@@ -31,6 +31,7 @@ In addition, the following `Makefile` targets are available
 The documentation and API reference is generated from the source interfaces.
 It can be consulted [online][doc] or via `odig`:
 
+    odig odoc noise-socket
     odig doc noise-socket
 
-[doc]: https://p2pcollab.github.io/doc/noise-socket/
+[doc]: https://p2pcollab.github.io/doc/ocaml-noise-socket/
