@@ -1,0 +1,29 @@
+opam-version: "2.0"
+maintainer: "TG x Thoth <*@tg-x.net>"
+authors: ["TG x Thoth <*@tg-x.net>"]
+tags: [ "noise" "socket" "protocol"]
+license: "ISC"
+homepage: "https://github.com/p2pcollab/ocaml-noise-socket"
+doc: "https://p2pcollab.github.io/doc/noise-socket/"
+dev-repo: "git+https://github.com/p2pcollab/ocaml-noise-socket.git"
+bug-reports: "https://github.com/p2pcollab/ocaml-nosie-socket/issues"
+depends:
+[
+  "dune" {build & >= "1.0.0"}
+  "noise"
+  "cstruct"
+  "angstrom"
+  "angstrom-lwt-unix"
+  "stdint"
+  "lwt" {with-test}
+  "lwt.unix" {with-test}
+  "lwt_ppx" {with-test}
+  "ounit" {with-test}
+]
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name "-j" jobs]
+]
+run-test: [
+  ["dune" "runtest" "-p" name "-j" jobs]
+]

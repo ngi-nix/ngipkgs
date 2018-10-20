@@ -1,0 +1,10 @@
+(library
+ (name noise_socket)
+ (public_name noise-socket)
+ (libraries
+  noise
+  cstruct
+  angstrom
+  stdint
+ )
+)
