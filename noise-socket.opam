@@ -2,7 +2,7 @@ opam-version: "2.0"
 maintainer: "TG x Thoth <*@tg-x.net>"
 authors: ["TG x Thoth <*@tg-x.net>"]
 tags: [ "noise" "socket" "protocol"]
-license: "ISC"
+license: "MPL-2.0"
 homepage: "https://github.com/p2pcollab/ocaml-noise-socket"
 doc: "https://p2pcollab.github.io/doc/ocaml-noise-socket/"
 dev-repo: "git+https://github.com/p2pcollab/ocaml-noise-socket.git"
