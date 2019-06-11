@@ -34,4 +34,4 @@ It can be consulted [online][doc] or via `odig`:
     odig odoc noise-socket
     odig doc noise-socket
 
-[doc]: https://p2pcollab.github.io/doc/ocaml-noise-socket/
+[doc]: https://p2pcollab.net/doc/noise-socket/
