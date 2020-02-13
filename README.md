@@ -2,7 +2,8 @@
 
 This library implements the
 [NoiseSocket](https://noisesocket.org/)
-[specification](https://noisesocket.org/spec/noisesocket/).
+[specification](https://noisesocket.org/spec/noisesocket/)
+using the [noise](https://opam.ocaml.org/packages/noise/) library.
 
 ## Installation
 
@@ -34,4 +35,4 @@ It can be consulted [online][doc] or via `odig`:
     odig odoc noise-socket
     odig doc noise-socket
 
-[doc]: https://p2pcollab.net/doc/noise-socket/
+[doc]: https://p2pcollab.net/doc/ocaml/noise-socket/

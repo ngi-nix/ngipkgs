@@ -4,7 +4,7 @@ authors: ["TG x Thoth <*@tg-x.net>"]
 tags: [ "noise" "socket" "protocol"]
 license: "MPL-2.0"
 homepage: "https://github.com/p2pcollab/ocaml-noise-socket"
-doc: "https://p2pcollab.net/doc/noise-socket/"
+doc: "https://p2pcollab.net/doc/ocaml/noise-socket/"
 dev-repo: "git+https://github.com/p2pcollab/ocaml-noise-socket.git"
 bug-reports: "https://github.com/p2pcollab/ocaml-nosie-socket/issues"
 depends:
