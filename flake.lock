@@ -47,11 +47,28 @@
         "type": "indirect"
       }
     },
+    "npmlock2nix-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1628331922,
+        "narHash": "sha256-AL3r4oSE8ZUwjT2X/seDcAhtjr0eEOgTERr+GMBPlxU=",
+        "owner": "tweag",
+        "repo": "npmlock2nix",
+        "rev": "5fc6505adec1bafc3ae9ebd2a28673f6f5ed9a75",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tweag",
+        "repo": "npmlock2nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "ipfs-search-backend-src": "ipfs-search-backend-src",
         "ipfs-search-frontend-src": "ipfs-search-frontend-src",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "npmlock2nix-src": "npmlock2nix-src"
       }
     }
   },

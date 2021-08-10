@@ -6,9 +6,10 @@
 
   # Upstream source tree(s).
   inputs.ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
+  inputs.npmlock2nix-src = { url = "github:tweag/npmlock2nix"; flake = false; };
   inputs.ipfs-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
 
-  outputs = { self, nixpkgs, ipfs-search-backend-src, ipfs-search-frontend-src }:
+  outputs = { self, nixpkgs, ipfs-search-backend-src, npmlock2nix-src, ipfs-search-frontend-src }:
     let
       # Generate a user-friendly version numer.
       userFriendlyVersion = src: builtins.substring 0 8 src.lastModifiedDate;
@@ -43,12 +44,22 @@
           };
         };
 
+        ipfs-search-frontend =
+          let
+            npmlock2nix = final.callPackage npmlock2nix-src { };
+          in
+          npmlock2nix.build {
+            src = ipfs-search-frontend-src;
+            installPhase = "cp -r dist $out";
+            buildCommands = [ "npm run build" ];
+          };
+
       };
 
       # Provide some binary packages for selected system types.
       packages = forAllSystems (system:
         {
-          inherit (nixpkgsFor.${system}) ipfs-search-backend;
+          inherit (nixpkgsFor.${system}) ipfs-search-backend ipfs-search-frontend;
         });
 
 
