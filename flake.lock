@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "dweb-search-frontend-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627299646,
+        "narHash": "sha256-v1Uv8HVuUjFQR17Hau2C+cHSRe1kvMPIBXqaKAFNYOs=",
+        "owner": "ipfs-search",
+        "repo": "dweb-search-frontend",
+        "rev": "985b2fa128523eef611e100bc361193e9ef65984",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipfs-search",
+        "repo": "dweb-search-frontend",
+        "type": "github"
+      }
+    },
     "ipfs-search-backend-src": {
       "flake": false,
       "locked": {
@@ -13,22 +29,6 @@
       "original": {
         "owner": "ipfs-search",
         "repo": "ipfs-search",
-        "type": "github"
-      }
-    },
-    "ipfs-search-frontend-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1627299646,
-        "narHash": "sha256-v1Uv8HVuUjFQR17Hau2C+cHSRe1kvMPIBXqaKAFNYOs=",
-        "owner": "ipfs-search",
-        "repo": "dweb-search-frontend",
-        "rev": "985b2fa128523eef611e100bc361193e9ef65984",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ipfs-search",
-        "repo": "dweb-search-frontend",
         "type": "github"
       }
     },
@@ -47,28 +47,11 @@
         "type": "indirect"
       }
     },
-    "npmlock2nix-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1628331922,
-        "narHash": "sha256-AL3r4oSE8ZUwjT2X/seDcAhtjr0eEOgTERr+GMBPlxU=",
-        "owner": "tweag",
-        "repo": "npmlock2nix",
-        "rev": "5fc6505adec1bafc3ae9ebd2a28673f6f5ed9a75",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tweag",
-        "repo": "npmlock2nix",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
+        "dweb-search-frontend-src": "dweb-search-frontend-src",
         "ipfs-search-backend-src": "ipfs-search-backend-src",
-        "ipfs-search-frontend-src": "ipfs-search-frontend-src",
-        "nixpkgs": "nixpkgs",
-        "npmlock2nix-src": "npmlock2nix-src"
+        "nixpkgs": "nixpkgs"
       }
     }
   },

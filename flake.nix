@@ -6,10 +6,9 @@
 
   # Upstream source tree(s).
   inputs.ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
-  inputs.npmlock2nix-src = { url = "github:tweag/npmlock2nix"; flake = false; };
-  inputs.ipfs-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
+  inputs.dweb-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
 
-  outputs = { self, nixpkgs, ipfs-search-backend-src, npmlock2nix-src, ipfs-search-frontend-src }:
+  outputs = { self, nixpkgs, ipfs-search-backend-src, dweb-search-frontend-src }:
     let
       # Generate a user-friendly version numer.
       userFriendlyVersion = src: builtins.substring 0 8 src.lastModifiedDate;
@@ -44,22 +43,29 @@
           };
         };
 
-        ipfs-search-frontend =
-          let
-            npmlock2nix = final.callPackage npmlock2nix-src { };
-          in
-          npmlock2nix.build {
-            src = ipfs-search-frontend-src;
-            installPhase = "cp -r dist $out";
-            buildCommands = [ "npm run build" ];
-          };
+        dweb-search-frontend = with final; mkYarnPackage rec {
+          pname = "dweb-search-frontend";
+          version = userFriendlyVersion src;
+          src = dweb-search-frontend-src;
+          yarnNix = ./yarn.nix;
+          yarnLock = ./yarn.lock;
+          installPhase = ''
+            yarn --offline build
+            cp -r deps/dweb-search-frontend/dist $out
+          '';
+          # don't generate the dist tarball
+          # (`doDist = false` does not work in mkYarnPackage)
+          distPhase = ''
+            true
+          '';
+        };
 
       };
 
       # Provide some binary packages for selected system types.
       packages = forAllSystems (system:
         {
-          inherit (nixpkgsFor.${system}) ipfs-search-backend ipfs-search-frontend;
+          inherit (nixpkgsFor.${system}) ipfs-search-backend dweb-search-frontend;
         });
 
 
