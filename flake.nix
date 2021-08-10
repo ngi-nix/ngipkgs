@@ -2,20 +2,19 @@
   description = "(insert short project description here)";
 
   # Nixpkgs / NixOS version to use.
-  inputs.nixpkgs.url = "nixpkgs/nixos-20.09";
+  inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
 
   # Upstream source tree(s).
-  inputs.hello-src = { url = git+https://git.savannah.gnu.org/git/hello.git; flake = false; };
-  inputs.gnulib-src = { url = git+https://git.savannah.gnu.org/git/gnulib.git; flake = false; };
+  inputs.ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
+  inputs.ipfs-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
 
-  outputs = { self, nixpkgs, hello-src, gnulib-src }:
+  outputs = { self, nixpkgs, ipfs-search-backend-src, ipfs-search-frontend-src }:
     let
-
       # Generate a user-friendly version numer.
-      version = builtins.substring 0 8 hello-src.lastModifiedDate;
+      userFriendlyVersion = src: builtins.substring 0 8 src.lastModifiedDate;
 
       # System types to support.
-      supportedSystems = [ "x86_64-linux" ];
+      supportedSystems = [ "x86_64-linux" "x86_64-darwin" ];
 
       # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
@@ -30,21 +29,17 @@
       # A Nixpkgs overlay.
       overlay = final: prev: {
 
-        hello = with final; stdenv.mkDerivation rec {
-          name = "hello-${version}";
+        ipfs-search-backend = with final; buildGo115Module rec {
+          pname = "ipfs-search-backend";
+          version = userFriendlyVersion src;
 
-          src = hello-src;
-
-          buildInputs = [ autoconf automake gettext gnulib perl gperf texinfo help2man ];
-
-          preConfigure = ''
-            mkdir -p .git # force BUILD_FROM_GIT
-            ./bootstrap --gnulib-srcdir=${gnulib-src} --no-git --skip-po
-          '';
+          vendorSha256 = "sha256-bz427bRS0E1xazQuSC7GqHSD5yBBrDv8o22TyVJ6fho=";
+          src = ipfs-search-backend-src;
 
           meta = {
-            homepage = "https://www.gnu.org/software/hello/";
-            description = "A program to show a familiar, friendly greeting";
+            license = with final.lib.licenses; agpl3Only;
+            homepage = "https://ipfs-search.com";
+            description = "Search engine for the Interplanetary Filesystem.";
           };
         };
 
@@ -53,68 +48,65 @@
       # Provide some binary packages for selected system types.
       packages = forAllSystems (system:
         {
-          inherit (nixpkgsFor.${system}) hello;
+          inherit (nixpkgsFor.${system}) ipfs-search-backend;
         });
 
-      # The default package for 'nix build'. This makes sense if the
-      # flake provides only one package or there is a clear "main"
-      # package.
-      defaultPackage = forAllSystems (system: self.packages.${system}.hello);
 
       # A NixOS module, if applicable (e.g. if the package provides a system service).
-      nixosModules.hello =
-        { pkgs, ... }:
-        {
-          nixpkgs.overlays = [ self.overlay ];
+      # nixosModules.hello =
+      #   { pkgs, ... }:
+      #   {
+      #     nixpkgs.overlays = [ self.overlay ];
 
-          environment.systemPackages = [ pkgs.hello ];
+      #     environment.systemPackages = [ pkgs.hello ];
 
-          #systemd.services = { ... };
-        };
+      #     #systemd.services = { ... };
+      #   };
 
       # Tests run by 'nix flake check' and by Hydra.
-      checks = forAllSystems (system: {
-        inherit (self.packages.${system}) hello;
+      # checks = forAllSystems (system: {
+      #   inherit (self.packages.${system}) hello;
 
-        # Additional tests, if applicable.
-        test =
-          with nixpkgsFor.${system};
-          stdenv.mkDerivation {
-            name = "hello-test-${version}";
+      #   # Additional tests, if applicable.
+      #   test =
+      #     with nixpkgsFor.${system};
+      #     stdenv.mkDerivation {
+      #       name = "hello-test-${version}";
 
-            buildInputs = [ hello ];
+      #       buildInputs = [ hello ];
 
-            unpackPhase = "true";
+      #       unpackPhase = "true";
 
-            buildPhase = ''
-              echo 'running some integration tests'
-              [[ $(hello) = 'Hello, world!' ]]
-            '';
+      #       buildPhase = ''
+      #         echo 'running some integration tests'
+      #         [[ $(hello) = 'Hello, world!' ]]
+      #       '';
 
-            installPhase = "mkdir -p $out";
-          };
+      #       installPhase = "mkdir -p $out";
+      #     };
 
-        # A VM test of the NixOS module.
-        vmTest =
-          with import (nixpkgs + "/nixos/lib/testing-python.nix") {
-            inherit system;
-          };
+      #   # A VM test of the NixOS module.
+      #   vmTest =
+      #     with import (nixpkgs + "/nixos/lib/testing-python.nix")
+      #       {
+      #         inherit system;
+      #       };
 
-          makeTest {
-            nodes = {
-              client = { ... }: {
-                imports = [ self.nixosModules.hello ];
-              };
-            };
+      #     makeTest {
+      #       nodes = {
+      #         client = { ... }: {
+      #           imports = [ self.nixosModules.hello ];
+      #         };
+      #       };
 
-            testScript =
-              ''
-                start_all()
-                client.wait_for_unit("multi-user.target")
-                client.succeed("hello")
-              '';
-          };
-      });
+      #       testScript =
+      #         ''
+      #           start_all()
+      #           client.wait_for_unit("multi-user.target")
+      #           client.succeed("hello")
+      #         '';
+      #     };
+      # });
 
     };
 }
