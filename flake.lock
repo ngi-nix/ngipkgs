@@ -147,6 +147,7 @@
         "quick-sasl-src": "quick-sasl-src",
         "steamworks-pulleyback-src": "steamworks-pulleyback-src",
         "steamworks-src": "steamworks-src",
+        "tlspool-gui-src": "tlspool-gui-src",
         "tlspool-src": "tlspool-src"
       }
     },
@@ -181,6 +182,23 @@
         "owner": "arpa2",
         "repo": "steamworks",
         "rev": "93935c899cd14b7659af0dbca05c776f7dc85ff4",
+        "type": "gitlab"
+      }
+    },
+    "tlspool-gui-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1588676874,
+        "narHash": "sha256-87AY5GxIeDvsc9jrjam1aAYK+RQwhEgt+GO4TE4d6Js=",
+        "owner": "arpa2",
+        "repo": "tlspool-gui",
+        "rev": "371858d5b19d0d32ef12c13dd1284a9560f47f9d",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "tlspool-gui",
+        "rev": "371858d5b19d0d32ef12c13dd1284a9560f47f9d",
         "type": "gitlab"
       }
     },

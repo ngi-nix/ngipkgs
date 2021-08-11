@@ -84,6 +84,14 @@
       rev = "dcfea4f6e504b9109d7f2300261a38d85db05025";
       flake = false;
     };
+
+    tlspool-gui-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "tlspool-gui";
+      rev = "371858d5b19d0d32ef12c13dd1284a9560f47f9d";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -120,12 +128,15 @@
           quick-sasl =
             callPackage ./pkgs/quick-sasl { src = inputs.quick-sasl-src; };
           tlspool = callPackage ./pkgs/tlspool { src = inputs.tlspool-src; };
+          tlspool-gui = libsForQt5.callPackage ./pkgs/tlspool-gui {
+            src = inputs.tlspool-gui-src;
+          };
         };
 
       packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
           arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool;
+          quick-sasl tlspool tlspool-gui;
       });
     };
 }
