@@ -36,6 +36,14 @@
       rev = "f63d89ba54f3919fa9c67aab9d59efad3f2dc9c7";
       flake = false;
     };
+
+    quick-mem-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "quick-mem";
+      rev = "4f8df4475ba5a48eaf633885c15f38f13b4f7392";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -60,14 +68,15 @@
             callPackage ./pkgs/arpa2common { src = inputs.arpa2common-src; };
           steamworks =
             callPackage ./pkgs/steamworks { src = inputs.steamworks-src; };
-          steamworks-pulleyback = callPackage ./pkgs/steamworks-pulleyback {
-            src = inputs.steamworks-pulleyback-src;
-          };
+          #steamworks-pulleyback = callPackage ./pkgs/steamworks-pulleyback {
+          #  src = inputs.steamworks-pulleyback-src;
+          #};
+          quick-mem =
+            callPackage ./pkgs/quick-mem { src = inputs.quick-mem-src; };
         };
 
       packages = forAllSystems (system: {
-        inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks steamworks-pulleyback;
+        inherit (nixpkgsFor.${system}) arpa2cm arpa2common steamworks quick-mem;
       });
     };
 }
