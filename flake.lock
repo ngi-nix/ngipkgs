@@ -34,6 +34,23 @@
         "type": "gitlab"
       }
     },
+    "leaf-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1588106772,
+        "narHash": "sha256-woEzlXyulVSpeJJQU0SsfC3U90cv3b9zzVh/w5iouJY=",
+        "owner": "arpa2",
+        "repo": "leaf",
+        "rev": "b3861efce0ba143f6eb5451aac5be24f18e6d8ab",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "leaf",
+        "rev": "b3861efce0ba143f6eb5451aac5be24f18e6d8ab",
+        "type": "gitlab"
+      }
+    },
     "lillydap-src": {
       "flake": false,
       "locked": {
@@ -105,6 +122,7 @@
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
         "arpa2common-src": "arpa2common-src",
+        "leaf-src": "leaf-src",
         "lillydap-src": "lillydap-src",
         "nixpkgs": "nixpkgs",
         "quick-der-src": "quick-der-src",

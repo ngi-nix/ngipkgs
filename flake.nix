@@ -60,6 +60,14 @@
       rev = "7dd28599dad7068d0f373f01f4bb106fd14deca6";
       flake = false;
     };
+
+    leaf-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "leaf";
+      rev = "b3861efce0ba143f6eb5451aac5be24f18e6d8ab";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -92,11 +100,12 @@
           quick-der =
             callPackage ./pkgs/quick-der { src = inputs.quick-der-src; };
           lillydap = callPackage ./pkgs/lillydap { src = inputs.lillydap-src; };
+          leaf = callPackage ./pkgs/leaf { src = inputs.leaf-src; };
         };
 
       packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks quick-mem quick-der lillydap;
+          arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf;
       });
     };
 }
