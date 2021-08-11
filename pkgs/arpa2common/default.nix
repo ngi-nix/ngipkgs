@@ -19,7 +19,7 @@ stdenv.mkDerivation {
     graphviz
   ];
 
-  propagatedBuildInputs = [ lmdb libkrb5 libressl ];
+  propagatedBuildInputs = [ arpa2cm lmdb libkrb5 libressl ];
 
   configurePhase = ''
     export PREFIX=$out
