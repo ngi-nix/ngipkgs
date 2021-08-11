@@ -68,6 +68,22 @@
       rev = "b3861efce0ba143f6eb5451aac5be24f18e6d8ab";
       flake = false;
     };
+
+    quick-sasl-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "quick-sasl";
+      rev = "9b7981254e14e53c41a118193ca550d503a46cba";
+      flake = false;
+    };
+
+    tlspool-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "tlspool";
+      rev = "dcfea4f6e504b9109d7f2300261a38d85db05025";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -101,11 +117,15 @@
             callPackage ./pkgs/quick-der { src = inputs.quick-der-src; };
           lillydap = callPackage ./pkgs/lillydap { src = inputs.lillydap-src; };
           leaf = callPackage ./pkgs/leaf { src = inputs.leaf-src; };
+          quick-sasl =
+            callPackage ./pkgs/quick-sasl { src = inputs.quick-sasl-src; };
+          tlspool = callPackage ./pkgs/tlspool { src = inputs.tlspool-src; };
         };
 
       packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf;
+          arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
+          quick-sasl tlspool;
       });
     };
 }

@@ -118,6 +118,23 @@
         "type": "gitlab"
       }
     },
+    "quick-sasl-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627185159,
+        "narHash": "sha256-z9kgKssuXq8qae9dTLP5REzkp1C4/jnJr7ydOavPWKM=",
+        "owner": "arpa2",
+        "repo": "quick-sasl",
+        "rev": "9b7981254e14e53c41a118193ca550d503a46cba",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "quick-sasl",
+        "rev": "9b7981254e14e53c41a118193ca550d503a46cba",
+        "type": "gitlab"
+      }
+    },
     "root": {
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
@@ -127,8 +144,10 @@
         "nixpkgs": "nixpkgs",
         "quick-der-src": "quick-der-src",
         "quick-mem-src": "quick-mem-src",
+        "quick-sasl-src": "quick-sasl-src",
         "steamworks-pulleyback-src": "steamworks-pulleyback-src",
-        "steamworks-src": "steamworks-src"
+        "steamworks-src": "steamworks-src",
+        "tlspool-src": "tlspool-src"
       }
     },
     "steamworks-pulleyback-src": {
@@ -162,6 +181,23 @@
         "owner": "arpa2",
         "repo": "steamworks",
         "rev": "93935c899cd14b7659af0dbca05c776f7dc85ff4",
+        "type": "gitlab"
+      }
+    },
+    "tlspool-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1625046693,
+        "narHash": "sha256-cscA7204nONYyuthDoVOlVwN1AW2EtvSamXpqjAAaqY=",
+        "owner": "arpa2",
+        "repo": "tlspool",
+        "rev": "dcfea4f6e504b9109d7f2300261a38d85db05025",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "tlspool",
+        "rev": "dcfea4f6e504b9109d7f2300261a38d85db05025",
         "type": "gitlab"
       }
     }
