@@ -1,0 +1,45 @@
+{
+  "nodes": {
+    "arpa2cm-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1625752594,
+        "narHash": "sha256-1z0fH8vZJiPkY/C654us9s2BULM1tlvvYcszNqk34yI=",
+        "owner": "arpa2",
+        "repo": "arpa2cm",
+        "rev": "c3aa5b6ce5c3c14a66bbf27044c517186176cb66",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "arpa2cm",
+        "rev": "c3aa5b6ce5c3c14a66bbf27044c517186176cb66",
+        "type": "gitlab"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1628605906,
+        "narHash": "sha256-XqCCPDIIG4zMPJ/V757FgzGM2zypcRb1BY7u/DqHKX0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "fe01052444c1d66ed6ef76df2af798c9769e9e79",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "arpa2cm-src": "arpa2cm-src",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
