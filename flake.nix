@@ -44,6 +44,22 @@
       rev = "4f8df4475ba5a48eaf633885c15f38f13b4f7392";
       flake = false;
     };
+
+    quick-der-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "quick-der";
+      rev = "bda3d1e8f6e021778531ab61a434960931dd88a1";
+      flake = false;
+    };
+
+    lillydap-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "lillydap";
+      rev = "7dd28599dad7068d0f373f01f4bb106fd14deca6";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -73,10 +89,14 @@
           #};
           quick-mem =
             callPackage ./pkgs/quick-mem { src = inputs.quick-mem-src; };
+          quick-der =
+            callPackage ./pkgs/quick-der { src = inputs.quick-der-src; };
+          lillydap = callPackage ./pkgs/lillydap { src = inputs.lillydap-src; };
         };
 
       packages = forAllSystems (system: {
-        inherit (nixpkgsFor.${system}) arpa2cm arpa2common steamworks quick-mem;
+        inherit (nixpkgsFor.${system})
+          arpa2cm arpa2common steamworks quick-mem quick-der lillydap;
       });
     };
 }

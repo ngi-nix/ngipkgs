@@ -34,6 +34,23 @@
         "type": "gitlab"
       }
     },
+    "lillydap-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1588631263,
+        "narHash": "sha256-L2zmitXezGzDZXLDxohU3DTuHE18KUZEMg98ui2AF+c=",
+        "owner": "arpa2",
+        "repo": "lillydap",
+        "rev": "7dd28599dad7068d0f373f01f4bb106fd14deca6",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "lillydap",
+        "rev": "7dd28599dad7068d0f373f01f4bb106fd14deca6",
+        "type": "gitlab"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1628605906,
@@ -48,6 +65,23 @@
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
+      }
+    },
+    "quick-der-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1626773097,
+        "narHash": "sha256-9vOCH6YnJ8mulersZnE4ox9D9bhdQBh2spVzvB/43So=",
+        "owner": "arpa2",
+        "repo": "quick-der",
+        "rev": "bda3d1e8f6e021778531ab61a434960931dd88a1",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "quick-der",
+        "rev": "bda3d1e8f6e021778531ab61a434960931dd88a1",
+        "type": "gitlab"
       }
     },
     "quick-mem-src": {
@@ -71,7 +105,9 @@
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
         "arpa2common-src": "arpa2common-src",
+        "lillydap-src": "lillydap-src",
         "nixpkgs": "nixpkgs",
+        "quick-der-src": "quick-der-src",
         "quick-mem-src": "quick-mem-src",
         "steamworks-pulleyback-src": "steamworks-pulleyback-src",
         "steamworks-src": "steamworks-src"
