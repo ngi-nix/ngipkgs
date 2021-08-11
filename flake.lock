@@ -17,6 +17,23 @@
         "type": "gitlab"
       }
     },
+    "arpa2common-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1625776969,
+        "narHash": "sha256-LWsWoHRdLWRSF9JaEwrw+CXm5Azgh7zNeq0a8Z/hijQ=",
+        "owner": "arpa2",
+        "repo": "arpa2common",
+        "rev": "c65fbe034a288ba504b4b68b62b1546b8c3ddf5a",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "arpa2common",
+        "rev": "c65fbe034a288ba504b4b68b62b1546b8c3ddf5a",
+        "type": "gitlab"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1628605906,
@@ -36,7 +53,44 @@
     "root": {
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
-        "nixpkgs": "nixpkgs"
+        "arpa2common-src": "arpa2common-src",
+        "nixpkgs": "nixpkgs",
+        "steamworks-pulleyback-src": "steamworks-pulleyback-src",
+        "steamworks-src": "steamworks-src"
+      }
+    },
+    "steamworks-pulleyback-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1626031697,
+        "narHash": "sha256-WIet38dn36kerMmos15/9X+1v5FF9vZ/m5gPzxGzYAs=",
+        "owner": "arpa2",
+        "repo": "steamworks-pulleyback",
+        "rev": "f63d89ba54f3919fa9c67aab9d59efad3f2dc9c7",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "steamworks-pulleyback",
+        "rev": "f63d89ba54f3919fa9c67aab9d59efad3f2dc9c7",
+        "type": "gitlab"
+      }
+    },
+    "steamworks-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627597248,
+        "narHash": "sha256-hD1nTyv/t7MQdopqivfSE0o4Qk1ymG8zQVg56lY+t9o=",
+        "owner": "arpa2",
+        "repo": "steamworks",
+        "rev": "93935c899cd14b7659af0dbca05c776f7dc85ff4",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "steamworks",
+        "rev": "93935c899cd14b7659af0dbca05c776f7dc85ff4",
+        "type": "gitlab"
       }
     }
   },
