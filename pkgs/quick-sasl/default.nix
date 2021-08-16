@@ -1,5 +1,5 @@
 { src, stdenv, cmake, arpa2cm, arpa2common, quick-mem, cyrus_sasl, quick-der
-, pkgconfig, libkrb5, libev, et }:
+, pkgconfig, libkrb5, libev, e2fsprogs }:
 stdenv.mkDerivation {
   inherit src;
 
@@ -7,20 +7,21 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     cmake
+    pkgconfig
     libkrb5
     arpa2cm
     arpa2common
     quick-mem
     cyrus_sasl
     quick-der
-    pkgconfig
     libev
+    e2fsprogs
   ];
 
   configurePhase = ''
     mkdir -p build
     cd build
-    cmake --debug-find ..
+    cmake ..
   '';
 
   buildPhase = ''
@@ -28,6 +29,6 @@ stdenv.mkDerivation {
   '';
 
   installPhase = ''
-    cmake --install -DCMAKE_INSTALL_PREFIX=$out .
+    cmake --install . --prefix $out
   '';
 }
