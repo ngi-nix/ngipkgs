@@ -34,6 +34,40 @@
         "type": "gitlab"
       }
     },
+    "freeDiameter-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1602305907,
+        "narHash": "sha256-hd71wR4b/pnAUcd2U4/InmubCAqkKUZeZTBrGTV3FSY=",
+        "owner": "freeDiameter",
+        "repo": "freeDiameter",
+        "rev": "8ac823b77653a03da82232470b376c2b281b0973",
+        "type": "github"
+      },
+      "original": {
+        "owner": "freeDiameter",
+        "repo": "freeDiameter",
+        "rev": "8ac823b77653a03da82232470b376c2b281b0973",
+        "type": "github"
+      }
+    },
+    "kip-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627185579,
+        "narHash": "sha256-kYoAEKODUQBGO1i/VAEptWHkXFMtQNDcrcREVykScFE=",
+        "owner": "arpa2",
+        "repo": "kip",
+        "rev": "ffdfba53ef1476df3d45662dec9aae1e7136b32a",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "repo": "kip",
+        "rev": "ffdfba53ef1476df3d45662dec9aae1e7136b32a",
+        "type": "gitlab"
+      }
+    },
     "leaf-src": {
       "flake": false,
       "locked": {
@@ -139,6 +173,8 @@
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
         "arpa2common-src": "arpa2common-src",
+        "freeDiameter-src": "freeDiameter-src",
+        "kip-src": "kip-src",
         "leaf-src": "leaf-src",
         "lillydap-src": "lillydap-src",
         "nixpkgs": "nixpkgs",

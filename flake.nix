@@ -92,23 +92,27 @@
       rev = "371858d5b19d0d32ef12c13dd1284a9560f47f9d";
       flake = false;
     };
+
+    kip-src = {
+      type = "gitlab";
+      owner = "arpa2";
+      repo = "kip";
+      rev = "ffdfba53ef1476df3d45662dec9aae1e7136b32a";
+      flake = false;
+    };
+
+    freeDiameter-src = {
+      type = "github";
+      owner = "freeDiameter";
+      repo = "freeDiameter";
+      rev = "8ac823b77653a03da82232470b376c2b281b0973";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
       supportedSystems = [ "x86_64-linux" ];
-      allPackages = [
-        "arpa2cm"
-        "arpa2common"
-        "steamworks"
-        "quick-mem"
-        "quick-der"
-        "lillydap"
-        "leaf"
-        "quick-sasl"
-        "tlspool"
-        "tlspool-gui"
-      ];
 
       # BEGIN Helper functions
       forAllSystems = f:
@@ -143,18 +147,21 @@
           tlspool-gui = libsForQt5.callPackage ./pkgs/tlspool-gui {
             src = inputs.tlspool-gui-src;
           };
+          kip = callPackage ./pkgs/kip { src = inputs.kip-src; };
+          freeDiameter =
+            callPackage ./pkgs/freeDiameter { src = inputs.freeDiameter-src; };
         };
 
       packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
           arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool tlspool-gui;
+          quick-sasl tlspool tlspool-gui kip freeDiameter;
       });
 
       checks = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
           arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool tlspool-gui;
+          quick-sasl tlspool tlspool-gui kip freeDiameter;
       });
     };
 }
