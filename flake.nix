@@ -137,9 +137,9 @@
             callPackage ./pkgs/arpa2common { src = inputs.arpa2common-src; };
           steamworks =
             callPackage ./pkgs/steamworks { src = inputs.steamworks-src; };
-          #steamworks-pulleyback = callPackage ./pkgs/steamworks-pulleyback {
-          #  src = inputs.steamworks-pulleyback-src;
-          #};
+          steamworks-pulleyback = callPackage ./pkgs/steamworks-pulleyback {
+            src = inputs.steamworks-pulleyback-src;
+          };
           quick-mem =
             callPackage ./pkgs/quick-mem { src = inputs.quick-mem-src; };
           quick-der =
@@ -160,13 +160,13 @@
       packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
           arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool tlspool-gui kip freeDiameter;
+          quick-sasl tlspool tlspool-gui kip freeDiameter steamworks-pulleyback;
       });
 
       checks = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
           arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool tlspool-gui kip freeDiameter;
+          quick-sasl tlspool tlspool-gui freeDiameter;
       });
     };
 }
