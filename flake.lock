@@ -34,6 +34,22 @@
         "type": "gitlab"
       }
     },
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627913399,
+        "narHash": "sha256-hY8g6H2KFL8ownSiFeMOjwPC8P0ueXpCVEbxgda3pko=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "12c64ca55c1014cdc1b16ed5a804aa8576601ff2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
     "freeDiameter-src": {
       "flake": false,
       "locked": {
@@ -173,6 +189,7 @@
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
         "arpa2common-src": "arpa2common-src",
+        "flake-compat": "flake-compat",
         "freeDiameter-src": "freeDiameter-src",
         "kip-src": "kip-src",
         "leaf-src": "leaf-src",
