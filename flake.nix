@@ -138,5 +138,8 @@
           arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
           quick-sasl tlspool tlspool-gui;
       });
+
+      hydraJobs."arpa2cm" =
+        forAllSystems (system: { inherit (nixpkgsFor.${system}) arpa2cm; });
     };
 }
