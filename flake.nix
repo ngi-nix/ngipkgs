@@ -97,6 +97,18 @@
   outputs = { self, nixpkgs, ... }@inputs:
     let
       supportedSystems = [ "x86_64-linux" ];
+      allPackages = [
+        "arpa2cm"
+        "arpa2common"
+        "steamworks"
+        "quick-mem"
+        "quick-der"
+        "lillydap"
+        "leaf"
+        "quick-sasl"
+        "tlspool"
+        "tlspool-gui"
+      ];
 
       # BEGIN Helper functions
       forAllSystems = f:
@@ -139,7 +151,10 @@
           quick-sasl tlspool tlspool-gui;
       });
 
-      hydraJobs."arpa2cm" =
-        forAllSystems (system: { inherit (nixpkgsFor.${system}) arpa2cm; });
+      checks = forAllSystems (system: {
+        inherit (nixpkgsFor.${system})
+          arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
+          quick-sasl tlspool tlspool-gui;
+      });
     };
 }
