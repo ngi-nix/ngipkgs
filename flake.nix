@@ -117,7 +117,7 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
+      supportedSystems = [ "x86_64-linux" ];
 
       # BEGIN Helper functions
       forAllSystems = f:
