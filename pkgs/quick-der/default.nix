@@ -17,14 +17,16 @@ in stdenv.mkDerivation {
   ];
 
   configurePhase = ''
-    export PREFIX=$out
+    mkdir -p make
+    cd make
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
   '';
 
   buildPhase = ''
-    make all
+    cmake --build .
   '';
 
   installPhase = ''
-    make install
+    cmake --install .
   '';
 }

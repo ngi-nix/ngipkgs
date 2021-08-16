@@ -21,7 +21,7 @@ stdenv.mkDerivation {
   configurePhase = ''
     mkdir -p build
     cd build
-    cmake ..
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
   '';
 
   buildPhase = ''
