@@ -1,0 +1,96 @@
+{
+  "nodes": {
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1610051610,
+        "narHash": "sha256-U9rPz/usA1/Aohhk7Cmc2gBrEEKRzcW4nwPWMPwja4Y=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "3982c9903e93927c2164caa727cd3f6a0e6d14cc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1629048390,
+        "narHash": "sha256-do7HuXFSKyj4ulMlRvGigNZCqOaGD9i0M3OLkFQgEAc=",
+        "owner": "NixOS",
+        "repo": "Nixpkgs",
+        "rev": "e41ba38114055832e5ba4a851e9c00149eef3e4a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "Nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1610729867,
+        "narHash": "sha256-bk/SBaBLqZX/PEqal27DMQwAHHl0dcZMp8NNksQr80s=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "04af07c659c6723a2259bb6bc00a47ec53330f20",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "poetry2nix": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1628967759,
+        "narHash": "sha256-ErzsA+8czZ+ALfCWlC7rpolts268WZvoumm5/WbrrAA=",
+        "owner": "nix-community",
+        "repo": "poetry2nix",
+        "rev": "f008ee4f8e5db87af110f31392f5858559755f9c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "master",
+        "repo": "poetry2nix",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "poetry2nix": "poetry2nix",
+        "weblate": "weblate"
+      }
+    },
+    "weblate": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1629112748,
+        "narHash": "sha256-S32DLTiNDPo941Kz6rfIuC/o2u6W/0G/RsgVJuPOKiQ=",
+        "ref": "weblate-4.7.2-poetry",
+        "rev": "7f1c76027bd120067b79f990272ad29e89087ffc",
+        "revCount": 49002,
+        "type": "git",
+        "url": "file:///home/kerstin/git/weblate"
+      },
+      "original": {
+        "ref": "weblate-4.7.2-poetry",
+        "type": "git",
+        "url": "file:///home/kerstin/git/weblate"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
