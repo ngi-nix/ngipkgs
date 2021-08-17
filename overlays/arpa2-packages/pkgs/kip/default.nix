@@ -32,7 +32,8 @@ in stdenv.mkDerivation {
   configurePhase = ''
     mkdir -p build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out \
+          -DfreeDiameter_EXTENSION_DIR=$out/lib/freeDiameter
     patchShebangs test
   '';
 
