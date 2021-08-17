@@ -151,7 +151,8 @@
       checks = forAllSystems (system: {
         inherit (nixpkgsFor.${system})
           arpa2cm arpa2common steamworks steamworks-pulleyback quick-mem
-          quick-der lillydap leaf quick-sasl tlspool tlspool-gui freeDiameter;
+          quick-der lillydap leaf quick-sasl tlspool tlspool-gui freeDiameter
+          kip;
       });
     };
 }
