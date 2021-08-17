@@ -3,10 +3,12 @@
 stdenv.mkDerivation {
   inherit src;
 
-  name = "steamworks";
+  name = "steamworks-pulleyback";
 
   nativeBuildInputs =
     [ cmake arpa2cm steamworks arpa2common lua doxygen graphviz libuuid ];
+
+  patches = [ ./install-dirs.patch ];
 
   configurePhase = ''
     export PREFIX=$out

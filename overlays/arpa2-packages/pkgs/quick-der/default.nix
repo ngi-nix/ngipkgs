@@ -1,7 +1,7 @@
-{ src, stdenv, cmake, arpa2cm, arpa2common, quick-mem, python3
+{ src, stdenv, cmake, arpa2cm, arpa2common, quick-mem, python37
 , ensureNewerSourcesHook }:
 let
-  python-with-packages = python3.withPackages
+  python-with-packages = python37.withPackages
     (ps: with ps; [ setuptools asn1ate six pyparsing colored ]);
 in stdenv.mkDerivation {
   inherit src;
