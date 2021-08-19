@@ -7,8 +7,8 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ cmake arpa2common arpa2cm ];
 
   configurePhase = ''
-    mkdir -p make
-    cd make
+    mkdir -p build
+    cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
   '';
 

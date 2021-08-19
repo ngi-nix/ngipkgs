@@ -8,8 +8,8 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ cmake ];
 
   configurePhase = ''
-    mkdir -p make
-    cd make
+    mkdir -p build
+    cd build
     cmake .. cmake .. -DCMAKE_INSTALL_PREFIX=$out
   '';
 

@@ -22,8 +22,8 @@ stdenv.mkDerivation {
   propagatedBuildInputs = [ arpa2cm lmdb libkrb5 libressl ];
 
   configurePhase = ''
-    mkdir -p make
-    cd make
+    mkdir -p build
+    cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
   '';
 
