@@ -124,35 +124,44 @@
       forAllSystems = f:
         nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
-      nixpkgsFor = forAllSystems (system:
-        import nixpkgs {
-          inherit system;
-          overlays = [ self.overlay ];
-        });
+      nixpkgsFor = forAllSystems (
+        system:
+          import nixpkgs {
+            inherit system;
+            overlays = [ self.overlay ];
+          }
+      );
       # END Helper functions
-    in {
-      overlay = final: prev:
-        (nixpkgs.lib.composeManyExtensions [
-          inputs.poetry2nix.overlay
-          self.overlays.arpa2-packages
-        ] final prev);
+    in
+      {
+        overlay = final: prev:
+          nixpkgs.lib.composeManyExtensions [
+            inputs.poetry2nix.overlay
+            self.overlays.arpa2-packages
+          ] final prev;
 
-      overlays = {
-        arpa2-packages = import ./overlays/arpa2-packages inputs;
-        arpa2-python-packages = import ./overlays/arpa2-python-packages inputs;
+        overlays = {
+          arpa2-packages = import ./overlays/arpa2-packages inputs;
+          arpa2-python-packages = import ./overlays/arpa2-python-packages inputs;
+        };
+
+        packages = forAllSystems (
+          system: {
+            inherit (nixpkgsFor.${system})
+              arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
+              quick-sasl tlspool tlspool-gui kip freeDiameter steamworks-pulleyback
+              ;
+          }
+        );
+
+        checks = forAllSystems (
+          system: {
+            inherit (nixpkgsFor.${system})
+              arpa2cm arpa2common steamworks steamworks-pulleyback quick-mem
+              quick-der lillydap leaf quick-sasl tlspool tlspool-gui freeDiameter
+              kip
+              ;
+          }
+        );
       };
-
-      packages = forAllSystems (system: {
-        inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool tlspool-gui kip freeDiameter steamworks-pulleyback;
-      });
-
-      checks = forAllSystems (system: {
-        inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks steamworks-pulleyback quick-mem
-          quick-der lillydap leaf quick-sasl tlspool tlspool-gui freeDiameter
-          kip;
-      });
-    };
 }
