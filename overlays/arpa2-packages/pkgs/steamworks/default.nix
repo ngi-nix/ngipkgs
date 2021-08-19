@@ -18,8 +18,8 @@ stdenv.mkDerivation {
   NIX_CFLAGS_COMPILE = "-pthread";
 
   configurePhase = ''
-    mkdir -p make
-    cd make
+    mkdir -p build
+    cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=$out
   '';
 
