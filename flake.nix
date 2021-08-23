@@ -34,11 +34,7 @@
 	      BORG_OPENSSL_PREFIX = pkgs.openssl.dev;
 	      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
 	      buildInputs = (old.buildInputs or [ ]) ++ (with pkgs; [ openssl acl ]);
-	      NIX_LDFLAGS = "-L${pkgs.openssl}/lib";
-	      NIX_CFLAGS_COMPILE = "-isystem ${pkgs.openssl.dev}/include";
 	    });
-	    # use borgbackup from nixpkgs for now.
-	    # borgbackup = pkgs.borgbackup;
           }
         );
       };
