@@ -3,7 +3,7 @@
 
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
-  inputs.weblate.url = "git+file:///home/kerstin/git/weblate?ref=weblate-4.7.2-poetry";
+  inputs.weblate.url = "git+file:///home/kerstin/git/weblate?ref=weblate-4.7.2";
   inputs.weblate.flake = false;
 
   outputs = { self, nixpkgs, poetry2nix, weblate }:
@@ -16,8 +16,9 @@
     {
 
       packages.x86_64-linux.weblate = pkgs.poetry2nix.mkPoetryApplication {
-        projectDir = ./.;
         src = weblate;
+	pyproject = ./pyproject.toml;
+	poetrylock = ./poetry.lock;
         overrides = pkgs.poetry2nix.overrides.withDefaults (
           self: super: {
             ruamel-yaml = super.ruamel-yaml.overridePythonAttrs (old: {

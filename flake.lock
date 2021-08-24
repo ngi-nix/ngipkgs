@@ -76,16 +76,16 @@
     "weblate": {
       "flake": false,
       "locked": {
-        "lastModified": 1629204085,
-        "narHash": "sha256-vNlLNgsU7OoV9CKcjPcr2RGLp68IM0CW2JyV3c+iT9o=",
-        "ref": "weblate-4.7.2-poetry",
-        "rev": "01fdbc8136f5b35d9f6dded2032813fd1ffdf1d5",
-        "revCount": 49003,
+        "lastModified": 1626371957,
+        "narHash": "sha256-R+KO7nHpZatxoLkr0y3rCZy6OV51WsuQ3ukiup1CA5M=",
+        "ref": "weblate-4.7.2",
+        "rev": "496ca41e5a97c85801db75da8f9de831bb0dd172",
+        "revCount": 49001,
         "type": "git",
         "url": "file:///home/kerstin/git/weblate"
       },
       "original": {
-        "ref": "weblate-4.7.2-poetry",
+        "ref": "weblate-4.7.2",
         "type": "git",
         "url": "file:///home/kerstin/git/weblate"
       }
