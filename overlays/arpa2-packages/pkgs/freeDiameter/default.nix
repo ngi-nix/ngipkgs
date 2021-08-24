@@ -1,9 +1,8 @@
-{ src, stdenv, cmake, pkgconfig, flex, bison, lksctp-tools, libidn, libgcrypt
-, gnutls }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, cmake, pkgconfig, flex, bison, lksctp-tools
+, libidn, libgcrypt, gnutls }:
 
-  name = "freeDiameter";
+stdenv.mkDerivation {
+  inherit src pname version;
 
   nativeBuildInputs =
     [ cmake pkgconfig flex bison lksctp-tools libidn libgcrypt gnutls ];

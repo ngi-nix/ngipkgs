@@ -1,13 +1,11 @@
-{ src, stdenv, cmake, pkgconfig, arpa2cm, arpa2common, quick-mem, quick-der
-, quick-sasl, unbound, openssl, e2fsprogs, cyrus_sasl, libkrb5, libev, json_c
-, bison, flex, freeDiameter, python3, libressl, cacert, gnutls }:
+{ src, pname, version, stdenv, cmake, pkgconfig, arpa2cm, arpa2common, quick-mem
+, quick-der, quick-sasl, unbound, openssl, e2fsprogs, cyrus_sasl, libkrb5, libev
+, json_c, bison, flex, freeDiameter, python3, libressl, cacert, gnutls }:
 let
   python-with-packages = python3.withPackages
     (ps: with ps; [ setuptools asn1ate six pyparsing colored ]);
 in stdenv.mkDerivation {
-  inherit src;
-
-  name = "kip";
+  inherit src pname version;
 
   nativeBuildInputs = [ cmake pkgconfig cacert openssl libressl gnutls ];
 

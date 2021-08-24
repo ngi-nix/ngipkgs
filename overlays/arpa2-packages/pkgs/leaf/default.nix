@@ -1,8 +1,7 @@
-{ src, stdenv, cmake, arpa2cm, quick-der, lillydap }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, cmake, arpa2cm, quick-der, lillydap }:
 
-  name = "leaf";
+stdenv.mkDerivation {
+  inherit src pname version;
 
   nativeBuildInputs = [ cmake arpa2cm quick-der lillydap ];
 

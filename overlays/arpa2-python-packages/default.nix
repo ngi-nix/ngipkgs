@@ -1,4 +1,4 @@
-inputs: final: prev:
+inputs: sources: final: prev:
 with final.pkgs;
 {
 

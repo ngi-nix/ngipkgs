@@ -26,23 +26,57 @@ with final.pkgs; rec {
     version = inputs.steamworks-pulleyback-src.ref;
   };
 
-  quick-mem = callPackage ./pkgs/quick-mem { src = inputs.quick-mem-src; };
+  quick-mem = callPackage ./pkgs/quick-mem {
+    src = sources.quick-mem-src;
+    pname = inputs.quick-mem-src.repo;
+    version = inputs.quick-mem-src.ref;
+  };
 
-  quick-der = callPackage ./pkgs/quick-der { src = inputs.quick-der-src; };
+  quick-der = callPackage ./pkgs/quick-der {
+    src = sources.quick-der-src;
+    pname = inputs.quick-der-src.repo;
+    version = inputs.quick-der-src.ref;
+  };
 
-  lillydap = callPackage ./pkgs/lillydap { src = inputs.lillydap-src; };
+  lillydap = callPackage ./pkgs/lillydap {
+    src = sources.lillydap-src;
+    pname = inputs.lillydap-src.repo;
+    version = inputs.lillydap-src.ref;
+  };
 
-  leaf = callPackage ./pkgs/leaf { src = inputs.leaf-src; };
+  leaf = callPackage ./pkgs/leaf {
+    src = sources.leaf-src;
+    pname = inputs.leaf-src.repo;
+    version = inputs.leaf-src.ref;
+  };
 
-  quick-sasl = callPackage ./pkgs/quick-sasl { src = inputs.quick-sasl-src; };
+  quick-sasl = callPackage ./pkgs/quick-sasl {
+    src = sources.quick-sasl-src;
+    pname = inputs.quick-sasl-src.repo;
+    version = inputs.quick-sasl-src.ref;
+  };
 
-  tlspool = callPackage ./pkgs/tlspool { src = inputs.tlspool-src; };
+  tlspool = callPackage ./pkgs/tlspool {
+    src = sources.tlspool-src;
+    pname = inputs.tlspool-src.repo;
+    version = inputs.tlspool-src.ref;
+  };
 
-  tlspool-gui =
-    libsForQt5.callPackage ./pkgs/tlspool-gui { src = inputs.tlspool-gui-src; };
+  tlspool-gui = libsForQt5.callPackage ./pkgs/tlspool-gui {
+    src = sources.tlspool-gui-src;
+    pname = inputs.tlspool-gui-src.repo;
+    version = inputs.tlspool-gui-src.ref;
+  };
 
-  kip = callPackage ./pkgs/kip { src = inputs.kip-src; };
+  kip = callPackage ./pkgs/kip {
+    src = sources.kip-src;
+    pname = inputs.kip-src.repo;
+    version = inputs.kip-src.ref;
+  };
 
-  freeDiameter =
-    callPackage ./pkgs/freeDiameter { src = inputs.freeDiameter-src; };
+  freeDiameter = callPackage ./pkgs/freeDiameter {
+    src = sources.freeDiameter-src;
+    pname = inputs.freeDiameter-src.repo;
+    version = inputs.freeDiameter-src.ref;
+  };
 }

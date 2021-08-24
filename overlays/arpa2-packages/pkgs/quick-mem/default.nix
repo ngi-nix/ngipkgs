@@ -1,8 +1,7 @@
-{ src, stdenv, cmake, arpa2cm, arpa2common }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, cmake, arpa2cm, arpa2common }:
 
-  name = "quick-mem";
+stdenv.mkDerivation {
+  inherit src pname version;
 
   nativeBuildInputs = [ cmake arpa2common arpa2cm ];
 

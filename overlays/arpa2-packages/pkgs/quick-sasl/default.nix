@@ -1,9 +1,8 @@
-{ src, stdenv, cmake, arpa2cm, arpa2common, quick-mem, cyrus_sasl, quick-der
-, pkgconfig, libkrb5, libev, e2fsprogs }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, cmake, arpa2cm, arpa2common, quick-mem
+, cyrus_sasl, quick-der, pkgconfig, libkrb5, libev, e2fsprogs }:
 
-  name = "quick-sasl";
+stdenv.mkDerivation {
+  inherit src pname version;
 
   nativeBuildInputs = [
     cmake

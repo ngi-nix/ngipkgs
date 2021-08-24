@@ -1,12 +1,11 @@
-{ src, stdenv, cmake, arpa2cm, arpa2common, quick-mem, python37
+{ src, pname, version, stdenv, cmake, arpa2cm, arpa2common, quick-mem, python37
 , ensureNewerSourcesHook }:
+
 let
   python-with-packages = python37.withPackages
     (ps: with ps; [ setuptools asn1ate six pyparsing colored ]);
 in stdenv.mkDerivation {
-  inherit src;
-
-  name = "quick-der";
+  inherit src pname version;
 
   nativeBuildInputs =
     [ cmake arpa2common arpa2cm quick-mem python-with-packages ];

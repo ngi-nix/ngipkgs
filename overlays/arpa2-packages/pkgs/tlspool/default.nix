@@ -1,9 +1,8 @@
-{ src, stdenv, cmake, arpa2cm, arpa2common, quick-der, gnutls, db, ldns
-, libtasn1, p11-kit, unbound, libkrb5, pkgconfig, openldap }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, cmake, arpa2cm, arpa2common, quick-der, gnutls
+, db, ldns, libtasn1, p11-kit, unbound, libkrb5, pkgconfig, openldap }:
 
-  name = "tlspool";
+stdenv.mkDerivation {
+  inherit src pname version;
 
   nativeBuildInputs = [
     cmake
