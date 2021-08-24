@@ -1,24 +1,16 @@
-{ src, stdenv, cmake, arpa2cm, arpa2common, steamworks, lua, doxygen, graphviz
+{ src, pname, version, stdenv, helpers, steamworks, lua, doxygen, graphviz
 , libressl, lmdb, libuuid }:
-stdenv.mkDerivation {
-  inherit src;
 
-  name = "steamworks-pulleyback";
+helpers.mkArpa2Derivation {
+  inherit src pname version;
 
-  nativeBuildInputs =
-    [ cmake arpa2cm steamworks arpa2common lua doxygen graphviz libuuid ];
+  buildInputs = [ steamworks lua doxygen graphviz libuuid ];
 
   patches = [ ./install-dirs.patch ];
 
   configurePhase = ''
-    export PREFIX=$out
-  '';
-
-  buildPhase = ''
-    make all
-  '';
-
-  installPhase = ''
-    make install
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out  -DPULLEY_BACKEND_DIR=$out/share/steamworks/pulleyback/
   '';
 }

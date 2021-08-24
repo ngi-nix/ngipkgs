@@ -1,12 +1,10 @@
-{ src, stdenv, cmake, arpa2cm, openldap, flex, bison, sqlite, catch2, log4cpp }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, helpers, openldap, flex, bison, sqlite, catch2
+, log4cpp }:
 
-  name = "steamworks";
+helpers.mkArpa2Derivation {
+  inherit src pname version;
 
-  nativeBuildInputs = [
-    cmake
-    arpa2cm
+  buildInputs = [
     openldap
     flex
     bison
@@ -15,19 +13,11 @@ stdenv.mkDerivation {
     log4cpp
   ];
 
-  NIX_CFLAGS_COMPILE = "-pthread";
-
   configurePhase = ''
     mkdir -p build
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=$out
   '';
 
-  buildPhase = ''
-    cmake --build .
-  '';
-
-  installPhase = ''
-    cmake --install .
-  '';
+  NIX_CFLAGS_COMPILE = "-pthread";
 }

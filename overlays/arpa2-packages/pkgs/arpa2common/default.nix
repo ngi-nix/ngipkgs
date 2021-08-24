@@ -1,12 +1,12 @@
-{ src, stdenv, cmake, arpa2cm, ragel, lmdb, libressl, libsodium, pkgconfig
-, libkrb5, e2fsprogs, doxygen, graphviz }:
-stdenv.mkDerivation {
-  inherit src;
+{ src, pname, version, stdenv, cmake, arpa2cm, ragel, lmdb, libressl, libsodium
+, pkgconfig, libkrb5, e2fsprogs, doxygen, graphviz }:
 
-  name = "arpa2common";
+stdenv.mkDerivation rec {
+  inherit src pname version;
 
-  nativeBuildInputs = [
-    cmake
+  nativeBuildInputs = [ cmake ];
+
+  buildInputs = [
     arpa2cm
     ragel
     lmdb
@@ -19,20 +19,10 @@ stdenv.mkDerivation {
     graphviz
   ];
 
-  propagatedBuildInputs = [ arpa2cm lmdb libkrb5 libressl ];
+  propagatedBuildInputs = buildInputs;
 
-  configurePhase = ''
-    mkdir -p build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
-  '';
-
-  buildPhase = ''
-    cmake --build .
-  '';
-
-  installPhase = ''
-    cmake --install .
+  postUnpack = ''
+    rm -rf Makefile
   '';
 
   # The project uses single argument `printf` throughout the program
