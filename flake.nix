@@ -152,7 +152,7 @@ rec {
       type = "github";
       owner = "freeDiameter";
       repo = "freeDiameter";
-      ref = "master";
+      ref = "1.5.0";
       flake = false;
     };
   };

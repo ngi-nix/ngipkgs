@@ -68,16 +68,16 @@
     "freeDiameter-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1627705295,
-        "narHash": "sha256-YBgPBQPjtkcKHWWsI+uzmOdaUO3XJT1pwvNxkEO1azw=",
+        "lastModified": 1602305907,
+        "narHash": "sha256-hd71wR4b/pnAUcd2U4/InmubCAqkKUZeZTBrGTV3FSY=",
         "owner": "freeDiameter",
         "repo": "freeDiameter",
-        "rev": "2e3b6b91cc45d44eabd715677e54e364e5e926d4",
+        "rev": "8ac823b77653a03da82232470b376c2b281b0973",
         "type": "github"
       },
       "original": {
         "owner": "freeDiameter",
-        "ref": "master",
+        "ref": "1.5.0",
         "repo": "freeDiameter",
         "type": "github"
       }
