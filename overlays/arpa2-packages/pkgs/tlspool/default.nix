@@ -1,34 +1,15 @@
-{ src, pname, version, stdenv, cmake, arpa2cm, arpa2common, quick-der, gnutls
-, db, ldns, libtasn1, p11-kit, unbound, libkrb5, pkgconfig, openldap }:
+{ src, pname, version, stdenv, helpers, quick-der, gnutls, db, ldns, libtasn1
+, p11-kit, unbound, libkrb5, openldap }:
 
-stdenv.mkDerivation {
+helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  nativeBuildInputs = [
-    cmake
-    pkgconfig
-    arpa2cm
-    arpa2common
-    quick-der
-    gnutls
-    db
-    ldns
-    libtasn1
-    p11-kit
-    unbound
-    libkrb5
-    openldap
-  ];
+  nativeBuildInputs =
+    [ quick-der gnutls db ldns libtasn1 p11-kit unbound libkrb5 openldap ];
 
   configurePhase = ''
-    export PREFIX=$out
-  '';
-
-  buildPhase = ''
-    make all
-  '';
-
-  installPhase = ''
-    make install
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
   '';
 }

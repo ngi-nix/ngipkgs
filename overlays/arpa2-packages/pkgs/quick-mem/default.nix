@@ -1,21 +1,11 @@
-{ src, pname, version, stdenv, cmake, arpa2cm, arpa2common }:
+{ src, pname, version, stdenv, helpers }:
 
-stdenv.mkDerivation {
+helpers.mkArpa2Derivation {
   inherit src pname version;
-
-  nativeBuildInputs = [ cmake arpa2common arpa2cm ];
 
   configurePhase = ''
     mkdir -p build
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
-  '';
-
-  buildPhase = ''
-    cmake --build .
-  '';
-
-  installPhase = ''
-    cmake --install .
   '';
 }

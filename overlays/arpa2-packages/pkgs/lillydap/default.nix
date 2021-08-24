@@ -1,19 +1,13 @@
-{ src, pname, version, stdenv, cmake, quick-der, arpa2cm, arpa2common, gperf }:
+{ src, pname, version, stdenv, helpers, quick-der, gperf }:
 
-stdenv.mkDerivation {
+helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  nativeBuildInputs = [ cmake quick-der arpa2cm arpa2common gperf ];
+  nativeBuildInputs = [ quick-der gperf ];
 
   configurePhase = ''
-    export PREFIX=$out
-  '';
-
-  buildPhase = ''
-    make all
-  '';
-
-  installPhase = ''
-    make install
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out
   '';
 }
