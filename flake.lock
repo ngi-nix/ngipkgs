@@ -17,11 +17,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1629292755,
-        "narHash": "sha256-5xMo32NVLnloY9DveqwJO/Cab1+PbTMPqU4WMmawX5M=",
+        "lastModified": 1629618782,
+        "narHash": "sha256-2K8SSXu3alo/URI3MClGdDSns6Gb4ZaW4LET53UWyKk=",
         "owner": "NixOS",
         "repo": "Nixpkgs",
-        "rev": "253aecf69ed7595aaefabde779aa6449195bebb7",
+        "rev": "870959c7fb3a42af1863bed9e1756086a74eb649",
         "type": "github"
       },
       "original": {
@@ -78,16 +78,16 @@
       "locked": {
         "lastModified": 1626371957,
         "narHash": "sha256-R+KO7nHpZatxoLkr0y3rCZy6OV51WsuQ3ukiup1CA5M=",
-        "ref": "weblate-4.7.2",
-        "rev": "496ca41e5a97c85801db75da8f9de831bb0dd172",
-        "revCount": 49001,
-        "type": "git",
-        "url": "file:///home/kerstin/git/weblate"
+        "owner": "WeblateOrg",
+        "repo": "weblate",
+        "rev": "60967e46974cc718944d20f2d999e7e2f0896896",
+        "type": "github"
       },
       "original": {
+        "owner": "WeblateOrg",
         "ref": "weblate-4.7.2",
-        "type": "git",
-        "url": "file:///home/kerstin/git/weblate"
+        "repo": "weblate",
+        "type": "github"
       }
     }
   },
