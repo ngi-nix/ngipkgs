@@ -11,6 +11,8 @@ helpers.mkArpa2Derivation {
   configurePhase = ''
     mkdir -p build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out  -DPULLEY_BACKEND_DIR=$out/share/steamworks/pulleyback/
+    cmake .. -DCMAKE_INSTALL_PREFIX=$out \
+             -DCMAKE_PREFIX_PATH=$out \
+             -DPULLEY_BACKEND_DIR=$out/share/steamworks/pulleyback/
   '';
 }
