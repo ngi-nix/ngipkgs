@@ -13,10 +13,4 @@ in helpers.mkArpa2Derivation {
     # Why DOS, why didn't you just make epcoh 1970...
     (ensureNewerSourcesHook { year = "1980"; })
   ];
-
-  configurePhase = ''
-    mkdir -p build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
-  '';
 }

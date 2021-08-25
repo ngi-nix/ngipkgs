@@ -5,10 +5,4 @@ helpers.mkArpa2Derivation {
 
   nativeBuildInputs = [ tlspool wrapQtAppsHook ];
   buildInputs = [ qtbase ];
-
-  configurePhase = ''
-    mkdir -p build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
-  '';
 }

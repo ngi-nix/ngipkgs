@@ -6,10 +6,4 @@ helpers.mkArpa2Derivation {
 
   nativeBuildInputs =
     [ libkrb5 quick-mem cyrus_sasl quick-der libev e2fsprogs ];
-
-  configurePhase = ''
-    mkdir -p build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out
-  '';
 }
