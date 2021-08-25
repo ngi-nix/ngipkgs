@@ -3,7 +3,7 @@
 {
   mkArpa2Derivation = { ... }@args:
     let
-      defaultDerivation = stdenv.mkDerivation {
+      defaultSet = {
         nativeBuildInputs = with pkgs; [ cmake arpa2cm arpa2common ];
 
         # Remove `./Makefile` since it causes the default builder to not use
@@ -12,9 +12,8 @@
           rm -rf Makefile
         '';
       };
-    in defaultDerivation.overrideAttrs (oldAttrs:
-      (args // rec {
-        nativeBuildInputs = oldAttrs.nativeBuildInputs
-          ++ (args.nativeBuildInputs or [ ]);
-      }));
+    in stdenv.mkDerivation (args // {
+      nativeBuildInputs = defaultSet.nativeBuildInputs
+        ++ (args.nativeBuildInputs or [ ]);
+    });
 }
