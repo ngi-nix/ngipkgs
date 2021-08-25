@@ -14,7 +14,7 @@ helpers.mkArpa2Derivation {
   ];
 
   # Currently doesn't build in `Release` since a macro is messing with some code
-  # when building in relase.
+  # when building in `Release`.
   cmakeBuildType = "Debug";
 
   meta = with lib; {
