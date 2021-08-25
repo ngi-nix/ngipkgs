@@ -47,13 +47,22 @@
 
       };
 
+      defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
+
       nixosModules.weblate = ./module.nix;
 
       overlay = _: _: {
         inherit (self.packages.x86_64-linux) weblate;
       };
 
-      defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
+      checks.x86_64-linux.integrationTest = let
+	# As pkgs doesn't contain the weblate package and module, we have to
+	# evaluate Nixpkgs again.
+	pkgsWeblate = import nixpkgs {
+          system = "x86_64-linux";
+          overlays = [ self.overlay ];
+	};
+      in pkgsWeblate.nixosTest (import ./integration-test.nix self.nixosModules.weblate);
 
     };
 }
