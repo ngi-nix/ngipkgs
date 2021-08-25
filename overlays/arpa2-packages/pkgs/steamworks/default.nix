@@ -13,13 +13,9 @@ helpers.mkArpa2Derivation {
     log4cpp
   ];
 
-  configurePhase = ''
-    mkdir -p build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out
-  '';
-
-  NIX_CFLAGS_COMPILE = "-pthread";
+  # Currently doesn't build in `Release` since a macro is messing with some code
+  # when building in relase.
+  cmakeBuildType = "Debug";
 
   meta = with lib; {
     description =
