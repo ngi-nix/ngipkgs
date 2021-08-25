@@ -47,6 +47,12 @@
 
       };
 
+      nixosModules.weblate = ./module.nix;
+
+      overlay = _: _: {
+        inherit (self.packages.x86_64-linux) weblate;
+      };
+
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
 
     };
