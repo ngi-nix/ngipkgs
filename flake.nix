@@ -2,7 +2,7 @@
   description = "Weblate package and module";
 
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
-  inputs.poetry2nix.url = "github:erictapen/poetry2nix/overrides";
+  inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.7.2";
   inputs.weblate.flake = false;
 
