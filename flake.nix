@@ -2,7 +2,7 @@
   description = "Weblate package and module";
 
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
-  inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
+  inputs.poetry2nix.url = "github:erictapen/poetry2nix/overrides";
   inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.7.2";
   inputs.weblate.flake = false;
 
@@ -19,25 +19,6 @@
         src = weblate;
         pyproject = ./pyproject.toml;
         poetrylock = ./poetry.lock;
-        overrides = pkgs.poetry2nix.overrides.withDefaults (
-          self: super: {
-            ruamel-yaml = super.ruamel-yaml.overridePythonAttrs (old: {
-              propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [
-                self.ruamel-yaml-clib
-              ];
-            });
-            weblate-language-data = super.weblate-language-data.overridePythonAttrs (old: {
-              buildInputs = (old.buildInputs or [ ]) ++ [
-                self.translate-toolkit
-              ];
-            });
-            borgbackup = super.borgbackup.overridePythonAttrs (old: {
-              BORG_OPENSSL_PREFIX = pkgs.openssl.dev;
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
-              buildInputs = (old.buildInputs or [ ]) ++ (with pkgs; [ openssl acl ]);
-            });
-          }
-        );
         meta = with pkgs.lib; {
           description = "Web based translation tool with tight version control integration";
           homepage = https://weblate.org/;
