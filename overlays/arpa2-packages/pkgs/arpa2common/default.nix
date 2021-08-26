@@ -21,12 +21,8 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs = buildInputs;
 
-  postUnpack = ''
-    rm -rf Makefile
-  '';
-
   # The project uses single argument `printf` throughout the program
-  # Disabeling this seems like the easiest fix
+  # Disabling this seems like the easiest fix
   hardeningDisable = [ "format" ];
 
   meta = with lib; {

@@ -5,9 +5,7 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ cmake ];
 
-  postUnpack = ''
-    rm -rf Makefile
-  '';
+  doCheck = true;
 
   meta = with lib; {
     description = "CMake module library for ARPA2";
