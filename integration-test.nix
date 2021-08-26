@@ -22,7 +22,7 @@ weblateModule:
       testScript =
         ''
           start_all()
-          weblate.wait_for_unit("multi-user.target")
+          # weblate.wait_for_unit("multi-user.target")
           weblate.wait_for_unit("weblate.service")
         '';
     }
