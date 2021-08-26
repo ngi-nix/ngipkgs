@@ -1,4 +1,4 @@
-{ pkgs, stdenv }:
+{ pkgs, stdenv, lib }:
 
 {
   mkArpa2Derivation = { ... }@args:

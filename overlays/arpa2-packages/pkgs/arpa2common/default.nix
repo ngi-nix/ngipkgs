@@ -4,10 +4,9 @@
 stdenv.mkDerivation rec {
   inherit src pname version;
 
-  nativeBuildInputs = [ cmake ];
+  nativeBuildInputs = [ cmake arpa2cm ];
 
   buildInputs = [
-    arpa2cm
     ragel
     lmdb
     libressl
