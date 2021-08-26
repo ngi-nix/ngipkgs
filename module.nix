@@ -75,18 +75,18 @@ in
       instance.type = "emperor";
       instance.vassals.weblate = {
         type = "normal";
-	socket = "/run/uwsgi/weblate.socket";
-	chmod-socket = "770";
-	chown-socket = "weblate:weblate";
-	uid = "weblate";
-	gid = "weblate";
-	enable-threads = true;
-	pythonPackages = self: [ pkgs.weblate ];
-	env = [ 
-         "PYTHONPATH=${settings_py}"
-         "DJANGO_SETTINGS_MODULE=settings"
+        socket = "/run/uwsgi/weblate.socket";
+        chmod-socket = "770";
+        chown-socket = "weblate:weblate";
+        uid = "weblate";
+        gid = "weblate";
+        enable-threads = true;
+        pythonPackages = self: [ pkgs.weblate ];
+        env = [
+          "PYTHONPATH=${settings_py}"
+          "DJANGO_SETTINGS_MODULE=settings"
         ];
-	wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
+        wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
       };
     };
 
