@@ -45,27 +45,6 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [ ];
 
-    systemd.services.weblate = {
-      description = "Weblate";
-      after = [ "network.target" "postgresql.service" ];
-      wantedBy = [ "multi-user.target" ];
-      environment = {
-        PYTHONPATH = "${settings_py}";
-	# DJANGO_SETTINGS_MODULE = "settings";
-      };
-      serviceConfig = {
-        ExecStart = "${pkgs.weblate}/bin/weblate runserver";
-        Restart = "always";
-        RestartSec = 20;
-        WorkingDirectory = pkgs.weblate;
-        RuntimeDirectory = "weblate";
-        RuntimeDirectoryMode = "0750"; # ?
-        # System Call Filtering
-        # SystemCallFilter = "~" + lib.concatStringsSep " " (systemCallsList ++ [ "@resources" ]);
-      };
-      path = with pkgs; [ git ];
-    };
-
     services.nginx = {
       enable = true;
       recommendedProxySettings = true; # required for redirections to work
@@ -79,15 +58,35 @@ in
           "/static/".alias = "/var/lib/weblate/static/";
           "/media/".alias = "/var/lib/weblate/media/";
           "/".extraConfig = ''
-            include uwsgi_params;
             # Needed for long running operations in admin interface
             uwsgi_read_timeout 3600;
             # Adjust based to uwsgi configuration:
-            uwsgi_pass unix:///run/uwsgi/app/weblate/socket;
+            uwsgi_pass unix:///run/uwsgi/weblate.socket;
             # uwsgi_pass 127.0.0.1:8080;
           '';
         };
 
+      };
+    };
+
+    services.uwsgi = {
+      enable = true;
+      plugins = [ "python3" ];
+      instance.type = "emperor";
+      instance.vassals.weblate = {
+        type = "normal";
+	socket = "/run/uwsgi/weblate.socket";
+	chmod-socket = "770";
+	chown-socket = "weblate:weblate";
+	uid = "weblate";
+	gid = "weblate";
+	enable-threads = true;
+	pythonPackages = self: [ pkgs.weblate ];
+	env = [ 
+         "PYTHONPATH=${settings_py}"
+         "DJANGO_SETTINGS_MODULE=settings"
+        ];
+	wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
       };
     };
 
