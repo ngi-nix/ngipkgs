@@ -76,6 +76,10 @@
           {
             config.nixpkgs.overlays = [ self.overlay ];
 
+            # needed to run elastic search
+            config.nixpkgs.config.allowUnfree = true;
+
+
             config.environment.systemPackages = with pkgs;[ ipfs-search-backend dweb-search-frontend ];
 
             options.services.ipfs-search = {
