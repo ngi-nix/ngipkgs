@@ -10,11 +10,26 @@
     npmlock2nix-src = { url = "github:nix-community/npmlock2nix"; flake = false; };
 
     # package sources
-    ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     dweb-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
+    ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
+    ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
+    ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
+    jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
   };
 
-  outputs = { self, nixpkgs, ipfs-search-backend-src, dweb-search-frontend-src, npmlock2nix-src }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+
+      # sources
+      npmlock2nix-src,
+      dweb-search-frontend-src,
+      ipfs-search-api-src,
+      ipfs-search-backend-src,
+      ipfs-sniffer-src,
+      jaeger-src,
+    }:
     let
       # Generate a user-friendly version numer.
       userFriendlyVersion = src: builtins.substring 0 8 src.lastModifiedDate;
@@ -26,9 +41,11 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
       # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay npmlock2nixOverlay ]; });
 
-      npmlock2nix = forAllSystems (system: import npmlock2nix-src { pkgs = nixpkgsFor."${system}"; });
+      npmlock2nixOverlay = final: prev: {
+          npmlock2nix = import npmlock2nix-src { pkgs = prev; };
+      };
 
     in
 
@@ -71,24 +88,14 @@
         ipfs-sniffer = pkgs.buildGoModule rec {
           pname = "ipfs-sniffer";
           version = "master";
-          src = pkgs.fetchFromGitHub {
-            owner = "ipfs-search";
-            repo = pname;
-            rev = "4a7c4441fc9039ce96edffc6ab30d08ac4c2a5f6";
-            sha256 = "sha256-HO21gjQLqzunkbJcZ1Hs+AnaaXJbsiL5BET0MDDWJZ0=";
-          };
+          src = ipfs-sniffer-src;
           vendorSha256 = "sha256-xc1biJF4zicosSTFuUv82yvOYpbuY3h++rhvD+5aWNE=";
         };
 
         jaeger = pkgs.buildGoModule rec {
           pname = "jaeger";
-          version = "jaegertracing";
-          src = pkgs.fetchFromGitHub {
-            owner = "jaegertracing";
-            repo = pname;
-            rev = "v1.25.0";
-            sha256 = "sha256-QzHWgjtCKtDVMNkVx82JqsslgIVuCso/xz6ZdQmmkNs=";
-          };
+          version = "v1.25.0";
+          src = jaeger-src;
           vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
         };
 
@@ -107,37 +114,28 @@
         });
 
         # using nodejs 14 despite upstream uses version 10 (EOL)
-        ipfs-search-api-server = 
-          let
-            repoSrc = pkgs.fetchFromGitHub {
-              owner = "ipfs-search";
-              repo = "ipfs-search-api";
-              rev = "8a6369d652263e574e026468d854284e1e2221fc";
-              sha256 = "sha256-kQ9Hczgb8CLgbBIlbzpLI5z9mwrVhplL5F9icGjrJKM=";
-            };
-          in
-            npmlock2nix."${final.hostPlatform.system}".build {
-              src = "${repoSrc}/server";
-              dontBuild = true;
-              installPhase = ''
-                mkdir -p $out/{bin,lib}
+        ipfs-search-api-server = pkgs.npmlock2nix.build {
+          src = "${ipfs-search-api-src}/server";
+          dontBuild = true;
+          installPhase = ''
+            mkdir -p $out/{bin,lib}
 
-                # copy npmlock2nix modules to lib
-                cp -r node_modules $out/lib/node_modules
+            # copy npmlock2nix modules to lib
+            cp -r node_modules $out/lib/node_modules
 
-                # copy source files to lib
-                cp -r search $out/lib/search
-                cp -r metadata $out/lib/metadata
-                for file in esclient.js server.js types.js; do
-                  echo "#!$(${pkgs.which}/bin/which node)" > $out/lib/$file
-                  cat $file >> $out/lib/$file
-                done
+            # copy source files to lib
+            cp -r search $out/lib/search
+            cp -r metadata $out/lib/metadata
+            for file in esclient.js server.js types.js; do
+              echo "#!$(${pkgs.which}/bin/which node)" > $out/lib/$file
+              cat $file >> $out/lib/$file
+            done
 
-                chmod +x $out/lib/server.js
+            chmod +x $out/lib/server.js
 
-                ln -s $out/lib/server.js $out/bin/server
-              '';
-            };
+            ln -s $out/lib/server.js $out/bin/server
+          '';
+        };
       };
 
       # Provide some binary packages for selected system types.
