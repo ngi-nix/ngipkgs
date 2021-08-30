@@ -30,9 +30,9 @@
 
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
 
-      nixosModules.weblate = ./module.nix;
+      nixosModules.weblate = import ./module.nix;
 
-      overlay = _: _: {
+      overlay = final: prev: {
         inherit (self.packages.x86_64-linux) weblate;
       };
 
