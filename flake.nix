@@ -5,10 +5,31 @@
   inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
 
   # Upstream source tree(s).
-  inputs.ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
-  inputs.dweb-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
+  inputs = {
 
-  outputs = { self, nixpkgs, ipfs-search-backend-src, dweb-search-frontend-src }:
+    npmlock2nix-src = { url = "github:nix-community/npmlock2nix"; flake = false; };
+
+    # package sources
+    dweb-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
+    ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
+    ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
+    ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
+    jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
+  };
+
+  outputs =
+    {
+      self,
+      nixpkgs,
+
+      # sources
+      npmlock2nix-src,
+      dweb-search-frontend-src,
+      ipfs-search-api-src,
+      ipfs-search-backend-src,
+      ipfs-sniffer-src,
+      jaeger-src,
+    }:
     let
       # Generate a user-friendly version numer.
       userFriendlyVersion = src: builtins.substring 0 8 src.lastModifiedDate;
@@ -20,14 +41,18 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
       # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay npmlock2nixOverlay ]; });
+
+      npmlock2nixOverlay = final: prev: {
+          npmlock2nix = import npmlock2nix-src { pkgs = prev; };
+      };
 
     in
 
     {
 
       # A Nixpkgs overlay.
-      overlay = final: prev: {
+      overlay = final: prev: let pkgs = final; in {
 
         ipfs-search-backend = with final; buildGo115Module rec {
           pname = "ipfs-search-backend";
@@ -60,12 +85,71 @@
           '';
         };
 
+        ipfs-sniffer = pkgs.buildGoModule rec {
+          pname = "ipfs-sniffer";
+          version = "master";
+          src = ipfs-sniffer-src;
+          vendorSha256 = "sha256-xc1biJF4zicosSTFuUv82yvOYpbuY3h++rhvD+5aWNE=";
+        };
+
+        jaeger = pkgs.buildGoModule rec {
+          pname = "jaeger";
+          version = "v1.25.0";
+          src = jaeger-src;
+          vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
+        };
+
+        kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
+          src = pkgs.fetchurl {
+            url = "https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.8.1-linux-x86_64.tar.gz";
+            sha256 = "sha256-WWoOslKYWfoPc4wOU84QdxJln88JOmG8VhMaMtLraxs=";
+          };
+        });
+
+        elasticsearch7-oss = prev.elasticsearch7-oss.overrideAttrs (old: {
+          src = pkgs.fetchurl {
+            url = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.8.1-linux-x86_64.tar.gz";
+            sha256 = "sha256-eJ7tt6daRd5EdWMQMYy8BBPnArsjB5t03fjqScKivcU=";
+          }; 
+        });
+
+        # using nodejs 14 despite upstream uses version 10 (EOL)
+        ipfs-search-api-server = pkgs.npmlock2nix.build {
+          src = "${ipfs-search-api-src}/server";
+          dontBuild = true;
+          installPhase = ''
+            mkdir -p $out/{bin,lib}
+
+            # copy npmlock2nix modules to lib
+            cp -r node_modules $out/lib/node_modules
+
+            # copy source files to lib
+            cp -r search $out/lib/search
+            cp -r metadata $out/lib/metadata
+            for file in esclient.js server.js types.js; do
+              echo "#!$(${pkgs.which}/bin/which node)" > $out/lib/$file
+              cat $file >> $out/lib/$file
+            done
+
+            chmod +x $out/lib/server.js
+
+            ln -s $out/lib/server.js $out/bin/server
+          '';
+        };
       };
 
       # Provide some binary packages for selected system types.
       packages = forAllSystems (system:
         {
-          inherit (nixpkgsFor.${system}) ipfs-search-backend dweb-search-frontend;
+          inherit (nixpkgsFor.${system})
+            ipfs-search-backend
+            dweb-search-frontend
+            ipfs-sniffer
+            jaeger
+            kibana7-oss
+            elasticsearch7-oss
+            ipfs-search-api-server
+          ;
         });
 
 
@@ -75,6 +159,10 @@
           with lib;
           {
             config.nixpkgs.overlays = [ self.overlay ];
+
+            # needed to run elastic search
+            config.nixpkgs.config.allowUnfree = true;
+
 
             config.environment.systemPackages = with pkgs;[ ipfs-search-backend dweb-search-frontend ];
 
