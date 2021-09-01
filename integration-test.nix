@@ -4,7 +4,7 @@ weblateModule:
   name = "weblate";
   meta.maintainers = with pkgs.lib.maintainers; [ erictapen ];
 
-  nodes.weblate = { lib, ... }:
+  nodes.server = { lib, ... }:
     {
       virtualisation.memorySize = 2048;
 
@@ -17,12 +17,13 @@ weblateModule:
 
       security.acme.email = "mail@example.org";
       security.acme.acceptTerms = true;
+
+      networking.hosts."::1" = [ "example.org" ];
     };
 
-  testScript =
-    ''
-      start_all()
-      # weblate.wait_for_unit("multi-user.target")
-      weblate.wait_for_unit("weblate.service")
-    '';
+  testScript = ''
+    start_all()
+    server.wait_for_unit("weblate.service")
+    server.succeed("curl -f http://example.org/")
+  '';
 }

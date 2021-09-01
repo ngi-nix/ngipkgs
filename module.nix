@@ -20,6 +20,18 @@ let
     cat ${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/settings_example.py > $out/settings.py
     cat >> $out/settings.py <<EOF${weblateConfig}EOF
   '';
+  uwsgiConfig.uwsgi = {
+    type = "normal";
+    socket = "/run/weblate.socket";
+    chmod-socket = "770";
+    chown-socket = "weblate:weblate";
+    uid = "weblate";
+    gid = "weblate";
+    enable-threads = true;
+    master = true;
+    wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
+    pyhome = pkgs.python3.withPackages (self: [ pkgs.weblate ]);
+  };
 in
 {
 
@@ -63,7 +75,7 @@ in
             # Needed for long running operations in admin interface
             uwsgi_read_timeout 3600;
             # Adjust based to uwsgi configuration:
-            uwsgi_pass unix:///run/uwsgi/weblate.socket;
+            uwsgi_pass unix:///run/weblate.socket;
             # uwsgi_pass 127.0.0.1:8080;
           '';
         };
@@ -71,47 +83,47 @@ in
       };
     };
 
-    services.uwsgi = {
-      enable = true;
-      plugins = [ "python3" ];
-      instance.type = "emperor";
-      instance.vassals.weblate = {
-        type = "normal";
-        socket = "/run/uwsgi/weblate.socket";
-        chmod-socket = "770";
-        chown-socket = "weblate:weblate";
-        uid = "weblate";
-        gid = "weblate";
-        enable-threads = true;
-        pythonPackages = self: [ pkgs.weblate ];
-        env =
-          let
-            runtimeDependencies = with pkgs; [
-              git
-              pango
-              cairo
-
-              #optional
-              git-review
-              tesseract
-              licensee
-            ];
-          in
-          [
-            "PYTHONPATH=${settings_py}"
-            "DJANGO_SETTINGS_MODULE=settings"
-            "PATH=${lib.makeBinPath runtimeDependencies}"
-          ];
-        wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
+    systemd.services.weblate = {
+      description = "Weblate";
+      after = [ "network.target" "postgresql.service" "redis.service" ];
+      wantedBy = [ "multi-user.target" ];
+      environment = {
+        PYTHONPATH = "${settings_py}";
+        DJANGO_SETTINGS_MODULE = "settings";
       };
+      path = with pkgs; [
+        git
+        pango
+        cairo
+
+        #optional
+        git-review
+        tesseract
+        licensee
+      ];
+      serviceConfig = {
+        ExecStart = "${pkgs.uwsgi}/bin/uwsgi --json ${pkgs.writeText "uwsgi.json" (builtins.toJSON uwsgiConfig)}";
+        Restart = "always";
+        RestartSec = 20;
+        WorkingDirectory = pkgs.weblate;
+        RuntimeDirectory = "weblate";
+        RuntimeDirectoryMode = "0750"; # ?
+      };
+    };
+
+    systemd.sockets.weblate = {
+      before = [ "nginx.service" ];
+      socketConfig.ListenStream = "/run/weblate.socket";
     };
 
     services.postfix = {
       enable = true;
     };
+
     services.redis = {
       enable = true;
     };
+
     services.postgresql = {
       enable = true;
       ensureUsers = [
