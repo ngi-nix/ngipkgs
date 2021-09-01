@@ -105,6 +105,44 @@
             vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
           };
 
+          # Apache Tika server 
+          tika-server = with final; stdenv.mkDerivation rec {
+            name = "tika-server-1.26";
+  
+            src = fetchurl {
+              url = https://archive.apache.org/dist/tika/tika-server-1.26.jar;
+              sha256 ="sha256-GLXsW4p/gKPOJTz5PF6l8DGjwXvIPoirDSmlFujnPZU=";
+            };
+  
+            dontUnpack = true;
+            buildInputs =with nixpkgs; [
+              jdk
+              tesseract
+              gdal
+              gnupg
+            ];
+            nativeBuildInputs = [
+              makeWrapper
+            ];
+            installPhase = ''
+            echo "Installing.. "
+              mkdir -pv $out/share/java $out/bin
+              ls -l ${src}
+            cp ${src} $out/share/java/tika-server-1.27.jar
+            makeWrapper ${jre}/bin/java $out/bin/tika-server \
+              --add-flags "-jar $out/share/java/tika-server-1.27.jar" \
+              --set _JAVA_OPTIONS '-Dawt.useSystemAAFontSettings=on' \
+              --set _JAVA_AWT_WM_NONREPARENTING 1
+              '';
+            meta = {
+              homepage = "https://tika.apache.org/";
+              description = ''
+                The Apache Tika toolkit detects and extracts metadata and text from over a thousand different file types 
+                (such as PPT, XLS, and PDF)
+                '';
+              };
+            };
+   
           # kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
           #   version = elkVersion;
           #   src = pkgs.fetchurl {
@@ -159,6 +197,7 @@
             kibana7-oss
             elasticsearch7-oss
             ipfs-search-api-server
+            tika-server
             ;
         });
 
@@ -173,15 +212,24 @@
             config.environment.systemPackages = with pkgs;[ ipfs-search-backend dweb-search-frontend ];
 
             options.services.ipfs-search = {
-              enable = mkOption {
-                type = types.bool;
-                default = false;
-                description = ''
-                  Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
-                '';
-              };
+                  enable = mkOption {
+                    type = types.bool;
+                    default = false;
+                    description = ''
+                      Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
+                    '';
+                  };
+                };
+            options.services.tika-server = {
+                  enable = mkOption {
+                    type = types.bool;
+                    default = false;
+                    description = ''
+                    tika server
+                    '';
+                  };
+                };
 
-            };
             config.services.rabbitmq = mkIf config.services.ipfs-search.enable {
               enable = true;
               managementPlugin.enable = true;
@@ -194,9 +242,20 @@
               enable = true;
               package = pkgs.kibana7-oss;
             };
-            config.services.ipfs.enable = config.services.ipfs-search.enable;
-            #systemd.services = { ... };
-          };
+          
+          config.services.ipfs.enable = config.services.ipfs-search.enable;
+          
+          #TODO need to put the requirement that all other required servives should be started first?
+
+           config.services.tika-server = mkIf config.services.tika-server.enable {
+              systemd.services.tika-server = {
+                description = "Tika Server";
+                   serviceConfig = {
+                   ExecStart =  "${self.packages.x86_64-linux.tika-server}/bin/tika-server";
+                      
+                 };
+               };
+             };
 
       # Tests run by 'nix flake check' and by Hydra.
       # checks = forAllSystems (system: {
@@ -244,4 +303,5 @@
       # });
 
     };
+  };
 }
