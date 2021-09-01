@@ -47,6 +47,7 @@ sentry-sdk = ">=0.13.0,<1.4.0"
 setuptools = ">=40.3.0"
 weblate-language-data = ">=2021.5"
 weblate-schemas = "0.7"
+psycopg2 = "^2.9.1"
 
 [tool.poetry.dev-dependencies]
 
