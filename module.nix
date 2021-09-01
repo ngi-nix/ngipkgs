@@ -12,6 +12,7 @@ let
     # TLS terminates at the reverse proxy, so we can handle ACME in an unified way.
     ENABLE_HTTPS = False
     DEBUG = True
+    DATA_DIR = "/var/lib/weblate"
 
     ${cfg.extraConfig}
   '';
@@ -122,14 +123,21 @@ in
         Restart = "always";
         RestartSec = 20;
         WorkingDirectory = pkgs.weblate;
-        RuntimeDirectory = "weblate";
-        RuntimeDirectoryMode = "0750"; # ?
+        StateDirectory = "weblate";
+	User = "weblate";
+	Group = "weblate";
       };
     };
 
     systemd.sockets.weblate = {
       before = [ "nginx.service" ];
-      socketConfig.ListenStream = "/run/weblate.socket";
+      wantedBy = [ "sockets.target" ];
+      socketConfig = {
+        ListenStream = "/run/weblate.socket";
+	SocketUser = "weblate";
+	SocketGroup = "weblate";
+	SocketMode = "770";
+      };
     };
 
     services.postfix = {
