@@ -46,7 +46,10 @@
             overlays = [ self.overlay ];
           };
         in
-        pkgsWeblate.nixosTest (import ./integration-test.nix self.nixosModules.weblate);
+        pkgsWeblate.nixosTest (import ./integration-test.nix {
+          inherit nixpkgs;
+          weblateModule = self.nixosModules.weblate;
+        });
 
     };
 }

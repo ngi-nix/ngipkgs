@@ -22,15 +22,27 @@ let
   '';
   uwsgiConfig.uwsgi = {
     type = "normal";
+    plugins = [ "python3" ];
+    master = true;
     socket = "/run/weblate.socket";
     chmod-socket = "770";
     chown-socket = "weblate:weblate";
     uid = "weblate";
     gid = "weblate";
-    enable-threads = true;
-    master = true;
     wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
     pyhome = pkgs.python3.withPackages (self: [ pkgs.weblate ]);
+
+    # Some more recommendations by upstream:
+    # https://docs.weblate.org/en/latest/admin/install.html#sample-configuration-for-nginx-and-uwsgi
+    buffer-size = 8192;
+    reload-on-rss = 250;
+    workers = 8;
+    enable-threads = true;
+    close-on-exec = true;
+    umask = "0022";
+    ignore-sigpipe = true;
+    ignore-write-errors = true;
+    disable-write-exception = true;
   };
 in
 {
@@ -90,11 +102,10 @@ in
       environment = {
         PYTHONPATH = "${settings_py}";
         DJANGO_SETTINGS_MODULE = "settings";
+        GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
       };
       path = with pkgs; [
         git
-        pango
-        cairo
 
         #optional
         git-review
@@ -102,7 +113,12 @@ in
         licensee
       ];
       serviceConfig = {
-        ExecStart = "${pkgs.uwsgi}/bin/uwsgi --json ${pkgs.writeText "uwsgi.json" (builtins.toJSON uwsgiConfig)}";
+        ExecStart =
+          let
+            uwsgi = pkgs.uwsgi.override { plugins = [ "python3" ]; };
+            jsonConfig = pkgs.writeText "uwsgi.json" (builtins.toJSON uwsgiConfig);
+          in
+          "${uwsgi}/bin/uwsgi --json ${jsonConfig}";
         Restart = "always";
         RestartSec = 20;
         WorkingDirectory = pkgs.weblate;

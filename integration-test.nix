@@ -1,29 +1,39 @@
-weblateModule:
+{ nixpkgs, weblateModule }:
 { pkgs, ... }:
+let
+  certs = import "${nixpkgs}/nixos/tests/common/acme/server/snakeoil-certs.nix";
+  serverDomain = certs.domain;
+in
 {
   name = "weblate";
   meta.maintainers = with pkgs.lib.maintainers; [ erictapen ];
 
-  nodes.server = { lib, ... }:
-    {
-      virtualisation.memorySize = 2048;
+  nodes.server = { lib, ... }: {
+    virtualisation.memorySize = 2048;
 
-      imports = [ weblateModule ];
+    imports = [ weblateModule ];
 
-      services.weblate = {
-        enable = true;
-        localDomain = "example.org";
-      };
-
-      security.acme.email = "mail@example.org";
-      security.acme.acceptTerms = true;
-
-      networking.hosts."::1" = [ "example.org" ];
+    services.weblate = {
+      enable = true;
+      localDomain = "${serverDomain}";
     };
+
+
+    services.nginx.virtualHosts."${serverDomain}" = {
+      enableACME = lib.mkForce false;
+      sslCertificate = certs."${serverDomain}".cert;
+      sslCertificateKey = certs."${serverDomain}".key;
+    };
+
+    security.pki.certificateFiles = [ certs.ca.cert ];
+
+    networking.hosts."::1" = [ "${serverDomain}" ];
+
+  };
 
   testScript = ''
     start_all()
     server.wait_for_unit("weblate.service")
-    server.succeed("curl -f http://example.org/")
+    server.wait_until_succeeds("curl -f https://${serverDomain}/")
   '';
 }
