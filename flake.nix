@@ -258,16 +258,30 @@
               serviceConfig = {
                 ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
               };
+              after = [ "rabbitmq.service" "jaeger.service" ];
+              wants = [ "rabbitmq.service" "jaeger.service" ];
               environment = {
                 AMQP_URL = "amqp://guest:guest@localhost:5672/";
                 OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
               };
             };
 
+            config.systemd.services.ipfs-search-api = mkIf config.services.ipfs-search.enable {
+              description = "IPFS search api";
+              after = [ "elasticsearch.service" ];
+              wants = [ "elasticsearch.service" ];
+              serviceConfig = {
+                ExecStart = "${pkgs.ipfs-search-api}/bin/server";
+              };
+              environment = {
+                ELASTICSEARCH_URL = "http://elasticsearch:9200";
+              };
+            };
+
             config.systemd.services.jaeger = mkIf config.services.ipfs-search.enable {
               description = "jaeger tracing";
-              after = [ "network.target" ];
-              wants = [ "network.target" ];
+              after = [ "elasticsearch.service" ];
+              wants = [ "elasticsearch.service" ];
               serviceConfig = {
                 ExecStart = "${pkgs.jaeger}/bin/all-in-one";
               };
