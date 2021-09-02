@@ -266,12 +266,12 @@
               };
             };
 
-            config.systemd.services.ipfs-search-api = mkIf config.services.ipfs-search.enable {
+            config.systemd.services.ipfs-search-api-server = mkIf config.services.ipfs-search.enable {
               description = "IPFS search api";
               after = [ "elasticsearch.service" ];
               wants = [ "elasticsearch.service" ];
               serviceConfig = {
-                ExecStart = "${pkgs.ipfs-search-api}/bin/server";
+                ExecStart = "${pkgs.ipfs-search-api-server}/bin/server";
               };
               environment = {
                 ELASTICSEARCH_URL = "http://elasticsearch:9200";
