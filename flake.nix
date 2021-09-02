@@ -106,7 +106,7 @@
             pname = "tika-server";
             version = "1.26";
             src = fetchurl {
-              url = https://archive.apache.org/dist/tika/tika-server-1.26.jar;
+              url = "https://archive.apache.org/dist/tika/tika-server-${version}.jar";
               sha256 = "sha256-GLXsW4p/gKPOJTz5PF6l8DGjwXvIPoirDSmlFujnPZU=";
             };
             dontUnpack = true;
@@ -121,11 +121,10 @@
             ];
             installPhase = ''
               echo "Installing.. "
-                mkdir -pv $out/share/java $out/bin
-                ls -l ${src}
-              cp ${src} $out/share/java/tika-server-1.27.jar
+              mkdir -pv $out/share/java $out/bin
+              cp ${src} $out/share/java/tika-server-${version}.jar
               makeWrapper ${jre}/bin/java $out/bin/tika-server \
-                --add-flags "-jar $out/share/java/tika-server-1.27.jar" \
+                --add-flags "-jar $out/share/java/tika-server-${version}.jar" \
                 --set _JAVA_OPTIONS '-Dawt.useSystemAAFontSettings=on' \
                 --set _JAVA_AWT_WM_NONREPARENTING 1
             '';
@@ -236,15 +235,6 @@
 
             config.services.ipfs.enable = config.services.ipfs-search.enable;
 
-            config.systemd.services.jaeger = mkIf config.services.ipfs-search.enable {
-              description = "jaeger tracing";
-              after = [ "network.target" ];
-              wants = [ "network.target" ];
-              serviceConfig = {
-                ExecStart = "${pkgs.jaeger}/bin/jaeger";
-              };
-            };
-
             config.systemd.services.ipfs-crawler = mkIf config.services.ipfs-search.enable {
               description = "The ipfs crawler";
               after = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
@@ -260,6 +250,31 @@
                 AMQP_URL = "amqp://guest:guest@localhost:5672/";
                 OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
                 OTEL_TRACE_SAMPLER_ARG = "1.0";
+              };
+            };
+
+            config.systemd.services.ipfs-sniffer = mkIf config.services.ipfs-search.enable {
+              description = "IPFS sniffer";
+              serviceConfig = {
+                ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
+              };
+              environment = {
+                AMQP_URL = "amqp://guest:guest@localhost:5672/";
+                OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
+              };
+            };
+
+            config.systemd.services.jaeger = mkIf config.services.ipfs-search.enable {
+              description = "jaeger tracing";
+              after = [ "network.target" ];
+              wants = [ "network.target" ];
+              serviceConfig = {
+                ExecStart = "${pkgs.jaeger}/bin/all-in-one";
+              };
+              environment = {
+                SPAN_STORAGE_TYPE = "elasticsearch";
+                ES_SERVER_URLS = "http://localhost:9200";
+                ES_TAGS_AS_FIELDS_ALL = "true";
               };
             };
 
