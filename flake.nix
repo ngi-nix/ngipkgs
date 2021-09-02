@@ -91,7 +91,6 @@
             version = "master";
             src = ipfs-sniffer-src;
             vendorSha256 = "sha256-xc1biJF4zicosSTFuUv82yvOYpbuY3h++rhvD+5aWNE=";
-            doCheck = false;
           };
 
           jaeger = pkgs.buildGoModule rec {
