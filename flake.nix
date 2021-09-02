@@ -15,7 +15,6 @@
     ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
-    tika-src = { url = "https://archive.apache.org/dist/tika/tika-server-1.26.jar"; flake = false; };
   };
 
   outputs =
@@ -108,8 +107,10 @@
           tika-server = with final; stdenv.mkDerivation rec {
             pname = "tika-server";
             version = "1.26";
-            src = tika-src;
-
+            src = fetchurl {
+              url = https://archive.apache.org/dist/tika/tika-server-1.26.jar;
+              sha256 = "sha256-GLXsW4p/gKPOJTz5PF6l8DGjwXvIPoirDSmlFujnPZU=";
+            };
             dontUnpack = true;
             buildInputs = with nixpkgs; [
               jdk
