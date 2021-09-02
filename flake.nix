@@ -15,6 +15,7 @@
     ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
+    tika-src = { url = "https://archive.apache.org/dist/tika/tika-server-1.26.jar"; flake = false; };
   };
 
   outputs =
@@ -44,9 +45,7 @@
       npmlock2nixOverlay = final: prev: {
         npmlock2nix = import npmlock2nix-src { pkgs = prev; };
       };
-
     in
-
     {
 
       # A Nixpkgs overlay.
@@ -107,15 +106,12 @@
 
           # Apache Tika server 
           tika-server = with final; stdenv.mkDerivation rec {
-            name = "tika-server-1.26";
-  
-            src = fetchurl {
-              url = https://archive.apache.org/dist/tika/tika-server-1.26.jar;
-              sha256 ="sha256-GLXsW4p/gKPOJTz5PF6l8DGjwXvIPoirDSmlFujnPZU=";
-            };
-  
+            pname = "tika-server";
+            version = "1.26";
+            src = tika-src;
+
             dontUnpack = true;
-            buildInputs =with nixpkgs; [
+            buildInputs = with nixpkgs; [
               jdk
               tesseract
               gdal
@@ -125,24 +121,24 @@
               makeWrapper
             ];
             installPhase = ''
-            echo "Installing.. "
-              mkdir -pv $out/share/java $out/bin
-              ls -l ${src}
-            cp ${src} $out/share/java/tika-server-1.27.jar
-            makeWrapper ${jre}/bin/java $out/bin/tika-server \
-              --add-flags "-jar $out/share/java/tika-server-1.27.jar" \
-              --set _JAVA_OPTIONS '-Dawt.useSystemAAFontSettings=on' \
-              --set _JAVA_AWT_WM_NONREPARENTING 1
-              '';
+              echo "Installing.. "
+                mkdir -pv $out/share/java $out/bin
+                ls -l ${src}
+              cp ${src} $out/share/java/tika-server-1.27.jar
+              makeWrapper ${jre}/bin/java $out/bin/tika-server \
+                --add-flags "-jar $out/share/java/tika-server-1.27.jar" \
+                --set _JAVA_OPTIONS '-Dawt.useSystemAAFontSettings=on' \
+                --set _JAVA_AWT_WM_NONREPARENTING 1
+            '';
             meta = {
               homepage = "https://tika.apache.org/";
               description = ''
                 The Apache Tika toolkit detects and extracts metadata and text from over a thousand different file types 
                 (such as PPT, XLS, and PDF)
-                '';
-              };
+              '';
             };
-   
+          };
+
           # kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
           #   version = elkVersion;
           #   src = pkgs.fetchurl {
@@ -212,23 +208,14 @@
             config.environment.systemPackages = with pkgs;[ ipfs-search-backend dweb-search-frontend ];
 
             options.services.ipfs-search = {
-                  enable = mkOption {
-                    type = types.bool;
-                    default = false;
-                    description = ''
-                      Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
-                    '';
-                  };
-                };
-            options.services.tika-server = {
-                  enable = mkOption {
-                    type = types.bool;
-                    default = false;
-                    description = ''
-                    tika server
-                    '';
-                  };
-                };
+              enable = mkOption {
+                type = types.bool;
+                default = false;
+                description = ''
+                  Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
+                '';
+              };
+            };
 
             config.services.rabbitmq = mkIf config.services.ipfs-search.enable {
               enable = true;
@@ -242,66 +229,63 @@
               enable = true;
               package = pkgs.kibana7-oss;
             };
-          
-          config.services.ipfs.enable = config.services.ipfs-search.enable;
-          
-          #TODO need to put the requirement that all other required servives should be started first?
 
-           config.services.tika-server = mkIf config.services.tika-server.enable {
-              systemd.services.tika-server = {
-                description = "Tika Server";
-                   serviceConfig = {
-                   ExecStart =  "${self.packages.x86_64-linux.tika-server}/bin/tika-server";
-                      
-                 };
-               };
-             };
+            config.services.ipfs.enable = config.services.ipfs-search.enable;
 
-      # Tests run by 'nix flake check' and by Hydra.
-      # checks = forAllSystems (system: {
-      #   inherit (self.packages.${system}) hello;
+            #TODO need to put the requirement that all other required servives should be started first?
 
-      #   # Additional tests, if applicable.
-      #   test =
-      #     with nixpkgsFor.${system};
-      #     stdenv.mkDerivation {
-      #       name = "hello-test-${version}";
+            systemd.services.tika-server = mkIf config.services.ifps-search.enable {
+              description = "Tika Server";
+              serviceConfig = {
+                ExecStart = "${tika-server}/bin/tika-server";
+              };
+            };
 
-      #       buildInputs = [ hello ];
+            # Tests run by 'nix flake check' and by Hydra.
+            # checks = forAllSystems (system: {
+            #   inherit (self.packages.${system}) hello;
 
-      #       unpackPhase = "true";
+            #   # Additional tests, if applicable.
+            #   test =
+            #     with nixpkgsFor.${system};
+            #     stdenv.mkDerivation {
+            #       name = "hello-test-${version}";
 
-      #       buildPhase = ''
-      #         echo 'running some integration tests'
-      #         [[ $(hello) = 'Hello, world!' ]]
-      #       '';
+            #       buildInputs = [ hello ];
 
-      #       installPhase = "mkdir -p $out";
-      #     };
+            #       unpackPhase = "true";
 
-      #   # A VM test of the NixOS module.
-      #   vmTest =
-      #     with import (nixpkgs + "/nixos/lib/testing-python.nix")
-      #       {
-      #         inherit system;
-      #       };
+            #       buildPhase = ''
+            #         echo 'running some integration tests'
+            #         [[ $(hello) = 'Hello, world!' ]]
+            #       '';
 
-      #     makeTest {
-      #       nodes = {
-      #         client = { ... }: {
-      #           imports = [ self.nixosModules.hello ];
-      #         };
-      #       };
+            #       installPhase = "mkdir -p $out";
+            #     };
 
-      #       testScript =
-      #         ''
-      #           start_all()
-      #           client.wait_for_unit("multi-user.target")
-      #           client.succeed("hello")
-      #         '';
-      #     };
-      # });
+            #   # A VM test of the NixOS module.
+            #   vmTest =
+            #     with import (nixpkgs + "/nixos/lib/testing-python.nix")
+            #       {
+            #         inherit system;
+            #       };
 
+            #     makeTest {
+            #       nodes = {
+            #         client = { ... }: {
+            #           imports = [ self.nixosModules.hello ];
+            #         };
+            #       };
+
+            #       testScript =
+            #         ''
+            #           start_all()
+            #           client.wait_for_unit("multi-user.target")
+            #           client.succeed("hello")
+            #         '';
+            #     };
+            # });
+
+          };
     };
-  };
 }
