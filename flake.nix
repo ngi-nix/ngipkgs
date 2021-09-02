@@ -262,7 +262,8 @@
 
             #TODO need to put the requirement that all other required servives should be started first?
 
-            config.systemd.services.tika-server = mkIf config.services.ifps-search.enable {
+            # config.systemd.services.tika-server = mkIf config.services.ifps-search.enable {
+            config.systemd.services.tika-server = {
               description = "Tika Server";
               serviceConfig = {
                 ExecStart = "${tika-server}/bin/tika-server";
