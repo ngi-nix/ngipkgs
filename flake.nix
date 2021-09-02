@@ -39,11 +39,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
       # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay npmlock2nixOverlay ]; });
-
-      npmlock2nixOverlay = final: prev: {
-        npmlock2nix = import npmlock2nix-src { pkgs = prev; };
-      };
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
     in
     {
 
@@ -55,6 +51,7 @@
           # arch = final.lib.elemAt info 0;
           # plat = final.lib.elemAt info 1;
           # elkVersion = "7.8.1";
+          npmlock2nix = import npmlock2nix-src { inherit pkgs; };
         in
         {
 
@@ -159,7 +156,7 @@
           # });
 
           # using nodejs 14 despite upstream uses version 10 (EOL)
-          ipfs-search-api-server = pkgs.npmlock2nix.build {
+          ipfs-search-api-server = npmlock2nix.build {
             src = "${ipfs-search-api-src}/server";
             dontBuild = true;
             installPhase = ''
