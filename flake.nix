@@ -191,8 +191,6 @@
             dweb-search-frontend
             ipfs-sniffer
             jaeger
-            kibana7-oss
-            elasticsearch7-oss
             ipfs-search-api-server
             tika-server
             ;
@@ -206,7 +204,14 @@
           {
             config.nixpkgs.overlays = [ self.overlay ];
 
-            config.environment.systemPackages = with pkgs;[ ipfs-crawler dweb-search-frontend ];
+            config.environment.systemPackages = with pkgs;[
+              ipfs-crawler
+              dweb-search-frontend
+              ipfs-sniffer
+              jaeger
+              ipfs-search-api-server
+              tika-server
+            ];
 
             options.services.ipfs-search = {
               enable = mkOption {
@@ -238,7 +243,7 @@
               after = [ "network.target" ];
               wants = [ "network.target" ];
               serviceConfig = {
-                ExecStart = "${jaeger}/bin/jaeger";
+                ExecStart = "${pkgs.jaeger}/bin/jaeger";
               };
             };
 
@@ -247,7 +252,7 @@
               after = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
               wants = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
               serviceConfig = {
-                ExecStart = "${ipfs-crawler}/bin/ipfs-search crawl";
+                ExecStart = "${pkgs.ipfs-crawler}/bin/ipfs-search crawl";
               };
               environment = {
                 TIKA_EXTRACTOR = "http://localhost:8081";
@@ -260,13 +265,10 @@
               };
             };
 
-            #TODO need to put the requirement that all other required servives should be started first?
-
-            # config.systemd.services.tika-server = mkIf config.services.ifps-search.enable {
-            config.systemd.services.tika-server = {
+            config.systemd.services.tika-server = mkIf config.services.ipfs-search.enable {
               description = "Tika Server";
               serviceConfig = {
-                ExecStart = "${tika-server}/bin/tika-server";
+                ExecStart = "${pkgs.tika-server}/bin/tika-server";
               };
             };
 
