@@ -12,7 +12,7 @@
     # package sources
     dweb-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
     ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
-    ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
+    ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
   };
@@ -24,7 +24,7 @@
       npmlock2nix-src
     , dweb-search-frontend-src
     , ipfs-search-api-src
-    , ipfs-search-backend-src
+    , ipfs-crawler-src
     , ipfs-sniffer-src
     , jaeger-src
     }:
@@ -58,12 +58,12 @@
         in
         {
 
-          ipfs-search-backend = with final; buildGo115Module rec {
-            pname = "ipfs-search-backend";
+          ipfs-crawler = with final; buildGo115Module rec {
+            pname = "ipfs-crawler";
             version = userFriendlyVersion src;
 
             vendorSha256 = "sha256-bz427bRS0E1xazQuSC7GqHSD5yBBrDv8o22TyVJ6fho=";
-            src = ipfs-search-backend-src;
+            src = ipfs-crawler-src;
 
             meta = {
               license = with final.lib.licenses; agpl3Only;
@@ -187,7 +187,7 @@
       packages = forAllSystems (system:
         {
           inherit (nixpkgsFor.${system})
-            ipfs-search-backend
+            ipfs-crawler
             dweb-search-frontend
             ipfs-sniffer
             jaeger
@@ -206,7 +206,7 @@
           {
             config.nixpkgs.overlays = [ self.overlay ];
 
-            config.environment.systemPackages = with pkgs;[ ipfs-search-backend dweb-search-frontend ];
+            config.environment.systemPackages = with pkgs;[ ipfs-crawler dweb-search-frontend ];
 
             options.services.ipfs-search = {
               enable = mkOption {
@@ -233,9 +233,36 @@
 
             config.services.ipfs.enable = config.services.ipfs-search.enable;
 
+            config.systemd.services.jaeger = mkIf config.services.ipfs-search.enable {
+              description = "jaeger tracing";
+              after = [ "network.target" ];
+              wants = [ "network.target" ];
+              serviceConfig = {
+                ExecStart = "${jaeger}/bin/jaeger";
+              };
+            };
+
+            config.systemd.services.ipfs-crawler = mkIf config.services.ipfs-search.enable {
+              description = "The ipfs crawler";
+              after = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
+              wants = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
+              serviceConfig = {
+                ExecStart = "${ipfs-crawler}/bin/ipfs-search crawl";
+              };
+              environment = {
+                TIKA_EXTRACTOR = "http://localhost:8081";
+                IPFS_API_URL = "http://localhost:5001";
+                IPFS_GATEWAY_URL = "http://localhost:8080";
+                ELASTICSEARCH_URL = "http://localhost:9200";
+                AMQP_URL = "amqp://guest:guest@localhost:5672/";
+                OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
+                OTEL_TRACE_SAMPLER_ARG = "1.0";
+              };
+            };
+
             #TODO need to put the requirement that all other required servives should be started first?
 
-            systemd.services.tika-server = mkIf config.services.ifps-search.enable {
+            config.systemd.services.tika-server = mkIf config.services.ifps-search.enable {
               description = "Tika Server";
               serviceConfig = {
                 ExecStart = "${tika-server}/bin/tika-server";
