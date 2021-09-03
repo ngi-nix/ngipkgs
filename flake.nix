@@ -12,7 +12,7 @@
     # package sources
     dweb-search-frontend-src = { url = "github:ipfs-search/dweb-search-frontend"; flake = false; };
     ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
-    ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
+    ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
     mvn2nix.url = "github:fzakaria/mvn2nix";
@@ -25,7 +25,7 @@
       npmlock2nix-src
     , dweb-search-frontend-src
     , ipfs-search-api-src
-    , ipfs-search-backend-src
+    , ipfs-crawler-src
     , ipfs-sniffer-src
     , jaeger-src
     , mvn2nix
@@ -41,6 +41,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
       # Nixpkgs instantiated for supported system types.
+
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay npmlock2nixOverlay ]; });
 
       npmlock2nixOverlay = final: prev: {
@@ -50,7 +51,6 @@
       mavenRepository = mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
 
     in
-
     {
 
       # A Nixpkgs overlay.
@@ -61,15 +61,16 @@
           # arch = final.lib.elemAt info 0;
           # plat = final.lib.elemAt info 1;
           # elkVersion = "7.8.1";
+          npmlock2nix = import npmlock2nix-src { inherit pkgs; };
         in
         {
 
-          ipfs-search-backend = with final; buildGo115Module rec {
-            pname = "ipfs-search-backend";
+          ipfs-crawler = with final; buildGo115Module rec {
+            pname = "ipfs-crawler";
             version = userFriendlyVersion src;
 
             vendorSha256 = "sha256-bz427bRS0E1xazQuSC7GqHSD5yBBrDv8o22TyVJ6fho=";
-            src = ipfs-search-backend-src;
+            src = ipfs-crawler-src;
 
             meta = {
               license = with final.lib.licenses; agpl3Only;
@@ -109,7 +110,7 @@
             vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
           };
 
-   
+
           # kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
           #   version = elkVersion;
           #   src = pkgs.fetchurl {
@@ -129,7 +130,7 @@
           # });
 
           # using nodejs 14 despite upstream uses version 10 (EOL)
-          ipfs-search-api-server = pkgs.npmlock2nix.build {
+          ipfs-search-api-server = npmlock2nix.build {
             src = "${ipfs-search-api-src}/server";
             dontBuild = true;
             installPhase = ''
@@ -186,12 +187,10 @@
       packages = forAllSystems (system:
         {
           inherit (nixpkgsFor.${system})
-            ipfs-search-backend
+            ipfs-crawler
             dweb-search-frontend
             ipfs-sniffer
             jaeger
-            kibana7-oss
-            elasticsearch7-oss
             ipfs-search-api-server
             tikaExtractor;
         });
@@ -204,9 +203,17 @@
           {
             config.nixpkgs.overlays = [ self.overlay ];
 
-            config.environment.systemPackages = with pkgs;[ ipfs-search-backend dweb-search-frontend ];
+            config.environment.systemPackages = with pkgs;[
+              ipfs-crawler
+              dweb-search-frontend
+              ipfs-sniffer
+              jaeger
+              ipfs-search-api-server
+              tika-server
+            ];
 
             options.services.ipfs-search = {
+
                   enable = mkOption {
                     type = types.bool;
                     default = false;
@@ -237,6 +244,7 @@
               enable = true;
               package = pkgs.kibana7-oss;
             };
+
           
             config.services.ipfs.enable = config.services.ipfs-search.enable;
           
@@ -250,51 +258,117 @@
              };
    
 
-      # Tests run by 'nix flake check' and by Hydra.
-      # checks = forAllSystems (system: {
-      #   inherit (self.packages.${system}) hello;
+            config.services.ipfs.enable = config.services.ipfs-search.enable;
 
-      #   # Additional tests, if applicable.
-      #   test =
-      #     with nixpkgsFor.${system};
-      #     stdenv.mkDerivation {
-      #       name = "hello-test-${version}";
+            config.systemd.services.ipfs-crawler = mkIf config.services.ipfs-search.enable {
+              description = "The ipfs crawler";
+              after = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
+              wants = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
+              serviceConfig = {
+                ExecStart = "${pkgs.ipfs-crawler}/bin/ipfs-search crawl";
+              };
+              environment = {
+                TIKA_EXTRACTOR = "http://localhost:8081";
+                IPFS_API_URL = "http://localhost:5001";
+                IPFS_GATEWAY_URL = "http://localhost:8080";
+                ELASTICSEARCH_URL = "http://localhost:9200";
+                AMQP_URL = "amqp://guest:guest@localhost:5672/";
+                OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
+                OTEL_TRACE_SAMPLER_ARG = "1.0";
+              };
+            };
 
-      #       buildInputs = [ hello ];
+            config.systemd.services.ipfs-sniffer = mkIf config.services.ipfs-search.enable {
+              description = "IPFS sniffer";
+              serviceConfig = {
+                ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
+              };
+              after = [ "rabbitmq.service" "jaeger.service" ];
+              wants = [ "rabbitmq.service" "jaeger.service" ];
+              environment = {
+                AMQP_URL = "amqp://guest:guest@localhost:5672/";
+                OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
+              };
+            };
 
-      #       unpackPhase = "true";
+            config.systemd.services.ipfs-search-api-server = mkIf config.services.ipfs-search.enable {
+              description = "IPFS search api";
+              after = [ "elasticsearch.service" ];
+              wants = [ "elasticsearch.service" ];
+              serviceConfig = {
+                ExecStart = "${pkgs.ipfs-search-api-server}/bin/server";
+              };
+              environment = {
+                ELASTICSEARCH_URL = "http://elasticsearch:9200";
+              };
+            };
 
-      #       buildPhase = ''
-      #         echo 'running some integration tests'
-      #         [[ $(hello) = 'Hello, world!' ]]
-      #       '';
+            config.systemd.services.jaeger = mkIf config.services.ipfs-search.enable {
+              description = "jaeger tracing";
+              after = [ "elasticsearch.service" ];
+              wants = [ "elasticsearch.service" ];
+              serviceConfig = {
+                ExecStart = "${pkgs.jaeger}/bin/all-in-one";
+              };
+              environment = {
+                SPAN_STORAGE_TYPE = "elasticsearch";
+                ES_SERVER_URLS = "http://localhost:9200";
+                ES_TAGS_AS_FIELDS_ALL = "true";
+              };
+            };
 
-      #       installPhase = "mkdir -p $out";
-      #     };
+            config.systemd.services.tika-server = mkIf config.services.ipfs-search.enable {
+              description = "Tika Server";
+              serviceConfig = {
+                ExecStart = "${pkgs.tika-server}/bin/tika-server";
+              };
+            };
 
-      #   # A VM test of the NixOS module.
-      #   vmTest =
-      #     with import (nixpkgs + "/nixos/lib/testing-python.nix")
-      #       {
-      #         inherit system;
-      #       };
+            # Tests run by 'nix flake check' and by Hydra.
+            # checks = forAllSystems (system: {
+            #   inherit (self.packages.${system}) hello;
 
-      #     makeTest {
-      #       nodes = {
-      #         client = { ... }: {
-      #           imports = [ self.nixosModules.hello ];
-      #         };
-      #       };
+            #   # Additional tests, if applicable.
+            #   test =
+            #     with nixpkgsFor.${system};
+            #     stdenv.mkDerivation {
+            #       name = "hello-test-${version}";
 
-      #       testScript =
-      #         ''
-      #           start_all()
-      #           client.wait_for_unit("multi-user.target")
-      #           client.succeed("hello")
-      #         '';
-      #     };
-      # });
+            #       buildInputs = [ hello ];
 
+            #       unpackPhase = "true";
+
+            #       buildPhase = ''
+            #         echo 'running some integration tests'
+            #         [[ $(hello) = 'Hello, world!' ]]
+            #       '';
+
+            #       installPhase = "mkdir -p $out";
+            #     };
+
+            #   # A VM test of the NixOS module.
+            #   vmTest =
+            #     with import (nixpkgs + "/nixos/lib/testing-python.nix")
+            #       {
+            #         inherit system;
+            #       };
+
+            #     makeTest {
+            #       nodes = {
+            #         client = { ... }: {
+            #           imports = [ self.nixosModules.hello ];
+            #         };
+            #       };
+
+            #       testScript =
+            #         ''
+            #           start_all()
+            #           client.wait_for_unit("multi-user.target")
+            #           client.succeed("hello")
+            #         '';
+            #     };
+            # });
+
+          };
     };
-  };
 }
