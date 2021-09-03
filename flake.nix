@@ -47,16 +47,7 @@
         npmlock2nix = import npmlock2nix-src { pkgs = prev; };
       };
  
-
-      pkgsForSystem = forAllSystems( system: import nixpkgs {
-           # ./overlay.nix contains the logic to package local repository
-           overlays = [ mvn2nix.overlay (
-               final: prev: {
-               tikaExtractor = final.callPackage ./tikaExtractor.nix { };
-               }
-           ) ];
-         inherit system;
-       });
+      mavenRepository = mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
 
     in
 
@@ -160,6 +151,35 @@
               ln -s $out/lib/server.js $out/bin/server
             '';
           };
+        
+
+    
+          tikaExtractor= pkgs.stdenv.mkDerivation rec {
+          pname = "tika-extractor";
+          version = "1.1";
+          name = "${pname}-${version}";
+          src = fetchGit{
+            url =https://github.com/ipfs-search/tika-extractor;
+            ref ="main";
+           rev= "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
+             };
+       
+           nativeBuildInputs = with pkgs; [ jdk11_headless maven makeWrapper ];
+           buildPhase = ''
+             echo "Building with maven repository ${mavenRepository}"
+             mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
+           '';
+         
+           installPhase = ''
+             mkdir -p $out/bin
+             ln -s ${mavenRepository} $out/lib
+             ls -l
+             cp target/${name}-runner.jar $out/
+             makeWrapper ${pkgs.jdk11_headless}/bin/java $out/bin/${pname} \
+                   --add-flags "-jar $out/${name}-runner.jar"
+             '';
+           };
+     
         };
 
       # Provide some binary packages for selected system types.
@@ -173,8 +193,7 @@
             kibana7-oss
             elasticsearch7-oss
             ipfs-search-api-server
-            ;
-          inherit ( pkgsForSystem.${system}) tikaExtractor;
+            tikaExtractor;
         });
 
 
@@ -221,8 +240,6 @@
           
           config.services.ipfs.enable = config.services.ipfs-search.enable;
           
-          #TODO need to put the requirement that all other required servives should be started first?
-
             config.services.tika-extractor= mkIf config.services.tika-extractor.enable {
                 systemd.services.tika-extractor = {
                   description = "Tika extractor";
