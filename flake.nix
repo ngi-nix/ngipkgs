@@ -15,6 +15,7 @@
     ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
+    mvn2nix.url = "github:fzakaria/mvn2nix";
   };
 
   outputs =
@@ -27,6 +28,7 @@
     , ipfs-crawler-src
     , ipfs-sniffer-src
     , jaeger-src
+    , mvn2nix
     }:
     let
       # Generate a user-friendly version numer.
@@ -39,7 +41,15 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
       # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
+
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay npmlock2nixOverlay ]; });
+
+      npmlock2nixOverlay = final: prev: {
+        npmlock2nix = import npmlock2nix-src { pkgs = prev; };
+      };
+ 
+      mavenRepository = mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
+
     in
     {
 
@@ -100,41 +110,6 @@
             vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
           };
 
-          # Apache Tika server 
-          tika-server = with final; stdenv.mkDerivation rec {
-            pname = "tika-server";
-            version = "1.26";
-            src = fetchurl {
-              url = "https://archive.apache.org/dist/tika/tika-server-${version}.jar";
-              sha256 = "sha256-GLXsW4p/gKPOJTz5PF6l8DGjwXvIPoirDSmlFujnPZU=";
-            };
-            dontUnpack = true;
-            buildInputs = with nixpkgs; [
-              jdk
-              tesseract
-              gdal
-              gnupg
-            ];
-            nativeBuildInputs = [
-              makeWrapper
-            ];
-            installPhase = ''
-              echo "Installing.. "
-              mkdir -pv $out/share/java $out/bin
-              cp ${src} $out/share/java/tika-server-${version}.jar
-              makeWrapper ${jre}/bin/java $out/bin/tika-server \
-                --add-flags "-jar $out/share/java/tika-server-${version}.jar" \
-                --set _JAVA_OPTIONS '-Dawt.useSystemAAFontSettings=on' \
-                --set _JAVA_AWT_WM_NONREPARENTING 1
-            '';
-            meta = {
-              homepage = "https://tika.apache.org/";
-              description = ''
-                The Apache Tika toolkit detects and extracts metadata and text from over a thousand different file types 
-                (such as PPT, XLS, and PDF)
-              '';
-            };
-          };
 
           # kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
           #   version = elkVersion;
@@ -177,6 +152,35 @@
               ln -s $out/lib/server.js $out/bin/server
             '';
           };
+        
+
+    
+          tikaExtractor= pkgs.stdenv.mkDerivation rec {
+          pname = "tika-extractor";
+          version = "1.1";
+          name = "${pname}-${version}";
+          src = fetchGit{
+            url =https://github.com/ipfs-search/tika-extractor;
+            ref ="main";
+           rev= "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
+             };
+       
+           nativeBuildInputs = with pkgs; [ jdk11_headless maven makeWrapper ];
+           buildPhase = ''
+             echo "Building with maven repository ${mavenRepository}"
+             mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
+           '';
+         
+           installPhase = ''
+             mkdir -p $out/bin
+             ln -s ${mavenRepository} $out/lib
+             ls -l
+             cp target/${name}-runner.jar $out/
+             makeWrapper ${pkgs.jdk11_headless}/bin/java $out/bin/${pname} \
+                   --add-flags "-jar $out/${name}-runner.jar"
+             '';
+           };
+     
         };
 
       # Provide some binary packages for selected system types.
@@ -188,8 +192,7 @@
             ipfs-sniffer
             jaeger
             ipfs-search-api-server
-            tika-server
-            ;
+            tikaExtractor;
         });
 
 
@@ -210,14 +213,24 @@
             ];
 
             options.services.ipfs-search = {
-              enable = mkOption {
-                type = types.bool;
-                default = false;
-                description = ''
-                  Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
-                '';
-              };
-            };
+
+                  enable = mkOption {
+                    type = types.bool;
+                    default = false;
+                    description = ''
+                      Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
+                    '';
+                  };
+                };
+            options.services.tika-extractor = {
+                  enable = mkOption {
+                    type = types.bool;
+                    default = false;
+                    description = ''
+                    tika server
+                    '';
+                  };
+                };
 
             config.services.rabbitmq = mkIf config.services.ipfs-search.enable {
               enable = true;
@@ -231,6 +244,19 @@
               enable = true;
               package = pkgs.kibana7-oss;
             };
+
+          
+            config.services.ipfs.enable = config.services.ipfs-search.enable;
+          
+            config.services.tika-extractor= mkIf config.services.tika-extractor.enable {
+                systemd.services.tika-extractor = {
+                  description = "Tika extractor";
+                  serviceConfig = {
+                    ExecStart =  "${self.packages.x86_64-linux.tikaExtractor}/bin/tika-extractor";
+                   };
+                };
+             };
+   
 
             config.services.ipfs.enable = config.services.ipfs-search.enable;
 
