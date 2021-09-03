@@ -15,6 +15,7 @@
     ipfs-search-backend-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
+    mvn2nix.url = "github:fzakaria/mvn2nix";
   };
 
   outputs =
@@ -27,6 +28,7 @@
     , ipfs-search-backend-src
     , ipfs-sniffer-src
     , jaeger-src
+    , mvn2nix
     }:
     let
       # Generate a user-friendly version numer.
@@ -44,6 +46,17 @@
       npmlock2nixOverlay = final: prev: {
         npmlock2nix = import npmlock2nix-src { pkgs = prev; };
       };
+ 
+
+      pkgsForSystem = forAllSystems( system: import nixpkgs {
+           # ./overlay.nix contains the logic to package local repository
+           overlays = [ mvn2nix.overlay (
+               final: prev: {
+               tikaExtractor = final.callPackage ./tikaExtractor.nix { };
+               }
+           ) ];
+         inherit system;
+       });
 
     in
 
@@ -105,43 +118,6 @@
             vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
           };
 
-          # Apache Tika server 
-          tika-server = with final; stdenv.mkDerivation rec {
-            name = "tika-server-1.26";
-  
-            src = fetchurl {
-              url = https://archive.apache.org/dist/tika/tika-server-1.26.jar;
-              sha256 ="sha256-GLXsW4p/gKPOJTz5PF6l8DGjwXvIPoirDSmlFujnPZU=";
-            };
-  
-            dontUnpack = true;
-            buildInputs =with nixpkgs; [
-              jdk
-              tesseract
-              gdal
-              gnupg
-            ];
-            nativeBuildInputs = [
-              makeWrapper
-            ];
-            installPhase = ''
-            echo "Installing.. "
-              mkdir -pv $out/share/java $out/bin
-              ls -l ${src}
-            cp ${src} $out/share/java/tika-server-1.27.jar
-            makeWrapper ${jre}/bin/java $out/bin/tika-server \
-              --add-flags "-jar $out/share/java/tika-server-1.27.jar" \
-              --set _JAVA_OPTIONS '-Dawt.useSystemAAFontSettings=on' \
-              --set _JAVA_AWT_WM_NONREPARENTING 1
-              '';
-            meta = {
-              homepage = "https://tika.apache.org/";
-              description = ''
-                The Apache Tika toolkit detects and extracts metadata and text from over a thousand different file types 
-                (such as PPT, XLS, and PDF)
-                '';
-              };
-            };
    
           # kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
           #   version = elkVersion;
@@ -197,8 +173,8 @@
             kibana7-oss
             elasticsearch7-oss
             ipfs-search-api-server
-            tika-server
             ;
+          inherit ( pkgsForSystem.${system}) tikaExtractor;
         });
 
 
@@ -220,7 +196,7 @@
                     '';
                   };
                 };
-            options.services.tika-server = {
+            options.services.tika-extractor = {
                   enable = mkOption {
                     type = types.bool;
                     default = false;
@@ -247,15 +223,15 @@
           
           #TODO need to put the requirement that all other required servives should be started first?
 
-           config.services.tika-server = mkIf config.services.tika-server.enable {
-              systemd.services.tika-server = {
-                description = "Tika Server";
-                   serviceConfig = {
-                   ExecStart =  "${self.packages.x86_64-linux.tika-server}/bin/tika-server";
-                      
-                 };
-               };
+            config.services.tika-extractor= mkIf config.services.tika-extractor.enable {
+                systemd.services.tika-extractor = {
+                  description = "Tika extractor";
+                  serviceConfig = {
+                    ExecStart =  "${self.packages.x86_64-linux.tikaExtractor}/bin/tika-extractor";
+                   };
+                };
              };
+   
 
       # Tests run by 'nix flake check' and by Hydra.
       # checks = forAllSystems (system: {
