@@ -238,7 +238,7 @@
               package = pkgs.kibana7-oss;
             };
           
-          config.services.ipfs.enable = config.services.ipfs-search.enable;
+            config.services.ipfs.enable = config.services.ipfs-search.enable;
           
             config.services.tika-extractor= mkIf config.services.tika-extractor.enable {
                 systemd.services.tika-extractor = {
