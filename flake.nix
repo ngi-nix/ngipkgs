@@ -47,7 +47,7 @@
       npmlock2nixOverlay = final: prev: {
         npmlock2nix = import npmlock2nix-src { pkgs = prev; };
       };
- 
+
       mavenRepository = mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
 
     in
@@ -152,35 +152,35 @@
               ln -s $out/lib/server.js $out/bin/server
             '';
           };
-        
 
-    
-          tikaExtractor= pkgs.stdenv.mkDerivation rec {
-          pname = "tika-extractor";
-          version = "1.1";
-          name = "${pname}-${version}";
-          src = fetchGit{
-            url =https://github.com/ipfs-search/tika-extractor;
-            ref ="main";
-           rev= "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
-             };
-       
-           nativeBuildInputs = with pkgs; [ jdk11_headless maven makeWrapper ];
-           buildPhase = ''
-             echo "Building with maven repository ${mavenRepository}"
-             mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
-           '';
-         
-           installPhase = ''
-             mkdir -p $out/bin
-             ln -s ${mavenRepository} $out/lib
-             ls -l
-             cp target/${name}-runner.jar $out/
-             makeWrapper ${pkgs.jdk11_headless}/bin/java $out/bin/${pname} \
-                   --add-flags "-jar $out/${name}-runner.jar"
-             '';
-           };
-     
+
+
+          tika-extractor = pkgs.stdenv.mkDerivation rec {
+            pname = "tika-extractor";
+            version = "1.1";
+            name = "${pname}-${version}";
+            src = fetchGit {
+              url = https://github.com/ipfs-search/tika-extractor;
+              ref = "main";
+              rev = "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
+            };
+
+            nativeBuildInputs = with pkgs; [ jdk11_headless maven makeWrapper ];
+            buildPhase = ''
+              echo "Building with maven repository ${mavenRepository}"
+              mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
+            '';
+
+            installPhase = ''
+              mkdir -p $out/bin
+              ln -s ${mavenRepository} $out/lib
+              ls -l
+              cp target/${name}-runner.jar $out/
+              makeWrapper ${pkgs.jdk11_headless}/bin/java $out/bin/${pname} \
+                    --add-flags "-jar $out/${name}-runner.jar"
+            '';
+          };
+
         };
 
       # Provide some binary packages for selected system types.
@@ -192,7 +192,7 @@
             ipfs-sniffer
             jaeger
             ipfs-search-api-server
-            tikaExtractor;
+            tika-extractor;
         });
 
 
@@ -209,28 +209,18 @@
               ipfs-sniffer
               jaeger
               ipfs-search-api-server
-              tika-server
+              tika-extractor
             ];
 
             options.services.ipfs-search = {
-
-                  enable = mkOption {
-                    type = types.bool;
-                    default = false;
-                    description = ''
-                      Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
-                    '';
-                  };
-                };
-            options.services.tika-extractor = {
-                  enable = mkOption {
-                    type = types.bool;
-                    default = false;
-                    description = ''
-                    tika server
-                    '';
-                  };
-                };
+              enable = mkOption {
+                type = types.bool;
+                default = false;
+                description = ''
+                  Whether to enable the ipfs-search service. It uses Rabbitmq, elastic-search, ipfs
+                '';
+              };
+            };
 
             config.services.rabbitmq = mkIf config.services.ipfs-search.enable {
               enable = true;
@@ -245,20 +235,18 @@
               package = pkgs.kibana7-oss;
             };
 
-          
-            config.services.ipfs.enable = config.services.ipfs-search.enable;
-          
-            config.services.tika-extractor= mkIf config.services.tika-extractor.enable {
-                systemd.services.tika-extractor = {
-                  description = "Tika extractor";
-                  serviceConfig = {
-                    ExecStart =  "${self.packages.x86_64-linux.tikaExtractor}/bin/tika-extractor";
-                   };
-                };
-             };
-   
 
             config.services.ipfs.enable = config.services.ipfs-search.enable;
+
+            config.services.tika-extractor = mkIf config.services.ipfs-search.enable {
+              systemd.services.tika-extractor = {
+                description = "Tika extractor";
+                serviceConfig = {
+                  ExecStart = "${pkgs.tika-extractor}/bin/tika-extractor";
+                };
+              };
+            };
+
 
             config.systemd.services.ipfs-crawler = mkIf config.services.ipfs-search.enable {
               description = "The ipfs crawler";
