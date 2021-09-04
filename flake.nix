@@ -47,17 +47,17 @@
     {
       # A Nixpkgs overlay.
       overlay = final: prev:
+        with final;
         let
           # info = final.lib.splitString "-" final.stdenv.hostPlatform.system;
           # arch = final.lib.elemAt info 0;
           # plat = final.lib.elemAt info 1;
           # elkVersion = "7.8.1";
           npmlock2nix = import npmlock2nix-src { pkgs = final; };
-          mavenRepository = final.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
+          mavenRepository = buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
         in
         {
-
-          ipfs-crawler = with final; buildGo115Module rec {
+          ipfs-crawler = buildGo115Module rec {
             pname = "ipfs-crawler";
             version = userFriendlyVersion src;
 
@@ -65,13 +65,13 @@
             src = ipfs-crawler-src;
 
             meta = {
-              license = with final.lib.licenses; agpl3Only;
+              license = with lib.licenses; agpl3Only;
               homepage = "https://ipfs-search.com";
               description = "Search engine for the Interplanetary Filesystem.";
             };
           };
 
-          dweb-search-frontend = with final; mkYarnPackage rec {
+          dweb-search-frontend = mkYarnPackage rec {
             pname = "dweb-search-frontend";
             version = userFriendlyVersion src;
             src = dweb-search-frontend-src;
@@ -88,14 +88,14 @@
             '';
           };
 
-          ipfs-sniffer = final.buildGoModule rec {
+          ipfs-sniffer = buildGoModule rec {
             pname = "ipfs-sniffer";
             version = "master";
             src = ipfs-sniffer-src;
             vendorSha256 = "sha256-xc1biJF4zicosSTFuUv82yvOYpbuY3h++rhvD+5aWNE=";
           };
 
-          jaeger = final.buildGoModule rec {
+          jaeger = buildGoModule rec {
             pname = "jaeger";
             version = "v1.25.0";
             src = jaeger-src;
@@ -135,7 +135,7 @@
               cp -r search $out/lib/search
               cp -r metadata $out/lib/metadata
               for file in esclient.js server.js types.js; do
-                echo "#!$(${final.which}/bin/which node)" > $out/lib/$file
+                echo "#!$(${which}/bin/which node)" > $out/lib/$file
                 cat $file >> $out/lib/$file
               done
 
@@ -145,7 +145,7 @@
             '';
           };
 
-          tika-extractor = final.stdenv.mkDerivation rec {
+          tika-extractor = stdenv.mkDerivation rec {
             pname = "tika-extractor";
             version = "1.1";
             src = fetchGit {
@@ -154,7 +154,7 @@
               rev = "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
             };
 
-            nativeBuildInputs = with final; [ jdk11_headless maven makeWrapper ];
+            nativeBuildInputs = [ jdk11_headless maven makeWrapper ];
             buildPhase = ''
               echo "Building with maven repository ${mavenRepository}"
               mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
@@ -165,7 +165,7 @@
               ln -s ${mavenRepository} $out/lib
               ls -l
               cp target/${pname}-${version}-runner.jar $out/
-              makeWrapper ${final.jdk11_headless}/bin/java $out/bin/${pname} \
+              makeWrapper ${jdk11_headless}/bin/java $out/bin/${pname} \
                     --add-flags "-jar $out/${pname}-${version}-runner.jar"
             '';
           };
