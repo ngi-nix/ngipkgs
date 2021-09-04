@@ -15,7 +15,7 @@
     ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
-    mvn2nix-src.url = "github:fzakaria/mvn2nix";
+    mvn2nix.url = "github:fzakaria/mvn2nix";
   };
 
   outputs =
@@ -28,7 +28,7 @@
     , ipfs-crawler-src
     , ipfs-sniffer-src
     , jaeger-src
-    , mvn2nix-src
+    , mvn2nix
     }:
     let
       # Generate a user-friendly version numer.
@@ -42,7 +42,7 @@
 
       # Nixpkgs instantiated for supported system types.
 
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ mvn2nix-src.overlay self.overlay ]; });
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ mvn2nix.overlay self.overlay ]; });
     in
     {
       # A Nixpkgs overlay.
