@@ -14,7 +14,6 @@
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
     mvn2nix.url = "github:fzakaria/mvn2nix";
-    mvn2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -53,7 +52,8 @@
           # plat = final.lib.elemAt info 1;
           # elkVersion = "7.8.1";
           npmlock2nix = import npmlock2nix-src { pkgs = final; };
-          mavenRepository = buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
+          dependencies = (builtins.fromJSON (builtins.readFile ./mvn2nix-lock.json)).dependencies;
+          mavenRepository = buildMavenRepository { inherit dependencies; };
         in
         {
           ipfs-crawler = buildGo115Module rec {
