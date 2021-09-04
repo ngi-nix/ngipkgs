@@ -52,8 +52,7 @@
           # plat = final.lib.elemAt info 1;
           # elkVersion = "7.8.1";
           npmlock2nix = import npmlock2nix-src { pkgs = final; };
-          dependencies = (builtins.fromJSON (builtins.readFile ./mvn2nix-lock.json)).dependencies;
-          mavenRepository = buildMavenRepository { inherit dependencies; };
+          mavenRepository = buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
         in
         {
           ipfs-crawler = buildGo115Module rec {
