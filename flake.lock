@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "ipfs-crawler-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627425284,
+        "narHash": "sha256-JJem8vghPH+J9THcPDSJjXe1LK2S7NX3A3Uawze3FUA=",
+        "owner": "ipfs-search",
+        "repo": "ipfs-search",
+        "rev": "0730dc2f33a1f841d4f4c43d3c3f5d70c66cceb9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipfs-search",
+        "repo": "ipfs-search",
+        "type": "github"
+      }
+    },
     "ipfs-search-api-src": {
       "flake": false,
       "locked": {
@@ -29,22 +45,6 @@
       "original": {
         "owner": "ipfs-search",
         "repo": "ipfs-search-api",
-        "type": "github"
-      }
-    },
-    "ipfs-search-backend-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1627425284,
-        "narHash": "sha256-JJem8vghPH+J9THcPDSJjXe1LK2S7NX3A3Uawze3FUA=",
-        "owner": "ipfs-search",
-        "repo": "ipfs-search",
-        "rev": "0730dc2f33a1f841d4f4c43d3c3f5d70c66cceb9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ipfs-search",
-        "repo": "ipfs-search",
         "type": "github"
       }
     },
@@ -81,7 +81,7 @@
         "type": "github"
       }
     },
-    "mvn2nix": {
+    "mvn2nix-src": {
       "inputs": {
         "nixpkgs": "nixpkgs",
         "utils": "utils"
@@ -150,11 +150,11 @@
     "root": {
       "inputs": {
         "dweb-search-frontend-src": "dweb-search-frontend-src",
+        "ipfs-crawler-src": "ipfs-crawler-src",
         "ipfs-search-api-src": "ipfs-search-api-src",
-        "ipfs-search-backend-src": "ipfs-search-backend-src",
         "ipfs-sniffer-src": "ipfs-sniffer-src",
         "jaeger-src": "jaeger-src",
-        "mvn2nix": "mvn2nix",
+        "mvn2nix-src": "mvn2nix-src",
         "nixpkgs": "nixpkgs_2",
         "npmlock2nix-src": "npmlock2nix-src"
       }
