@@ -15,7 +15,7 @@
     ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
-    mvn2nix.url = "github:fzakaria/mvn2nix";
+    mvn2nix-src.url = "github:fzakaria/mvn2nix";
   };
 
   outputs =
@@ -28,7 +28,7 @@
     , ipfs-crawler-src
     , ipfs-sniffer-src
     , jaeger-src
-    , mvn2nix
+    , mvn2nix-src
     }:
     let
       # Generate a user-friendly version numer.
@@ -42,26 +42,18 @@
 
       # Nixpkgs instantiated for supported system types.
 
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay npmlock2nixOverlay ]; });
-
-      npmlock2nixOverlay = final: prev: {
-        npmlock2nix = import npmlock2nix-src { pkgs = prev; };
-      };
-
-      mavenRepository = mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
-
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ mvn2nix-src.overlay self.overlay ]; });
     in
     {
-
       # A Nixpkgs overlay.
       overlay = final: prev:
         let
-          pkgs = final;
           # info = final.lib.splitString "-" final.stdenv.hostPlatform.system;
           # arch = final.lib.elemAt info 0;
           # plat = final.lib.elemAt info 1;
           # elkVersion = "7.8.1";
-          npmlock2nix = import npmlock2nix-src { inherit pkgs; };
+          npmlock2nix = import npmlock2nix-src { pkgs = final; };
+          mavenRepository = final.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
         in
         {
 
@@ -96,14 +88,14 @@
             '';
           };
 
-          ipfs-sniffer = pkgs.buildGoModule rec {
+          ipfs-sniffer = final.buildGoModule rec {
             pname = "ipfs-sniffer";
             version = "master";
             src = ipfs-sniffer-src;
             vendorSha256 = "sha256-xc1biJF4zicosSTFuUv82yvOYpbuY3h++rhvD+5aWNE=";
           };
 
-          jaeger = pkgs.buildGoModule rec {
+          jaeger = final.buildGoModule rec {
             pname = "jaeger";
             version = "v1.25.0";
             src = jaeger-src;
@@ -143,7 +135,7 @@
               cp -r search $out/lib/search
               cp -r metadata $out/lib/metadata
               for file in esclient.js server.js types.js; do
-                echo "#!$(${pkgs.which}/bin/which node)" > $out/lib/$file
+                echo "#!$(${final.which}/bin/which node)" > $out/lib/$file
                 cat $file >> $out/lib/$file
               done
 
@@ -153,19 +145,16 @@
             '';
           };
 
-
-
-          tika-extractor = pkgs.stdenv.mkDerivation rec {
+          tika-extractor = final.stdenv.mkDerivation rec {
             pname = "tika-extractor";
             version = "1.1";
-            name = "${pname}-${version}";
             src = fetchGit {
               url = https://github.com/ipfs-search/tika-extractor;
               ref = "main";
               rev = "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
             };
 
-            nativeBuildInputs = with pkgs; [ jdk11_headless maven makeWrapper ];
+            nativeBuildInputs = with final; [ jdk11_headless maven makeWrapper ];
             buildPhase = ''
               echo "Building with maven repository ${mavenRepository}"
               mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
@@ -176,8 +165,8 @@
               ln -s ${mavenRepository} $out/lib
               ls -l
               cp target/${name}-runner.jar $out/
-              makeWrapper ${pkgs.jdk11_headless}/bin/java $out/bin/${pname} \
-                    --add-flags "-jar $out/${name}-runner.jar"
+              makeWrapper ${final.jdk11_headless}/bin/java $out/bin/${pname} \
+                    --add-flags "-jar $out/${pname}-${version}-runner.jar"
             '';
           };
 
