@@ -1,11 +1,9 @@
 {
   description = "(insert short project description here)";
 
-  # Nixpkgs / NixOS version to use.
-  inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
-
-  # Upstream source tree(s).
   inputs = {
+    # Nixpkgs / NixOS version to use.
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
 
     npmlock2nix-src = { url = "github:nix-community/npmlock2nix"; flake = false; };
 
@@ -16,6 +14,7 @@
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
     mvn2nix.url = "github:fzakaria/mvn2nix";
+    mvn2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
