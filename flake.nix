@@ -164,7 +164,7 @@
               mkdir -p $out/bin
               ln -s ${mavenRepository} $out/lib
               ls -l
-              cp target/${name}-runner.jar $out/
+              cp target/${pname}-${version}-runner.jar $out/
               makeWrapper ${final.jdk11_headless}/bin/java $out/bin/${pname} \
                     --add-flags "-jar $out/${pname}-${version}-runner.jar"
             '';
