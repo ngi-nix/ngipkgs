@@ -58,7 +58,7 @@
             src = ipfs-crawler-src;
 
             meta = {
-              license = with lib.licenses; agpl3Only;
+              license = with final.lib.licenses; agpl3Only;
               homepage = "https://ipfs-search.com";
               description = "Search engine for the Interplanetary Filesystem.";
             };
