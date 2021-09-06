@@ -140,7 +140,7 @@
               ln -s ${mavenRepository} $out/lib
               ls -l
               cp target/${pname}-${version}-runner.jar $out/
-              makeWrapper ${jdk11_headless}/bin/java $out/bin/${pname} \
+              makeWrapper ${final.jdk11_headless}/bin/java $out/bin/${pname} \
                     --add-flags "-jar $out/${pname}-${version}-runner.jar"
             '';
           };
