@@ -110,7 +110,7 @@
               cp -r search $out/lib/search
               cp -r metadata $out/lib/metadata
               for file in esclient.js server.js types.js; do
-                echo "#!$(${which}/bin/which node)" > $out/lib/$file
+                echo "#!$(${final.which}/bin/which node)" > $out/lib/$file
                 cat $file >> $out/lib/$file
               done
 
