@@ -12,6 +12,7 @@
     ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
     ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
+    tika-extractor-src = { url = "github:ipfs-search/tika-extractor"; flake = false;}
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
     mvn2nix.url = "github:fzakaria/mvn2nix";
   };
@@ -25,6 +26,7 @@
     , ipfs-search-api-src
     , ipfs-crawler-src
     , ipfs-sniffer-src
+    , tika-extractor-src
     , jaeger-src
     , mvn2nix
     }:
@@ -123,11 +125,7 @@
           tika-extractor = final.stdenv.mkDerivation rec {
             pname = "tika-extractor";
             version = "1.1";
-            src = fetchGit {
-              url = https://github.com/ipfs-search/tika-extractor;
-              ref = "main";
-              rev = "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
-            };
+            src = tika-extractor-src;
 
             nativeBuildInputs = with final;[ jdk11_headless maven makeWrapper ];
             buildPhase = ''
@@ -264,13 +262,6 @@
                 SPAN_STORAGE_TYPE = "elasticsearch";
                 ES_SERVER_URLS = "http://localhost:9200";
                 ES_TAGS_AS_FIELDS_ALL = "true";
-              };
-            };
-
-            config.systemd.services.tika-server = mkIf config.services.ipfs-search.enable {
-              description = "Tika Server";
-              serviceConfig = {
-                ExecStart = "${pkgs.tika-server}/bin/tika-server";
               };
             };
 
