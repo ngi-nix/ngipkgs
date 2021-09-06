@@ -188,7 +188,7 @@
         { pkgs, config, lib, ... }:
           with lib;
           {
-            config.nixpkgs.overlays = [ self.overlay ];
+            config.nixpkgs.overlays = [ mvn2nix.overlay self.overlay ];
 
             config.environment.systemPackages = with pkgs;[
               ipfs-crawler
