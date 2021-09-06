@@ -12,7 +12,7 @@
     ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
     ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
-    tika-extractor-src = { url = "github:ipfs-search/tika-extractor"; flake = false;}
+    tika-extractor-src = { url = "github:ipfs-search/tika-extractor"; flake = false;};
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
     mvn2nix.url = "github:fzakaria/mvn2nix";
   };
