@@ -12,7 +12,7 @@
     ipfs-search-api-src = { url = "github:ipfs-search/ipfs-search-api"; flake = false; };
     ipfs-crawler-src = { url = "github:ipfs-search/ipfs-search"; flake = false; };
     ipfs-sniffer-src = { url = "github:ipfs-search/ipfs-sniffer"; flake = false; };
-    tika-extractor-src = { url = "github:ipfs-search/tika-extractor"; flake = false;};
+    tika-extractor-src = { url = "github:ipfs-search/tika-extractor"; flake = false; };
     jaeger-src = { url = "github:jaegertracing/jaeger?ref=v1.25.0"; flake = false; };
     mvn2nix.url = "github:fzakaria/mvn2nix";
   };
@@ -201,68 +201,72 @@
 
             config.services.ipfs.enable = config.services.ipfs-search.enable;
 
-            config.systemd.services.tika-extractor = mkIf config.services.ipfs-search.enable {
-              description = "Tika extractor";
-              serviceConfig = {
-                ExecStart = "${pkgs.tika-extractor}/bin/tika-extractor";
+            config.systemd = mkIf config.services.ipfs-search.enable {
+              services.tika-extractor = {
+                description = "Tika extractor";
+                after = [ "ipfs.service" ];
+                wants = [ "ipfs.service" ];
+                serviceConfig = {
+                  ExecStart = "${pkgs.tika-extractor}/bin/tika-extractor";
+                };
               };
-            };
 
 
-            config.systemd.services.ipfs-crawler = mkIf config.services.ipfs-search.enable {
-              description = "The ipfs crawler";
-              after = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
-              wants = [ "ipfs.service" "elasticsearch.service" "tika-server.service" "rabbitmq.service" "jaeger.service" ];
-              serviceConfig = {
-                ExecStart = "${pkgs.ipfs-crawler}/bin/ipfs-search crawl";
+              services.ipfs-crawler = {
+                description = "The ipfs crawler";
+                after = [ "ipfs.service" "elasticsearch.service" "tika-extractor.service" "rabbitmq.service" "jaeger.service" ];
+                wants = [ "ipfs.service" "elasticsearch.service" "tika-extractor.service" "rabbitmq.service" "jaeger.service" ];
+                serviceConfig = {
+                  ExecStart = "${pkgs.ipfs-crawler}/bin/ipfs-search crawl";
+                };
+                environment = {
+                  TIKA_EXTRACTOR = "http://localhost:8081";
+                  IPFS_API_URL = "http://localhost:5001";
+                  IPFS_GATEWAY_URL = "http://localhost:8080";
+                  ELASTICSEARCH_URL = "http://localhost:9200";
+                  AMQP_URL = "amqp://guest:guest@localhost:5672/";
+                  OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
+                  OTEL_TRACE_SAMPLER_ARG = "1.0";
+                };
               };
-              environment = {
-                TIKA_EXTRACTOR = "http://localhost:8081";
-                IPFS_API_URL = "http://localhost:5001";
-                IPFS_GATEWAY_URL = "http://localhost:8080";
-                ELASTICSEARCH_URL = "http://localhost:9200";
-                AMQP_URL = "amqp://guest:guest@localhost:5672/";
-                OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
-                OTEL_TRACE_SAMPLER_ARG = "1.0";
-              };
-            };
 
-            config.systemd.services.ipfs-sniffer = mkIf config.services.ipfs-search.enable {
-              description = "IPFS sniffer";
-              serviceConfig = {
-                ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
+              services.ipfs-sniffer = {
+                description = "IPFS sniffer";
+                serviceConfig = {
+                  ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
+                };
+                after = [ "rabbitmq.service" "jaeger.service" ];
+                wants = [ "rabbitmq.service" "jaeger.service" ];
+                environment = {
+                  AMQP_URL = "amqp://guest:guest@localhost:5672/";
+                  OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
+                };
               };
-              after = [ "rabbitmq.service" "jaeger.service" ];
-              wants = [ "rabbitmq.service" "jaeger.service" ];
-              environment = {
-                AMQP_URL = "amqp://guest:guest@localhost:5672/";
-                OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
-              };
-            };
 
-            config.systemd.services.ipfs-search-api-server = mkIf config.services.ipfs-search.enable {
-              description = "IPFS search api";
-              after = [ "elasticsearch.service" ];
-              wants = [ "elasticsearch.service" ];
-              serviceConfig = {
-                ExecStart = "${pkgs.ipfs-search-api-server}/bin/server";
+              services.ipfs-search-api-server = {
+                description = "IPFS search api";
+                after = [ "elasticsearch.service" ];
+                wants = [ "elasticsearch.service" ];
+                serviceConfig = {
+                  ExecStart = "${pkgs.ipfs-search-api-server}/bin/server";
+                };
+                environment = {
+                  ELASTICSEARCH_URL = "http://elasticsearch:9200";
+                };
               };
-              environment = {
-                ELASTICSEARCH_URL = "http://elasticsearch:9200";
-              };
-            };
 
-            config.systemd.services.jaeger = mkIf config.services.ipfs-search.enable {
-              description = "jaeger tracing";
-              after = [ "elasticsearch.service" ];
-              wants = [ "elasticsearch.service" ];
-              serviceConfig = {
-                ExecStart = "${pkgs.jaeger}/bin/all-in-one";
-              };
-              environment = {
-                SPAN_STORAGE_TYPE = "elasticsearch";
-                ES_SERVER_URLS = "http://localhost:9200";
-                ES_TAGS_AS_FIELDS_ALL = "true";
+              services.jaeger = {
+                description = "jaeger tracing";
+                after = [ "elasticsearch.service" ];
+                wants = [ "elasticsearch.service" ];
+                serviceConfig = {
+                  ExecStart = "${pkgs.jaeger}/bin/all-in-one";
+                };
+                environment = {
+                  SPAN_STORAGE_TYPE = "elasticsearch";
+                  ES_SERVER_URLS = "http://localhost:9200";
+                  ES_TAGS_AS_FIELDS_ALL = "true";
+                };
               };
             };
 
