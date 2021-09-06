@@ -45,17 +45,12 @@
     {
       # A Nixpkgs overlay.
       overlay = final: prev:
-        with final;
         let
-          # info = final.lib.splitString "-" final.stdenv.hostPlatform.system;
-          # arch = final.lib.elemAt info 0;
-          # plat = final.lib.elemAt info 1;
-          # elkVersion = "7.8.1";
           npmlock2nix = import npmlock2nix-src { pkgs = final; };
-          mavenRepository = buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
+          mavenRepository = final.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
         in
         {
-          ipfs-crawler = buildGo115Module rec {
+          ipfs-crawler = final.buildGo115Module rec {
             pname = "ipfs-crawler";
             version = userFriendlyVersion src;
 
@@ -69,7 +64,7 @@
             };
           };
 
-          dweb-search-frontend = mkYarnPackage rec {
+          dweb-search-frontend = final.mkYarnPackage rec {
             pname = "dweb-search-frontend";
             version = userFriendlyVersion src;
             src = dweb-search-frontend-src;
@@ -86,38 +81,20 @@
             '';
           };
 
-          ipfs-sniffer = buildGoModule rec {
+          ipfs-sniffer = final.buildGoModule rec {
             pname = "ipfs-sniffer";
             version = "master";
             src = ipfs-sniffer-src;
             vendorSha256 = "sha256-xc1biJF4zicosSTFuUv82yvOYpbuY3h++rhvD+5aWNE=";
           };
 
-          jaeger = buildGoModule rec {
+          jaeger = final.buildGoModule rec {
             pname = "jaeger";
             version = "v1.25.0";
             src = jaeger-src;
             vendorSha256 = "sha256-f/DIAw8XWb1osfXAJ/ZKsB0sOmFnJincAQlfVHqElBE=";
           };
 
-
-          # kibana7-oss = prev.kibana7-oss.overrideAttrs (old: {
-          #   version = elkVersion;
-          #   src = pkgs.fetchurl {
-          #     url = "https://artifacts.elastic.co/downloads/kibana/kibana-oss-${elkVersion}-${plat}-${arch}.tar.gz";
-          #     # TODO fix the sha for other platforms
-          #     sha256 = "sha256-WWoOslKYWfoPc4wOU84QdxJln88JOmG8VhMaMtLraxs=";
-          #   };
-          # });
-
-          # elasticsearch7-oss = prev.elasticsearch7-oss.overrideAttrs (old: {
-          #   version = elkVersion;
-          #   src = pkgs.fetchurl {
-          #     url = "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${elkVersion}-${plat}-${arch}.tar.gz";
-          #     # TODO fix the sha for other platforms
-          #     sha256 = "sha256-eJ7tt6daRd5EdWMQMYy8BBPnArsjB5t03fjqScKivcU=";
-          #   };
-          # });
 
           # using nodejs 14 despite upstream uses version 10 (EOL)
           ipfs-search-api-server = npmlock2nix.build {
@@ -143,7 +120,7 @@
             '';
           };
 
-          tika-extractor = stdenv.mkDerivation rec {
+          tika-extractor = final.stdenv.mkDerivation rec {
             pname = "tika-extractor";
             version = "1.1";
             src = fetchGit {
@@ -152,7 +129,7 @@
               rev = "e629c4a6362916001deb430584ddc3fdc8a4bf6a";
             };
 
-            nativeBuildInputs = [ jdk11_headless maven makeWrapper ];
+            nativeBuildInputs = with final;[ jdk11_headless maven makeWrapper ];
             buildPhase = ''
               echo "Building with maven repository ${mavenRepository}"
               mvn package --offline -Dmaven.repo.local=${mavenRepository} -Dquarkus.package.type=uber-jar
@@ -225,12 +202,10 @@
 
             config.services.ipfs.enable = config.services.ipfs-search.enable;
 
-            config.services.tika-extractor = mkIf config.services.ipfs-search.enable {
-              systemd.services.tika-extractor = {
-                description = "Tika extractor";
-                serviceConfig = {
-                  ExecStart = "${pkgs.tika-extractor}/bin/tika-extractor";
-                };
+            config.systemd.services.tika-extractor = mkIf config.services.ipfs-search.enable {
+              description = "Tika extractor";
+              serviceConfig = {
+                ExecStart = "${pkgs.tika-extractor}/bin/tika-extractor";
               };
             };
 
