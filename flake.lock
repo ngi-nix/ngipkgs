@@ -142,7 +142,24 @@
         "jaeger-src": "jaeger-src",
         "mvn2nix": "mvn2nix",
         "nixpkgs": "nixpkgs",
-        "npmlock2nix-src": "npmlock2nix-src"
+        "npmlock2nix-src": "npmlock2nix-src",
+        "tika-extractor-src": "tika-extractor-src"
+      }
+    },
+    "tika-extractor-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1618237011,
+        "narHash": "sha256-nXCGTHcz5rrVHFqAcuNxDTDLSMX9WcVQducCfzGjfnk=",
+        "owner": "ipfs-search",
+        "repo": "tika-extractor",
+        "rev": "e629c4a6362916001deb430584ddc3fdc8a4bf6a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipfs-search",
+        "repo": "tika-extractor",
+        "type": "github"
       }
     },
     "utils": {
