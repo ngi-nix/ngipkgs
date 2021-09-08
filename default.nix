@@ -1,5 +1,8 @@
 {stdenv, fetchurl, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt, 
- libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib}:
+libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper}:
+let
+  gnunet' = gnunet.override { postgresqlSupport = true; };
+in
 stdenv.mkDerivation rec {
   pname = "anastasis";
   version = "0.0.0";
@@ -45,6 +48,8 @@ stdenv.mkDerivation rec {
     # https://discourse.nixos.org/t/could-weve-implemented-multi-output-packages-better/6597
     pkg-config
     autoreconfHook
+    # for wrapProgram
+    makeWrapper
   ];
   buildInputs = [
     taler-exchange
@@ -59,6 +64,13 @@ stdenv.mkDerivation rec {
     libuuid
   ];
   doCheck = true;
+  postInstall = ''
+    wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [ gnunet' ]}
+    '';
+  # Check that anastasis-config can find gnunet at runtime
+  postInstallCheck = ''
+    anastasis-config --help
+    '';
   meta = {
     description = ''
       GNU Anastasis is a key backup and recovery tool from the GNU project.
