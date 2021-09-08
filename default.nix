@@ -33,6 +33,11 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-0K6Ku7/aVIBUnFZnBD+w7fGQ2PU99JpAnVihSkdPZfs=";
   };
 
+  postPatch = ''
+    for f in src/cli/*.sh; do
+      substituteInPlace "$f" --replace "#!/bin/bash" "#!${stdenv.shell}";
+    done
+  '';
   nativeBuildInputs = [
     # To get the pkgconfig file into the dev output of taler-exchange
     # https://nixos.wiki/wiki/C#pkg-config
@@ -53,7 +58,7 @@ stdenv.mkDerivation rec {
     recutils
     libuuid
   ];
-
+  doCheck = true;
   meta = {
     description = ''
       GNU Anastasis is a key backup and recovery tool from the GNU project.
