@@ -78,6 +78,6 @@ stdenv.mkDerivation rec {
       well as libraries for clients and a command-line interface.
     '';
     license = lib.licenses.agpl3Plus;
-    homepage = "https://taler.net/";
+    homepage = "https://anastasis.lu";
   };
 }
