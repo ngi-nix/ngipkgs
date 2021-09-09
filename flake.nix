@@ -240,7 +240,8 @@
                 wants = [ "rabbitmq.service" "jaeger.service" ];
                 wantedBy    = [ "multi-user.target" ]; 
                 serviceConfig = {
-                  ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
+                  ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster -db '/var/lib/ipfs-sniffer'";
+                  StateDirectory = "ipfs-sniffer";
                   DynamicUser = true;
                 };
                 environment = {
