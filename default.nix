@@ -1,5 +1,5 @@
 {stdenv, fetchurl, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt, 
-libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper}:
+libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which}:
 let
   gnunet' = gnunet.override { postgresqlSupport = true; };
 in
@@ -63,13 +63,18 @@ stdenv.mkDerivation rec {
     recutils
     libuuid
   ];
+  # FIXME: increases computation time
+  # see https://github.com/gytis-ivaskevicius/rfcs/blob/enable-docheck-by-default/rfcs/0095-enable-docheck-by-default.md
   doCheck = true;
   postInstall = ''
-    wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [ gnunet' ]}
+    wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [ gnunet' 
+    # `which` is needed by $out/bin/anastasis-config during postInstallCheck
+    which ]}
     '';
   # Check that anastasis-config can find gnunet at runtime
+  doInstallCheck = true;
   postInstallCheck = ''
-    anastasis-config --help
+    $out/bin/anastasis-config --help > /dev/null
     '';
   meta = {
     description = ''
