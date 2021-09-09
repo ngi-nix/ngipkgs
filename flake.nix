@@ -206,8 +206,10 @@
                 description = "Tika extractor";
                 after = [ "ipfs.service" ];
                 wants = [ "ipfs.service" ];
+                wantedBy    = [ "multi-user.target" ]; 
                 serviceConfig = {
                   ExecStart = "${pkgs.tika-extractor}/bin/tika-extractor";
+                  DynamicUser = true;
                 };
               };
 
@@ -216,8 +218,10 @@
                 description = "The ipfs crawler";
                 after = [ "ipfs.service" "elasticsearch.service" "tika-extractor.service" "rabbitmq.service" "jaeger.service" ];
                 wants = [ "ipfs.service" "elasticsearch.service" "tika-extractor.service" "rabbitmq.service" "jaeger.service" ];
+                wantedBy    = [ "multi-user.target" ]; 
                 serviceConfig = {
                   ExecStart = "${pkgs.ipfs-crawler}/bin/ipfs-search crawl";
+                  DynamicUser = true;
                 };
                 environment = {
                   TIKA_EXTRACTOR = "http://localhost:8081";
@@ -232,11 +236,13 @@
 
               services.ipfs-sniffer = {
                 description = "IPFS sniffer";
-                serviceConfig = {
-                  ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
-                };
                 after = [ "rabbitmq.service" "jaeger.service" ];
                 wants = [ "rabbitmq.service" "jaeger.service" ];
+                wantedBy    = [ "multi-user.target" ]; 
+                serviceConfig = {
+                  ExecStart = "${pkgs.ipfs-sniffer}/bin/hydra-booster";
+                  DynamicUser = true;
+                };
                 environment = {
                   AMQP_URL = "amqp://guest:guest@localhost:5672/";
                   OTEL_EXPORTER_JAEGER_ENDPOINT = "http://localhost:14268/api/traces";
@@ -247,8 +253,10 @@
                 description = "IPFS search api";
                 after = [ "elasticsearch.service" ];
                 wants = [ "elasticsearch.service" ];
+                wantedBy    = [ "multi-user.target" ]; 
                 serviceConfig = {
                   ExecStart = "${pkgs.ipfs-search-api-server}/bin/server";
+                  DynamicUser = true;
                 };
                 environment = {
                   ELASTICSEARCH_URL = "http://elasticsearch:9200";
@@ -259,8 +267,10 @@
                 description = "jaeger tracing";
                 after = [ "elasticsearch.service" ];
                 wants = [ "elasticsearch.service" ];
+                wantedBy    = [ "multi-user.target" ]; 
                 serviceConfig = {
                   ExecStart = "${pkgs.jaeger}/bin/all-in-one";
+                  DynamicUser = true;
                 };
                 environment = {
                   SPAN_STORAGE_TYPE = "elasticsearch";
