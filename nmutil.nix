@@ -4,7 +4,7 @@ buildPythonPackage {
   pname = "libresoc-nmutil";
   version = "unstable-2021-08-24";
 
-  nativeBuildInputs = [ pyvcd ];
+  propagatedBuildInputs = [ pyvcd ];
 
   src = fetchgit {
     url = "https://git.libre-soc.org/git/nmutil.git";
