@@ -4,7 +4,8 @@ buildPythonPackage rec {
   pname = "bigfloat";
   version = "0.4.0";
 
-  buildInputs = [ gmp mpfr six ];
+  buildInputs = [ gmp mpfr ];
+  propagatedBuildInputs = [ six ];
 
   src = fetchPypi {
     inherit pname version;
