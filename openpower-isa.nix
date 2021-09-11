@@ -1,4 +1,4 @@
-{ lib, buildPythonPackage, fetchgit }:
+{ lib, buildPythonPackage, fetchgit, libresoc-nmutil, astor, nmigen, ply, pygdbmi }:
 
 buildPythonPackage {
   pname = "libresoc-openpower-isa";
@@ -9,6 +9,8 @@ buildPythonPackage {
     rev = "6e43a194f3d07ed5a8daa297187a32746c4c4d3c";
     sha256 = "0EekUouTQruTXGO5jlPJtqh0DOudghILy0nca5eaZz8=";
   };
+
+  propagatedBuildInputs = [ libresoc-nmutil astor nmigen ply pygdbmi ];
 
   doCheck = false;
 

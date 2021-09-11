@@ -1,10 +1,10 @@
-{ lib, buildPythonPackage, bigfloat, fetchPypi, gmp, mpfr }:
+{ lib, buildPythonPackage, bigfloat, fetchPypi, gmp, mpfr, six }:
 
 buildPythonPackage rec {
   pname = "bigfloat";
   version = "0.4.0";
 
-  buildInputs = [ gmp mpfr ];
+  buildInputs = [ gmp mpfr six ];
 
   src = fetchPypi {
     inherit pname version;

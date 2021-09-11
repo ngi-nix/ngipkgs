@@ -1,4 +1,4 @@
-{ lib, buildPythonPackage, bigfloat, fetchgit }:
+{ lib, buildPythonPackage, libresoc-nmutil, bigfloat, fetchgit }:
 
 buildPythonPackage {
   pname = "libresoc-ieee754fpu";
@@ -10,7 +10,7 @@ buildPythonPackage {
     sha256 = "wbr1vGFzUlUtBT6IcRsykADYeksiVoq/LacU/dbRQ0o=";
   };
 
-  propagatedBuildInputs = [ bigfloat ];
+  propagatedBuildInputs = [ libresoc-nmutil bigfloat ];
 
   doCheck = false;
 
