@@ -22,7 +22,7 @@ buildPythonPackage {
     cp -rT ./openpower $out/${python.sitePackages}/../openpower/
   '';
 
-  pythonImportsCheck = [ "openpower.decoder.power_decoder2" ];
+  pythonImportsCheck = [ "openpower.decoder.power_decoder2" "openpower" ];
 
   meta = with lib; {
     homepage = "https://pypi.org/project/libresoc-openpower-isa/";
