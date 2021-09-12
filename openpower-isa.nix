@@ -1,4 +1,4 @@
-{ lib, buildPythonPackage, fetchgit, libresoc-nmutil, astor, nmigen, ply, pygdbmi }:
+{ lib, python, buildPythonPackage, fetchgit, libresoc-nmutil, astor, nmigen, ply, pygdbmi }:
 
 buildPythonPackage {
   pname = "libresoc-openpower-isa";
@@ -13,6 +13,16 @@ buildPythonPackage {
   propagatedBuildInputs = [ libresoc-nmutil astor nmigen ply pygdbmi ];
 
   doCheck = false;
+
+  prePatch = ''
+    touch ./src/openpower/sv/__init__.py # TODO: fix upstream
+  '';
+
+  postInstall = ''
+    cp -rT ./openpower $out/${python.sitePackages}/../openpower/
+  '';
+
+  pythonImportsCheck = [ "openpower.decoder.power_decoder2" ];
 
   meta = with lib; {
     homepage = "https://pypi.org/project/libresoc-openpower-isa/";
