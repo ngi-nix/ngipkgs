@@ -14,6 +14,12 @@ buildPythonPackage {
 
   doCheck = false;
 
+  prePatch = ''
+    touch ./src/ieee754/part/__init__.py
+  '';
+
+  pythonImportsCheck = [ "ieee754.part" ];
+
   meta = with lib; {
     homepage = "https://pypi.org/project/libresoc-ieee754fpu/";
     license = licenses.lgpl3Plus;
