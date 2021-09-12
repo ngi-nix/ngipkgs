@@ -10,7 +10,9 @@ stdenv.mkDerivation {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [ nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa ];
+  nativeBuildInputs = with python3Packages; [
+    c4m-jtag nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa
+  ];
 
   configurePhase = "true";
 

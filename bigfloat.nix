@@ -1,4 +1,4 @@
-{ lib, buildPythonPackage, bigfloat, fetchPypi, gmp, mpfr, six }:
+{ lib, buildPythonPackage, fetchPypi, gmp, mpfr, six }:
 
 buildPythonPackage rec {
   pname = "bigfloat";
