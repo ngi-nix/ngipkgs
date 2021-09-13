@@ -1,6 +1,6 @@
 { version }:
 
-{ stdenv, python3Packages, python2 }:
+{ stdenv, python3Packages, python2, yosys }:
 
 stdenv.mkDerivation {
   pname = "libresoc.v";
@@ -10,9 +10,9 @@ stdenv.mkDerivation {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [
+  nativeBuildInputs = (with python3Packages; [
     c4m-jtag nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa
-  ];
+  ]) ++ [ yosys ];
 
   configurePhase = "true";
 
