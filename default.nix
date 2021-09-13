@@ -82,7 +82,7 @@ stdenv.mkDerivation rec {
       This package includes the backend run by the Anastasis providers as
       well as libraries for clients and a command-line interface.
     '';
-    license = lib.licenses.agpl3Plus;
+    license = lib.licenses.agpl3Only;
     homepage = "https://anastasis.lu";
   };
 }
