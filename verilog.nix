@@ -1,6 +1,6 @@
 { version }:
 
-{ stdenv, python3Packages }:
+{ stdenv, python3Packages, python2 }:
 
 stdenv.mkDerivation {
   pname = "libresoc.v";
@@ -18,6 +18,9 @@ stdenv.mkDerivation {
 
   buildPhase = ''
     runHook preBuild
+    env -C pinmux ${python2}/bin/python src/pinmux_generator.py -v -s ls180 -o ls180
+    cp pinmux/ls180/ls180_pins.py src/soc/debug
+    cp pinmux/ls180/ls180_pins.py src/soc/litex/florent/libresoc
     cd src
     export PYTHONPATH="$PWD:$PYTHONPATH"
     python3 soc/simple/issuer_verilog.py \
