@@ -1,12 +1,24 @@
 { version }:
 
-{ stdenv, python3Packages, python2, yosys }:
+{ stdenv, python3Packages, runCommand, python2, yosys }:
 
+let
+  # If we use ../. as source, then any change to
+  # any unrelated Nix file would cause a rebuild,
+  # since the build would have access to it.
+  src = runCommand "libresoc-verilog-source" {} ''
+    mkdir $out
+    cp -r ${../src} -T $out/src
+    cp -r ${../mkpinmux.sh} -T $out/mkpinmux.sh
+    cp -r ${../pinmux} -T $out/pinmux
+    cp -r ${../Makefile} -T $out/Makefile
+  '';
+in
 stdenv.mkDerivation {
   pname = "libresoc.v";
   inherit version;
 
-  src = ../.;
+  inherit src;
 
   strictDeps = true;
 
