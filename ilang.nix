@@ -1,4 +1,4 @@
-{ version }:
+{ version, litexPkgs }:
 
 { stdenv, python3Packages, yosys, libresoc-verilog }:
 
@@ -11,8 +11,8 @@ stdenv.mkDerivation {
   strictDeps = true;
 
   nativeBuildInputs = (with python3Packages; [
-    c4m-jtag nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa
-  ]) ++ [ yosys ];
+    python migen
+  ]) ++ (with litexPkgs; [ litex litedram liteeth liteiclink litescope litesdcard ]);
 
   postPatch = ''
     patchShebangs --build .
@@ -23,17 +23,18 @@ stdenv.mkDerivation {
   buildPhase = ''
     runHook preBuild
     cp ${libresoc-verilog} libresoc/libresoc.v
-    stat ls180soc.py
     ./ls180soc.py --build --platform=ls180sram4k --num-srams=2 --srams4k
-    echo IKJIJIJIJI
-    #make ls1804k
     runHook postBuild
   '';
 
   installPhase = ''
     runHook preInstall
     mkdir $out
-    mv ls180.il ls180_cvt.il libresoc_cvt.il -t $out
+    mv build/ls180sram4k/gateware/ls180sram4k.v $out/ls180.v
+    mv build/ls180sram4k/gateware/mem.init $out
+    mv build/ls180sram4k/gateware/mem_1.init $out
+    mv libresoc/libresoc.v $out
+    mv libresoc/SPBlock_512W64B8W.v $out
     runHook postInstall
   '';
 

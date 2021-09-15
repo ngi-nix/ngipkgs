@@ -16,7 +16,6 @@ buildPythonPackage {
   prePatch = ''
     export SETUPTOOLS_SCM_PRETEND_VERSION=${version}
   '';
-    # sed -i -e 's/use_scm_version=scm_version..,//g' setup.py
 
   meta = with lib; {
     homepage = "https://pypi.org/project/libresoc-openpower-isa/";
