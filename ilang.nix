@@ -11,11 +11,13 @@ stdenv.mkDerivation {
   strictDeps = true;
 
   nativeBuildInputs = (with python3Packages; [
-    python migen
+    python migen c4m-jtag nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa
   ]) ++ (with litexPkgs; [ litex litedram liteeth liteiclink litescope litesdcard ]);
 
   postPatch = ''
     patchShebangs --build .
+
+    export PYTHONPATH="${../src}:$PYTHONPATH"
   '';
 
   configurePhase = "true";
