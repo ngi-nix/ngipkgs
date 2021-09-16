@@ -16,9 +16,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "libresoc.v";
-  inherit version;
-
-  inherit src;
+  inherit version src;
 
   strictDeps = true;
 
