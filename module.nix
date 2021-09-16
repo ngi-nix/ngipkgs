@@ -17,6 +17,7 @@ let
 
     DATABASES = {
       "default": {
+        "ENGINE": "django.db.backends.postgresql",
         "HOST": "/run/postgresql",
         "NAME": "weblate",
         "USER": "weblate",
@@ -27,6 +28,13 @@ let
 
     with open("${cfg.djangoSecretKeyFile}") as f:
       SECRET_KEY = f.read().rstrip("\n")
+
+    CACHES = {
+      "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+      }
+    }
 
     ${cfg.extraConfig}
   '';
@@ -105,7 +113,7 @@ in
 
         locations = {
           "= /favicon.ico".alias = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/favicon.ico";
-          "/static/".alias = "/var/lib/weblate/static/";
+          "/static/".alias = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/";
           "/media/".alias = "/var/lib/weblate/media/";
           "/".extraConfig = ''
             # Needed for long running operations in admin interface
@@ -119,9 +127,56 @@ in
       };
     };
 
+    systemd.services.weblate-postgresql = {
+      description = "Weblate PostgreSQL setup";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "postgresql.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        User = "postgres";
+        Group = "postgres";
+        ExecStart = ''
+          ${pkgs.postgresql}/bin/psql weblate -c "CREATE EXTENSION IF NOT EXISTS pg_trgm"
+        '';
+      };
+    };
+
+    systemd.services.weblate-migrate = {
+      description = "Weblate migration";
+      wantedBy = [ "multi-user.target" ];
+      after = [ 
+        "postgresql.service"
+        "weblate-postgresql.service"
+      ];
+      environment = {
+        PYTHONPATH = "${settings_py}";
+        DJANGO_SETTINGS_MODULE = "settings";
+        GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
+      };
+      path = with pkgs; [ gitSVN ];
+      serviceConfig = {
+        Type = "oneshot";
+        # WorkingDirectory = pkgs.weblate;
+        StateDirectory = "weblate";
+        User = "weblate";
+        Group = "weblate";
+        ExecStart = "${pkgs.weblate}/bin/weblate migrate --noinput";
+      };
+    };
+
     systemd.services.weblate = {
       description = "Weblate";
-      after = [ "network.target" "postgresql.service" "redis.service" ];
+      after = [
+        "network.target"
+        "postgresql.service"
+        "redis.service"
+        "weblate-migrate.service"
+        "weblate-postgresql.service"
+      ];
+      requires = [
+        "weblate-migrate.service"
+        "weblate-postgresql.service"
+      ];
       wantedBy = [ "multi-user.target" ];
       environment = {
         PYTHONPATH = "${settings_py}";
@@ -129,7 +184,7 @@ in
         GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
       };
       path = with pkgs; [
-        git
+        gitSVN
 
         #optional
         git-review
@@ -169,6 +224,7 @@ in
 
     services.redis = {
       enable = true;
+      unixSocket = "/run/redis/redis.sock";
     };
 
     services.postgresql = {

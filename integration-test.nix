@@ -16,6 +16,7 @@ in
     services.weblate = {
       enable = true;
       localDomain = "${serverDomain}";
+      djangoSecretKeyFile = pkgs.writeText "weblate-django-secret" "thisissnakeoilsecret";
     };
 
 
