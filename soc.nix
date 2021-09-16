@@ -10,8 +10,9 @@ let
   src = runCommand "libresoc-soc-source" {} ''
     mkdir $out
     cp -r ${../src} -T $out/src
-    cp -r ${../pinmux} -T $out/pinmux
     cp -r ${../setup.py} -T $out/setup.py
+    cp -r ${../README.md} -T $out/README.md
+    cp -r ${../NEWS.txt} -T $out/NEWS.txt
   '';
 in
 buildPythonPackage {
@@ -23,6 +24,10 @@ buildPythonPackage {
   ];
 
   doCheck = false;
+
+  prePatch = ''
+    rm -r src/soc/litex
+  '';
 
   pythonImportsCheck = [ "soc" ];
 
