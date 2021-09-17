@@ -35,6 +35,19 @@ let
       "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+            "PASSWORD": None,
+            "CONNECTION_POOL_KWARGS": {},
+        },
+        "KEY_PREFIX": "weblate",
+      },
+      "avatar": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/var/lib/weblate/avatar-cache",
+        "TIMEOUT": 86400,
+        "OPTIONS": {"MAX_ENTRIES": 1000},
       }
     }
 
