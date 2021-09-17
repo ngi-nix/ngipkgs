@@ -14,6 +14,8 @@ let
     ENABLE_HTTPS = False
     DEBUG = True
     DATA_DIR = "/var/lib/weblate"
+    STATIC_ROOT = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/"
+    MEDIA_ROOT = "/var/lib/weblate/media"
 
     DATABASES = {
       "default": {
