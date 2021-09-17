@@ -51,6 +51,13 @@ let
       }
     }
 
+    EMAIL_HOST = "127.0.0.1"
+    # EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = "${cfg.smtp.user}"
+    EMAIL_PORT = 587
+    with open("${cfg.smtp.passwordFile}") as f:
+      EMAIL_HOST_PASSWORD = f.read().rstrip("\n")
+
     ${cfg.extraConfig}
   '';
   settings_py = pkgs.runCommand "weblate_settings.py" { } ''
@@ -112,6 +119,28 @@ in
         '';
       };
 
+      smtp = {
+        user = lib.mkOption {
+          description = "SMTP login name.";
+          example = "weblate@weblate.example.org";
+          type = lib.types.str;
+        };
+
+        createLocally = lib.mkOption {
+          description = "Configure local Postfix SMTP server for Weblate.";
+          type = lib.types.bool;
+          default = true;
+        };
+        passwordFile = lib.mkOption {
+          description = ''
+            Location of a file containing the SMTP password.
+
+            This should be a string, not a nix path, since nix paths are copied into the world-readable nix store.
+          '';
+          type = lib.types.path;
+        };
+      };
+
     };
   };
 
@@ -142,10 +171,11 @@ in
       };
     };
 
-    systemd.services.weblate-postgresql = {
+    systemd.services.weblate-postgresql-setup = {
       description = "Weblate PostgreSQL setup";
       wantedBy = [ "multi-user.target" ];
       after = [ "postgresql.service" ];
+      partOf = [ "weblate.service" ];
       serviceConfig = {
         Type = "oneshot";
         User = "postgres";
@@ -158,11 +188,12 @@ in
 
     systemd.services.weblate-migrate = {
       description = "Weblate migration";
-      wantedBy = [ "multi-user.target" ];
-      after = [ 
+      wantedBy = [ "weblate.service" ];
+      after = [
         "postgresql.service"
-        "weblate-postgresql.service"
+        "weblate-postgresql-setup.service"
       ];
+      partOf = [ "weblate.service" ];
       environment = {
         PYTHONPATH = "${settings_py}";
         DJANGO_SETTINGS_MODULE = "settings";
@@ -179,6 +210,50 @@ in
       };
     };
 
+    systemd.services.weblate-celery = {
+      description = "Weblate Celery";
+      wantedBy = [ "weblate.service" ];
+      after = [
+        "redis.service"
+      ];
+      partOf = [ "weblate.service" ];
+      environment = {
+        CELERY_WORKER_RUNNING = "1";
+      };
+      # Recommendations from:
+      # https://github.com/WeblateOrg/weblate/blob/main/weblate/examples/celery-weblate.service
+      serviceConfig = {
+        Type = "forking";
+        User = "weblate";
+        Group = "weblate";
+        WorkingDirectory = "/var/lib/weblate";
+        RuntimeDirectory = "weblate";
+        RuntimeDirectoryPreserve = "restart";
+        LogsDirectory = "celery";
+        PIDFile = "/run/celery-weblate.pid";
+        ExecStart = ''
+          ${pkgs.python3Packages.celery}/bin/celery multi start \
+            celery notify memory backup translate \
+            -A "weblate.utils" \
+            --pidfile=/run/celery-weblate.pid \
+            --logfile=/var/log/celery/weblate.log \
+            --loglevel=INFO \
+            --beat:celery \
+            --queues:celery=celery \
+            --prefetch-multiplier:celery=4 \
+            --queues:notify=notify \
+            --prefetch-multiplier:notify=10 \
+            --queues:memory=memory \
+            --prefetch-multiplier:memory=10 \
+            --queues:translate=translate \
+            --prefetch-multiplier:translate=4 \
+            --concurrency:backup=1 \
+            --queues:backup=backup \
+            --prefetch-multiplier:backup=2
+        '';
+      };
+    };
+
     systemd.services.weblate = {
       description = "Weblate";
       after = [
@@ -192,7 +267,9 @@ in
         "weblate-migrate.service"
         "weblate-postgresql.service"
       ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [
+        "multi-user.target"
+      ];
       environment = {
         PYTHONPATH = "${settings_py}";
         DJANGO_SETTINGS_MODULE = "settings";
@@ -233,7 +310,7 @@ in
       };
     };
 
-    services.postfix = {
+    services.postfix = lib.mkIf cfg.smtp.createLocally {
       enable = true;
     };
 
@@ -263,3 +340,5 @@ in
   meta.maintainers = with lib.maintainers; [ erictapen ];
 
 }
+
+
