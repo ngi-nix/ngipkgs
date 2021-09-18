@@ -17,6 +17,10 @@ in
       enable = true;
       localDomain = "${serverDomain}";
       djangoSecretKeyFile = pkgs.writeText "weblate-django-secret" "thisissnakeoilsecret";
+      smtp = {
+        user = "weblate@${serverDomain}";
+        passwordFile = pkgs.writeText "weblate-smtp-pass" "thisissnakeoilpassword";
+      };
     };
 
 
