@@ -1,30 +1,28 @@
-{ version, litexPkgs }:
+{ version }:
 
-{ stdenv, python3Packages, yosys, libresoc-verilog }:
+{ stdenv, python3Packages, yosys, libresoc-pre-litex, libresoc-pinmux }:
 
 stdenv.mkDerivation {
-  pname = "libresoc.il";
+  pname = "libresoc-ls1804k";
   inherit version;
 
   src = ../src/soc/litex/florent;
 
-  strictDeps = true;
-
-  nativeBuildInputs = (with python3Packages; [
-    python migen c4m-jtag nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa
-  ]) ++ (with litexPkgs; [ litex litedram liteeth liteiclink litescope litesdcard ]);
+  nativeBuildInputs = with python3Packages; [
+    python libresoc-soc litex-unchecked litedram-unchecked liteeth-unchecked liteiclink-unchecked litescope-unchecked litesdcard-unchecked
+  ];
 
   postPatch = ''
     patchShebangs --build .
-
-    export PYTHONPATH="${../src}:$PYTHONPATH"
   '';
 
   configurePhase = "true";
 
   buildPhase = ''
     runHook preBuild
-    cp ${libresoc-verilog} libresoc/libresoc.v
+    export PINMUX="$(mktemp -d)"
+    ln -s ${libresoc-pinmux} "$PINMUX/ls180"
+    cp ${libresoc-pre-litex} libresoc/libresoc.v
     ./ls180soc.py --build --platform=ls180sram4k --num-srams=2 --srams4k
     runHook postBuild
   '';

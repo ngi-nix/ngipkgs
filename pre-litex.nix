@@ -11,7 +11,7 @@ let script = ''
     --enable-xics --enable-sram4x4kblock --disable-svp64 \
     $out
 ''; in
-runCommand "libresoc-pre-litex.v" {
+runCommand "libresoc-ls1804k-pre-litex.v" {
   inherit version;
 
   nativeBuildInputs = (with python3Packages; [
