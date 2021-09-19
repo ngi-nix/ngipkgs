@@ -1,6 +1,6 @@
 { version }:
 
-{ stdenv, python3Packages, yosys, libresoc-pre-litex, libresoc-pinmux }:
+{ stdenv, python3Packages, yosys, libresoc-pre-litex, libresoc-pinmux, pkgsCross }:
 
 stdenv.mkDerivation {
   pname = "libresoc-ls1804k";
@@ -8,9 +8,11 @@ stdenv.mkDerivation {
 
   src = ../src/soc/litex/florent;
 
-  nativeBuildInputs = with python3Packages; [
+  nativeBuildInputs =
+    (with python3Packages; [
     python libresoc-soc litex litedram liteeth liteiclink litescope litesdcard
-  ];
+    ])
+    ++ [ pkgsCross.powernv.buildPackages.gcc ];
 
   postPatch = ''
     patchShebangs --build .
