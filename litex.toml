@@ -1,62 +1,62 @@
 [litex]
 github_user = "enjoy-digital"
 github_repo = "litex"
-git_revision = "35929c0f8a8f1cc098a6b6ebb569caca8df8c08d"
-github_archive_nix_hash = "1npbmafbwg2bzx7w61v6l9lbvv4sh6rs18sflr0i1j2x3kd78hr4"
+git_revision = "42d8fc226a4f4e8dfef104257a95f98eb9b10da7"
+github_archive_nix_hash = "16zb7mci2a09jc5bbr4342pn95iyl84705n566alpx696xk2l0zr"
 
 [litex-boards]
 github_user = "litex-hub"
 github_repo = "litex-boards"
-git_revision = "f3289095780a0106bd41201ea680d50ca5c1a180"
-github_archive_nix_hash = "1wg8cpz5rps8b1402mg3pxd4ynwb79a0917w5cjdzsyxn0wwdviy"
+git_revision = "1781be166aee867421e0d943f6a62c3397524563"
+github_archive_nix_hash = "0ar41ibs6si03iyhcjn3blw1rkdsazn5rsa95ph8v061kg2yjbjh"
 
 [liteeth]
 github_user = "enjoy-digital"
 github_repo = "liteeth"
-git_revision = "792013a1756ea50608726ee86989ec38cfc35a8b"
-github_archive_nix_hash = "0b1jy2kk0dx7v11f79s3c7wrwvgwdwl79v14cx0hs79x8jcl3247"
+git_revision = "64b85e621e740b9b7a9bdb03749758c703fea6e1"
+github_archive_nix_hash = "1gbscl36n6mgaz1y1b27nzhykrhrccl6ls5vp7dd6divpqdf328i"
 
 [litedram]
 github_user = "enjoy-digital"
 github_repo = "litedram"
-git_revision = "198bcbab676e2b4065e5b6a7dc8a7733bae8315a"
-github_archive_nix_hash = "13vmvqmvrk3j52d2szjjs0f2zz6rv7zbav3f74qgaa55slidmx99"
+git_revision = "ac825e51124e926c67455292cd2b949954fc6f65"
+github_archive_nix_hash = "1acs4kgbsv8pgml1q7709afh46f8mpy8b1nw0p9n8a1zih8ang1r"
 
 [litehyperbus]
 github_user = "litex-hub"
 github_repo = "litehyperbus"
-git_revision = "8f7116e15470c97f2a564746c3e57e0deaf32229"
-github_archive_nix_hash = "0f54jh0d6xi7ygpllh95wcr95a14icsqn662lag9s1gkdg1rx44q"
+git_revision = "c4b64d2c992cedf3e03ffdf87f389feb5ddfff52"
+github_archive_nix_hash = "1iwjwzz4wa9zzm6yqa7rkag9igmsawp8wpmkj6fqia20b7xjglnb"
 
 [liteiclink]
 github_user = "enjoy-digital"
 github_repo = "liteiclink"
-git_revision = "60b19945d2e08913d56ecf6433a1d380bb1da616"
-github_archive_nix_hash = "15s3csh8psdaf1v4lf75f74k79bmcipwq6j104baq0vq32q76jfm"
+git_revision = "efd200fa9e625144131a310fc09fd1fecf1682e6"
+github_archive_nix_hash = "0g643ryfzc6iq0p80rhq116n5w6mh4fv4yg4adyy5i1vy2grlg8s"
 
 [litepcie]
 github_user = "enjoy-digital"
 github_repo = "litepcie"
-git_revision = "29d496302e0addf5daac553f8da6a6c79db4237f"
-github_archive_nix_hash = "0dz5m43h4l7kxx2sxm0hvpdfshbpjvsjknasm63ayxp3fyb25fv7"
+git_revision = "0718fd135fc30e0a3598eaf66ce2fcb54b62193c"
+github_archive_nix_hash = "1m3i4hv49438ik4qhdp7rx9nan5rddrqp7nzvya9xfbh7lfc59hl"
 
 [litescope]
 github_user = "enjoy-digital"
 github_repo = "litescope"
-git_revision = "ec7bd6b47d3cbc549e4465e59e427cb438734d33"
-github_archive_nix_hash = "14a84znv2x42380si92wyvq09v09wr77s505ybg0pn1ndw40s06w"
+git_revision = "2739d5a069386c8e834c7f660dce9f93dc2b4598"
+github_archive_nix_hash = "08r7dzlmlfs9pmfz4xkf61sal5zy3caby88bcb4993c43nzpw8a3"
 
 [litesdcard]
 github_user = "enjoy-digital"
 github_repo = "litesdcard"
-git_revision = "b5a92192acc950388480c25039cd324c898998fb"
-github_archive_nix_hash = "0z4l87y7gxcx0yjj8hsb6y32qhnr3zh2gqlldarq9rbbc1s9q57f"
+git_revision = "edee2467fcabc62c4b34e3daa2271a71e52ba09f"
+github_archive_nix_hash = "0n5x9cx61xij0hc61slabxa05pzmw8i5fyg54ydmxi2fl2p5p0rs"
 
 [litespi]
 github_user = "litex-hub"
 github_repo = "litespi"
-git_revision = "ce33a01b85c24e9123a12443a5d447da0e462767"
-github_archive_nix_hash = "0k3v5vpjj6320nqd90gydlh2fwb06vbs9rmykb86llra7h8dnslp"
+git_revision = "c0730ebdb3c976618bf24e9ec04911e7c9934adf"
+github_archive_nix_hash = "015irjdpii514aj4av02pglvvq0wgxkplyy09435crzy9j5i5v04"
 
 [pythondata-misc-tapcfg]
 github_user = "litex-hub"
@@ -73,5 +73,5 @@ github_archive_nix_hash = "0b65dj95418j4pjqqkqjq5npnn1ih1789ba9575kxcljgj7r8xb7"
 [pythondata-cpu-serv]
 github_user = "litex-hub"
 github_repo = "pythondata-cpu-serv"
-git_revision = "fe79ea40880943c259d774201f2725133f4878fd"
-github_archive_nix_hash = "0jfzsp6gc4chk8qlqxxqp4iklj4s54whaghamrigw560vz72m01w"
+git_revision = "915cdf793395ab48cc52c0225660eb6eeff41133"
+github_archive_nix_hash = "1ndkjhh7r521cc9g63pmjvgvv9sa3s8n2mkdli91nr7ns3q3lxmk"
