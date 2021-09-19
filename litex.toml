@@ -1,0 +1,77 @@
+[litex]
+github_user = "enjoy-digital"
+github_repo = "litex"
+git_revision = "35929c0f8a8f1cc098a6b6ebb569caca8df8c08d"
+github_archive_nix_hash = "1npbmafbwg2bzx7w61v6l9lbvv4sh6rs18sflr0i1j2x3kd78hr4"
+
+[litex-boards]
+github_user = "litex-hub"
+github_repo = "litex-boards"
+git_revision = "f3289095780a0106bd41201ea680d50ca5c1a180"
+github_archive_nix_hash = "1wg8cpz5rps8b1402mg3pxd4ynwb79a0917w5cjdzsyxn0wwdviy"
+
+[liteeth]
+github_user = "enjoy-digital"
+github_repo = "liteeth"
+git_revision = "792013a1756ea50608726ee86989ec38cfc35a8b"
+github_archive_nix_hash = "0b1jy2kk0dx7v11f79s3c7wrwvgwdwl79v14cx0hs79x8jcl3247"
+
+[litedram]
+github_user = "enjoy-digital"
+github_repo = "litedram"
+git_revision = "198bcbab676e2b4065e5b6a7dc8a7733bae8315a"
+github_archive_nix_hash = "13vmvqmvrk3j52d2szjjs0f2zz6rv7zbav3f74qgaa55slidmx99"
+
+[litehyperbus]
+github_user = "litex-hub"
+github_repo = "litehyperbus"
+git_revision = "8f7116e15470c97f2a564746c3e57e0deaf32229"
+github_archive_nix_hash = "0f54jh0d6xi7ygpllh95wcr95a14icsqn662lag9s1gkdg1rx44q"
+
+[liteiclink]
+github_user = "enjoy-digital"
+github_repo = "liteiclink"
+git_revision = "60b19945d2e08913d56ecf6433a1d380bb1da616"
+github_archive_nix_hash = "15s3csh8psdaf1v4lf75f74k79bmcipwq6j104baq0vq32q76jfm"
+
+[litepcie]
+github_user = "enjoy-digital"
+github_repo = "litepcie"
+git_revision = "29d496302e0addf5daac553f8da6a6c79db4237f"
+github_archive_nix_hash = "0dz5m43h4l7kxx2sxm0hvpdfshbpjvsjknasm63ayxp3fyb25fv7"
+
+[litescope]
+github_user = "enjoy-digital"
+github_repo = "litescope"
+git_revision = "ec7bd6b47d3cbc549e4465e59e427cb438734d33"
+github_archive_nix_hash = "14a84znv2x42380si92wyvq09v09wr77s505ybg0pn1ndw40s06w"
+
+[litesdcard]
+github_user = "enjoy-digital"
+github_repo = "litesdcard"
+git_revision = "b5a92192acc950388480c25039cd324c898998fb"
+github_archive_nix_hash = "0z4l87y7gxcx0yjj8hsb6y32qhnr3zh2gqlldarq9rbbc1s9q57f"
+
+[litespi]
+github_user = "litex-hub"
+github_repo = "litespi"
+git_revision = "ce33a01b85c24e9123a12443a5d447da0e462767"
+github_archive_nix_hash = "0k3v5vpjj6320nqd90gydlh2fwb06vbs9rmykb86llra7h8dnslp"
+
+[pythondata-misc-tapcfg]
+github_user = "litex-hub"
+github_repo = "pythondata-misc-tapcfg"
+git_revision = "25c97a4a9ff9af85248028fe01e2c65b2e3640ee"
+github_archive_nix_hash = "0zr6d5giqzsjmqpfyf1b25r0y70bj09xjbfinfxcdc6s8cwwwz71"
+
+[pythondata-software-compiler_rt]
+github_user = "litex-hub"
+github_repo = "pythondata-software-compiler_rt"
+git_revision = "7cfcaed2e726027fd622650b58dd77e47c495ee0"
+github_archive_nix_hash = "0b65dj95418j4pjqqkqjq5npnn1ih1789ba9575kxcljgj7r8xb7"
+
+[pythondata-cpu-serv]
+github_user = "litex-hub"
+github_repo = "pythondata-cpu-serv"
+git_revision = "fe79ea40880943c259d774201f2725133f4878fd"
+github_archive_nix_hash = "0jfzsp6gc4chk8qlqxxqp4iklj4s54whaghamrigw560vz72m01w"

@@ -9,7 +9,7 @@ stdenv.mkDerivation {
   src = ../src/soc/litex/florent;
 
   nativeBuildInputs = with python3Packages; [
-    python libresoc-soc litex-unchecked litedram-unchecked liteeth-unchecked liteiclink-unchecked litescope-unchecked litesdcard-unchecked
+    python libresoc-soc litex litedram liteeth liteiclink litescope litesdcard
   ];
 
   postPatch = ''
