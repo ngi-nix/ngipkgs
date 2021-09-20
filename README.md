@@ -57,7 +57,7 @@ General help using GNU software: http://www.gnu.org/gethelp/
 
 ## Client CLI
 
-Anastasis Reducer API is used by client applications to store or load the different states the client application can have
+Anastasis Reducer API is used by client applications to initialise, store or load the different states the client application can have.
 
 ```
 anastasis-reducer
@@ -76,6 +76,25 @@ Arguments mandatory for long options are also mandatory for short options.
 Report bugs to contact@anastasis.lu.
 Home page: https://anastasis.lu/
 General help using GNU software: http://www.gnu.org/gethelp/
+```
+
+Examples:
+
+Initialise a backup state
+```
+BFILE=$(mktemp /tmp/anastasis-state-XXX)
+anastasis-reducer -b "$BFILE"
+```
+
+Initialise a recovery state
+```
+RFILE=$(mktemp /tmp/anastasis-state-XXX)
+anastasis-reducer -r "$RFILE"
+```
+
+The state files are json formated and can be inspected this way
+```
+jq -r -e .recovery_state < $RFILE
 ```
 
 ## Gnunet configuration file manager (either client or server)
