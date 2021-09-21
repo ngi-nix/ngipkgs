@@ -1,38 +1,14 @@
 {stdenv, fetchurl, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt, 
-libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which}:
+libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which, jq, tree}:
 let
   gnunet' = gnunet.override { postgresqlSupport = true; };
 in
 stdenv.mkDerivation rec {
   pname = "anastasis";
   version = "0.0.0";
-
-  # version = "0.1.0"; yields this error
-  #
-  # plugin_anastasis_postgres.c: In function 'postgres_event_listen':
-  # plugin_anastasis_postgres.c:666:34: error: incompatible type for argument 3 of 'GNUNET_PQ_event_listen'
-  #   666 |                                  timeout,
-  #       |                                  ^~~~~~~
-  #       |                                  |
-  #       |                                  struct GNUNET_TIME_Relative
-  # In file included from /nix/store/zh0ia8wf90zsqbwzf4pbmcbgbzwdaiic-taler-exchange-0.8.3/include/taler/taler_pq_lib.h:28,
-  #                  from plugin_anastasis_postgres.c:26:
-  # /nix/store/jj0f8czpnhdz3n7nn4rsjx3rfmwcb9bm-gnunet-0.15.0/include/gnunet/gnunet_pq_lib.h:932:49: note: expected 'GNUNET_DB_EventCallback' {aka 'void (*)(void>
-  #   932 |                         GNUNET_DB_EventCallback cb,
-  #       |                         ~~~~~~~~~~~~~~~~~~~~~~~~^~
-  # plugin_anastasis_postgres.c:664:10: error: too many arguments to function 'GNUNET_PQ_event_listen'
-  #   664 |   return GNUNET_PQ_event_listen (pg->conn,
-  #       |          ^~~~~~~~~~~~~~~~~~~~~~
-  # In file included from /nix/store/zh0ia8wf90zsqbwzf4pbmcbgbzwdaiic-taler-exchange-0.8.3/include/taler/taler_pq_lib.h:28,
-  #                  from plugin_anastasis_postgres.c:26:
-  # /nix/store/jj0f8czpnhdz3n7nn4rsjx3rfmwcb9bm-gnunet-0.15.0/include/gnunet/gnunet_pq_lib.h:930:1: note: declared here
-  #   930 | GNUNET_PQ_event_listen (struct GNUNET_PQ_Context *db,
-  #       | ^~~~~~~~~~~~~~~~~~~~~~
-  # plugin_anastasis_postgres.c:669:1: warning: control reaches end of non-void function [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wretur>
-  #   669 | }
-
+  # version = "0.1.0"; # needs gnunet 0.15.3 and conflicts with taler-exchange 0.8.4: missing TALER_amount_is_zero
   src = fetchurl {
-    url = "https://ftp.gnu.org/gnu/anastasis/anastasis-${version}.tar.gz";
+    url = "https://ftp.gnu.org/gnu/anastasis/${pname}-${version}.tar.gz";
     sha256 = "sha256-0K6Ku7/aVIBUnFZnBD+w7fGQ2PU99JpAnVihSkdPZfs=";
   };
 
@@ -63,17 +39,37 @@ stdenv.mkDerivation rec {
     recutils
     libuuid
   ];
-  # FIXME: increases computation time
+  configureFlags = [
+    # GNUNETPFX
+    "--with-gnunet=${gnunet'}"
+    # EXCHANGEPFX
+    "--with-exchange=${taler-exchange}"
+  ];
+  # FIXME: this increases computation time
   # see https://github.com/gytis-ivaskevicius/rfcs/blob/enable-docheck-by-default/rfcs/0095-enable-docheck-by-default.md
+  # FIXME: many tests are skipped 
+  #   it might be needed to add ./ in front of some shell scripts within test scripts, missing path to config
+  checkInputs = [
+    taler-exchange
+    taler-merchant
+    jq
+  ];
   doCheck = true;
+
   postInstall = ''
-    wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [ gnunet' 
-    # `which` is needed by $out/bin/anastasis-config during postInstallCheck
-    which ]}
+    # FIXME I don't know if it's necessary if the GNUNETPREFIX is already set
+    wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [
+      # Fix "anastasis-config-wrapped needs gnunet-config to be installed"
+      #   in src/cli/test_anastasis_reducer_backup_enter_user_attributes.sh
+      # (NB: --with-gnunet was not enough)
+      gnunet'
+      # `which` is needed by $out/bin/anastasis-config during postInstallCheck
+      which
+    ]}
     '';
-  # Check that anastasis-config can find gnunet at runtime
   doInstallCheck = true;
   postInstallCheck = ''
+    # Check that anastasis-config can find gnunet at runtime
     $out/bin/anastasis-config --help > /dev/null
     '';
   meta = {
