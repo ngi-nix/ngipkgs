@@ -1,6 +1,8 @@
 {
   description = "GNU Anastasis is a key backup and recovery tool from the GNU project.";
+
   inputs.nixpkgs.url = "github:JosephLucas/nixpkgs/anastasis";
+
   outputs = { self, nixpkgs}:
     let
       supportedSystems = [ "x86_64-linux" ];
@@ -10,21 +12,15 @@
       ##
       # For the integration test
       ##
-      anastasisSrc = let
-         # FIXME: not sure if this prefetch to get some test data is conventional
-         # FIXME: system should be generic here
-         anastasisPkgName = ((import nixpkgs {system = "x86_64-linux";}).callPackage ./default.nix {}).name;
-        in
-          fetchTarball {
-            url = "https://ftp.gnu.org/gnu/anastasis/${anastasisPkgName}.tar.gz";
-            sha256 = "sha256:1lgpkjj4wy4xr34ngzi0qag1gspib3i9rmaw4g4k50l90jphzfxj";
-          };
+
+      # FIXME: system should be generic here
+      anastasisSrc = self.packages.x86_64-linux.anastasis.src;
+
       sql0  =  builtins.readFile "${anastasisSrc}/src/stasis/stasis-0000.sql";
       sql1  =  builtins.readFile "${anastasisSrc}/src/stasis/stasis-0001.sql";
       t1  = "test_anastasis_reducer_backup_enter_user_attributes.sh";
       t2  = "test_anastasis_reducer_enter_secret.sh";
       t3  = "test_anastasis_reducer_recovery_enter_user_attributes.sh";
-
     in
     {
       overlay = final: prev: { anastasis = (final.callPackage ./default.nix {}); };
@@ -35,7 +31,7 @@
 
       ###
       # Integration test:
-      #   anstasis + gnunet + postgres + taler-exchange + taler-merchant       
+      #   anstasis + gnunet + postgres + taler-exchange + taler-merchant
       ###
 
       nixosModules = {
