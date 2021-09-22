@@ -1,5 +1,5 @@
-{src, stdenv, fetchurl, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt,
-libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which, jq, tree}:
+{src, stdenv, fetchzip, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt,
+libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which, jq}:
 let
   gnunet' = gnunet.override { postgresqlSupport = true; };
 in
@@ -7,9 +7,9 @@ stdenv.mkDerivation rec {
   pname = "anastasis";
   version = "0.0.0";
   # version = "0.1.0"; # needs gnunet 0.15.3 and conflicts with taler-exchange 0.8.4: missing TALER_amount_is_zero
-  src = fetchTarball {
-    url = "https://ftp.gnu.org/gnu/anastasis/${pname}-${version}.tar.gz";
-    sha256 = "sha256:1lgpkjj4wy4xr34ngzi0qag1gspib3i9rmaw4g4k50l90jphzfxj";
+  src = fetchzip {
+    url = "mirror://gnu/anastasis/${pname}-${version}.tar.gz";
+    sha256 = "sha256-srsPrwSJgjLJI1zVnOJY8eoXnsIg/mfJyJ14TqSc99E=";
   };
 
   postPatch = ''
