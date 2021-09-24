@@ -149,7 +149,6 @@ in
 
     services.nginx = {
       enable = true;
-      recommendedProxySettings = true; # required for redirections to work
       virtualHosts."${cfg.localDomain}" = {
 
         forceSSL = true;
