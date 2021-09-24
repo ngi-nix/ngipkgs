@@ -75,3 +75,15 @@ github_user = "litex-hub"
 github_repo = "pythondata-cpu-serv"
 git_revision = "915cdf793395ab48cc52c0225660eb6eeff41133"
 github_archive_nix_hash = "1ndkjhh7r521cc9g63pmjvgvv9sa3s8n2mkdli91nr7ns3q3lxmk"
+
+[litevideo]
+github_user = "enjoy-digital"
+github_repo = "litevideo"
+git_revision = "41f30143075ece3fff5c33a332ed067d1837cbb3"
+github_archive_nix_hash = "06vw4rn8xby8is13275bmkrxlwp3wlznbdqfay78a5m8bp73kypy"
+
+[valentyusb-hw_cdc_eptri]
+github_user = "litex-hub"
+github_repo = "valentyusb"
+git_revision = "a0526ad053c394306ad7a585a7ddd463831ad09d"
+github_archive_nix_hash = "0nad2x5j5rnjyciwm0abxhzng8nrv06ri8g9qdi39zk8n9zy7cmf"
