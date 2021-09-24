@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.7.2";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.8.1";
   inputs.weblate.flake = false;
 
   outputs = { self, nixpkgs, poetry2nix, weblate }:
@@ -26,7 +26,6 @@
           license = licenses.gpl3Plus;
           maintainers = with maintainers; [ erictapen ];
         };
-
       };
 
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;

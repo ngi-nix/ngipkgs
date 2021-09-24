@@ -332,6 +332,7 @@ in
 
     users.users.weblate = {
       isSystemUser = true;
+      group = "weblate";
     };
 
     users.groups.weblate.members = [ config.services.nginx.user ];
