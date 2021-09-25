@@ -1,6 +1,7 @@
 { version }:
 
-{ stdenv, python3Packages, yosys, libresoc-pre-litex, libresoc-pinmux, pkgsCross }:
+{ stdenv, python3Packages, yosys, libresoc-pre-litex, libresoc-pinmux, pkgsCross
+, nextpnr, trellis }:
 
 stdenv.mkDerivation {
   pname = "libresoc-versa-ecp5";
@@ -12,7 +13,7 @@ stdenv.mkDerivation {
     (with python3Packages; [
     python libresoc-soc litex-boards litex litedram liteeth liteiclink litescope litesdcard
     ])
-    ++ [ pkgsCross.powernv.buildPackages.gcc ];
+    ++ [ trellis nextpnr pkgsCross.powernv.buildPackages.gcc ];
 
   postPatch = ''
     patchShebangs --build .
@@ -31,6 +32,7 @@ stdenv.mkDerivation {
 
   installPhase = ''
     runHook preInstall
+    mv /build/florent/build/versa_ecp5/gateware/versa_ecp5.svf $out
     runHook postInstall
   '';
 
