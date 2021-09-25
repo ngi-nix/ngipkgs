@@ -178,7 +178,6 @@ in
       description = "Weblate PostgreSQL setup";
       wantedBy = [ "multi-user.target" ];
       after = [ "postgresql.service" ];
-      partOf = [ "weblate.service" ];
       serviceConfig = {
         Type = "oneshot";
         User = "postgres";
@@ -196,7 +195,6 @@ in
         "postgresql.service"
         "weblate-postgresql-setup.service"
       ];
-      partOf = [ "weblate.service" ];
       environment = {
         PYTHONPATH = "${settings_py}";
         DJANGO_SETTINGS_MODULE = "settings";
@@ -220,9 +218,10 @@ in
         "network.target"
         "redis.service"
       ];
-      partOf = [ "weblate.service" ];
       environment = {
         CELERY_WORKER_RUNNING = "1";
+        PYTHONPATH = "${settings_py}";
+        DJANGO_SETTINGS_MODULE = "settings";
       };
       # Recommendations from:
       # https://github.com/WeblateOrg/weblate/blob/main/weblate/examples/celery-weblate.service
@@ -265,11 +264,12 @@ in
         "postgresql.service"
         "redis.service"
         "weblate-migrate.service"
-        "weblate-postgresql.service"
+        "weblate-postgresql-setup.service"
       ];
       requires = [
         "weblate-migrate.service"
-        "weblate-postgresql.service"
+        "weblate-postgresql-setup.service"
+        "weblate-celery.service"
       ];
       wantedBy = [
         "multi-user.target"
