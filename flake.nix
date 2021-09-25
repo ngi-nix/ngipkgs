@@ -16,7 +16,7 @@
     in
     {
 
-      packages.x86_64-linux.weblate = pkgs.poetry2nix.mkPoetryApplication {
+      packages.x86_64-linux.weblate = (pkgs.poetry2nix.mkPoetryApplication {
         src = weblate;
         pyproject = ./pyproject.toml;
         poetrylock = ./poetry.lock;
@@ -26,7 +26,7 @@
           license = licenses.gpl3Plus;
           maintainers = with maintainers; [ erictapen ];
         };
-      };
+      }).dependencyEnv;
 
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
 
