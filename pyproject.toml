@@ -11,7 +11,6 @@ translate-toolkit = ">=3.3.6,<3.5.0"
 GitPython = "3.1.18"
 user-agents = "^2.2.0"
 Django = {version = ">=3.2,<3.3", extras = ["argon2"]}
-celery = "^5.1.2"
 translation-finder = "^2.10"
 social-auth-core = "^4.1.0"
 djangorestframework = "^3.12.4"
@@ -48,6 +47,7 @@ setuptools = ">=40.3.0"
 weblate-language-data = ">=2021.5"
 weblate-schemas = "0.7"
 psycopg2 = "^2.9.1"
+celery = {extras = ["redis"], version = "^5.1.2"}
 
 [tool.poetry.dev-dependencies]
 

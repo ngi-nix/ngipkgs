@@ -112,6 +112,7 @@ click-plugins = ">=1.1.1"
 click-repl = ">=0.1.6"
 kombu = ">=5.1.0,<6.0"
 pytz = ">0.0-dev"
+redis = {version = ">=3.2.0", optional = true, markers = "extra == \"redis\""}
 vine = ">=5.0.0,<6.0"
 
 [package.extras]
@@ -1014,7 +1015,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "4b7cd9b6d419802cec72c664b0bcdfe372749a05c15489d68e0ccbdcd87dd4c4"
+content-hash = "f9050dc05d1ddaeacc25f842630a3f24e957a678803358907cacec5efb8aa815"
 
 [metadata.files]
 amqp = [
