@@ -51,9 +51,13 @@ let
       }
     }
 
+    ADMINS = (("Weblate Admin", "${cfg.smtp.user}"),)
+
     EMAIL_HOST = "127.0.0.1"
-    # EMAIL_USE_TLS = True
+    EMAIL_USE_TLS = True
     EMAIL_HOST_USER = "${cfg.smtp.user}"
+    SERVER_EMAIL = "${cfg.smtp.user}"
+    DEFAULT_FROM_EMAIL = "${cfg.smtp.user}"
     EMAIL_PORT = 587
     with open("${cfg.smtp.passwordFile}") as f:
       EMAIL_HOST_PASSWORD = f.read().rstrip("\n")
@@ -213,6 +217,7 @@ in
       description = "Weblate Celery";
       wantedBy = [ "weblate.service" ];
       after = [
+        "network.target"
         "redis.service"
       ];
       partOf = [ "weblate.service" ];
