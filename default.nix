@@ -1,74 +1,62 @@
-{src, stdenv, fetchzip, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt,
-libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which, jq}:
+{src, stdenv, fetchzip, pkg-config, autoreconfHook, taler-exchange, taler-merchant, libgcrypt, libmicrohttpd, jansson, libsodium, postgresql, curl, recutils, libuuid, lib, gnunet, makeWrapper, which, jq}:
 let
-  gnunet' = gnunet.override { postgresqlSupport = true; };
+  gnunet' = (gnunet.override { postgresqlSupport = true; });
 in
 stdenv.mkDerivation rec {
   pname = "anastasis";
-  version = "0.0.0";
-  # version = "0.1.0"; # needs gnunet 0.15.3 and conflicts with taler-exchange 0.8.4: missing TALER_amount_is_zero
+  version = "0.1.0";
   src = fetchzip {
     url = "mirror://gnu/anastasis/${pname}-${version}.tar.gz";
-    sha256 = "sha256-srsPrwSJgjLJI1zVnOJY8eoXnsIg/mfJyJ14TqSc99E=";
+    sha256 = "sha256-1ZeSad/Rn87uo3fmwIGXlZSBzCZuFDafLy9FSDOltn0=";
   };
-
+  patches = [
+    ./remove_anastasis-authorization-email.sh.patch
+  ];
   postPatch = ''
-    for f in src/cli/*.sh; do
-      substituteInPlace "$f" --replace "#!/bin/bash" "#!${stdenv.shell}";
-    done
+    patchShebangs src/cli
   '';
+  outputs = [ "out" "configured" ];
   nativeBuildInputs = [
-    # To get the pkgconfig file into the dev output of taler-exchange
-    # https://nixos.wiki/wiki/C#pkg-config
-    # https://discourse.nixos.org/t/how-to-add-pkg-config-file-to-a-nix-package/8264
-    # https://discourse.nixos.org/t/could-weve-implemented-multi-output-packages-better/6597
-    pkg-config
-    autoreconfHook
-    # for wrapProgram
-    makeWrapper
+    pkg-config # hook that adds pkg-config files of buildInputs
+    autoreconfHook # hook tha triggers autoreconf to get the configure script
+    makeWrapper # for wrapProgram
   ];
   buildInputs = [
     taler-exchange
     taler-merchant
     libgcrypt
     libmicrohttpd
-    jansson
     libsodium
     postgresql
     curl
+    jansson
     recutils
     libuuid
   ];
   configureFlags = [
-    # GNUNETPFX
     "--with-gnunet=${gnunet'}"
-    # EXCHANGEPFX
     "--with-exchange=${taler-exchange}"
+    "--with-merchant=${taler-merchant}"
   ];
-  # FIXME: this increases computation time
-  # see https://github.com/gytis-ivaskevicius/rfcs/blob/enable-docheck-by-default/rfcs/0095-enable-docheck-by-default.md
-  # FIXME: many tests are skipped 
-  #   it might be needed to add ./ in front of some shell scripts within test scripts, missing path to config
-  checkInputs = [
-    taler-exchange
-    taler-merchant
-    jq
-  ];
-  doCheck = true;
-
+  postConfigure = ''
+    mkdir -p $configured
+    cp -r ./* $configured/
+    '';
   postInstall = ''
-    # FIXME I don't know if it's necessary if the GNUNETPREFIX is already set
     wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [
       # Fix "anastasis-config-wrapped needs gnunet-config to be installed"
       #   in src/cli/test_anastasis_reducer_backup_enter_user_attributes.sh
       # (NB: --with-gnunet was not enough)
       gnunet'
-      # `which` is needed by $out/bin/anastasis-config during postInstallCheck
+      # needed by $out/bin/anastasis-config during postInstallCheck
       which
     ]}
     '';
   doInstallCheck = true;
   postInstallCheck = ''
+    # The author said `make check` is meant to be executed after installation
+    # FIXME: many tests are skipped
+    make check
     # Check that anastasis-config can find gnunet at runtime
     $out/bin/anastasis-config --help > /dev/null
     '';
