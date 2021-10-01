@@ -277,7 +277,7 @@ in
     };
 
     systemd.services.weblate = {
-      description = "Weblate";
+      description = "Weblate uWSGI app";
       after = [
         "network.target"
         "postgresql.service"
@@ -307,14 +307,16 @@ in
         licensee
       ];
       serviceConfig = {
+        Type = "notify";
+        NotifyAccess = "all";
         ExecStart =
           let
             uwsgi = pkgs.uwsgi.override { plugins = [ "python3" ]; };
             jsonConfig = pkgs.writeText "uwsgi.json" (builtins.toJSON uwsgiConfig);
           in
           "${uwsgi}/bin/uwsgi --json ${jsonConfig}";
-        Restart = "always";
-        RestartSec = 20;
+        Restart = "on-failure";
+        KillSignal = "SIGQUIT";
         WorkingDirectory = pkgs.weblate;
         StateDirectory = "weblate";
         User = "weblate";
