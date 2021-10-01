@@ -231,36 +231,49 @@ in
       };
       # Recommendations from:
       # https://github.com/WeblateOrg/weblate/blob/main/weblate/examples/celery-weblate.service
-      serviceConfig = {
-        Type = "forking";
-        User = "weblate";
-        Group = "weblate";
-        WorkingDirectory = "/var/lib/weblate";
-        RuntimeDirectory = "weblate";
-        RuntimeDirectoryPreserve = "restart";
-        LogsDirectory = "celery";
-        PIDFile = "/run/celery-weblate.pid";
-        ExecStart = ''
-          ${pkgs.weblate}/bin/celery multi start \
-            celery notify memory backup translate \
-            -A "weblate.utils" \
-            --pidfile=/run/celery-weblate.pid \
-            --logfile=/var/log/celery/weblate.log \
-            --loglevel=INFO \
-            --beat:celery \
-            --queues:celery=celery \
-            --prefetch-multiplier:celery=4 \
-            --queues:notify=notify \
-            --prefetch-multiplier:notify=10 \
-            --queues:memory=memory \
-            --prefetch-multiplier:memory=10 \
-            --queues:translate=translate \
-            --prefetch-multiplier:translate=4 \
-            --concurrency:backup=1 \
-            --queues:backup=backup \
-            --prefetch-multiplier:backup=2
-        '';
-      };
+      serviceConfig =
+        let
+          PIDFile = "/run/weblate/celery.pid";
+          cmd = verb: ''
+            ${pkgs.weblate}/bin/celery multi ${verb} \
+              celery notify memory backup translate \
+              -A "weblate.utils" \
+              --pidfile=${PIDFile} \
+              --logfile=/var/log/celery/weblate.log \
+              --loglevel=DEBUG \
+              --beat:celery \
+              --queues:celery=celery \
+              --prefetch-multiplier:celery=4 \
+              --queues:notify=notify \
+              --prefetch-multiplier:notify=10 \
+              --queues:memory=memory \
+              --prefetch-multiplier:memory=10 \
+              --queues:translate=translate \
+              --prefetch-multiplier:translate=4 \
+              --concurrency:backup=1 \
+              --queues:backup=backup \
+              --prefetch-multiplier:backup=2
+          '';
+        in
+        {
+          Type = "forking";
+          # User = "weblate";
+          # Group = "weblate";
+          WorkingDirectory = "/var/lib/weblate";
+          RuntimeDirectory = "weblate";
+          RuntimeDirectoryPreserve = "restart";
+          LogsDirectory = "celery";
+          # inherit PIDFile;
+          # ExecStartPre = "${pkgs.coreutils}/bin/touch ${PIDFile}";
+          ExecStart = cmd "start";
+          ExecReload = cmd "restart";
+          ExecStop = ''
+            ${pkgs.weblate}/bin/celery multi stopwait \
+              celery notify memory backup translate \
+              --pidfile=${PIDFile}
+          '';
+          Restart = "always";
+        };
     };
 
     systemd.services.weblate = {
