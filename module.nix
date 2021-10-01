@@ -190,7 +190,10 @@ in
 
     systemd.services.weblate-migrate = {
       description = "Weblate migration";
-      wantedBy = [ "weblate.service" ];
+      wantedBy = [
+        "weblate.service"
+        "multi-user.target"
+      ];
       after = [
         "postgresql.service"
         "weblate-postgresql-setup.service"
@@ -213,7 +216,10 @@ in
 
     systemd.services.weblate-celery = {
       description = "Weblate Celery";
-      wantedBy = [ "weblate.service" ];
+      wantedBy = [
+        "weblate.service"
+        "multi-user.target"
+      ];
       after = [
         "network.target"
         "redis.service"
