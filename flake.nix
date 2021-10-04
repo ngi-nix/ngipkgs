@@ -65,28 +65,28 @@
             };
             testScript = let
               check-anastasis = pkgs.writeScript "check-anastasis" ''
-                  # Load test fixture data into the vm $HOME (/root)
-                  cd ${self.packages.x86_64-linux.anastasis.configured} && find . -type f -exec install -Dm 755 "{}" "$HOME/{}" \;
-                  cd $HOME
-                  # Patch some paths
-                  sed=${pkgs.gnused}/bin/sed
-                  find . -type f -exec $sed -i "s^/build/source^$HOME^g" "{}" \;
-                  find . -type f -exec $sed -i "s^/usr/bin/file^${pkgs.file}/bin/file^g" "{}" \;
-                  
-                  # ./missing is executed at the beginning of `make check` and re-triggers autoreconf
-                  #   -> Fix that by making missing a no-op
-                  echo ":" > missing
+                # Load test fixture data into the vm $HOME (/root)
+                cd ${self.packages.x86_64-linux.anastasis.configured} && find . -type f -exec install -Dm 755 "{}" "$HOME/{}" \;
+                cd $HOME
+                # Patch some paths
+                sed=${pkgs.gnused}/bin/sed
+                find . -type f -exec $sed -i "s^/build/source^$HOME^g" "{}" \;
+                find . -type f -exec $sed -i "s^/usr/bin/file^${pkgs.file}/bin/file^g" "{}" \;
+                
+                # ./missing is executed at the beginning of `make check` and re-triggers autoreconf
+                #   -> Fix that by making missing a no-op
+                echo ":" > missing
 
-                  for i in "" $(seq 1 4); do createdb anastasischeck$i; done
-                  
-                  # Start checking anastasis
-                  # FIXME: recursvely adds paths to dependencies
-                  # Provide all the paths toward header files and libraries, as well as pkg-config files
-                  # This can be debugged by prefixing with "NIX_DEBUG=1 "
-                  # FIXME: the build is triggered !!! making the check *very* long :(
-                  #  a solution would be to copy the state of the package after build has finished
-                  # FIXME: The log of `make check` is only shown at the end
-                  NIX_CFLAGS_COMPILE_BEFORE_x86_64_unknown_linux_gnu="-I${pkgs.libsodium.dev}/include -I${pkgs.jansson}/include -I${pkgs.libgcrypt.dev}/include -I${pkgs.curl.dev}/include -I${pkgs.libgnurl}/include -I${pkgs.libmicrohttpd.dev}/include -I${pkgs.libtool}/include -I${pkgs.zlib.dev}/include" NIX_LDFLAGS_BEFORE_x86_64_unknown_linux_gnu="-L${pkgs.libsodium}/lib -L${pkgs.jansson}/lib -L${pkgs.libgcrypt}/lib -L${pkgs.curl}/lib -L${pkgs.libgnurl}/lib -L${pkgs.libmicrohttpd}/lib -L${pkgs.libtool.lib}/lib -L${pkgs.postgresql.lib}/lib -L${pkgs.libossp_uuid}/lib -L${pkgs.zlib}/lib" PKG_CONFIG_PATH="${pkgs.libmicrohttpd.dev}/lib/pkgconfig:${pkgs.jansson}/lib/pkgconfig" make check
+                for i in "" $(seq 1 4); do createdb anastasischeck$i; done
+                
+                # Start checking anastasis
+                # FIXME: recursvely adds paths to dependencies
+                # Provide all the paths toward header files and libraries, as well as pkg-config files
+                # This can be debugged by prefixing with "NIX_DEBUG=1 "
+                # FIXME: the build is triggered !!! making the check *very* long :(
+                #  a solution would be to copy the state of the package after build has finished
+                # FIXME: The log of `make check` is only shown at the end
+                NIX_CFLAGS_COMPILE_BEFORE_x86_64_unknown_linux_gnu="-I${pkgs.libsodium.dev}/include -I${pkgs.jansson}/include -I${pkgs.libgcrypt.dev}/include -I${pkgs.curl.dev}/include -I${pkgs.libgnurl}/include -I${pkgs.libmicrohttpd.dev}/include -I${pkgs.libtool}/include -I${pkgs.zlib.dev}/include" NIX_LDFLAGS_BEFORE_x86_64_unknown_linux_gnu="-L${pkgs.libsodium}/lib -L${pkgs.jansson}/lib -L${pkgs.libgcrypt}/lib -L${pkgs.curl}/lib -L${pkgs.libgnurl}/lib -L${pkgs.libmicrohttpd}/lib -L${pkgs.libtool.lib}/lib -L${pkgs.postgresql.lib}/lib -L${pkgs.libossp_uuid}/lib -L${pkgs.zlib}/lib" PKG_CONFIG_PATH="${pkgs.libmicrohttpd.dev}/lib/pkgconfig:${pkgs.jansson}/lib/pkgconfig" make check
                 '';
                 in
               ''

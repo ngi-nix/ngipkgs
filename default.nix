@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
   outputs = [ "out" "configured" ];
   nativeBuildInputs = [
     pkg-config # hook that adds pkg-config files of buildInputs
-    autoreconfHook # hook tha triggers autoreconf to get the configure script
+    autoreconfHook # hook that triggers autoreconf to get the configure script
     makeWrapper # for wrapProgram
   ];
   buildInputs = [
