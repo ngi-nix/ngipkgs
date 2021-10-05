@@ -227,6 +227,7 @@ in
       after = [
         "network.target"
         "redis.service"
+        "postgresql.service"
       ];
       environment = {
         CELERY_WORKER_RUNNING = "1";
