@@ -12,10 +12,14 @@ writeShellScript "program-ecp5-libresoc" ''
   export PATH="${openocd}/bin:${pythonWithEnv}/bin:${trellis}/bin:${nextpnr}/bin:$PATH"
 
   dir="$(mktemp -d)"
-  cd "$dir"
+  pushd "$dir"
   echo "$dir"
 
   export PYTHONPATH="${../src/soc/litex/florent}:$PYTHONPATH"
 
   python ${../src/soc/litex/florent/versa_ecp5.py} --sys-clk-freq=55e6 --load-from ${libresoc-ecp5}
+
+  popd
+  rm -rf "$dir"
+  exit 0
 ''
