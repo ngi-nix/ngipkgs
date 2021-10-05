@@ -74,6 +74,10 @@ let
     plugins = [ "python3" ];
     master = true;
     socket = "/run/weblate.socket";
+    die-on-idle = true;
+    idle = 20;
+    manage-script-name = true;
+    cheap = true;
     chmod-socket = "770";
     chown-socket = "weblate:weblate";
     uid = "weblate";
@@ -289,6 +293,7 @@ in
         "weblate-migrate.service"
         "weblate-postgresql-setup.service"
         "weblate-celery.service"
+        "weblate.socket"
       ];
       wantedBy = [
         "multi-user.target"
