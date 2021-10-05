@@ -75,7 +75,8 @@ let
     master = true;
     socket = "/run/weblate.socket";
     die-on-idle = true;
-    idle = 20;
+    die-on-term = true;
+    idle = 600;
     manage-script-name = true;
     cheap = true;
     chmod-socket = "770";
@@ -221,7 +222,6 @@ in
     systemd.services.weblate-celery = {
       description = "Weblate Celery";
       wantedBy = [
-        "weblate.service"
         "multi-user.target"
       ];
       after = [
@@ -292,11 +292,9 @@ in
       requires = [
         "weblate-migrate.service"
         "weblate-postgresql-setup.service"
-        "weblate-celery.service"
+        # TODO celery doesn't startup yet
+        # "weblate-celery.service"
         "weblate.socket"
-      ];
-      wantedBy = [
-        "multi-user.target"
       ];
       environment = {
         PYTHONPATH = "${settings_py}";
@@ -321,9 +319,10 @@ in
           in
           "${uwsgi}/bin/uwsgi --json ${jsonConfig}";
         Restart = "on-failure";
-        KillSignal = "SIGQUIT";
+        KillSignal = "SIGTERM";
         WorkingDirectory = pkgs.weblate;
         StateDirectory = "weblate";
+        RuntimeDirectory = "weblate";
         User = "weblate";
         Group = "weblate";
       };
