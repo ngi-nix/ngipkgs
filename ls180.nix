@@ -1,6 +1,6 @@
 { version }:
 
-{ stdenv, python3Packages, yosys, libresoc-pre-litex, libresoc-pinmux, pkgsCross }:
+{ stdenv, python3Packages, yosys, libresoc-verilog, libresoc-pinmux, pkgsCross }:
 
 stdenv.mkDerivation {
   pname = "libresoc-ls1804k";
@@ -24,7 +24,7 @@ stdenv.mkDerivation {
     runHook preBuild
     export PINMUX="$(mktemp -d)"
     ln -s ${libresoc-pinmux} "$PINMUX/ls180"
-    cp ${libresoc-pre-litex} libresoc/libresoc.v
+    cp ${libresoc-verilog} libresoc/libresoc.v
     ./ls180soc.py --build --platform=ls180sram4k --num-srams=2 --srams4k
     runHook postBuild
   '';
