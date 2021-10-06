@@ -1,7 +1,6 @@
 { version }:
 
-{ writeShellScript, openocd, python3Packages, libresoc-ecp5, yosys, libresoc-pre-litex, libresoc-pinmux, pkgsCross
-, nextpnr, trellis }:
+{ writeShellScript, openocd, python3Packages, libresoc-ecp5, nextpnr, trellis }:
 
 let
   pythonWithEnv = python3Packages.python.withPackages (ps: with ps; [
