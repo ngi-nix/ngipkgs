@@ -104,7 +104,7 @@
 
               # FIXME:
               # src/cli/test_anastasis_reducer_enter_secret.sh
-              # and s/cli/recovery_enter_user_attributes.sh
+              # and src/cli/recovery_enter_user_attributes.sh
               # are skipped due to `line {65,64}: taler-bank-manage: command not found`
             '';
         };
