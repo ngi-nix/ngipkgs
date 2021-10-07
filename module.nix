@@ -103,6 +103,11 @@ let
     ignore-write-errors = true;
     disable-write-exception = true;
   };
+  environment = {
+    PYTHONPATH = "${settings_py}";
+    DJANGO_SETTINGS_MODULE = "settings";
+    GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
+  };
 in
 {
 
@@ -208,11 +213,7 @@ in
         "postgresql.service"
         "weblate-postgresql-setup.service"
       ];
-      environment = {
-        PYTHONPATH = "${settings_py}";
-        DJANGO_SETTINGS_MODULE = "settings";
-        GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
-      };
+      inherit environment;
       path = with pkgs; [ gitSVN ];
       serviceConfig = {
         Type = "oneshot";
@@ -232,11 +233,8 @@ in
         "redis.service"
         "postgresql.service"
       ];
-      environment = {
+      environment = environment // {
         CELERY_WORKER_RUNNING = "1";
-        PYTHONPATH = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages:${settings_py}";
-        DJANGO_SETTINGS_MODULE = "settings";
-        GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
       };
       # Recommendations from:
       # https://github.com/WeblateOrg/weblate/blob/main/weblate/examples/celery-weblate.service
@@ -300,11 +298,7 @@ in
         "weblate-celery.service"
         "weblate.socket"
       ];
-      environment = {
-        PYTHONPATH = "${settings_py}";
-        DJANGO_SETTINGS_MODULE = "settings";
-        GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
-      };
+      inherit environment;
       path = with pkgs; [
         gitSVN
 
