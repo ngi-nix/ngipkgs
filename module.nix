@@ -12,6 +12,7 @@ let
     SITE_DOMAIN = "${cfg.localDomain}"
     # TLS terminates at the reverse proxy, so we can handle ACME in an unified way.
     ENABLE_HTTPS = False
+    # TODO disable this, shouldn't be enabled in production
     DEBUG = True
     DATA_DIR = "/var/lib/weblate"
     STATIC_ROOT = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/"
@@ -34,7 +35,7 @@ let
     CACHES = {
       "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "unix://${config.services.redis.unixSocket}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PARSER_CLASS": "redis.connection.HiredisParser",
@@ -61,6 +62,10 @@ let
     EMAIL_PORT = 587
     with open("${cfg.smtp.passwordFile}") as f:
       EMAIL_HOST_PASSWORD = f.read().rstrip("\n")
+
+    CELERY_TASK_ALWAYS_EAGER = False
+    CELERY_BROKER_URL = "redis+socket:://${config.services.redis.unixSocket}"
+    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
     ${cfg.extraConfig}
   '';
@@ -221,9 +226,7 @@ in
 
     systemd.services.weblate-celery = {
       description = "Weblate Celery";
-      wantedBy = [
-        "multi-user.target"
-      ];
+      wantedBy = [ "multi-user.target" ];
       after = [
         "network.target"
         "redis.service"
@@ -231,20 +234,23 @@ in
       ];
       environment = {
         CELERY_WORKER_RUNNING = "1";
-        PYTHONPATH = "${settings_py}";
+        PYTHONPATH = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages:${settings_py}";
         DJANGO_SETTINGS_MODULE = "settings";
+        GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
       };
       # Recommendations from:
       # https://github.com/WeblateOrg/weblate/blob/main/weblate/examples/celery-weblate.service
       serviceConfig =
         let
-          PIDFile = "/run/weblate/celery.pid";
+          # We have to push %n through systemd's replacement, therefore %%n.
+          pidFile = "/run/weblate/%%n.pid";
+          nodes = "celery notify memory backup translate";
           cmd = verb: ''
             ${pkgs.weblate}/bin/celery multi ${verb} \
-              celery notify memory backup translate \
+              ${nodes} \
               -A "weblate.utils" \
-              --pidfile=${PIDFile} \
-              --logfile=/var/log/celery/weblate.log \
+              --pidfile=${pidFile} \
+              --logfile=/var/log/celery/%%n%%I.log \
               --loglevel=DEBUG \
               --beat:celery \
               --queues:celery=celery \
@@ -262,20 +268,18 @@ in
         in
         {
           Type = "forking";
-          # User = "weblate";
-          # Group = "weblate";
-          WorkingDirectory = "/var/lib/weblate";
+          User = "weblate";
+          Group = "weblate";
+          WorkingDirectory = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/";
           RuntimeDirectory = "weblate";
           RuntimeDirectoryPreserve = "restart";
           LogsDirectory = "celery";
-          # inherit PIDFile;
-          # ExecStartPre = "${pkgs.coreutils}/bin/touch ${PIDFile}";
           ExecStart = cmd "start";
           ExecReload = cmd "restart";
           ExecStop = ''
             ${pkgs.weblate}/bin/celery multi stopwait \
-              celery notify memory backup translate \
-              --pidfile=${PIDFile}
+              ${nodes} \
+              --pidfile=${pidFile}
           '';
           Restart = "always";
         };
@@ -293,8 +297,7 @@ in
       requires = [
         "weblate-migrate.service"
         "weblate-postgresql-setup.service"
-        # TODO celery doesn't startup yet
-        # "weblate-celery.service"
+        "weblate-celery.service"
         "weblate.socket"
       ];
       environment = {
@@ -329,6 +332,8 @@ in
       };
     };
 
+
+
     systemd.sockets.weblate = {
       before = [ "nginx.service" ];
       wantedBy = [ "sockets.target" ];
@@ -347,6 +352,7 @@ in
     services.redis = {
       enable = true;
       unixSocket = "/run/redis/redis.sock";
+      unixSocketPerm = 770;
     };
 
     services.postgresql = {
@@ -363,6 +369,9 @@ in
     users.users.weblate = {
       isSystemUser = true;
       group = "weblate";
+      extraGroups = [
+        "redis"
+      ];
     };
 
     users.groups.weblate.members = [ config.services.nginx.user ];
