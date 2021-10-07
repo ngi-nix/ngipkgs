@@ -332,8 +332,6 @@ in
       };
     };
 
-
-
     systemd.sockets.weblate = {
       before = [ "nginx.service" ];
       wantedBy = [ "sockets.target" ];
@@ -372,6 +370,7 @@ in
       extraGroups = [
         "redis"
       ];
+      packages = [ pkgs.weblate ];
     };
 
     users.groups.weblate.members = [ config.services.nginx.user ];
