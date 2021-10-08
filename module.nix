@@ -10,8 +10,8 @@ let
 
     SITE_TITLE = "Weblate"
     SITE_DOMAIN = "${cfg.localDomain}"
-    # TLS terminates at the reverse proxy, so we can handle ACME in an unified way.
-    ENABLE_HTTPS = False
+    # TLS terminates at the reverse proxy, but this setting controls how links to weblate are generated.
+    ENABLE_HTTPS = True
     # TODO disable this, shouldn't be enabled in production
     DEBUG = True
     DATA_DIR = "/var/lib/weblate"
