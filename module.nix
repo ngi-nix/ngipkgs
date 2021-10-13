@@ -108,6 +108,11 @@ let
     DJANGO_SETTINGS_MODULE = "settings";
     GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
   };
+  weblate-env = pkgs.writeShellScriptBin
+    "weblate-env"
+    ((pkgs.lib.concatStrings (pkgs.lib.mapAttrsToList (n: v: "export ${n}=${v}\n") environment)) + ''
+      eval -- "\$@"
+    '');
 in
 {
 
@@ -364,8 +369,11 @@ in
       extraGroups = [
         "redis"
       ];
-      packages = [ pkgs.weblate ];
+      packages = [ weblate-env pkgs.weblate pkgs.git ];
     };
+
+    # TODO remove
+    environment.systemPackages = config.users.users.weblate.packages;
 
     users.groups.weblate.members = [ config.services.nginx.user ];
   };
