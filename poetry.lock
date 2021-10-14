@@ -595,12 +595,31 @@ python-versions = ">=3.6"
 pyparsing = ">=2.0.2"
 
 [[package]]
+name = "phply"
+version = "1.2.5"
+description = "Lexer and parser for PHP source implemented using PLY"
+category = "main"
+optional = true
+python-versions = "*"
+
+[package.dependencies]
+ply = "*"
+
+[[package]]
 name = "pillow"
 version = "8.3.2"
 description = "Python Imaging Library (Fork)"
 category = "main"
 optional = false
 python-versions = ">=3.6"
+
+[[package]]
+name = "ply"
+version = "3.11"
+description = "Python Lex & Yacc"
+category = "main"
+optional = true
+python-versions = "*"
 
 [[package]]
 name = "prompt-toolkit"
@@ -1053,7 +1072,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "6ad04d45f41dd79008b906fa3acdd752a132c5bbd590f985a4fb1cdea07d579c"
+content-hash = "6a9f786301208314365839894b36abf7bcc1630102140e7b97ce2b511fe9c2b7"
 
 [metadata.files]
 aeidon = [
@@ -1446,6 +1465,10 @@ packaging = [
     {file = "packaging-21.0-py3-none-any.whl", hash = "sha256:c86254f9220d55e31cc94d69bade760f0847da8000def4dfe1c6b872fd14ff14"},
     {file = "packaging-21.0.tar.gz", hash = "sha256:7dc96269f53a4ccec5c0670940a4281106dd0bb343f47b7471f779df49c2fbe7"},
 ]
+phply = [
+    {file = "phply-1.2.5-py2.py3-none-any.whl", hash = "sha256:0391a59a564ab187cc95e69b770e8c8efa8006693a84e784c7214905c1285408"},
+    {file = "phply-1.2.5.tar.gz", hash = "sha256:7d45875288fbd8d6c80231e3195dea4487bc1a9b67f2681e5fe9907b81249f3f"},
+]
 pillow = [
     {file = "Pillow-8.3.2-cp310-cp310-macosx_10_10_universal2.whl", hash = "sha256:c691b26283c3a31594683217d746f1dad59a7ae1d4cfc24626d7a064a11197d4"},
     {file = "Pillow-8.3.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:f514c2717012859ccb349c97862568fdc0479aad85b0270d6b5a6509dbc142e2"},
@@ -1500,6 +1523,10 @@ pillow = [
     {file = "Pillow-8.3.2-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a66566f8a22561fc1a88dc87606c69b84fa9ce724f99522cf922c801ec68f5c1"},
     {file = "Pillow-8.3.2-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:ce651ca46d0202c302a535d3047c55a0131a720cf554a578fc1b8a2aff0e7d96"},
     {file = "Pillow-8.3.2.tar.gz", hash = "sha256:dde3f3ed8d00c72631bc19cbfff8ad3b6215062a5eed402381ad365f82f0c18c"},
+]
+ply = [
+    {file = "ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce"},
+    {file = "ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"},
 ]
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.3-py3-none-any.whl", hash = "sha256:c93e53af97f630f12f5f62a3274e79527936ed466f038953dfa379d4941f651a"},
