@@ -396,6 +396,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "fluent.syntax"
+version = "0.18.1"
+description = "Localization library for expressive translations."
+category = "main"
+optional = true
+python-versions = "*"
+
+[[package]]
 name = "gitdb"
 version = "4.0.7"
 description = "Git Object Database"
@@ -1034,7 +1042,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "3fb4a7c630ea90d20f950081a9bf5809dbf7803b6339cbf435c1470139078436"
+content-hash = "9553c451b44550fa700a63d4c187c7489f9ababef2ca6a1e0f0b2b48f22ee421"
 
 [metadata.files]
 aeidon = [
@@ -1274,6 +1282,10 @@ et-xmlfile = [
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
     {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
+]
+"fluent.syntax" = [
+    {file = "fluent.syntax-0.18.1-py2.py3-none-any.whl", hash = "sha256:0e63679fa4f1b3042565220a5127b4bab842424f07d6a13c12299e3b3835486a"},
+    {file = "fluent.syntax-0.18.1.tar.gz", hash = "sha256:3a55f5e605d1b029a65cc8b6492c86ec4608e15447e73db1495de11fd46c104f"},
 ]
 gitdb = [
     {file = "gitdb-4.0.7-py3-none-any.whl", hash = "sha256:6c4cc71933456991da20917998acbe6cf4fb41eeaab7d6d67fbc05ecd4c865b0"},
