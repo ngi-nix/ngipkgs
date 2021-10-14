@@ -113,6 +113,15 @@ let
     ((pkgs.lib.concatStrings (pkgs.lib.mapAttrsToList (n: v: "export ${n}=${v}\n") environment)) + ''
       eval -- "\$@"
     '');
+  weblatePath = with pkgs; [
+        gitSVN
+
+        #optional
+        git-review
+        tesseract
+        licensee
+        mercurial
+      ];
 in
 {
 
@@ -219,7 +228,7 @@ in
         "weblate-postgresql-setup.service"
       ];
       inherit environment;
-      path = with pkgs; [ gitSVN ];
+      path = weblatePath;
       serviceConfig = {
         Type = "oneshot";
         # WorkingDirectory = pkgs.weblate;
@@ -304,14 +313,7 @@ in
         "weblate.socket"
       ];
       inherit environment;
-      path = with pkgs; [
-        gitSVN
-
-        #optional
-        git-review
-        tesseract
-        licensee
-      ];
+      path = weblatePath;
       serviceConfig = {
         Type = "notify";
         NotifyAccess = "all";
@@ -369,7 +371,7 @@ in
       extraGroups = [
         "redis"
       ];
-      packages = [ weblate-env pkgs.weblate pkgs.git ];
+      packages = [ weblate-env pkgs.weblate ] ++ weblatePath;
     };
 
     # TODO remove
