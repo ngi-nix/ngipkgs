@@ -4,14 +4,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "anastasis";
-  version = "0.1.0";
+  version = "0.2.0";
   src = fetchzip {
     url = "mirror://gnu/anastasis/${pname}-${version}.tar.gz";
-    sha256 = "sha256-1ZeSad/Rn87uo3fmwIGXlZSBzCZuFDafLy9FSDOltn0=";
+    sha256 = "sha256-/13AqJUf8dwXhY554ZaXD8EuMPvrr3SoSe05Hc8Q+Io=";
   };
-  patches = [
-    ./remove_anastasis-authorization-email.sh.patch
-  ];
   postPatch = ''
     patchShebangs src/cli
   '';
