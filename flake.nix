@@ -6,8 +6,10 @@
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.8.1";
   inputs.weblate.flake = false;
+  inputs.aeidon-src.url = "github:otsaloma/gaupol/1.9";
+  inputs.aeidon-src.flake = false;
 
-  outputs = { self, nixpkgs, poetry2nix, weblate }:
+  outputs = { self, nixpkgs, poetry2nix, weblate, aeidon-src }:
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
@@ -26,6 +28,35 @@
           license = licenses.gpl3Plus;
           maintainers = with maintainers; [ erictapen ];
         };
+        overrides = pkgs.poetry2nix.overrides.withDefaults (
+          self: super: {
+            aeidon = super.aeidon.overridePythonAttrs (old: {
+              src = aeidon-src;
+              nativeBuildInputs = [ pkgs.gettext ];
+              buildInputs = [ pkgs.isocodes ];
+              installPhase = ''
+                ${self.python.interpreter} setup.py --without-gaupol install --prefix=$out
+              '';
+            });
+            # Copied from https://github.com/nix-community/poetry2nix/issues/413
+            cryptography = super.cryptography.overridePythonAttrs(old:{
+              cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
+                inherit (old) src;
+                name = "${old.pname}-${old.version}";
+                sourceRoot = "${old.pname}-${old.version}/src/rust/";
+                # Remember to update this for new cryptography versions.
+                sha256 = "sha256-tQoQfo+TAoqAea86YFxyj/LNQCiViu5ij/3wj7ZnYLI=";
+              };
+              cargoRoot = "src/rust";
+              nativeBuildInputs = old.nativeBuildInputs ++ (with pkgs.rustPlatform; [
+                rust.rustc
+                rust.cargo
+                cargoSetupHook
+              ]);
+            });
+          }
+        );
+
       }).dependencyEnv;
 
       defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
