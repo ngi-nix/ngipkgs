@@ -268,7 +268,7 @@ in
       serviceConfig =
         let
           # We have to push %n through systemd's replacement, therefore %%n.
-          pidFile = "/run/weblate/%%n.pid";
+          pidFile = "/run/celery/%%n.pid";
           nodes = "celery notify memory backup translate";
           cmd = verb: ''
             ${pkgs.weblate}/bin/celery multi ${verb} \
@@ -296,7 +296,7 @@ in
           User = "weblate";
           Group = "weblate";
           WorkingDirectory = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/";
-          RuntimeDirectory = "weblate";
+          RuntimeDirectory = "celery";
           RuntimeDirectoryPreserve = "restart";
           LogsDirectory = "celery";
           ExecStart = cmd "start";
