@@ -22,7 +22,6 @@
         src = weblate;
         pyproject = ./pyproject.toml;
         poetrylock = ./poetry.lock;
-        patches = [ ./debug.patch ];
         meta = with pkgs.lib; {
           description = "Web based translation tool with tight version control integration";
           homepage = https://weblate.org/;

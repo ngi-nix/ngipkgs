@@ -29,6 +29,17 @@ in
         passwordFile = pkgs.writeText "weblate-smtp-pass" "thisissnakeoilpassword";
       };
     };
+    nixpkgs.overlays = [
+      # The default timeout for the celery check is much too short upstream, so
+      # we increase it. I guess this is due to the fact that we test the setup
+      # very early into the initialization of the server, so the load might be
+      # higher compared to production setups?
+      (self: super: {
+        weblate = super.weblate.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [ ./longer-celery-wait-time.patch ];
+        });
+      })
+    ];
 
     services.nginx.virtualHosts."${serverDomain}" = {
       enableACME = lib.mkForce false;
