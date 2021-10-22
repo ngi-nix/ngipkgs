@@ -64,7 +64,7 @@ let
       EMAIL_HOST_PASSWORD = f.read().rstrip("\n")
 
     CELERY_TASK_ALWAYS_EAGER = False
-    CELERY_BROKER_URL = "redis+socket:://${config.services.redis.unixSocket}"
+    CELERY_BROKER_URL = "redis+socket://${config.services.redis.unixSocket}"
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
     ${cfg.extraConfig}
