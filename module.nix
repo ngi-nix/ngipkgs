@@ -250,6 +250,7 @@ in
       environment = environment // {
         CELERY_WORKER_RUNNING = "1";
       };
+      path = weblatePath;
       # Recommendations from:
       # https://github.com/WeblateOrg/weblate/blob/main/weblate/examples/celery-weblate.service
       serviceConfig =
