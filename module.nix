@@ -54,7 +54,7 @@ let
 
     ADMINS = (("Weblate Admin", "${cfg.smtp.user}"),)
 
-    EMAIL_HOST = "127.0.0.1"
+    EMAIL_HOST = "${cfg.smtp.host}"
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = "${cfg.smtp.user}"
     SERVER_EMAIL = "${cfg.smtp.user}"
@@ -159,6 +159,12 @@ in
           type = lib.types.str;
         };
 
+        host = lib.mkOption {
+          description = "SMTP host used when sending emails to users.";
+          type = lib.types.str;
+          default = "127.0.0.1";
+        };
+
         createLocally = lib.mkOption {
           description = "Configure local Postfix SMTP server for Weblate.";
           type = lib.types.bool;
@@ -178,7 +184,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [ ];
+
+    assertions = [
+      {
+        assertion = cfg.smtp.createLocally -> cfg.smtp.host == "127.0.0.1";
+        message = ''services.weblate.smtp.host should be "127.0.0.1" if you want to to use services.weblate.smtp.createLocally.'';
+      }
+    ];
 
     services.nginx = {
       enable = true;

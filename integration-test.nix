@@ -24,11 +24,11 @@ in
       localDomain = "${serverDomain}";
       djangoSecretKeyFile = pkgs.writeText "weblate-django-secret" "thisissnakeoilsecret";
       smtp = {
+        createLocally = true;
         user = "weblate@${serverDomain}";
         passwordFile = pkgs.writeText "weblate-smtp-pass" "thisissnakeoilpassword";
       };
     };
-
 
     services.nginx.virtualHosts."${serverDomain}" = {
       enableACME = lib.mkForce false;
