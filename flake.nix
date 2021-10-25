@@ -44,7 +44,7 @@
               '';
             });
             # Copied from https://github.com/nix-community/poetry2nix/issues/413
-            cryptography = super.cryptography.overridePythonAttrs(old:{
+            cryptography = super.cryptography.overridePythonAttrs (old: {
               cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
                 inherit (old) src;
                 name = "${old.pname}-${old.version}";
@@ -85,6 +85,7 @@
           inherit nixpkgs;
           weblateModule = self.nixosModules.weblate;
         });
+      checks.x86_64-linux.package = self.defaultPackage.x86_64-linux;
 
     };
 }
