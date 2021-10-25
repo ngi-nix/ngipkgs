@@ -22,6 +22,11 @@
         src = weblate;
         pyproject = ./pyproject.toml;
         poetrylock = ./poetry.lock;
+        # The default timeout for the celery check is much too short upstream, so
+        # we increase it. I guess this is due to the fact that we test the setup
+        # very early into the initialization of the server, so the load might be
+        # higher compared to production setups?
+        patches = [ ./longer-celery-wait-time.patch ];
         meta = with pkgs.lib; {
           description = "Web based translation tool with tight version control integration";
           homepage = https://weblate.org/;
