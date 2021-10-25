@@ -36,6 +36,17 @@ in
       sslCertificateKey = certs."${serverDomain}".key;
     };
 
+    services.postfix = {
+      enableSubmission = true;
+      enableSubmissions = true;
+      submissionsOptions = {
+        smtpd_sasl_auth_enable = "yes";
+        smtpd_client_restrictions = "permit";
+      };
+      # sslKey = certs."${serverDomain}".key;
+      # sslCert = certs."${serverDomain}".cert;
+    };
+
     security.pki.certificateFiles = [ certs.ca.cert ];
 
     networking.hosts."::1" = [ "${serverDomain}" ];
