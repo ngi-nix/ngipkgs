@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.8.1";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.9";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.9";
   inputs.aeidon-src.flake = false;
@@ -58,6 +58,11 @@
                 rust.cargo
                 cargoSetupHook
               ]);
+            });
+            filelock = super.filelock.overridePythonAttrs (old: {
+              postPatch = ''
+                substituteInPlace setup.py --replace 'setup()' 'setup(version="${old.version}")'
+              '';
             });
           }
         );
