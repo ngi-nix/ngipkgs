@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.9.1";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.10";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.9";
   inputs.aeidon-src.flake = false;
@@ -50,7 +50,7 @@
                 name = "${old.pname}-${old.version}";
                 sourceRoot = "${old.pname}-${old.version}/src/rust/";
                 # Remember to update this for new cryptography versions.
-                sha256 = "sha256-tQoQfo+TAoqAea86YFxyj/LNQCiViu5ij/3wj7ZnYLI=";
+                sha256 = "sha256-kozYXkqt1Wpqyo9GYCwN08J+zV92ZWFJY/f+rulxmeQ=";
               };
               cargoRoot = "src/rust";
               nativeBuildInputs = old.nativeBuildInputs ++ (with pkgs.rustPlatform; [
@@ -58,6 +58,9 @@
                 rust.cargo
                 cargoSetupHook
               ]);
+            });
+            typing-extensions = super.typing-extensions.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
             });
           }
         );
