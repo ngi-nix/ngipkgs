@@ -35,7 +35,7 @@ let
     CACHES = {
       "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "unix://${config.services.redis.unixSocket}",
+        "LOCATION": "unix://${config.services.redis.servers.weblate.unixSocket}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PARSER_CLASS": "redis.connection.HiredisParser",
@@ -64,7 +64,7 @@ let
       EMAIL_HOST_PASSWORD = f.read().rstrip("\n")
 
     CELERY_TASK_ALWAYS_EAGER = False
-    CELERY_BROKER_URL = "redis+socket://${config.services.redis.unixSocket}"
+    CELERY_BROKER_URL = "redis+socket://${config.services.redis.servers.weblate.unixSocket}"
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
     ${cfg.extraConfig}
@@ -361,9 +361,10 @@ in
       enable = true;
     };
 
-    services.redis = {
+    services.redis.servers.weblate = {
       enable = true;
-      unixSocket = "/run/redis/redis.sock";
+      user = "weblate";
+      unixSocket = "/run/redis-weblate/redis.sock";
       unixSocketPerm = 770;
     };
 
@@ -381,9 +382,6 @@ in
     users.users.weblate = {
       isSystemUser = true;
       group = "weblate";
-      extraGroups = [
-        "redis"
-      ];
       packages = [ weblate-env pkgs.weblate ] ++ weblatePath;
     };
 
