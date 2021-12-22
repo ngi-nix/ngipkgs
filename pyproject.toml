@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "weblate"
-version = "4.10"
+version = "4.10.1"
 description = ""
 authors = ["Your Name <you@example.com>"]
 license = "GPLv3+"
@@ -24,7 +24,7 @@ bleach = ">=3.1.1,<5.0.0"
 cssselect = ">=1.0.0,<1.2.0"
 Cython = ">=0.29.14,<0.30"
 diff-match-patch = "20200713"
-django-compressor = ">=2.4,<3.1"
+django-compressor = ">=2.4,<3.2"
 django-crispy-forms = ">=1.9.0,<1.13.0"
 django-filter = ">=2.4.0,<22.0.0"
 filelock = ">=3.0.0,<3.5.0"
