@@ -1,6 +1,6 @@
 # About this flake
 
-This Nix flake packages [Weblate](https://weblate.org/en/), a web based translation tool.
+This Nix flake packages [Weblate](https://weblate.org/en/), a web based translation tool. It is fully usable and tested regularly.
 
 # Usage
 
