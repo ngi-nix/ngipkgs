@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.10.1";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.11.2";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.9";
   inputs.aeidon-src.flake = false;
@@ -61,6 +61,15 @@
             });
             typing-extensions = super.typing-extensions.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
+            });
+            click-didyoumean = super.click-didyoumean.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.poetry ];
+            });
+            celery = super.celery.overridePythonAttrs (old: {
+              postPatch = ''
+                substituteInPlace requirements/default.txt \
+                  --replace "setuptools>=59.1.1,<59.7.0" "setuptools"
+              '';
             });
           }
         );
