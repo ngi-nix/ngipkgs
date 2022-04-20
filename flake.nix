@@ -4,9 +4,9 @@
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.11.2";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.12";
   inputs.weblate.flake = false;
-  inputs.aeidon-src.url = "github:otsaloma/gaupol/1.9";
+  inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
   inputs.aeidon-src.flake = false;
 
   outputs = { self, nixpkgs, poetry2nix, weblate, aeidon-src }:
@@ -50,7 +50,7 @@
                 name = "${old.pname}-${old.version}";
                 sourceRoot = "${old.pname}-${old.version}/src/rust/";
                 # Remember to update this for new cryptography versions.
-                sha256 = "sha256-kozYXkqt1Wpqyo9GYCwN08J+zV92ZWFJY/f+rulxmeQ=";
+                sha256 = "sha256-6C4N445h4Xf2nCc9rJWpSZaNPilR9GfgbmKvNlSIFqg=";
               };
               cargoRoot = "src/rust";
               nativeBuildInputs = old.nativeBuildInputs ++ (with pkgs.rustPlatform; [
