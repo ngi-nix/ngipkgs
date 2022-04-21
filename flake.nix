@@ -43,33 +43,8 @@
                 ${self.python.interpreter} setup.py --without-gaupol install --prefix=$out
               '';
             });
-            # Copied from https://github.com/nix-community/poetry2nix/issues/413
-            cryptography = super.cryptography.overridePythonAttrs (old: {
-              cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
-                inherit (old) src;
-                name = "${old.pname}-${old.version}";
-                sourceRoot = "${old.pname}-${old.version}/src/rust/";
-                # Remember to update this for new cryptography versions.
-                sha256 = "sha256-6C4N445h4Xf2nCc9rJWpSZaNPilR9GfgbmKvNlSIFqg=";
-              };
-              cargoRoot = "src/rust";
-              nativeBuildInputs = old.nativeBuildInputs ++ (with pkgs.rustPlatform; [
-                rust.rustc
-                rust.cargo
-                cargoSetupHook
-              ]);
-            });
-            typing-extensions = super.typing-extensions.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
-            });
             click-didyoumean = super.click-didyoumean.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.poetry ];
-            });
-            celery = super.celery.overridePythonAttrs (old: {
-              postPatch = ''
-                substituteInPlace requirements/default.txt \
-                  --replace "setuptools>=59.1.1,<59.7.0" "setuptools"
-              '';
             });
           }
         );
