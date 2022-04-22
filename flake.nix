@@ -2,18 +2,15 @@
   description = "Weblate package and module";
 
   inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
-  inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
-  inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.12";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
   inputs.aeidon-src.flake = false;
 
-  outputs = { self, nixpkgs, poetry2nix, weblate, aeidon-src }:
+  outputs = { self, nixpkgs, weblate, aeidon-src }:
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
-        overlays = [ poetry2nix.overlay ];
       };
     in
     {
@@ -45,6 +42,9 @@
             });
             click-didyoumean = super.click-didyoumean.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.poetry ];
+            });
+            pyparsing = super.pyparsing.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
             });
           }
         );
