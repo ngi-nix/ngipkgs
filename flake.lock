@@ -19,16 +19,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1650161686,
-        "narHash": "sha256-70ZWAlOQ9nAZ08OU6WY7n4Ij2kOO199dLfNlvO/+pf8=",
-        "owner": "NixOS",
+        "lastModified": 1651241401,
+        "narHash": "sha256-seWWsulPmaMJP0uXSBgMgNVNAsdn4KMC1f3dVOk3KiY=",
+        "owner": "erictapen",
         "repo": "Nixpkgs",
-        "rev": "1ffba9f2f683063c2b14c9f4d12c55ad5f4ed887",
+        "rev": "dfd9348cfd724f716e65bfad2481ce5e53760b6d",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "owner": "erictapen",
+        "ref": "poetry2nix",
         "repo": "Nixpkgs",
         "type": "github"
       }
@@ -43,16 +43,16 @@
     "weblate": {
       "flake": false,
       "locked": {
-        "lastModified": 1650464010,
-        "narHash": "sha256-8SVwbwxXZX7HCers7kgjXplPirNHeC4Zkhm6IDYA2sA=",
+        "lastModified": 1651232013,
+        "narHash": "sha256-LM55g0TYMl8OjPW8BUmLNS0WVv201ddkuZNPiSbPJ2E=",
         "owner": "WeblateOrg",
         "repo": "weblate",
-        "rev": "7fd0aa076a7701f8e9fe8cda99cd00f4ede3d2bc",
+        "rev": "e0de2d6750ed4cd08f561698949686359a9b01bc",
         "type": "github"
       },
       "original": {
         "owner": "WeblateOrg",
-        "ref": "weblate-4.12",
+        "ref": "weblate-4.12.1",
         "repo": "weblate",
         "type": "github"
       }

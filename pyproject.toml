@@ -8,7 +8,7 @@ target-version = ['py37']
 
 [tool.poetry]
 name = "weblate"
-version = "4.12"
+version = "4.12.1"
 description = ""
 authors = ["Your Name <you@example.com>"]
 license = "GPLv3+"
@@ -33,7 +33,7 @@ charset-normalizer = ">=2.0,<3.0"
 cssselect = ">=1.0.0,<1.2"
 Cython = ">=0.29.14,<0.30"
 diff-match-patch = "20200713"
-django-compressor = ">=2.4,<3.2"
+django-compressor = ">=2.4,<5"
 django-crispy-forms = ">=1.9.0,<1.15"
 django-filter = ">=2.4.0,<22.0"
 filelock = ">=3.2.0,<3.7"
