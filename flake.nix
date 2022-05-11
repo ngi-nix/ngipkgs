@@ -2,15 +2,18 @@
   description = "Weblate package and module";
 
   inputs.nixpkgs.url = "github:erictapen/Nixpkgs/poetry2nix";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.12.1";
+  inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
+  inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.12.2";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
   inputs.aeidon-src.flake = false;
 
-  outputs = { self, nixpkgs, weblate, aeidon-src }:
+  outputs = { self, nixpkgs, weblate, aeidon-src, poetry2nix }:
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
+        overlays = [ poetry2nix.overlay ];
       };
     in
     {
