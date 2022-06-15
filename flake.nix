@@ -1,10 +1,10 @@
 {
   description = "Weblate package and module";
 
-  inputs.nixpkgs.url = "github:erictapen/Nixpkgs/poetry2nix";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.12.2";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.13";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
   inputs.aeidon-src.flake = false;
