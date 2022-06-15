@@ -18,6 +18,7 @@
     in
     {
 
+      packages.x86_64-linux.default = self.packages.x86_64-linux.weblate;
       packages.x86_64-linux.weblate = (pkgs.poetry2nix.mkPoetryApplication {
         src = weblate;
         pyproject = ./pyproject.toml;
@@ -53,11 +54,9 @@
         );
       }).dependencyEnv;
 
-      defaultPackage.x86_64-linux = self.packages.x86_64-linux.weblate;
-
       nixosModules.weblate = import ./module.nix;
 
-      overlay = final: prev: {
+      overlays.default = final: prev: {
         inherit (self.packages.x86_64-linux) weblate;
       };
 
@@ -67,14 +66,14 @@
           # evaluate Nixpkgs again.
           pkgsWeblate = import nixpkgs {
             system = "x86_64-linux";
-            overlays = [ self.overlay ];
+            overlays = [ self.overlays.default ];
           };
         in
         pkgsWeblate.nixosTest (import ./integration-test.nix {
           inherit nixpkgs;
           weblateModule = self.nixosModules.weblate;
         });
-      checks.x86_64-linux.package = self.defaultPackage.x86_64-linux;
+      checks.x86_64-linux.package = self.packages.x86_64-linux.weblate;
 
     };
 }
