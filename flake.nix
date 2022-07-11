@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.13";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.13.1";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
   inputs.aeidon-src.flake = false;
@@ -49,6 +49,13 @@
             });
             pyparsing = super.pyparsing.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
+            });
+            ua-parser = super.ua-parser.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.pyyaml ];
+              postPatch = ''
+                substituteInPlace setup.py \
+                  --replace "pyyaml ~= 5.4.0" "pyyaml~=6.0"
+              '';
             });
           }
         );
