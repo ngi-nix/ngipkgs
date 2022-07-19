@@ -3,6 +3,28 @@
 {
   imports = [ ./hardware-configuration.nix ];
 
+  networking.firewall.allowedTCPPorts = [ 80 443 ]
+    ++ config.services.owncast.rtmp-port;
+
+  security.acme.defaults.email = "bryanhonof@gmail.com";
+
+  services.owncast.enable = true;
+
+  services.caddy = {
+    enable = true;
+    email = config.security.acme.defaults.email;
+    virtualHosts = {
+      "live.bjth.xyz".extraConfig = let
+        owncastWebService = "http://${config.services.owncast.listen}:${
+            toString config.services.owncast.port
+          }";
+      in ''
+        encode gzip
+        reverse_proxy ${owncastWebService}
+      '';
+    };
+  };
+
   boot.cleanTmpDir = true;
 
   zramSwap.enable = true;
