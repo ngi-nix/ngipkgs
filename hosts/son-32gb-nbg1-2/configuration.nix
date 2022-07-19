@@ -4,7 +4,7 @@
   imports = [ ./hardware-configuration.nix ];
 
   networking.firewall.allowedTCPPorts = [ 80 443 ]
-    ++ config.services.owncast.rtmp-port;
+    ++ [ config.services.owncast.rtmp-port ];
 
   security.acme.defaults.email = "bryanhonof@gmail.com";
 
