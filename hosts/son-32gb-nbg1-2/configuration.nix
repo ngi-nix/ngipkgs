@@ -14,6 +14,14 @@
     enable = true;
     email = config.security.acme.defaults.email;
     virtualHosts = {
+      "live.nixos.org".extraConfig = let
+        owncastWebService = "http://${config.services.owncast.listen}:${
+            toString config.services.owncast.port
+          }";
+      in ''
+        encode gzip
+        reverse_proxy ${owncastWebService}
+      '';
       "live.bjth.xyz".extraConfig = let
         owncastWebService = "http://${config.services.owncast.listen}:${
             toString config.services.owncast.port
