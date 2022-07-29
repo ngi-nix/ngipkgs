@@ -15,11 +15,17 @@
             inherit system overlays;
             crossSystem.config = "arm-none-eabi";
           };
+          pkgsAvr = import nixpkgs {
+            inherit system overlays;
+            crossSystem.config = "avr";
+          };
         in
         {
           inherit (pkgsArm)
             nitrokey-pro
             nitrokey-start;
+          inherit (pkgsAvr)
+            nitrokey-trng-rs232;
         };
     };
   };
