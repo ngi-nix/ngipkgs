@@ -1,6 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    #nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:sbruder/nixpkgs/polkit-cross-fix";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
@@ -18,6 +19,7 @@
           pkgsArm = import nixpkgs {
             inherit system overlays;
             crossSystem.config = "arm-none-eabi";
+            config.allowUnfree = true; # nitrokey-fido2 → pynitrokey → nrfutil
           };
           pkgsAvr = import nixpkgs {
             inherit system overlays;
@@ -29,6 +31,7 @@
             nitrokey-3
             nitrokey-storage;
           inherit (pkgsArm)
+            nitrokey-fido2
             nitrokey-pro
             nitrokey-start;
           inherit (pkgsAvr)
