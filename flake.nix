@@ -21,6 +21,9 @@
           };
         in
         {
+          inherit (pkgs)
+            nitrokey-3
+            nitrokey-storage;
           inherit (pkgsArm)
             nitrokey-pro
             nitrokey-start;
