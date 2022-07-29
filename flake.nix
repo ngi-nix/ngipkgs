@@ -18,7 +18,8 @@
         in
         {
           inherit (pkgsArm)
-            nitrokey-pro;
+            nitrokey-pro
+            nitrokey-start;
         };
     };
   };
