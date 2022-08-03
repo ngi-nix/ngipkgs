@@ -117,7 +117,7 @@ dev = ["build (==0.8.0)", "flake8 (==4.0.1)", "hashin (==0.17.0)", "pip-tools (=
 
 [[package]]
 name = "borgbackup"
-version = "1.1.11"
+version = "1.1.18"
 description = "Deduplicated, encrypted, authenticated and compressed backups"
 category = "main"
 optional = false
@@ -1313,7 +1313,7 @@ bleach = [
     {file = "bleach-5.0.1.tar.gz", hash = "sha256:0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c"},
 ]
 borgbackup = [
-    {file = "borgbackup-1.1.11.tar.gz", hash = "sha256:36090992ba795a5a5091fcd407b67be9bf26d0e88020892d31d7ac81fa970fa4"},
+    {file = "borgbackup-1.1.18.tar.gz", hash = "sha256:5cba5fe7db4d08944b467ec11efc017687a512b0d98ccf0ad1aa9c4329665275"},
 ]
 cached-property = [
     {file = "cached-property-1.5.2.tar.gz", hash = "sha256:9fa5755838eecbb2d234c3aa390bd80fbd3ac6b6869109bfc1b499f7bd89a130"},
