@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.13.1";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.14";
   inputs.weblate.flake = false;
   inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
   inputs.aeidon-src.flake = false;
@@ -56,6 +56,15 @@
                 substituteInPlace setup.py \
                   --replace "pyyaml ~= 5.4.0" "pyyaml~=6.0"
               '';
+            });
+            jarowinkler = super.jarowinkler.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.scikit-build ];
+            });
+            rapidfuzz = super.rapidfuzz.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.scikit-build ];
+            });
+            jsonschema = super.jsonschema.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.hatch-fancy-pypi-readme ];
             });
           }
         );
