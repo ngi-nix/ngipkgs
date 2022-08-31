@@ -1,10 +1,12 @@
 # hyperspace
 
-This flake was generated with dream2nix which added all dependencies in the lock files folder.
-To run, you need to have a recent version of Nix installed which has good flake support.
+This repository is a monorepo which holds various tools and packages related to the [Hypercore protocol](https://hypercore-protocol.org). These packages are built via [dream2nix](https://github.com/nix-community/dream2nix).
 
-You can then run:
-
+You can list the available packages by running:
 ```
-echo 'hello world' | nix run github:ngi-nix/hyperspace
+nix flake show github:ngi-nix/hyperspace
+```
+For example to run `hyperbeam` all you have to do is run the following command:
+```
+nix run github:ngi-nix/hyperspace#hyperbeam
 ```

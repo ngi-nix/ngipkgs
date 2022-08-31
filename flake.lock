@@ -23,6 +23,38 @@
         "type": "github"
       }
     },
+    "autobase": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1661795007,
+        "narHash": "sha256-67pmU2QtWAPWUwaPDHuJkSKejSc2asXou1ZNtVqiqL8=",
+        "owner": "hypercore-protocol",
+        "repo": "autobase",
+        "rev": "1a14bd32d2621446b94eaac26a2688b9fa9ef618",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hypercore-protocol",
+        "repo": "autobase",
+        "type": "github"
+      }
+    },
+    "corestore": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1661793769,
+        "narHash": "sha256-/QFAoggSOf70mS04Bobaj4LmOrV22+0I+Ib7pPVW4kk=",
+        "owner": "hypercore-protocol",
+        "repo": "corestore",
+        "rev": "7f4f2fde727a816d4736de5bdee8612508595122",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hypercore-protocol",
+        "repo": "corestore",
+        "type": "github"
+      }
+    },
     "crane": {
       "flake": false,
       "locked": {
@@ -63,7 +95,9 @@
         "flake-utils-pre-commit": "flake-utils-pre-commit",
         "gomod2nix": "gomod2nix",
         "mach-nix": "mach-nix",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
         "poetry2nix": "poetry2nix",
         "pre-commit-hooks": "pre-commit-hooks"
       },
@@ -167,6 +201,54 @@
         "type": "github"
       }
     },
+    "hyperblobs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1661263996,
+        "narHash": "sha256-z382PRsdWnPMzoqjheWDGuEeuq/ErB0tjUTjZcNS3j8=",
+        "owner": "hypercore-protocol",
+        "repo": "hyperblobs",
+        "rev": "d2ea6b1b496f5fd1e39f361bc9c102ae35c15626",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hypercore-protocol",
+        "repo": "hyperblobs",
+        "type": "github"
+      }
+    },
+    "hypercore": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1661943035,
+        "narHash": "sha256-a6uE/4p+WBGnj4fsVX8yp6aXSZd/DOoESgj3zLCeCqc=",
+        "owner": "hypercore-protocol",
+        "repo": "hypercore",
+        "rev": "6b691a7c52c17c42bb5878d9eb465d570200b7a1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hypercore-protocol",
+        "repo": "hypercore",
+        "type": "github"
+      }
+    },
+    "hyperswarm": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1660602829,
+        "narHash": "sha256-RfdqSuFqkRGak/wBMvLTwbnY/wGA1YO4qr8aax7GvjE=",
+        "owner": "hyperswarm",
+        "repo": "hyperswarm",
+        "rev": "54734b76d4f7cbf89ac82b65f2ae48e63cb53b26",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hyperswarm",
+        "repo": "hyperswarm",
+        "type": "github"
+      }
+    },
     "mach-nix": {
       "flake": false,
       "locked": {
@@ -184,17 +266,18 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1657638268,
-        "narHash": "sha256-blBNtQSslAFkg0Gym9fWNJk+bPxGSZib4SOcPrmTPi4=",
+        "lastModified": 1661353537,
+        "narHash": "sha256-1E2IGPajOsrkR49mM5h55OtYnU0dGyre6gl60NXKITE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d80993b5f885515254746ba6d1917276ee386149",
+        "rev": "0e304ff0d9db453a4b230e9386418fd974d5804a",
         "type": "github"
       },
       "original": {
-        "id": "nixpkgs",
-        "ref": "nixos-unstable",
-        "type": "indirect"
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
       }
     },
     "poetry2nix": {
@@ -241,8 +324,14 @@
     },
     "root": {
       "inputs": {
+        "autobase": "autobase",
+        "corestore": "corestore",
         "dream2nix": "dream2nix",
-        "hyperbeam": "hyperbeam"
+        "hyperbeam": "hyperbeam",
+        "hyperblobs": "hyperblobs",
+        "hypercore": "hypercore",
+        "hyperswarm": "hyperswarm",
+        "nixpkgs": "nixpkgs"
       }
     },
     "rust-analyzer-src": {
