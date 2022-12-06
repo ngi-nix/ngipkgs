@@ -12,11 +12,11 @@ let
     SITE_DOMAIN = "${cfg.localDomain}"
     # TLS terminates at the reverse proxy, but this setting controls how links to weblate are generated.
     ENABLE_HTTPS = True
-    # TODO disable this, shouldn't be enabled in production
-    DEBUG = True
     DATA_DIR = "/var/lib/weblate"
     STATIC_ROOT = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/"
     MEDIA_ROOT = "/var/lib/weblate/media"
+    COMPRESS_ROOT = "/var/lib/weblate/compressor-cache/"
+    DEBUG = False
 
     DATABASES = {
       "default": {
@@ -202,6 +202,7 @@ in
         locations = {
           "= /favicon.ico".alias = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/favicon.ico";
           "/static/".alias = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/static/";
+          "/static/CACHE/".alias = "/var/lib/weblate/compressor-cache/CACHE/";
           "/media/".alias = "/var/lib/weblate/media/";
           "/".extraConfig = ''
             # Needed for long running operations in admin interface
@@ -394,5 +395,3 @@ in
   meta.maintainers = with lib.maintainers; [ erictapen ];
 
 }
-
-
