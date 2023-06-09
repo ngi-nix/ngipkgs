@@ -1,0 +1,3 @@
+{
+  liberaforms = import ./liberaforms.nix;
+}

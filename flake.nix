@@ -11,5 +11,6 @@
     in
     {
       packages = lib.makeScope pkgs.newScope (self: import ./all-packages.nix { inherit (self) callPackage; });
+      nixosModules = import ./modules/all-modules.nix;
     });
 }
