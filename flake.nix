@@ -69,6 +69,9 @@
             fluent-syntax = super.fluent-syntax.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
+            phply = super.phply.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
           }
         );
       }).dependencyEnv;
