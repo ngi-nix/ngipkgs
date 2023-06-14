@@ -76,6 +76,9 @@
               # See: https://discourse.nixos.org/t/nix-flake-direnv-fails-to-build-pycairo/26639/6
               nativeBuildInputs = [ self.meson pkgs.buildPackages.pkg-config ];
             });
+            pygobject = super.pygobject.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
           }
         );
       }).dependencyEnv;
