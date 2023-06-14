@@ -104,6 +104,9 @@
             pillow = super.pillow.override {
               preferWheel = true;
             };
+            weblate-language-data = super.weblate-language-data.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
           }
         );
       }).dependencyEnv;
