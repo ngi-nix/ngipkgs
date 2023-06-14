@@ -110,6 +110,9 @@
             translation-finder = super.translation-finder.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
+            weblate-schemas = super.weblate-schemas.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
           }
         );
       }).dependencyEnv;
