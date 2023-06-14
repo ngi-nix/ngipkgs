@@ -82,9 +82,9 @@
             pyicumessageformat = super.pyicumessageformat.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
-            borgbackup = super.borgbackup.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
-            });
+            borgbackup = super.borgbackup.override {
+              preferWheel = true;
+            };
           }
         );
       }).dependencyEnv;
