@@ -66,7 +66,7 @@ in
       key = ${apiToken}
     '';
 
-    networking.hosts."${nodes.server.config.networking.primaryIPAddress}" = [ "${serverDomain}" ];
+    networking.hosts."${nodes.server.networking.primaryIPAddress}" = [ "${serverDomain}" ];
 
     security.pki.certificateFiles = [ certs.ca.cert ];
   };
