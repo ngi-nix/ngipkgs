@@ -95,9 +95,6 @@
               };
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
-            hatchling = super.hatchling.override {
-              preferWheel = true;
-            };
           }
         );
       }).dependencyEnv;
