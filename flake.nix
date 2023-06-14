@@ -101,9 +101,9 @@
             translate-toolkit = super.translate-toolkit.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
-            pillow = super.pillow.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.zlib ];
-            });
+            pillow = super.pillow.override {
+              preferWheel = true;
+            };
           }
         );
       }).dependencyEnv;
