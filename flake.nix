@@ -95,9 +95,9 @@
               };
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
-            hatchling = super.hatchling.overridePythonAttrs (old: {
-              buildInputs = (old.buildInputs or [ ]) ++ [ self.pathspec ];
-            });
+            hatchling = super.hatchling.override {
+              preferWheel = true;
+            };
           }
         );
       }).dependencyEnv;
