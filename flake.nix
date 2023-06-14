@@ -98,6 +98,9 @@
             siphashc = super.siphashc.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
+            translate-toolkit = super.translate-toolkit.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
           }
         );
       }).dependencyEnv;
