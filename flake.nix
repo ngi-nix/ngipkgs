@@ -38,7 +38,7 @@
           self: super: {
             aeidon = super.aeidon.overridePythonAttrs (old: {
               src = aeidon-src;
-              nativeBuildInputs = [ pkgs.gettext ];
+              nativeBuildInputs = [ pkgs.gettext self.flake8 ];
               buildInputs = [ pkgs.isocodes ];
               installPhase = ''
                 ${self.python.interpreter} setup.py --without-gaupol install --prefix=$out
@@ -65,6 +65,53 @@
             });
             jsonschema = super.jsonschema.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.hatch-fancy-pypi-readme ];
+            });
+            fluent-syntax = super.fluent-syntax.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            phply = super.phply.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            pycairo = super.pycairo.overridePythonAttrs (old: {
+              # See: https://discourse.nixos.org/t/nix-flake-direnv-fails-to-build-pycairo/26639/6
+              nativeBuildInputs = [ self.meson pkgs.buildPackages.pkg-config ];
+            });
+            pygobject = super.pygobject.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            pyicumessageformat = super.pyicumessageformat.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            borgbackup = super.borgbackup.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools-scm ];
+            });
+            kombu = super.kombu.overridePythonAttrs (old: rec {
+              # See: https://github.com/mayflower/authentik-nix/blob/main/poetry2nix-python-overrides.nix#L44
+              version = "5.3.0b3"; # 5.2.4 broken build from source
+              src = self.fetchPypi {
+                inherit version;
+                pname = "kombu";
+                sha256 = "316df5e840f284d0671b9000bbf747da2b00f3b81433c720de66a5f659e5711d";
+              };
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            siphashc = super.siphashc.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            translate-toolkit = super.translate-toolkit.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            pillow = super.pillow.override {
+              preferWheel = true;
+            };
+            weblate-language-data = super.weblate-language-data.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            translation-finder = super.translation-finder.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            weblate-schemas = super.weblate-schemas.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
           }
         );

@@ -66,8 +66,5 @@ Pygments = ">=2.6.0,<3.0"
 pygobject = ">=3.34.0"
 packaging = ">=20.5,<22.0"
 
-# TODO remove
-hatch-fancy-pypi-readme = "*"
-
 [tool.poetry.dev-dependencies]
 
