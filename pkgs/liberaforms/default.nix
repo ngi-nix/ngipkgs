@@ -49,7 +49,7 @@ in stdenv.mkDerivation {
     src = liberaforms-src;
     dontConfigure = true; # do not use ./configure
 
-    propagatedBuildInputs = [ liberaforms-env postgresql]; #TODO unfuck
+    propagatedBuildInputs = [ liberaforms-env postgresql_11]; #TODO unfuck
 
     installPhase = ''
       cp -r . $out

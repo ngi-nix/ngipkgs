@@ -13,6 +13,10 @@ with lib; let
   default_home = "/var/lib/liberaforms";
   default_logs = "/var/log/liberaforms";
 in {
+
+ #Tried instead of top attribute but causes infinite recursion
+ #imports = [ ../pkgs/liberaforms/default.nix ];
+
   options.services.liberaforms = with types; {
     enable = mkEnableOption "LiberaForms server";
 
