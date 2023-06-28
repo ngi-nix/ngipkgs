@@ -1,4 +1,6 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+
+{
   imports = [ ../../modules/liberaforms.nix ];
 
   boot.isContainer = true;
@@ -23,4 +25,3 @@
 
   system.stateVersion = "22.11";
 }
-

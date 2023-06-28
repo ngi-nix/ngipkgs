@@ -5,13 +5,33 @@
 
   outputs = { self, nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = nixpkgs.legacyPackages.${system};
-      lib = pkgs.lib;
-    in
-    {
-      packages = lib.makeScope pkgs.newScope (self: import ./all-packages.nix { inherit (self) callPackage; });
-      nixosModules = import ./modules/all-modules.nix;
-      nixosConfigurations = import ./configurations/all-configurations.nix;
-    });
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      {
+        packages = import ./all-packages.nix { inherit (pkgs) newScope; };
+        overlays.packages = final: prev: self.packages;
+        nixosModules = {
+          liberaforms = import ./modules/liberaforms.nix;
+          overlayModule = { ... }: {
+            nixpkgs.overlays = [ self.overlays.${system}.packages ];
+          };
+        };
+        nixosConfigurations = {
+          # nix build .#nixosConfigurations.x86_64-linux.foo.config.system.build.toplevel
+          foo = pkgs.nixos ({ ... }: {
+            imports = [
+              ./configs/liberaforms/container.nix
+              self.nixosModules.${system}.overlayModule
+            ];
+          });
+          bar = nixpkgs.lib.nixosSystem {
+            inherit system;
+            modules = [
+              ./configs/liberaforms/container.nix
+              self.nixosModules.${system}.overlayModule
+            ];
+          };
+        };
+      });
 }
