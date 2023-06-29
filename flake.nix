@@ -10,11 +10,10 @@
       in
       {
         packages = import ./all-packages.nix { inherit (pkgs) newScope; };
-        overlays.packages = final: prev: self.packages;
         nixosModules = {
           liberaforms = import ./modules/liberaforms.nix;
-          overlayModule = { ... }: {
-            nixpkgs.overlays = [ self.overlays.${system}.packages ];
+          ngipkgs = { ... }: {
+            _module.args.ngipkgs = self.packages.${system};
           };
         };
         nixosConfigurations = {
@@ -22,16 +21,9 @@
           foo = pkgs.nixos ({ ... }: {
             imports = [
               ./configs/liberaforms/container.nix
-              self.nixosModules.${system}.overlayModule
+              self.nixosModules.${system}.ngipkgs
             ];
           });
-          bar = nixpkgs.lib.nixosSystem {
-            inherit system;
-            modules = [
-              ./configs/liberaforms/container.nix
-              self.nixosModules.${system}.overlayModule
-            ];
-          };
         };
       });
 }
