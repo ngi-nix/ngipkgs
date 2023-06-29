@@ -6,13 +6,11 @@ let
     nixpkgs.overlays = [ (final: prev: packages) ];
   };
 in
-# sudo nixos-container destroy foo
-  # sudo nixos-container create foo --config-file configuration.nix
-{ ... }:
+# nix-build configuration.nix -A toplevel
+pkgs.nixos ({ ... }:
 {
   imports = [
     ./configs/liberaforms/container.nix
     overlayModule
   ];
-}
-
+})
