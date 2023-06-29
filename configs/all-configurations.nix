@@ -1,3 +1,4 @@
+{ callPackage }:
 {
-  liberaforms-container = import ./liberaforms/container.nix;
+  liberaforms-container = callPackage ./liberaforms/container.nix { };
 }

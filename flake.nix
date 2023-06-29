@@ -12,6 +12,6 @@
     {
       packages = lib.makeScope pkgs.newScope (self: import ./all-packages.nix { inherit (self) callPackage; });
       nixosModules = import ./modules/all-modules.nix;
-      nixosConfigurations = import ./configurations/all-configurations.nix;
+      nixosConfigurations = lib.makeScope pkgs.newScope (self: import ./configs/all-configurations.nix { inherit (self) callPackage; });
     });
 }

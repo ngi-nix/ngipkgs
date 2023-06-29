@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }: pkgs.nixos {
   imports = [ ../../modules/liberaforms.nix ];
 
   boot.isContainer = true;
