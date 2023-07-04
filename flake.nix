@@ -4,26 +4,39 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      {
-        packages = import ./all-packages.nix { inherit (pkgs) newScope; };
-        nixosModules = {
-          liberaforms = import ./modules/liberaforms.nix;
-          ngipkgs = { ... }: {
-            _module.args.ngipkgs = self.packages.${system};
+    flake-utils.lib.eachDefaultSystem
+      (system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          packages = import ./all-packages.nix { inherit (pkgs) newScope; };
+          nixosModules = {
+            liberaforms = import ./modules/liberaforms.nix;
+            ngipkgs = { ... }: {
+              # inject an additional argument into the module system evaluation.
+              # this way our package set can be accessed separately and we don't have
+              # to muck around with overlays (which don't work with flakes as you'd expect)
+              _module.args.ngipkgs = self.packages.${system};
+            };
           };
-        };
-        nixosConfigurations = {
-          # nix build .#nixosConfigurations.x86_64-linux.foo.config.system.build.toplevel
-          foo = pkgs.nixos ({ ... }: {
-            imports = [
-              ./configs/liberaforms/container.nix
-              self.nixosModules.${system}.ngipkgs
-            ];
-          });
-        };
-      });
+          # XXX: fugly hack to work around literal quoting of attribute paths passed to `nixos-container`.
+          # without it we'd have to pass `x86_64-linux.<container>`, which will
+          # be taken as a single attribute name and not an attribute path (i.e. a dot-separated
+          # sequence attribute names)
+        }) // {
+      nixosConfigurations =
+        let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          all-configurations = import ./configs/all-configurations.nix { inherit pkgs; };
+          inject-ngipkgs = k: v: pkgs.nixos ({ ... }: { imports = [ self.nixosModules.x86_64-linux.ngipkgs v ]; });
+        in
+
+        builtins.mapAttrs inject-ngipkgs all-configurations;
+
+    };
 }
+ 
+
+
+
