@@ -8,17 +8,15 @@
 
 ```
 .
-├── all-packages.nix              # 
+├── all-packages.nix              # import package files here
 ├── configs
 │   ├── all-configurations.nix    # import configuration files here
 │   └── ...                       # add configuration files here
-├── configuration.nix
-├── default.nix
 ├── flake.lock
 ├── flake.nix
 ├── modules
-│   ├── all-modules.nix             # import module files here
+│   ├── all-modules.nix           # import module files here
 │   └── ...
-├── pkgs                            # add packages here
-├── README.md                       # this file
+├── pkgs                          # add package files here
+├── README.md                     # this file
 ```

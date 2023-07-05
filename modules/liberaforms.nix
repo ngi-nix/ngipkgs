@@ -13,9 +13,6 @@ with lib; let
 in
 {
 
-  #Tried instead of top attribute but causes infinite recursion
-  #imports = [ ../pkgs/liberaforms/default.nix ];
-
   options.services.liberaforms = with types; {
     enable = mkEnableOption "LiberaForms server";
 
