@@ -12,7 +12,7 @@
         {
           packages = import ./all-packages.nix { inherit (pkgs) newScope; };
           nixosModules = {
-            liberaforms = import ./modules/liberaforms.nix;
+            modules = import ./modules/all-modules.nix;
             ngipkgs = { ... }: {
               # inject an additional argument into the module system evaluation.
               # this way our package set can be accessed separately and we don't have
