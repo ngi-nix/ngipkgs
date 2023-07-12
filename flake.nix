@@ -11,6 +11,10 @@
         in
         {
           packages = import ./all-packages.nix { inherit (pkgs) newScope; };
+          hydraJobs = {
+            inherit (self)
+              packages;
+          };
           nixosModules = {
             modules = import ./modules/all-modules.nix;
             ngipkgs = { ... }: {
