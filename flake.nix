@@ -11,10 +11,6 @@
         in
         {
           packages = import ./all-packages.nix { inherit (pkgs) newScope; };
-          hydraJobs = {
-            inherit (self)
-              packages;
-          };
           nixosModules = {
             modules = import ./modules/all-modules.nix;
             ngipkgs = { ... }: {
@@ -35,8 +31,13 @@
           all-configurations = import ./configs/all-configurations.nix { inherit pkgs; };
           inject-ngipkgs = k: v: pkgs.nixos ({ ... }: { imports = [ self.nixosModules.x86_64-linux.ngipkgs v ]; });
         in
-
         builtins.mapAttrs inject-ngipkgs all-configurations;
 
+      hydraJobs = {
+        inherit (self)
+          packages;
+      };
+        
     };
+
 }
