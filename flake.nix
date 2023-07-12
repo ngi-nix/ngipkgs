@@ -34,10 +34,9 @@
         builtins.mapAttrs inject-ngipkgs all-configurations;
 
       hydraJobs = {
-        inherit (self)
-          packages;
+        packages.x86_64-linux = self.packages.x86_64-linux;
       };
-        
+
     };
 
 }
