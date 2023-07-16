@@ -38,7 +38,7 @@ nix build .#libgnunetchat
 
 ## Add and deploy a service
 
-For each service there is a module file in the `modules directory` which is where most of the work is done to define the configuration for a service. Whereas the default.nix for a package usually somewhat corresponds to the upstream instructions for building and installing from source, the module for a service will correspond to the instructions for configuring and running the software persistently (often using a systemd service). Each module must also be imported into Ngipkgs by adding a line to the file `modules/all-modules.nix`.
+For each service there is a module file in the `modules` directory which is where most of the work is done to define the configuration for a service. Whereas the default.nix for a package usually somewhat corresponds to the upstream instructions for building and installing from source, the module for a service will correspond to the instructions for configuring and running the software persistently, including integration with other system components such as a systemd service or a web server config. Each module must also be imported into Ngipkgs by adding a line to the file `modules/all-modules.nix`.
 
 A service has its NixOS configuration options defined in its module. To actually be used, this module file must be imported into a NixOS system configuration so that the options can be used and the service deployed. There is a directory in `configs` for each service that contains NixOS configuration template files for practical deployment of the service to different kinds of target systems, such as a container or a cloud VM. Each configuration must also be imported into Ngipkgs by adding a line to the file `configs/all-configurations.nix`. For clarity, the name given to the configuration in this file should include both the name of the service, and its target system. For example, this is the import line for deployment of liberaforms to a container:
 ```
@@ -51,9 +51,13 @@ sudo nixos-container create libera0 --flake .#liberaforms-container
 
 [TODO: Add details about how to do more production-like deployments that require non-default config options.]
 
-[TODO: How to import all of Ngipkgs as an input to an existing NixOS configuration, in order to deploy a service alongside other services on the same virtual or physical machine.]  
+[TODO: How to import all of Ngipkgs as an input to an existing NixOS configuration, in order to deploy a service alongside other services on the same virtual or physical machine.]
 
-## Reasoning for creation the Ngipkgs monorepo
+## Continuous builds of packages with Hydra
+
+Once they are merged into the main branch of the repo, all of the packages in Ngipkgs are a automatically built by a Hydra server. The results of these builds can be seen at https://hydra.ngi0.nixos.org/jobset/ngipkgs/main#tabs-jobs
+
+## Reasoning for creation of the Ngipkgs monorepo
 
 - The user can discover ngi projects through a unified webpage and expectation is set that many of them are research projects.
 - The developers get a unified code structure, CI & CD tooling, and a common PR and issue tracker which facilitates reviews.
