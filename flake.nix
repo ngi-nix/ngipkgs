@@ -39,6 +39,8 @@
         packages.x86_64-linux = self.packages.x86_64-linux;
       };
 
+      checks.x86_64-linux = self.packages.x86_64-linux;
+
     };
 
 }
