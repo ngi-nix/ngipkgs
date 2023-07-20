@@ -4,6 +4,7 @@ let
   liberaforms-src = callPackage ./src.nix { };
 
   # Mach Nix is broken on recent Nixpkgs
+  # https://github.com/DavHau/mach-nix/issues/549
   machNixpkgs = fetchFromGitHub {
     owner = "NixOS";
     repo = "nixpkgs";
