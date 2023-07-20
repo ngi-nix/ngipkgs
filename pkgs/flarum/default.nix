@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub }:
+{ stdenv, fetchFromGitHub, php, composer  }:
 
 stdenv.mkDerivation rec {
   pname = "flarum";
@@ -18,6 +18,6 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/www
     cp -r * $out/www
-  ''
+  '';
 }
 
