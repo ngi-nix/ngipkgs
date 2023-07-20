@@ -8,5 +8,16 @@ stdenv.mkDerivation rec {
     repo = "framework";
     rev = version;
   };
+
+  buildInputs = [php composer];
+
+  buildPhase = ''
+    composer install
+  '';
+
+  installPhase = ''
+    mkdir -p $out/www
+    cp -r * $out/www
+  ''
 }
 
