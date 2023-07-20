@@ -1,24 +1,14 @@
-{ stdenv, fetchFromGitHub, php, phpPackages, ... }:
+{pkgs ? import <nixpkgs> {
+    inherit system;
+  }, system ? builtins.currentSystem, noDev ? false, php ? pkgs.php, phpPackages ? pkgs.phpPackages}:
 
-stdenv.mkDerivation rec {
-  pname = "flarum";
-  version = "v1.8.1";
-  src = fetchFromGitHub {
-    owner = "flarum";
-    repo = "framework";
-    rev = version;
-    sha256 = "sha256-Q6+MxRTuMGzwkwnmgaLffkg6rpTlalA+49O/UGaz7HE=";
+let
+  composerEnv = import ./composer-env.nix {
+    inherit (pkgs) stdenv lib writeTextFile fetchurl unzip;
+    inherit php phpPackages;
   };
-
-  buildInputs = [ php phpPackages.composer ];
-
-  buildPhase = ''
-    composer install
-  '';
-
-  installPhase = ''
-    mkdir -p $out/www
-    cp -r * $out/www
-  '';
+in
+import ./php-packages.nix {
+  inherit composerEnv noDev;
+  inherit (pkgs) fetchurl fetchgit fetchhg fetchsvn;
 }
-
