@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, php, composer  }:
+{ stdenv, fetchFromGitHub, php, phpPackages, ...  }:
 
 stdenv.mkDerivation rec {
   pname = "flarum";
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     rev = version;
   };
 
-  buildInputs = [php composer];
+  buildInputs = [php phpPackages.composer];
 
   buildPhase = ''
     composer install
