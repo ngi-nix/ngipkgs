@@ -1,12 +1,5 @@
 # NGIPKGS
 
-Hi I'm Albert
-
-Hi, I'm Jack!
-
-# Jason here
-# Dominic here 
->>>>>>> 7790c804aa5a88206b3b3f269b11a39bdbedc628
 [Ngipkgs](https://github.com/ngi-nix/ngipkgs) is a collection of [Nix](https://nixos.org/) packages and services for software projects that are supported through the [Next Generation Internet](https://www.ngi.eu/) (NGI) program of the European Commission.
 
 ## Structure of Ngipkgs
