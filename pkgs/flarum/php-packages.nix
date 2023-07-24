@@ -1348,8 +1348,8 @@ in
 composerEnv.buildPackage {
   inherit packages devPackages noDev;
   name = "flarum-flarum";
-  # src = composerEnv.filterSrc ./.;
-  src = ./src;
+  src = composerEnv.filterSrc ./.;
+  # src = ./src;
   executable = false;
   symlinkDependencies = false;
   meta = {
