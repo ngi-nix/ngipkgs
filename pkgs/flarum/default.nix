@@ -1,12 +1,10 @@
 { pkgs }:
 
-rec {
-  pname = "flarum";
-  version = "v1.8.0";
+{
   src = builtins.fetchFromGitHub {
     owner = "flarum";
     repo = "flarum";
-    rev = version;
+    rev = "v1.8.0";
     sha256 = "";
   };
 
