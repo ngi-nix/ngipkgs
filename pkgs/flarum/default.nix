@@ -31,7 +31,7 @@ in package.override rec {
   version = "1.8.0";
 
   src = fetchFromGitHub {
-    owner = "flarum";
+    owner = "albertchae";
     repo = pname;
     rev = "v${version}";
     hash = "sha256-xadZIdyH20mxfxCyiDRtSRSrPj8DWXpuup61WSsjgWw=";
