@@ -34,7 +34,7 @@ in package.override rec {
     owner = "flarum";
     repo = pname;
     rev = "v${version}";
-    hash = "";
+    hash = "sha256-xadZIdyH20mxfxCyiDRtSRSrPj8DWXpuup61WSsjgWw=";
   };
 
   passthru = {

@@ -575,10 +575,10 @@ let
     "jaybizzle/crawler-detect" = {
       targetDir = "";
       src = composerEnv.buildZipPackage {
-        name = "jaybizzle-crawler-detect-4531e4a70d55d10cbe7d41ac1ff0d75a5fe2ef1e";
+        name = "jaybizzle-crawler-detect-97e9fe30219e60092e107651abb379a38b342921";
         src = fetchurl {
-          url = "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/4531e4a70d55d10cbe7d41ac1ff0d75a5fe2ef1e";
-          sha256 = "0f4g6kbz6ypg3jyfnqw2l1gk40xgxwnvyrrz719f3qxh3bh5k9iy";
+          url = "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/97e9fe30219e60092e107651abb379a38b342921";
+          sha256 = "0ywqamhyilrlb1sli00i2gnaw2hyjpbb9pkxb8nxx7dr1a4v8x7q";
         };
       };
     };
@@ -1349,7 +1349,6 @@ composerEnv.buildPackage {
   inherit packages devPackages noDev;
   name = "flarum-flarum";
   src = composerEnv.filterSrc ./.;
-  # src = ./src;
   executable = false;
   symlinkDependencies = false;
   meta = {

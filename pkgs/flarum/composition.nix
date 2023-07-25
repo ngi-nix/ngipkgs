@@ -10,5 +10,5 @@ let
 in
 import ./php-packages.nix {
   inherit composerEnv noDev;
-  inherit (pkgs) fetchurl fetchFromGitHub fetchgit fetchhg fetchsvn;
+  inherit (pkgs) fetchurl fetchgit fetchhg fetchsvn;
 }
