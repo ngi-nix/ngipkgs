@@ -14,6 +14,7 @@
         in
         {
           packages = import ./all-packages.nix { inherit (pkgs) newScope; };
+          checks = import ./all-packages.nix { inherit (pkgs) newScope; };
           nixosModules = {
             modules = import ./modules/all-modules.nix;
             ngipkgs = { ... }: {
@@ -22,7 +23,6 @@
               # to muck around with overlays (which don't work with flakes as you'd expect)
               _module.args.ngipkgs = self.packages.${system};
             };
-          checks = self.packages;
           };
           # XXX: fugly hack to work around literal quoting of attribute paths passed to `nixos-container`.
           # without it we'd have to pass `x86_64-linux.<container>`, which will
