@@ -22,6 +22,7 @@
               # to muck around with overlays (which don't work with flakes as you'd expect)
               _module.args.ngipkgs = self.packages.${system};
             };
+          checks = self.packages;
           };
           # XXX: fugly hack to work around literal quoting of attribute paths passed to `nixos-container`.
           # without it we'd have to pass `x86_64-linux.<container>`, which will
@@ -40,7 +41,7 @@
         packages.x86_64-linux = self.packages.x86_64-linux;
       };
 
-      checks.x86_64-linux = self.packages.x86_64-linux;
+      #checks.x86_64-linux = self.packages.x86_64-linux;
 
     };
 

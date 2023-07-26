@@ -1,4 +1,4 @@
 { pkgs }:
 {
-  liberaforms-container = import ./liberaforms/container.nix;
+  #Disabled because IDF# liberaforms-container = import ./liberaforms/container.nix;
 }

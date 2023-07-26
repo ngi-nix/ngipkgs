@@ -1,3 +1,3 @@
 {
-  liberaforms = import ./liberaforms.nix;
+  #Disabled because IDF# liberaforms = import ./liberaforms.nix;
 }
