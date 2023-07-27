@@ -7,8 +7,8 @@
   inputs.flake-utils.inputs.systems.follows = "systems";
 
   outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem
-      (system:
+  let
+    buildOutputs = (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
@@ -27,21 +27,21 @@
           # without it we'd have to pass `x86_64-linux.<container>`, which will
           # be taken as a single attribute name and not an attribute path (i.e. a dot-separated
           # sequence attribute names)
-        }) // {
+        });
+    checkOutputs = (system: {
       nixosConfigurations =
         let
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          pkgs = nixpkgs.legacyPackages.${system};
           all-configurations = import ./configs/all-configurations.nix { inherit pkgs; };
-          inject-ngipkgs = k: v: pkgs.nixos ({ ... }: { imports = [ self.nixosModules.x86_64-linux.ngipkgs v ]; });
+          inject-ngipkgs = k: v: pkgs.nixos ({ ... }: { imports = [ self.nixosModules.${system}.ngipkgs v ]; });
         in
         builtins.mapAttrs inject-ngipkgs all-configurations;
 
       hydraJobs = {
-        packages.x86_64-linux = self.packages.x86_64-linux;
+        packages.${system} = self.packages.${system};
       };
 
-      checks.x86_64-linux = self.packages.x86_64-linux;
-
-    };
-
+      checks.${system} = self.packages.${system};
+    } );
+  in (flake-utils.lib.eachDefaultSystem buildOutputs) // (checkOutputs "x86_64-linux");
 }
