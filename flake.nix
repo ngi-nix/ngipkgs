@@ -23,10 +23,6 @@
               _module.args.ngipkgs = self.packages.${system};
             };
           };
-          # XXX: fugly hack to work around literal quoting of attribute paths passed to `nixos-container`.
-          # without it we'd have to pass `x86_64-linux.<container>`, which will
-          # be taken as a single attribute name and not an attribute path (i.e. a dot-separated
-          # sequence attribute names)
         });
     checkOutputs = (system: {
       nixosConfigurations =
