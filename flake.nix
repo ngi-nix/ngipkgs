@@ -25,13 +25,15 @@
             };
           };
         });
-    checkOutputs = (system: {
+    checkOutputs = (system:
+    let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
       # Configurations have to go in checkOutputs (ie, avoid `eachDefaultSystem`) to generate
       # a single attribute name for nixos-container deployments (`<config-name>`), because
       # nixos-container can't parse dot-separated sequence attribute paths (`x86_64-linux.<config-name>`).
       nixosConfigurations =
         let
-          pkgs = nixpkgs.legacyPackages.${system};
           all-configurations = import ./configs/all-configurations.nix { inherit pkgs; };
           inject-ngipkgs = k: v: pkgs.nixos ({ ... }: { imports = [ self.nixosModules.${system}.ngipkgs v ]; });
         in
