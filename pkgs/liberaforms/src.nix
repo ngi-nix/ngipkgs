@@ -1,4 +1,4 @@
-{ fetchFromGitLab, ... }:
+{fetchFromGitLab, ...}:
 fetchFromGitLab {
   owner = "liberaforms";
   repo = "liberaforms";

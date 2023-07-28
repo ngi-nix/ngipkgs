@@ -1,5 +1,11 @@
-{ stdenv, gnunet, libsodium, libgcrypt, libextractor, fetchgit }:
-
+{
+  stdenv,
+  gnunet,
+  libsodium,
+  libgcrypt,
+  libextractor,
+  fetchgit,
+}:
 # From https://github.com/ngi-nix/gnunet-messenger-cli/blob/main/flake.nix
 stdenv.mkDerivation {
   name = "libgnunetchat";
@@ -9,7 +15,7 @@ stdenv.mkDerivation {
     sha256 = "sha256-U6m6AgjnYy9BL158WktpGbf/Evurst5LExK4YU26WJU=";
   };
 
-  buildInputs = [ gnunet libsodium libgcrypt libextractor ];
+  buildInputs = [gnunet libsodium libgcrypt libextractor];
 
   INSTALL_DIR = (placeholder "out") + "/";
   prePatch = ''
