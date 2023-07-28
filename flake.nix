@@ -6,12 +6,15 @@
   # Set the defaultSystem list for flake-utils to only x86_64-linux
   inputs.systems.url = "github:nix-systems/x86_64-linux";
   inputs.flake-utils.inputs.systems.follows = "systems";
+  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
+  inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, treefmt-nix, ... }:
   let
     buildOutputs = (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
         in
         {
           packages = import ./all-packages.nix { inherit (pkgs) newScope; };
@@ -24,10 +27,14 @@
               _module.args.ngipkgs = self.packages.${system};
             };
           };
+
+          formatter = treefmtEval.config.build.wrapper;
         });
+
     checkOutputs = (system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
+      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
     in {
       # Configurations have to go in checkOutputs (ie, avoid `eachDefaultSystem`) to generate
       # a single attribute name for nixos-container deployments (`<config-name>`), because
@@ -47,7 +54,9 @@
 
       # For .github/workflows/ci.yaml to *build* all packages, because
       # `nix flake check` only evaluates packages, but it builds checks.
-      checks.${system} = self.packages.${system};
+      checks.${system} = self.packages.${system} // {
+          formatting = treefmtEval.config.build.check self;
+      };
     } );
   in (flake-utils.lib.eachDefaultSystem buildOutputs) // (checkOutputs "x86_64-linux");
 }
