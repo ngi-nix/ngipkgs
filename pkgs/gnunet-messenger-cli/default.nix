@@ -1,5 +1,12 @@
-{ stdenv, gnunet, libsodium, libgcrypt, libgnunetchat, ncurses, fetchgit }:
-
+{
+  stdenv,
+  gnunet,
+  libsodium,
+  libgcrypt,
+  libgnunetchat,
+  ncurses,
+  fetchgit,
+}:
 stdenv.mkDerivation {
   name = "gnunet-messenger-cli";
   src = fetchgit {
