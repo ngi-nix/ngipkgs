@@ -3,16 +3,16 @@
     "aeidon-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1648947925,
-        "narHash": "sha256-iF2ScQFYxYM2o18Cfy6U6JAZxIiZSsGrWEb4yjyECwc=",
+        "lastModified": 1674321022,
+        "narHash": "sha256-XMF1ra7ntEdp9JN458kRhWNlLbdPP1ip9S2TelMeMv0=",
         "owner": "otsaloma",
         "repo": "gaupol",
-        "rev": "51ae5c96e25fef795f29df0684f9c00e615e74e7",
+        "rev": "60cab543e355e0577d3553f8b998853f56476e55",
         "type": "github"
       },
       "original": {
         "owner": "otsaloma",
-        "ref": "1.11",
+        "ref": "1.12",
         "repo": "gaupol",
         "type": "github"
       }
@@ -121,16 +121,16 @@
     "weblate": {
       "flake": false,
       "locked": {
-        "lastModified": 1663242726,
-        "narHash": "sha256-p+nwNEgHmMxQLhG+n9/6nywE71vO8kZgq77JwHYqPUs=",
+        "lastModified": 1688118527,
+        "narHash": "sha256-RZkF6MRR0v1nQHRbrr6ahx8GhTgU4nr8bBLjHfHJmDc=",
         "owner": "WeblateOrg",
         "repo": "weblate",
-        "rev": "444dc55f06834f66b79787bfb11dc49db18b4248",
+        "rev": "a595da9065ab069971bb8a2a94fdd1de18140f09",
         "type": "github"
       },
       "original": {
         "owner": "WeblateOrg",
-        "ref": "weblate-4.14.1",
+        "ref": "weblate-4.18.2",
         "repo": "weblate",
         "type": "github"
       }

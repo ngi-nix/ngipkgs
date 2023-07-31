@@ -4,9 +4,9 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
   inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.14.1";
+  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.18.2";
   inputs.weblate.flake = false;
-  inputs.aeidon-src.url = "github:otsaloma/gaupol/1.11";
+  inputs.aeidon-src.url = "github:otsaloma/gaupol/1.12";
   inputs.aeidon-src.flake = false;
 
   outputs = { self, nixpkgs, weblate, aeidon-src, poetry2nix }:
@@ -19,6 +19,7 @@
     {
 
       packages.x86_64-linux.default = self.packages.x86_64-linux.weblate;
+
       packages.x86_64-linux.weblate = (pkgs.poetry2nix.mkPoetryApplication {
         src = weblate;
         pyproject = ./pyproject.toml;
@@ -85,16 +86,6 @@
             borgbackup = super.borgbackup.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools-scm ];
             });
-            kombu = super.kombu.overridePythonAttrs (old: rec {
-              # See: https://github.com/mayflower/authentik-nix/blob/main/poetry2nix-python-overrides.nix#L44
-              version = "5.3.0b3"; # 5.2.4 broken build from source
-              src = self.fetchPypi {
-                inherit version;
-                pname = "kombu";
-                sha256 = "316df5e840f284d0671b9000bbf747da2b00f3b81433c720de66a5f659e5711d";
-              };
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
-            });
             siphashc = super.siphashc.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
@@ -113,6 +104,40 @@
             weblate-schemas = super.weblate-schemas.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
+            diff-match-patch = super.diff-match-patch.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
+            });
+            editables = super.editables.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
+            });
+            nh3 = super.nh3.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+                pkgs.maturin
+                pkgs.rustPlatform.maturinBuildHook
+                pkgs.rustPlatform.cargoSetupHook
+              ];
+              cargoDeps =
+                let
+                  getCargoHash = version: {
+                    "0.2.14" = "sha256-EzlwSic1Qgs4NZAde/KWg0Qjs+PNEPcnE8HyIPoYZQ0=";
+                  }.${version};
+                in
+                pkgs.rustPlatform.fetchCargoTarball {
+                  inherit (old) src;
+                  name = "${old.pname}-${old.version}";
+                  hash = getCargoHash old.version;
+                };
+            });
+            crispy-bootstrap3 = super.crispy-bootstrap3.overridePythonAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
+            });
+            psycopg = super.psycopg.overridePythonAttrs (
+              old: {
+                buildInputs = (old.buildInputs or [ ])
+                  ++ pkgs.lib.optional pkgs.stdenv.isDarwin pkgs.openssl;
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.postgresql ];
+              }
+            );
           }
         );
       }).dependencyEnv;
