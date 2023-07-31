@@ -20,7 +20,8 @@
       pkgs = nixpkgs.legacyPackages.${system};
       treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
     in {
-      packages = import ./all-packages.nix {inherit (pkgs) newScope;};
+      packages = import ./all-packages.nix {inherit (pkgs) newScope;
+      };
       nixosModules = {
         modules = import ./modules/all-modules.nix;
         ngipkgs = {...}: {
@@ -35,15 +36,16 @@
     };
 
     checkOutputs = system: let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = nixpkgs.legacyPackages.${system} // self.packages.${system};
       treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
+      ngipkgsModule = self.nixosModules.${system}.ngipkgs;
     in {
       # Configurations have to go in checkOutputs (ie, avoid `eachDefaultSystem`) to generate
       # a single attribute name for nixos-container deployments (`<config-name>`), because
       # nixos-container can't parse dot-separated sequence attribute paths (`x86_64-linux.<config-name>`).
       nixosConfigurations = let
         all-configurations = import ./configs/all-configurations.nix {inherit pkgs;};
-        inject-ngipkgs = k: v: pkgs.nixos ({...}: {imports = [self.nixosModules.${system}.ngipkgs v];});
+        inject-ngipkgs = k: v: pkgs.nixos ({...}: {imports = [ngipkgsModule v];});
       in
         builtins.mapAttrs inject-ngipkgs all-configurations;
 
@@ -59,6 +61,11 @@
         self.packages.${system}
         // {
           formatting = treefmtEval.config.build.check self;
+          test-pretalx =
+            pkgs.nixosTest
+            (import ./tests/pretalx/pretalx.nix {
+              inherit ngipkgsModule pkgs;
+            });
         };
     };
   in
