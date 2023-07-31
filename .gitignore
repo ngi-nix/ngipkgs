@@ -1,2 +1,6 @@
 result
 .tmp
+
+# Configuration file for `mob` CLI (see <https://mob.sh>)
+# with contents varying per mob.
+.mob
