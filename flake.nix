@@ -2,7 +2,7 @@
   description = "NgiPkgs";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.nix-php-composer-builder.url = "github:loophp/nix-php-composer-builder";
+  inputs.nix-php-composer-builder.url = "github:loophp/nix-php-composer-builder?ref=0caf5a60753397cfa959a74fc9ea0562556573c1";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   # Set default system to `x86_64-linux`,
   # as we currently only support Linux.
@@ -112,7 +112,7 @@
           // {
             # The default module adds the default overlay on top of nixpkgs.
             # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-            default.nixpkgs.overlays = [self.overlays.default];
+            default.nixpkgs.overlays = [self.overlays.default nix-php-composer-builder.overlays.default];
           };
 
         # Overlays a package set (e.g. nixpkgs) with the packages defined in this flake.
