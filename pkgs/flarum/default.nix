@@ -1,0 +1,27 @@
+{
+  fetchFromGitHub,
+  fetchurl,
+  lib,
+  php,
+}:
+php.buildComposerProject (finalAttrs: {
+  pname = "flarum";
+  version = "1.8.0";
+
+  src = fetchFromGitHub {
+    owner = "flarum";
+    repo = "flarum";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-xadZIdyH20mxfxCyiDRtSRSrPj8DWXpuup61WSsjgWw=";
+  };
+
+  composerLock = ./composer.lock;
+  vendorHash = "sha256-KXC0kVuBXTqLlddWGEisSDChWE74nRNdUr+fieFTG1M=";
+
+  meta = {
+    changelog = "https://github.com/flarum/framework/blob/main/CHANGELOG.md";
+    description = "Flarum is a delightfully simple discussion platform for your website";
+    homepage = "https://github.com/flarum/flarum";
+    license = lib.licenses.mit;
+  };
+})
