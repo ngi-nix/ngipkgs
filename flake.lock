@@ -36,29 +36,12 @@
         "type": "github"
       }
     },
-    "php-nixpkgs": {
-      "locked": {
-        "lastModified": 1689687631,
-        "narHash": "sha256-TxLnLoxc7GjnZqxeFH06GzuxReOvaweDHew5btAlqvs=",
-        "owner": "drupol",
-        "repo": "nixpkgs",
-        "rev": "af638ea89a7aeef9fe6c1c674165314c09f02395",
-        "type": "github"
-      },
-      "original": {
-        "owner": "drupol",
-        "ref": "php/add-new-builder",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "systems": "systems",
-        "treefmt-nix": "treefmt-nix",
-        "php-nixpkgs": "php-nixpkgs"
+        "treefmt-nix": "treefmt-nix"
       }
     },
     "systems": {

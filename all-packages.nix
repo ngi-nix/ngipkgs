@@ -1,10 +1,6 @@
-{
-  newScope,
-  php-newScope,
-  ...
-}: let
+{newScope, ...}: let
   self = rec {
-    flarum = php-callPackage ./pkgs/flarum {};
+    flarum = callPackage ./pkgs/flarum {};
     gnunet-messenger-cli = callPackage ./pkgs/gnunet-messenger-cli {};
     kikit = callPackage ./pkgs/kikit {};
     liberaforms = callPackage ./pkgs/liberaforms {};
@@ -20,6 +16,5 @@
   };
 
   callPackage = newScope (self // nixpkgs-candidates // {inherit callPackage;});
-  php-callPackage = php-newScope (self // nixpkgs-candidates // {inherit callPackage;});
 in
   self
