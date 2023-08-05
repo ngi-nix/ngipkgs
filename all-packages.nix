@@ -7,6 +7,7 @@
     liberaforms = callPackage ./pkgs/liberaforms {};
     liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
+    librecast = callPackage ./pkgs/librecast {inherit lcrq;};
   };
 
   nixpkgs-candidates = {
