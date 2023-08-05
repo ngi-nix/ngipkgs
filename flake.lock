@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1690933134,
+        "narHash": "sha256-ab989mN63fQZBFrkk4Q8bYxQCktuHmBIBqUG1jl6/FQ=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "59cf3f1447cfc75087e7273b04b31e689a8599fb",
+        "type": "github"
+      },
+      "original": {
+        "id": "flake-parts",
+        "type": "indirect"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": [
@@ -20,6 +37,24 @@
         "type": "github"
       }
     },
+    "nix-php-composer-builder": {
+      "inputs": {
+        "flake-parts": "flake-parts"
+      },
+      "locked": {
+        "lastModified": 1691252882,
+        "narHash": "sha256-kCiFl72gV/OzDPCrw2CeHM6VEtVGFj57gaF8ZKD9LWI=",
+        "owner": "loophp",
+        "repo": "nix-php-composer-builder",
+        "rev": "0caf5a60753397cfa959a74fc9ea0562556573c1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "loophp",
+        "repo": "nix-php-composer-builder",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1689752456,
@@ -36,18 +71,20 @@
         "type": "github"
       }
     },
-    "php-nixpkgs": {
+    "nixpkgs-lib": {
       "locked": {
-        "lastModified": 1689687631,
-        "narHash": "sha256-TxLnLoxc7GjnZqxeFH06GzuxReOvaweDHew5btAlqvs=",
-        "owner": "drupol",
+        "dir": "lib",
+        "lastModified": 1690881714,
+        "narHash": "sha256-h/nXluEqdiQHs1oSgkOOWF+j8gcJMWhwnZ9PFabN6q0=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "af638ea89a7aeef9fe6c1c674165314c09f02395",
+        "rev": "9e1960bc196baf6881340d53dccb203a951745a2",
         "type": "github"
       },
       "original": {
-        "owner": "drupol",
-        "ref": "php/add-new-builder",
+        "dir": "lib",
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -55,10 +92,10 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "nix-php-composer-builder": "nix-php-composer-builder",
         "nixpkgs": "nixpkgs",
         "systems": "systems",
-        "treefmt-nix": "treefmt-nix",
-        "php-nixpkgs": "php-nixpkgs"
+        "treefmt-nix": "treefmt-nix"
       }
     },
     "systems": {

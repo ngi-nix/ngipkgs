@@ -2,7 +2,7 @@
   description = "NgiPkgs";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.php-nixpkgs.url = "github:drupol/nixpkgs?ref=php/add-new-builder";
+  inputs.nix-php-composer-builder.url = "github:loophp/nix-php-composer-builder";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   # Set the defaultSystem list for flake-utils to only x86_64-linux
   inputs.systems.url = "github:nix-systems/x86_64-linux";
@@ -13,19 +13,22 @@
   outputs = {
     self,
     nixpkgs,
-    php-nixpkgs,
+    nix-php-composer-builder,
     flake-utils,
     treefmt-nix,
     ...
   }: let
     buildOutputs = system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-      php-pkgs = php-nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          nix-php-composer-builder.overlays.default
+        ];
+      };
       treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
     in {
       packages = import ./all-packages.nix {
         inherit (pkgs) newScope;
-        php-newScope = php-pkgs.newScope;
       };
       nixosModules = {
         modules = import ./modules/all-modules.nix;
