@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     homepage = "https://librecast.net/lcrq.html";
-    changelog = "https://codeberg.org/librecast/lcrq/src/branch/main/CHANGELOG.md";
+    changelog = "https://codeberg.org/librecast/lcrq/src/tag/v${version}/CHANGELOG.md";
     description = "Librecast RaptorQ library.";
     license = [licenses.gpl2 licenses.gpl3];
   };
