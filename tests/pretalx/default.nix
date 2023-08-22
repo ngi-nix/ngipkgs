@@ -7,22 +7,9 @@
         configurations.server
       ];
 
-      networking.hostName = "server";
-      networking.domain = "example.com";
-
-      sops = {
+      sops = pkgs.lib.mkForce {
         age.keyFile = ./sops/keys.txt;
-        secrets = let
-          pretalxSecret = {
-            sopsFile = ./sops/pretalx.yaml;
-          };
-        in {
-          "pretalx/database/password" = pretalxSecret;
-          "pretalx/redis/location" = pretalxSecret;
-          "pretalx/init/admin/password" = pretalxSecret;
-          "pretalx/celery/backend" = pretalxSecret;
-          "pretalx/celery/broker" = pretalxSecret;
-        };
+        defaultSopsFile = ./sops/pretalx.yaml;
       };
 
       # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>

@@ -9,9 +9,15 @@
     liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
     librecast = callPackage ./pkgs/librecast {inherit lcrq;};
-    pretalx-mysql = callPackage ./pkgs/pretalx { withMysql = true; withRedis=true;};
-    pretalx-postgresql = callPackage ./pkgs/pretalx { withPostgresql = true; withRedis=true;};
-    pretalx = callPackage ./pkgs/pretalx { 
+    pretalx-mysql = callPackage ./pkgs/pretalx {
+      withMysql = true;
+      withRedis = true;
+    };
+    pretalx-postgresql = callPackage ./pkgs/pretalx {
+      withPostgresql = true;
+      withRedis = true;
+    };
+    pretalx = callPackage ./pkgs/pretalx {
       withMysql = true;
       withPostgresql = true;
       withRedis = true;

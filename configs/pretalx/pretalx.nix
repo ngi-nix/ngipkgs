@@ -3,23 +3,33 @@
   pkgs,
   ...
 }: {
+  imports = [
+    ./vm.nix
+  ];
+
   nixpkgs.hostPlatform = "x86_64-linux";
 
-  networking.firewall.allowedTCPPorts = [config.services.nginx.defaultHTTPListenPort];
+  networking = {
+    firewall.allowedTCPPorts = [config.services.nginx.defaultHTTPListenPort];
+    hostName = "server";
+    domain = "example.com";
+  };
 
-  sops.secrets = let
-    pretalxSecret = {
-      # For a production configuration also `sopsFile` is required.
-      # See <https://github.com/Mic92/sops-nix>.
-      owner = config.services.pretalx.user;
-      group = config.services.pretalx.group;
+  sops = {
+    secrets = let
+      pretalxSecret = {
+        # For a production configuration also `sopsFile` is required.
+        # See <https://github.com/Mic92/sops-nix>.
+        owner = config.services.pretalx.user;
+        group = config.services.pretalx.group;
+      };
+    in {
+      "pretalx/database/password" = pretalxSecret;
+      "pretalx/redis/location" = pretalxSecret;
+      "pretalx/init/admin/password" = pretalxSecret;
+      "pretalx/celery/backend" = pretalxSecret;
+      "pretalx/celery/broker" = pretalxSecret;
     };
-  in {
-    "pretalx/database/password" = pretalxSecret;
-    "pretalx/redis/location" = pretalxSecret;
-    "pretalx/init/admin/password" = pretalxSecret;
-    "pretalx/celery/backend" = pretalxSecret;
-    "pretalx/celery/broker" = pretalxSecret;
   };
 
   services = {
@@ -69,4 +79,6 @@
       recommendedProxySettings = true;
     };
   };
+
+  system.stateVersion = "22.11";
 }

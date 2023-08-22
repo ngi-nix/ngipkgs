@@ -485,10 +485,9 @@ in {
           script = ''
             ${exportPasswordEnv}
 
-            # ${cfg.package}/bin/pretalx compilemessages
+            # ${cfg.package}/bin/pretalx compilemessages # FIXME: when run, pretalx-web hangs
             ${cfg.package}/bin/pretalx collectstatic --noinput
-            # FIXME: Remove `--force`, was only added for PRETALX_DEBUG=true not to crash.
-            ${cfg.package}/bin/pretalx compress --force
+            ${cfg.package}/bin/pretalx compress
 
             exec ${gunicorn}/bin/gunicorn pretalx.wsgi --name=${pretalxWebServiceName} --bind=${gunicornSocket} ${cfg.gunicorn.extraArgs}
           '';
