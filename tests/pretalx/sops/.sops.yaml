@@ -1,0 +1,13 @@
+keys:
+  - &augustebaum   age16xvvc22xm35xzgc2yx6cpcz6wnww8tf6rwfmrag4vnem7nq6h9pqr33epg
+  - &imincik       age1przhvgd5gy3kvcmlmsu47qmauhdwzzez7z89xyv623em72e9mfzskefwcl
+  - &lorenzleutgeb age1c0g6s6daxy79dlm9uqczwlkh0hvjpghw5h8zzljc3vs275rvvqus30hv9l
+  - &test          age1fdlfm8xh97fwpf8fls9245wre9aktg6dzhhrr02s028kz4g38ajss2guwx
+creation_rules:
+  - path_regex: ^pretalx\.yaml$
+    key_groups:
+      - age:
+        - *augustebaum
+        - *imincik
+        - *lorenzleutgeb
+        - *test

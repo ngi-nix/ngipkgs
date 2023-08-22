@@ -1,20 +1,27 @@
 {
   config,
   lib,
+  modulesPath,
+  options,
   pkgs,
-  ngipkgs,
   ...
 }:
 with builtins;
 with lib; let
   cfg = config.services.pretalx;
+  opt = options.services.pretalx;
   gunicorn = pkgs.python3Packages.gunicorn;
   libDir = "/var/lib/pretalx";
+  gunicornSocketPath = "/var/run/pretalx.sock";
+  gunicornSocket = "unix:${gunicornSocketPath}";
+  pretalxWebServiceName = "pretalx-web";
 
-  init = pkgs.writeScriptBin "expect-pretalx-init" ''
+  # NOTE: This expect script might be replaced as soon as <https://github.com/pretalx/pretalx/issues/1551> is resolved.
+  pretalxInit = pkgs.writeScriptBin "expect-pretalx-init" ''
     #! ${pkgs.expect}/bin/expect -f
     set timeout 10
     spawn ${cfg.package}/bin/pretalx init
+    log_user 0
 
     expect "E-Mail: "
     send -- "${cfg.init.admin.email}\n"
@@ -40,32 +47,16 @@ with lib; let
     expect eof
   '';
 
-  environmentFile =
-    pkgs.runCommand "pretalx-environ" {
-      buildInputs = [cfg.package gunicorn]; # Sets PYTHONPATH in derivation
-    } ''
-      cat > $out <<EOF
-      PYTHONPATH=$PYTHONPATH
-      EOF
-    '';
+  environmentFile = pkgs.runCommand "pretalx-environ" {
+    buildInputs = [cfg.package gunicorn]; # Sets PYTHONPATH in derivation
+  } "echo PYTHONPATH=$PYTHONPATH > $out;";
+
+  secretRecommendation = "Consider using a secret managing scheme such as `agenix` or `sops-nix` to generate this file.";
 in {
   options.services.pretalx = with types; {
     enable = mkEnableOption "Enable pretalx server.";
 
-    package = mkPackageOption ngipkgs "pretalx" {};
-
-    bind = mkOption {
-      type = str;
-      description = "IP address or hostname that pretalx binds to.";
-      default = "127.0.0.1";
-      example = "0.0.0.0";
-    };
-
-    port = mkOption {
-      type = int;
-      description = "TCP port that the pretalx HTTP server binds to.";
-      default = 8000;
-    };
+    package = mkPackageOption pkgs "pretalx" {};
 
     user = mkOption {
       type = str;
@@ -77,6 +68,34 @@ in {
       type = str;
       description = "Group that contains the system user that executes pretalx.";
       default = "pretalx";
+    };
+
+    nginx = mkOption {
+      type = types.submodule (
+        recursiveUpdate
+        (import (modulesPath + "/services/web-servers/nginx/vhost-options.nix") {inherit config lib;}) {}
+      );
+      default = {};
+      example = literalExpression ''
+        {
+          serverAliases = [
+            "pretalx.''${config.networking.domain}"
+          ];
+          # To enable encryption and let let's encrypt take care of certificate
+          forceSSL = true;
+          enableACME = true;
+        }
+      '';
+      description = "nginx virtualHost settings.";
+    };
+
+    gunicorn = {
+      extraArgs = mkOption {
+        type = str;
+        description = "Command line arguments passed to Gunicorn server.";
+        defaultText = literalExpression "\"--workers=4 --max-requests=1200 --max-requests-jitter=50 --log-level=error\"";
+        default = "--workers=4 --max-requests=1200 --max-requests-jitter=50 --log-level=error";
+      };
     };
 
     filesystem = {
@@ -129,13 +148,13 @@ in {
         description = ''
           URL for pretalx. pretalx uses this value when it has to render full URLs, for example in emails or feeds. It is also used to determine the allowed incoming hosts.
         '';
-        default = "http://localhost:${builtins.toString cfg.port}";
+        default = "http://${config.networking.fqdn}";
         example = "http://pretalx.example.com";
       };
 
       secretFile = mkOption {
         type = nullOr path;
-        description = "Path to a file containing a secret key that the Django web framework uses for cryptographic signing. See <https://docs.pretalx.org/administrator/configure.html#secret>";
+        description = "Path to a file containing a secret key that the Django web framework uses for cryptographic signing. See <https://docs.pretalx.org/administrator/configure.html#secret>. ${secretRecommendation}";
         default = null;
         example = "/run/secrets/pretalx/secret";
       };
@@ -183,7 +202,7 @@ in {
 
       passwordFile = mkOption {
         type = nullOr path;
-        description = "Path to a file containing the database password. If you use PostgreSQL, consider using its peer authentication and not setting a password.";
+        description = "Path to a file containing the database password. If you use PostgreSQL, consider using its peer authentication and not setting a password. ${secretRecommendation}";
         default = null;
         example = "/run/secrets/pretalx/database";
       };
@@ -236,7 +255,7 @@ in {
 
       passwordFile = mkOption {
         type = path;
-        description = "Path to a file containing the password for SMTP server authentication.";
+        description = "Path to a file containing the password for SMTP server authentication. ${secretRecommendation}";
         example = "/run/secrets/pretalx/mail";
       };
 
@@ -258,14 +277,14 @@ in {
 
       backendFile = mkOption {
         type = nullOr path;
-        description = "Path to a file that contains the location (connection URI) of Celery backend. If you use a standard Redis-based setup, the file should contain `redis://127.0.0.1/1` or similar. Check the documentation <https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html>.";
+        description = "Path to a file that contains the location (connection URI) of Celery backend. If you use a standard Redis-based setup, the file should contain `redis://127.0.0.1/1` or similar. Check the documentation <https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html>. ${secretRecommendation}";
         default = null;
         example = "/run/secrets/pretalx/celery-backend";
       };
 
       brokerFile = mkOption {
         type = nullOr path;
-        description = "Path to a file that contains the location (connection URI) of Celery broker. If you use a standard Redis-based setup, the file should contain `redis://127.0.0.1/2` or similar. Check the documentation <https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html>.";
+        description = "Path to a file that contains the location (connection URI) of Celery broker. If you use a standard Redis-based setup, the file should contain `redis://127.0.0.1/2` or similar. Check the documentation <https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/redis.html>. ${secretRecommendation}";
         default = null;
         example = "/run/secrets/pretalx/celery-broker";
       };
@@ -277,7 +296,7 @@ in {
       locationFile = mkOption {
         type = path;
         description = ''
-          Path to a file that contains the location (connection URI) of Redis server, if you want to use it as a cache. Contents of the file: `redis://[:password]@127.0.0.1:6379/1` would be sensible, or `unix://[:password]@/path/to/socket.sock?db=0` if you prefer to use sockets.
+          Path to a file that contains the location (connection URI) of Redis server, if you want to use it as a cache. Contents of the file: `redis://[:password]@127.0.0.1:6379/1` would be sensible, or `unix://[:password]@/path/to/socket.sock?db=0` if you prefer to use sockets. ${secretRecommendation}
         '';
         example = "/run/secrets/pretalx/redis";
       };
@@ -329,12 +348,13 @@ in {
     };
 
     extraConfig = mkOption {
-      type = lines;
+      type = attrs;
       description = ''
-        Extra lines of configuration to be appended to the generated pretalx configuration file.
+        Extra configuration to be appended to the generated pretalx configuration file.
         See <https://docs.pretalx.org/administrator/configure.html> for all options.
       '';
-      default = "";
+      default = {};
+      example = literalExpression "{ site.debug = true; }";
     };
 
     init = {
@@ -347,7 +367,7 @@ in {
 
         passwordFile = mkOption {
           type = path;
-          description = "Path to a file containing the administrator password.";
+          description = "Path to a file containing the administrator password. ${secretRecommendation}";
           example = "/run/secrets/pretalx/admin";
         };
       };
@@ -372,9 +392,20 @@ in {
     assertions = [
       {
         assertion = !(cfg.mail.tls && cfg.mail.ssl);
-        message = "Enable either `services.pretalx.mail.tls` or `services.pretalx.mail.ssl`.";
+        message = "Enable either `${opt.mail.tls}` or `${opt.mail.ssl}`.";
       }
     ];
+
+    services.nginx = {
+      enable = mkDefault true;
+      virtualHosts.${pretalxWebServiceName} = mkMerge [
+        cfg.nginx
+        {
+          locations."/".proxyPass = "http://${pretalxWebServiceName}";
+        }
+      ];
+      upstreams.${pretalxWebServiceName}.servers."${gunicornSocket}".fail_timeout = "0";
+    };
 
     users.users."${cfg.user}" = {
       isSystemUser = true;
@@ -384,6 +415,12 @@ in {
     };
 
     users.groups."${cfg.group}" = {};
+
+    environment.systemPackages = [
+      cfg.package
+      pkgs.tmux
+      pkgs.htop
+    ];
 
     environment.etc."pretalx/pretalx.cfg".text = let
       hiddenNames = ["enable" "passwordFile" "locationFile" "backendFile" "brokerFile" "secretFile"];
@@ -403,12 +440,15 @@ in {
           mail = ifEnable cfg.mail;
           redis = ifEnable cfg.redis;
         });
-    in ''
-      ${generators.toINI {} pretalxCfg}
-      ${cfg.extraConfig}
-    '';
+    in
+      generators.toINI {} (recursiveUpdate pretalxCfg cfg.extraConfig);
 
     systemd = {
+      sockets."pretalx-web" = {
+        listenStreams = [gunicornSocketPath];
+        socketConfig.SocketUser = config.services.nginx.user;
+        wantedBy = ["sockets.target"];
+      };
       services = let
         catFile = varname: filename: "export ${varname}=\"$(cat ${filename})\"";
         exportPasswordEnv = lib.concatStringsSep "\n" ([]
@@ -434,30 +474,26 @@ in {
           '';
         };
       in {
-        pretalx-web = {
+        ${pretalxWebServiceName} = {
           serviceConfig = {
             Type = "notify";
             Restart = "on-failure";
             EnvironmentFile = environmentFile;
             User = cfg.user;
             Group = cfg.group;
-            ExecStart = pkgs.writeScript "webserver" ''
-              #!${pkgs.runtimeShell}
-              set -euo pipefail
-
-              ${exportPasswordEnv}
-
-              ${cfg.package}/bin/pretalx collectstatic --noinput
-              ${cfg.package}/bin/pretalx compress
-
-              exec ${gunicorn}/bin/gunicorn pretalx.wsgi --name pretalx \
-              --workers 3 \
-              --log-level=info \
-              --bind=${cfg.bind}:${toString cfg.port}
-            '';
           };
+          script = ''
+            ${exportPasswordEnv}
+
+            # ${cfg.package}/bin/pretalx compilemessages
+            ${cfg.package}/bin/pretalx collectstatic --noinput
+            # FIXME: Remove `--force`, was only added for PRETALX_DEBUG=true not to crash.
+            ${cfg.package}/bin/pretalx compress --force
+
+            exec ${gunicorn}/bin/gunicorn pretalx.wsgi --name=${pretalxWebServiceName} --bind=${gunicornSocket} ${cfg.gunicorn.extraArgs}
+          '';
           wantedBy = ["multi-user.target"];
-          requires = ["pretalx-init.service"];
+          requires = ["pretalx-init.service" "pretalx-web.socket"];
           after = ["pretalx-init.service"];
         };
 
@@ -465,7 +501,7 @@ in {
           serviceConfig = oneshotServiceConfig;
           script = ''
             ${exportPasswordEnv}
-            ${init}/bin/expect-pretalx-init
+            ${pretalxInit}/bin/expect-pretalx-init
           '';
           requires = ["pretalx-migrate.service"];
           after = ["network.target" "pretalx-migrate.service"];
@@ -484,8 +520,8 @@ in {
           onCalendar,
         }: {
           inherit description;
-          requires = ["pretalx-migrate.service"];
-          after = ["network.target"];
+          requires = ["pretalx-web.service"];
+          after = ["network.target" "pretalx-web.service"];
           wantedBy = ["timers.target"];
           timerConfig = {
             Persistent = true;
@@ -501,11 +537,11 @@ in {
           onCalendar = "monthly";
         };
 
-        # Once every 5 minutes
+        # Once every 15 minutes
         pretalx-runperiodic = mkTimer {
           description = "Run pretalx tasks";
           unit = "pretalx-runperiodic.service";
-          onCalendar = "*:0/5";
+          onCalendar = "*:0/15";
         };
       };
     };

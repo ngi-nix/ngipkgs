@@ -6,7 +6,7 @@
     name = "Auguste Baum";
   };
   kubaneko = {
-    email = "ondrej@email.invalid"; # TODO
+    email = "kubanek0ondrej@gmail.com";
     github = "kubaneko";
     githubId = 71923533;
     name = "Ondřej Kubánek";

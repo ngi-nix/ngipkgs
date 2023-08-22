@@ -2,6 +2,19 @@
 
 This provides [pretalx][pretalx].
 
+## Production Deployment
+
+The configuration at `/configs/pretalx/pretalx.nix` and `/config/pretalx/{mysql,postgresql}.nix` serves as a starting point for a production-ready configuration to deploy pretalx.
+
+### Secret Management
+
+It is recommended to use a secret management scheme for security (see [this comparison][secret-management-comparison]).
+In the example configuration in `/configs/pretalx/pretalx.nix`, we use [sops-nix][sops-nix] with [age][age] for the options `services.pretalx.*.*File`.
+
+### TLS Certificates for HTTPS
+
+In order to enable HTTPS, you can obtain the TLS certificates via ACME. See the [NixOS manual][nixos-manual-acme] for details.
+
 ## Packaging
 
 ### Pretalx Version Update
@@ -14,14 +27,14 @@ This provides [pretalx][pretalx].
 
 Run NixOS integration tests using
 ```sh
-nix build -L .#checks.x86_64-linux.test-pretalx
+nix build -L .#nixosTests.x86_64-linux.pretalx
 ```
 
 #### Interactive Tests
 
 Run NixOS integration tests interactively using
 ```sh
-nix build -L .#checks.x86_64-linux.test-pretalx.driverInteractive
+nix build -L .#nixosTests.x86_64-linux.pretalx.driverInteractive
 ./result/bin/nixos-test-driver # Start a shell
 ```
 
@@ -35,7 +48,10 @@ If you want to use your browser to connect to the `pretalx` server at <http://lo
 server.forward_port(host_port=8000, guest_port=80)
 ```
 
-## Deployment
-
 [pretalx]: https://github.com/pretalx/pretalx
 [poetry2nix-edge]: https://github.com/nix-community/poetry2nix/blob/master/docs/edgecases.md
+[secret-management-comparison]: https://nixos.wiki/wiki/Comparison_of_secret_managing_schemes
+[sops-nix]: https://github.com/Mic92/sops-nix
+[age]: https://github.com/FiloSottile/age
+[nixos-manual-acme]: https://nixos.org/manual/nixos/stable/#module-security-acme-nginx
+

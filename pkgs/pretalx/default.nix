@@ -66,11 +66,12 @@ in (poetry2nix.mkPoetryApplication {
     changelog = "https://docs.pretalx.org/changelog.html#${version}";
     license = licenses.asl20;
     platforms = platforms.linux;
-    maintainers =
-      with maintainers; [
+    maintainers = with maintainers;
+      [
         andresnav
         imincik
         lorenzleutgeb
-      ] ++ (with (import ../../maintainers/maintainers-list.nix); [ augustebaum kubaneko ]);
+      ]
+      ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
   };
 })
