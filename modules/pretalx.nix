@@ -418,8 +418,6 @@ in {
 
     environment.systemPackages = [
       cfg.package
-      pkgs.tmux
-      pkgs.htop
     ];
 
     environment.etc."pretalx/pretalx.cfg".text = let
@@ -465,6 +463,7 @@ in {
           EnvironmentFile = environmentFile;
           User = cfg.user;
           Group = cfg.group;
+          WorkingDirectory = libDir;
         };
         mkOneshot = command: {
           serviceConfig = oneshotServiceConfig;
@@ -476,23 +475,19 @@ in {
       in {
         ${pretalxWebServiceName} = {
           serviceConfig = {
-            Type = "notify";
             Restart = "on-failure";
             EnvironmentFile = environmentFile;
             User = cfg.user;
             Group = cfg.group;
+            WorkingDirectory = libDir;
           };
           script = ''
             ${exportPasswordEnv}
 
-            # ${cfg.package}/bin/pretalx compilemessages # FIXME: when run, pretalx-web hangs
-            ${cfg.package}/bin/pretalx collectstatic --noinput
-            ${cfg.package}/bin/pretalx compress
-
             exec ${gunicorn}/bin/gunicorn pretalx.wsgi --name=${pretalxWebServiceName} --bind=${gunicornSocket} ${cfg.gunicorn.extraArgs}
           '';
           wantedBy = ["multi-user.target"];
-          requires = ["pretalx-init.service" "pretalx-web.socket"];
+          requires = ["pretalx-init.service" "pretalx-rebuild.service" "pretalx-web.socket"];
           after = ["pretalx-init.service"];
         };
 
