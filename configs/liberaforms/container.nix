@@ -1,10 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}: {
-  imports = [../../modules/liberaforms.nix];
-
+{...}: {
   boot.isContainer = true;
 
   networking.useDHCP = false;
@@ -26,4 +20,6 @@
   };
 
   system.stateVersion = "22.11";
+
+  nixpkgs.hostPlatform = "x86_64-linux";
 }
