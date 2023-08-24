@@ -1,25 +1,32 @@
 {
   lib,
+  fetchpatch,
   gettext,
   pkg-config,
+  poetry,
   poetry2nix,
   libmysqlclient,
+  withPlugins ? false,
   withMysql ? false,
   withPostgresql ? false,
   withRedis ? false,
   withTest ? false,
 }: let
-  pname = "pretalx";
   version = "2.3.2";
 in (poetry2nix.mkPoetryApplication {
   projectDir = ./.;
   propagatedBuildInputs = [gettext];
   groups =
     []
+    ++ lib.optional withPlugins "plugins"
     ++ lib.optional withMysql "mysql"
     ++ lib.optional withPostgresql "postgresql"
     ++ lib.optional withRedis "redis"
     ++ lib.optional withTest "test";
+
+  nativeBuildInputs = [
+    poetry
+  ];
 
   overrides = poetry2nix.overrides.withDefaults (self: super: let
     addSetupTools = old: {
@@ -27,6 +34,8 @@ in (poetry2nix.mkPoetryApplication {
         (old.propagatedBuildInputs or [])
         ++ [self.setuptools];
     };
+
+    pluginOverrides = old: (addSetupTools old) // {patches = [./patches/pretalx-plugin.patch];};
   in {
     defusedcsv = super.defusedcsv.overridePythonAttrs addSetupTools;
     django-context-decorator =
@@ -39,10 +48,10 @@ in (poetry2nix.mkPoetryApplication {
     urlman = super.urlman.overridePythonAttrs addSetupTools;
     kombu =
       super.kombu.overridePythonAttrs
-      (old: (addSetupTools old) // {patches = [./kombu.patch];});
+      (old: (addSetupTools old) // {patches = [./patches/kombu.patch];});
     celery =
       super.celery.overridePythonAttrs
-      (old: {patches = [./celery.patch];});
+      (old: {patches = [./patches/celery.patch];});
     django-hierarkey =
       super.django-hierarkey.overridePythonAttrs addSetupTools;
     django-jquery-js =
@@ -58,6 +67,24 @@ in (poetry2nix.mkPoetryApplication {
         ++ [libmysqlclient pkg-config];
       buildInputs = (old.buildInputs or []) ++ [libmysqlclient];
     });
+
+    # Plugins
+    pretalx-youtube =
+      super.pretalx-youtube.overridePythonAttrs pluginOverrides;
+    pretalx-pages =
+      super.pretalx-pages.overridePythonAttrs pluginOverrides;
+    pretalx-venueless =
+      super.pretalx-venueless.overridePythonAttrs pluginOverrides;
+    pretalx-orcid =
+      super.pretalx-orcid.overridePythonAttrs pluginOverrides;
+    pretalx-media-ccc-de =
+      super.pretalx-media-ccc-de.overridePythonAttrs pluginOverrides;
+    pretalx-downstream =
+      super.pretalx-downstream.overridePythonAttrs pluginOverrides;
+    pretalx-vimeo =
+      super.pretalx-vimeo.overridePythonAttrs pluginOverrides;
+    pretalx-public-voting =
+      super.pretalx-public-voting.overridePythonAttrs pluginOverrides;
   });
 
   meta = with lib; {
@@ -72,6 +99,9 @@ in (poetry2nix.mkPoetryApplication {
         imincik
         lorenzleutgeb
       ]
-      ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
+      ++ (with (import ../../maintainers/maintainers-list.nix); [
+        augustebaum
+        kubaneko
+      ]);
   };
 })
