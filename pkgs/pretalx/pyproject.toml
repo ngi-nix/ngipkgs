@@ -8,6 +8,19 @@ authors = [] # see meta.maintainers in pkgs/pretalx/default.nix
 python = ">=3.9,<3.12"
 pretalx = "2.3.2"
 
+[tool.poetry.group.plugins]
+optional = true
+
+[tool.poetry.group.plugins.dependencies]
+pretalx-downstream = "*"
+pretalx-media-ccc-de = "*"
+pretalx-orcid = "*"
+pretalx-pages = "*"
+pretalx-public-voting = "*"
+pretalx-venueless = "*"
+pretalx-vimeo = "*"
+pretalx-youtube = "*"
+
 [tool.poetry.group.mysql]
 optional = true
 

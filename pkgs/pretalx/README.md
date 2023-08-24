@@ -17,6 +17,12 @@ In order to enable HTTPS, you can obtain the TLS certificates via ACME. See the 
 
 ## Packaging
 
+### Plugins
+
+See [`pyproject.toml`](./pyproject.toml) for the list of included plugins.
+
+Note that the plugin `prtx-faq` is broken as of 2023-08-24 and therefore not included in the package definition.
+
 ### Pretalx Version Update
 
 * Update the version of `pretalx` in `tool.poetry.dependencies` section of `/pkgs/pretalx/pyproject.toml` file.

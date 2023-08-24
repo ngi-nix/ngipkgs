@@ -10,14 +10,17 @@
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
     librecast = callPackage ./pkgs/librecast {inherit lcrq;};
     pretalx-mysql = callPackage ./pkgs/pretalx {
+      withPlugins = true;
       withMysql = true;
       withRedis = true;
     };
     pretalx-postgresql = callPackage ./pkgs/pretalx {
+      withPlugins = true;
       withPostgresql = true;
       withRedis = true;
     };
     pretalx = callPackage ./pkgs/pretalx {
+      withPlugins = true;
       withMysql = true;
       withPostgresql = true;
       withRedis = true;
