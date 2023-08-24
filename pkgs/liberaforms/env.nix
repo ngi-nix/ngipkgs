@@ -40,4 +40,13 @@
     ${extraReq}
   '';
 in
-  mach-nix.mkPython {inherit requirements;}
+  (mach-nix.mkPython {
+    inherit requirements;
+  }).overrideAttrs (_: {
+    # NOTE: Probably this override could also be
+    # done via the `_` argument for `mach-nix.mkPython`,
+    # see <https://github.com/DavHau/mach-nix/tree/725aab8d52eb2f5b8ff67bea61049011ef31597c#optional-arguments>,
+    # but this works too, and we do not have to think about
+    # what `{package}` means.
+    meta.broken = true;  # See <https://github.com/ngi-nix/ngipkgs/issues/40>.
+  })

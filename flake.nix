@@ -71,6 +71,14 @@
         linuxSystem = "x86_64-linux";
         pkgs = importNixpkgs linuxSystem [self.overlays.default];
         treefmtEval = loadTreefmt pkgs;
+
+        # A function that removes packages that are known to
+        # have issues from a set of packages.
+        # Packages that are known to have issues, and should not
+        # be built by `nix flake check` or Hydra.
+        # Mark every entry with a GitHub issue that tracks
+        # respective issues.
+        filterBroken = nixpkgs.lib.filterAttrs (_: x: !x.meta.broken);
       in {
         # Github Actions executes `nix flake check` therefore this output
         # should only contain derivations that can built within CI.
@@ -78,14 +86,14 @@
         checks.${linuxSystem} =
           # For `nix flake check` to *build* all packages, because by default
           # `nix flake check` only evaluates packages and does not build them.
-          self.packages.${linuxSystem}
+          (filterBroken self.packages.${linuxSystem})
           // {
             formatting = treefmtEval.config.build.check self;
           };
 
         # To generate a Hydra jobset for CI builds of all packages.
         # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
-        hydraJobs.packages.${linuxSystem} = self.packages.${linuxSystem};
+        hydraJobs.packages.${linuxSystem} = (filterBroken self.packages.${linuxSystem});
 
         # `nixosTests` is a non-standard name for a flake output.
         # See <https://github.com/ngi-nix/ngipkgs/issues/28>.
