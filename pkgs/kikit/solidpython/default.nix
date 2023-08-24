@@ -9,27 +9,6 @@
 }: let
   inherit (python3.pkgs) buildPythonPackage;
 
-  # https://github.com/SolidCode/SolidPython/issues/207
-  prettytablePkgsRoot = fetchFromGitHub {
-    owner = "NixOS";
-    repo = "nixpkgs";
-    rev = "6dda65e8da23cc123060e3f24723471a15b3f0cd";
-    sha256 = "sha256-1zdXZIs5C81slD+nLeIk5j+O/aAujejbiW4g07JHU5s=";
-  };
-
-  prettytableFile = "${prettytablePkgsRoot}/pkgs/development/python-modules/prettytable";
-
-  prettytable =
-    python3.pkgs.callPackage
-    prettytableFile
-    {
-      # stdenv seems to have moved since then. Shim something that'll make this
-      # old version of prettytable happy.
-      stdenv = {
-        inherit lib;
-      };
-    };
-
   pypng = python3.pkgs.pypng.overrideAttrs (old: rec {
     version = "0.0.19";
     src = fetchFromGitLab {
@@ -62,13 +41,18 @@ in
       hash = "sha256-3fJta2a5c8hV9FPwKn5pj01aBtsCGSRCz3vvxR/5n0Q=";
     };
 
+    patches = [
+      # Unpin PrettyTable, see <https://github.com/SolidCode/SolidPython/issues/207>.
+      ./prettytable.patch
+    ];
+
     propagatedBuildInputs = with python3.pkgs;
       [
         ply
+        prettytable
         setuptools
       ]
       ++ [
-        prettytable
         euclid3
         pypng
       ];

@@ -1,0 +1,12 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 8b31bb7..0e2d0e0 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -36,7 +36,7 @@ packages=[
+ python = ">=3.7"
+ euclid3 = "^0.1.0"
+ pypng = "^0.0.19"
+-PrettyTable = "=0.7.2"
++PrettyTable = "*"
+ ply = "^3.11"
+ setuptools = ">=65.6.3"
