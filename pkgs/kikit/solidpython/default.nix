@@ -41,9 +41,12 @@ in
       hash = "sha256-3fJta2a5c8hV9FPwKn5pj01aBtsCGSRCz3vvxR/5n0Q=";
     };
 
-    patches = [
-      # Unpin PrettyTable, see <https://github.com/SolidCode/SolidPython/issues/207>.
-      ./prettytable.patch
+    nativeBuildInputs = [
+      python3.pkgs.pythonRelaxDepsHook
+    ];
+
+    pythonRelaxDeps = [
+      "PrettyTable"
     ];
 
     propagatedBuildInputs = with python3.pkgs;
