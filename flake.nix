@@ -1,13 +1,15 @@
 {
   description = "Weblate package and module";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  inputs.poetry2nix.url = "github:nix-community/poetry2nix/master";
-  inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.weblate.url = "github:WeblateOrg/weblate/weblate-4.18.2";
-  inputs.weblate.flake = false;
-  inputs.aeidon-src.url = "github:otsaloma/gaupol/1.12";
-  inputs.aeidon-src.flake = false;
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    poetry2nix.url = "github:nix-community/poetry2nix/master";
+    poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
+    weblate.url = "github:WeblateOrg/weblate/weblate-5.0";
+    weblate.flake = false;
+    aeidon-src.url = "github:otsaloma/gaupol/1.12";
+    aeidon-src.flake = false;
+  };
 
   outputs = { self, nixpkgs, weblate, aeidon-src, poetry2nix }:
     let
@@ -136,6 +138,12 @@
                 buildInputs = (old.buildInputs or [ ])
                   ++ pkgs.lib.optional pkgs.stdenv.isDarwin pkgs.openssl;
                 nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.postgresql ];
+              }
+            );
+            tesserocr = super.tesserocr.overridePythonAttrs (
+              old: {
+                buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.leptonica pkgs.tesseract ];
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
               }
             );
           }
