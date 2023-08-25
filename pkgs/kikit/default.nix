@@ -9,22 +9,8 @@
 }: let
   properCaseName = "KiKit";
 
+  shapely = callPackage ./shapely {};
   solidpython = callPackage ./solidpython {};
-
-  # https://github.com/yaqwsx/KiKit/issues/574
-  shapelyPkgsRoot = fetchFromGitHub {
-    owner = "NixOS";
-    repo = "nixpkgs";
-    rev = "8d8e62e74f511160a599471549a98bc9e4f4818d";
-    sha256 = "sha256-2vm6IAnaCo5KAA5/rWSb6dzJsS/raEqR93xbM2/jgng=";
-  };
-
-  shapelyFile = "${shapelyPkgsRoot}/pkgs/development/python-modules/shapely";
-
-  shapely =
-    python3.pkgs.callPackage
-    shapelyFile
-    {};
 in
   python3.pkgs.buildPythonPackage rec {
     pname = lib.toLower properCaseName;

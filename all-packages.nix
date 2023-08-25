@@ -5,8 +5,12 @@
     kikit = callPackage ./pkgs/kikit {};
     lcrq = callPackage ./pkgs/lcrq {};
     lcsync = callPackage ./pkgs/lcsync {inherit lcrq librecast;};
-    liberaforms = callPackage ./pkgs/liberaforms {};
-    liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
+
+    # LiberaForms is intentionally disabled.
+    # Refer to <https://github.com/ngi-nix/ngipkgs/issues/40>.
+    #liberaforms = callPackage ./pkgs/liberaforms {};
+    #liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
+
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
     librecast = callPackage ./pkgs/librecast {inherit lcrq;};
     pretalx-mysql = callPackage ./pkgs/pretalx {

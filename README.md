@@ -36,18 +36,29 @@ This package can then be built using the following command:
 nix build .#libgnunetchat
 ```
 
-## Add and deploy a service
+## Add and test a service
 
 For each service there is a module file in the `modules` directory which is where most of the work is done to define the configuration for a service. Whereas the default.nix for a package usually somewhat corresponds to the upstream instructions for building and installing from source, the module for a service will correspond to the instructions for configuring and running the software persistently, including integration with other system components such as a systemd service or a web server config. Each module must also be imported into Ngipkgs by adding a line to the file `modules/all-modules.nix`.
 
-A service has its NixOS configuration options defined in its module. To actually be used, this module file must be imported into a NixOS system configuration so that the options can be used and the service deployed. There is a directory in `configs` for each service that contains NixOS configuration template files for practical deployment of the service to different kinds of target systems, such as a container or a cloud VM. Each configuration must also be imported into Ngipkgs by adding a line to the file `configs/all-configurations.nix`. For clarity, the name given to the configuration in this file should include both the name of the service, and its target system. For example, this is the import line for deployment of liberaforms to a container:
+A service has its NixOS configuration options defined in its module. To actually be used, this module file must be imported into a NixOS system configuration so that the options can be used and the service deployed or tested. There is a directory in `configs` for each service that contains NixOS configuration template files for practical use of the service to different contexts. Each configuration must also be imported into Ngipkgs by adding a line to the file `configs/all-configurations.nix`. For example, these are the import lines for deployment of pretalx with postgresql:
 ```
-  liberaforms-container = import ./liberaforms/container.nix;
+    pretalx-postgresql = {
+    imports = [
+      ./pretalx/pretalx.nix
+      ./pretalx/postgresql.nix
+    ];
 ```
-This service can then be deployed on NixOS to a local container using the following comamand:
+This service can then be deployed on NixOS to a local VM running integration tests using the following comamands:
+```sh
+nix build -L .#nixosTests.x86_64-linux.pretalx.driverInteractive
+./result/bin/nixos-test-driver # Start a shell
 ```
-sudo nixos-container create libera0 --flake .#liberaforms-container
+
+Once in the spawned shell, you can start a VM that will execute the tests using the following command:
+```python
+start_all() # Run the VM
 ```
+More details on running pretalx in a test VM are available in the [README](https://github.com/ngi-nix/ngipkgs/edit/main/pkgs/pretalx/README.md) for this service.
 
 [TODO: Add details about how to do more production-like deployments that require non-default config options.]
 
