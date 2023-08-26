@@ -384,6 +384,11 @@ in
       isSystemUser = true;
       group = "weblate";
       packages = [ weblate-env pkgs.weblate ] ++ weblatePath;
+
+      # FIXME This is only here because Weblate wants to save something in this dir at runtime...
+      createHome = true;
+      home = "/home/weblate";
+
     };
 
     # TODO remove
