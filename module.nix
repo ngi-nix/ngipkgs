@@ -114,14 +114,14 @@ let
       eval -- "\$@"
     '');
   weblatePath = with pkgs; [
-        gitSVN
+    gitSVN
 
-        #optional
-        git-review
-        tesseract
-        licensee
-        mercurial
-      ];
+    #optional
+    git-review
+    tesseract
+    licensee
+    mercurial
+  ];
 in
 {
 
