@@ -47,28 +47,6 @@
                 ${self.python.interpreter} setup.py --without-gaupol install --prefix=$out
               '';
             });
-            click-didyoumean = super.click-didyoumean.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.poetry ];
-            });
-            pyparsing = super.pyparsing.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.flit-core ];
-            });
-            ua-parser = super.ua-parser.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.pyyaml ];
-              postPatch = ''
-                substituteInPlace setup.py \
-                  --replace "pyyaml ~= 5.4.0" "pyyaml~=6.0"
-              '';
-            });
-            jarowinkler = super.jarowinkler.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.scikit-build ];
-            });
-            rapidfuzz = super.rapidfuzz.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.scikit-build ];
-            });
-            jsonschema = super.jsonschema.overridePythonAttrs (old: {
-              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.hatch-fancy-pypi-readme ];
-            });
             fluent-syntax = super.fluent-syntax.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
@@ -94,9 +72,6 @@
             translate-toolkit = super.translate-toolkit.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
-            pillow = super.pillow.override {
-              preferWheel = true;
-            };
             weblate-language-data = super.weblate-language-data.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
             });
