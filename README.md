@@ -1,4 +1,4 @@
-*Unfortunately I currently have some trouble upgrading to the latest Weblate version (4.16.4 as the time of writing). If you want to help with the build errors, have a look at my current progress in the [`dev` branch](https://github.com/ngi-nix/weblate/tree/dev).*
+*Unfortunately I currently have some trouble upgrading to the latest Weblate version (5.0.0 as the time of writing). If you want to help with the build errors, have a look at my current progress in the [`dev` branch](https://github.com/ngi-nix/weblate/tree/dev).*
 
 # About this flake
 
