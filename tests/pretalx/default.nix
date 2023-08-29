@@ -2,7 +2,11 @@
   name = "pretalx tests";
 
   nodes = {
-    server = {pkgs, ...}: {
+    server = {
+      pkgs,
+      config,
+      ...
+    }: {
       imports = [
         configurations.server
       ];

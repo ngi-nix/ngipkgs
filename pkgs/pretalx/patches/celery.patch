@@ -1,6 +1,0 @@
-diff --git a/requirements/default.txt b/requirements/default.txt
---- a/requirements/default.txt
-+++ b/requirements/default.txt
-@@ -1,1 +1,1 @@
--pytz>dev
-+pytz

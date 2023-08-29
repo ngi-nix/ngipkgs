@@ -1,6 +1,0 @@
-diff --git a/requirements/test.txt b/requirements/test.txt
---- a/requirements/test.txt
-+++ b/requirements/test.txt
-@@ -1,1 +1,1 @@
--pytz>dev
-+pytz

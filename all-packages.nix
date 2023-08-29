@@ -1,5 +1,11 @@
-{newScope, ...}: let
-  self = rec {
+{
+  newScope,
+  lib,
+  ...
+}: let
+  self = let
+    pretalxPlugins = lib.recurseIntoAttrs (callPackage ./pkgs/pretalx/plugins.nix {});
+  in rec {
     flarum = callPackage ./pkgs/flarum {};
     gnunet-messenger-cli = callPackage ./pkgs/gnunet-messenger-cli {};
     kikit = callPackage ./pkgs/kikit {};
@@ -13,23 +19,30 @@
 
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
     librecast = callPackage ./pkgs/librecast {inherit lcrq;};
-    pretalx-mysql = callPackage ./pkgs/pretalx {
-      withPlugins = true;
-      withMysql = true;
-      withRedis = true;
+    pretalx = callPackage ./pkgs/pretalx {};
+    pretalx-full = callPackage ./pkgs/pretalx {
+      withPlugins = [
+        pretalx-downstream
+        pretalx-media-ccc-de
+        pretalx-pages
+        pretalx-public-voting
+        pretalx-venueless
+        pretalx-vimeo
+        pretalx-youtube
+      ];
     };
-    pretalx-postgresql = callPackage ./pkgs/pretalx {
-      withPlugins = true;
-      withPostgresql = true;
-      withRedis = true;
-    };
-    pretalx = callPackage ./pkgs/pretalx {
-      withPlugins = true;
-      withMysql = true;
-      withPostgresql = true;
-      withRedis = true;
-      withTest = true;
-    };
+
+    inherit
+      (pretalxPlugins)
+      pretalx-downstream
+      pretalx-media-ccc-de
+      pretalx-pages
+      pretalx-public-voting
+      pretalx-venueless
+      pretalx-vimeo
+      pretalx-youtube
+      ;
+
     rosenpass = callPackage ./pkgs/rosenpass {};
     rosenpass-tools = callPackage ./pkgs/rosenpass-tools {};
   };
