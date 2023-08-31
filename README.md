@@ -16,6 +16,8 @@ NixOS services are nix packages that are designed to be configured through, and 
 ├── configs
 │   ├── all-configurations.nix    # import configuration files here
 │   └── ...                       # add configuration directories here
+├── nixpkgs-candidates            # contains packages that could be upstreamed to nixpkgs
+│   └── ...
 ├── flake.lock
 ├── flake.nix
 ├── modules
@@ -27,7 +29,17 @@ NixOS services are nix packages that are designed to be configured through, and 
 
 ## Add and build a package
 
-For each package there is a directory in `pkgs` that contains a core `default.nix` file and possibly other files required to build the package. Each package directory must also be imported into Ngipkgs by adding a line to the file `all-packages.nix`. For example, this is the import line for building the libgnunetchat package:
+Packagers are encouraged to contribute NGI projects to nixpkgs, instead of to this repository.
+However, reasons to contribute to this repository include:
+
+- Package is not a good candidate for nixpkgs. [Read here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md).
+    - Place this package in the `pkgs` directory.
+- Expediting the public availability of a package prior to its acceptance into nixpkgs and landing in a channel.
+    - Place this package in the `nixpkgs-candidates` directory with a comment linking to the PR to nixpkgs.
+- Package is a good candidate for nixpkgs, but no one is willing to be a maintainer :cry:.
+    - Place this packge in the `nixpkgs-candidates` directory.
+
+For each package there is a directory in `pkgs` or `nixpkgs-candidates` that contains a core `default.nix` file and possibly other files required to build the package. Each package directory must also be imported into Ngipkgs by adding a line to the file `all-packages.nix`. For example, this is the import line for building the libgnunetchat package:
 ```
 libgnunetchat = callPackage ./pkgs/libgnunetchat { };
 ```
