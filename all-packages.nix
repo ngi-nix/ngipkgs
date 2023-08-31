@@ -30,9 +30,13 @@
   };
 
   nixpkgs-candidates = {
+    # Attempting to upstream to nixpkgs here: https://github.com/NixOS/nixpkgs/pull/249464
     pcbnew-transition = callPackage ./nixpkgs-candidates/pcbnew-transition {};
+    # Attempting to upstream to nixpkgs here: https://github.com/NixOS/nixpkgs/pull/249464
     pybars3 = callPackage ./nixpkgs-candidates/pybars3 {};
+    # Attempting to upstream to nixpkgs here: https://github.com/NixOS/nixpkgs/pull/249464
     pymeta3 = callPackage ./nixpkgs-candidates/pymeta3 {};
+    # Attempting to upstream to nixpkgs here: https://github.com/NixOS/nixpkgs/pull/249464
     euclid3 = callPackage ./nixpkgs-candidates/euclid3 {};
   };
 
