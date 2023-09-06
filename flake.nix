@@ -83,9 +83,10 @@
             formatting = treefmtEval.config.build.check self;
           };
 
-        # To generate a Hydra jobset for CI builds of all packages.
+        # To generate a Hydra jobset for CI builds of all packages and tests.
         # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
         hydraJobs.packages.${linuxSystem} = self.packages.${linuxSystem};
+        hydraJobs.nixosTests.${linuxSystem} = self.nixosTests.${linuxSystem};
 
         # `nixosTests` is a non-standard name for a flake output.
         # See <https://github.com/ngi-nix/ngipkgs/issues/28>.
