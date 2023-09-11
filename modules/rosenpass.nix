@@ -116,7 +116,7 @@ in {
     in
       concatMap (peer: optional (!publicKeyInNetdevs peer) (warningMsg peer)) cfg.peers;
 
-    environment.systemPackages = [ cfg.package ];
+    environment.systemPackages = [cfg.package pkgs.wireguard-tools];
 
     users.users."${cfg.user}" = {
       isSystemUser = true;
@@ -161,6 +161,7 @@ in {
     in {
       wantedBy = ["multi-user.target"];
       after = ["network-online.target"];
+      path = [pkgs.wireguard-tools];
 
       script = "${cfg.package}/bin/rosenpass exchange-config ${configFile}";
 

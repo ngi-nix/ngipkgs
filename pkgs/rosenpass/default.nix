@@ -3,7 +3,6 @@
   fetchFromGitHub,
   rustPlatform,
   targetPlatform,
-
   cmake,
   libsodium,
   pkg-config,
@@ -27,11 +26,9 @@ rustPlatform.buildRustPackage rec {
     rustPlatform.bindgenHook # for C-bindings in the crypto libs
   ];
 
-  buildInputs = [ libsodium ];
+  buildInputs = [libsodium];
 
-  propagetedBuildInputs = [
-    wireguard-tools
-  ];
+  propagetedBuildInputs = [wireguard-tools];
 
   # liboqs requires quite a lot of stack memory, thus we adjust
   # Increase the default stack size picked for new threads (which is used
@@ -42,7 +39,8 @@ rustPlatform.buildRustPackage rec {
 
   # nix defaults to building for aarch64 _without_ the armv8-a
   # crypto extensions, but liboqs depends on these
-  preBuild = lib.optionalString targetPlatform.isAarch
+  preBuild =
+    lib.optionalString targetPlatform.isAarch
     ''NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -march=armv8-a+crypto"'';
 
   preInstall = "install -D doc/rosenpass.1 $out/share/man/man1/rosenpass.1";
@@ -50,8 +48,8 @@ rustPlatform.buildRustPackage rec {
   meta = with lib; {
     description = "Build post-quantum-secure VPNs with WireGuard!";
     homepage = "https://rosenpass.eu/";
-    license = with licenses; [ mit /* or */ asl20 ];
-    maintainers = with maintainers; [ wucke13 ];
+    license = with licenses; [mit /* or */ asl20];
+    maintainers = with maintainers; [wucke13];
     platforms = platforms.all;
   };
 }
