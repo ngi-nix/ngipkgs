@@ -3,9 +3,11 @@
   fetchFromGitHub,
   rustPlatform,
   targetPlatform,
+
   cmake,
   libsodium,
   pkg-config,
+  wireguard-tools,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rosenpass";
@@ -26,6 +28,10 @@ rustPlatform.buildRustPackage rec {
   ];
 
   buildInputs = [ libsodium ];
+
+  propagetedBuildInputs = [
+    wireguard-tools
+  ];
 
   # liboqs requires quite a lot of stack memory, thus we adjust
   # Increase the default stack size picked for new threads (which is used

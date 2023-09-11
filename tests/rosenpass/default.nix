@@ -8,15 +8,6 @@
       ...
     }: {
       imports = [configurations.common];
-      environment.systemPackages = with pkgs; [
-        rosenpass
-        wireguard-tools
-        tcpdump
-        git
-        tmux
-        htop
-        vim
-      ];
 
       sops = pkgs.lib.mkForce {
         age.keyFile = ./sops/keys.txt;
@@ -24,7 +15,6 @@
 
       networking.firewall.enable = false;
 
-      # boot.extraModulePackages = [config.boot.kernelPackages.wireguard];
       boot.kernelModules = ["wireguard"];
       systemd.network = {
         enable = true;
