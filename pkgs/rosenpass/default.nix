@@ -1,18 +1,15 @@
 {
-  fetchFromGitHub,
   lib,
+  fetchFromGitHub,
   rustPlatform,
   targetPlatform,
   cmake,
-  libclang,
   libsodium,
   pkg-config,
-  removeReferencesTo,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rosenpass";
   version = "0.2.0";
-
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
@@ -23,19 +20,15 @@ rustPlatform.buildRustPackage rec {
   cargoHash = "sha256-g2w3lZXQ3Kg3ydKdFs8P2lOPfIkfTbAF0MhxsJoX/E4=";
 
   nativeBuildInputs = [
-    pkg-config
-    rustPlatform.bindgenHook
-    cmake
-    removeReferencesTo
+    cmake # for oqs build in the oqs-sys crate
+    pkg-config # let libsodium-sys-stable find libsodium
+    rustPlatform.bindgenHook # for C-bindings in the crypto libs
   ];
 
-  buildInputs = [
-    libclang
-    libsodium
-  ];
+  buildInputs = [ libsodium ];
 
   # liboqs requires quite a lot of stack memory, thus we adjust
-  # the default stack size picked for new threads (which is used
+  # Increase the default stack size picked for new threads (which is used
   # by `cargo test`) to be _big enough_.
   # Only set this value for the check phase (not as an environment variable for the derivation),
   # because it is only required in this phase.
@@ -43,19 +36,16 @@ rustPlatform.buildRustPackage rec {
 
   # nix defaults to building for aarch64 _without_ the armv8-a
   # crypto extensions, but liboqs depends on these
-  preBuild =
-    lib.optionalString targetPlatform.isAarch
+  preBuild = lib.optionalString targetPlatform.isAarch
     ''NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -march=armv8-a+crypto"'';
 
-  preInstall = ''
-    install -D doc/rosenpass.1 $out/share/man/man1/rosenpass.1
-  '';
+  preInstall = "install -D doc/rosenpass.1 $out/share/man/man1/rosenpass.1";
 
   meta = with lib; {
     description = "Build post-quantum-secure VPNs with WireGuard!";
     homepage = "https://rosenpass.eu/";
-    license = with licenses; [mit asl20];
-    maintainers = with maintainers; [wucke13];
+    license = with licenses; [ mit /* or */ asl20 ];
+    maintainers = with maintainers; [ wucke13 ];
     platforms = platforms.all;
   };
 }

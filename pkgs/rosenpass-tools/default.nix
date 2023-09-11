@@ -12,7 +12,7 @@ stdenv.mkDerivation {
   pname = "rosenpass-tools";
   inherit (rosenpass) version src;
 
-  nativeBuildInputs = [makeWrapper];
+  nativeBuildInputs = [ makeWrapper ];
 
   postInstall = let
     rpDependencies = [
@@ -24,13 +24,12 @@ stdenv.mkDerivation {
     ];
   in ''
     install -D $src/rp $out/bin/rp
+    install -D $src/doc/rp.1 $out/share/man/man1/rp.1
     wrapProgram $out/bin/rp --prefix PATH : ${lib.makeBinPath rpDependencies}
-
-    install -D doc/rp.1 $out/share/man/man1/rp.1
   '';
 
   meta = {
     inherit (rosenpass.meta) homepage license maintainers;
-    description = rosenpass.meta.description + " This is a wrapper script around the `rosenpass` Rust binary.";
+    description = rosenpass.meta.description + " This package contains `rp`, which is a script that wraps the `rosenpass` binary.";
   };
 }
