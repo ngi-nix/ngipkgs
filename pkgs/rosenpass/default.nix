@@ -7,6 +7,7 @@
   libclang,
   libsodium,
   pkg-config,
+  removeReferencesTo,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rosenpass";
@@ -25,6 +26,7 @@ rustPlatform.buildRustPackage rec {
     pkg-config
     rustPlatform.bindgenHook
     cmake
+    removeReferencesTo
   ];
 
   buildInputs = [
