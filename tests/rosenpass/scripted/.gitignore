@@ -1,0 +1,5 @@
+*.log
+client.toml
+server.toml
+keys
+peers

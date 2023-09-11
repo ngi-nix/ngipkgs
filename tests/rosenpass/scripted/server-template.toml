@@ -1,0 +1,10 @@
+public_key = "./keys/server/pqpk"
+secret_key = "./keys/server/pqsk"
+listen = ["[::]:9999"]
+verbosity = "Verbose"
+
+[[peers]]
+public_key = "./peers/client/pqpk"
+device = "rserver"
+peer = "xxx"
+extra_params = []
