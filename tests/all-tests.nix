@@ -12,4 +12,13 @@
       ];
     };
   };
+
+  rosenpass = import ./rosenpass {
+    configurations.shared = {...}: {
+      imports = [
+        modules.rosenpass
+        modules.sops-nix
+      ];
+    };
+  };
 }
