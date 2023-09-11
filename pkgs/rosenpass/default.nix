@@ -1,11 +1,13 @@
 {
-  lib,
-  cmake,
   fetchFromGitHub,
+  lib,
+  rustPlatform,
+  targetPlatform,
+
+  cmake,
   libclang,
   libsodium,
   pkg-config,
-  rustPlatform,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rosenpass";
@@ -33,12 +35,15 @@ rustPlatform.buildRustPackage rec {
 
   # liboqs requires quite a lot of stack memory, thus we adjust
   # the default stack size picked for new threads (which is used
-  # by `cargo test`) to be _big enough_ (8MiB)
-  # Only set for the check phase (not as an environment variable for the derivation),
-  # because it is only required in that phase.
-  preCheck = ''
-    export RUST_MIN_STACK=8388608
-  '';
+  # by `cargo test`) to be _big enough_.
+  # Only set this value for the check phase (not as an environment variable for the derivation),
+  # because it is only required in this phase.
+  preCheck = "RUST_MIN_STACK=${builtins.toString (8 * 1024 * 1024)}"; # 8 MiB
+  
+  # nix defaults to building for aarch64 _without_ the armv8-a
+  # crypto extensions, but liboqs depends on these
+  preBuild = lib.optionalString targetPlatform.isAarch
+    ''NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -march=armv8-a+crypto"'';
 
   meta = with lib; {
     description = "Rosenpass is a formally verified, post-quantum secure VPN that uses WireGuard to transport the actual data.";
