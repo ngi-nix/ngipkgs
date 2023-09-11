@@ -2,7 +2,6 @@
   lib,
   makeWrapper,
   stdenv,
-
   coreutils,
   findutils,
   gawk,
@@ -26,6 +25,8 @@ stdenv.mkDerivation {
   in ''
     install -D $src/rp $out/bin/rp
     wrapProgram $out/bin/rp --prefix PATH : ${lib.makeBinPath rpDependencies}
+
+    install -D doc/rp.1 $out/share/man/man1/rp.1
   '';
 
   meta = {

@@ -3,7 +3,6 @@
   lib,
   rustPlatform,
   targetPlatform,
-
   cmake,
   libclang,
   libsodium,
@@ -38,23 +37,23 @@ rustPlatform.buildRustPackage rec {
   # by `cargo test`) to be _big enough_.
   # Only set this value for the check phase (not as an environment variable for the derivation),
   # because it is only required in this phase.
-  preCheck = "RUST_MIN_STACK=${builtins.toString (8 * 1024 * 1024)}"; # 8 MiB
-  
+  preCheck = "export RUST_MIN_STACK=${builtins.toString (8 * 1024 * 1024)}"; # 8 MiB
+
   # nix defaults to building for aarch64 _without_ the armv8-a
   # crypto extensions, but liboqs depends on these
-  preBuild = lib.optionalString targetPlatform.isAarch
+  preBuild =
+    lib.optionalString targetPlatform.isAarch
     ''NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -march=armv8-a+crypto"'';
 
+  preInstall = ''
+    install -D doc/rosenpass.1 $out/share/man/man1/rosenpass.1
+  '';
+
   meta = with lib; {
-    description = "Rosenpass is a formally verified, post-quantum secure VPN that uses WireGuard to transport the actual data.";
+    description = "Build post-quantum-secure VPNs with WireGuard!";
     homepage = "https://rosenpass.eu/";
     license = with licenses; [mit asl20];
-    maintainers = with maintainers;
-      [
-        andresnav
-        imincik
-        lorenzleutgeb
-      ]
-      ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
+    maintainers = with maintainers; [wucke13];
+    platforms = platforms.all;
   };
 }
