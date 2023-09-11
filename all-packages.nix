@@ -27,6 +27,8 @@
       withRedis = true;
       withTest = true;
     };
+    rosenpass = callPackage ./pkgs/rosenpass {};
+    rosenpass-tools = callPackage ./pkgs/rosenpass-tools {};
   };
 
   nixpkgs-candidates = {
