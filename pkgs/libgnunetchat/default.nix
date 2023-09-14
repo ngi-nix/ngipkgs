@@ -1,24 +1,42 @@
 {
   stdenv,
+  fetchgit,
+  # Build Tools:
+  meson,
+  ninja,
+  pkg-config,
+  # Validation:
+  validatePkgConfig,
+  testers,
+  # Dependencies:
+  check,
   gnunet,
   libsodium,
   libgcrypt,
   libextractor,
-  fetchgit,
 }:
 # From https://github.com/ngi-nix/gnunet-messenger-cli/blob/main/flake.nix
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: rec {
   name = "libgnunetchat";
+  version = "0.1.3";
+
   src = fetchgit {
     url = "https://git.gnunet.org/libgnunetchat";
-    rev = "a67bafd0a50710de5fd729dbc5b938ad48580954";
-    sha256 = "sha256-U6m6AgjnYy9BL158WktpGbf/Evurst5LExK4YU26WJU=";
+    rev = "v${version}";
+    hash = "sha256-0sp/MfM6CBOI60k8tZscFamc5Y2cnyRaAds6bSXhm3w=";
   };
 
-  buildInputs = [gnunet libsodium libgcrypt libextractor];
+  nativeBuildInputs = [meson ninja pkg-config validatePkgConfig];
+
+  buildInputs = [check gnunet libextractor libgcrypt libsodium];
 
   INSTALL_DIR = (placeholder "out") + "/";
-  prePatch = ''
-    mkdir -p $out/lib
-  '';
-}
+
+  prePatch = "mkdir -p $out/lib";
+
+  passthru.tests.pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
+
+  meta = {
+    pkgConfigModules = ["gunetchat"];
+  };
+})
