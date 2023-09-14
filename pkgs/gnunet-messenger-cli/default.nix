@@ -1,35 +1,40 @@
 {
   stdenv,
+  fetchgit,
+  # Build tools:
+  meson,
+  ninja,
+  pkg-config,
+  # Dependencies:
   gnunet,
   libsodium,
   libgcrypt,
   libgnunetchat,
   ncurses,
-  fetchgit,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "gnunet-messenger-cli";
+  version = "0.1.1";
+
   src = fetchgit {
     url = "https://git.gnunet.org/messenger-cli";
-    rev = "969f1536918e342bb331acfb042bf906c307978c";
-    sha256 = "sha256-y+6A70dh973qJTDy12Tgm4dvgZgPjtkqSHklP0/6YBc=";
+    rev = "v${version}";
+    hash = "sha256-p2HukucR1pE5+PJu64MHqkrOhgxnu/bdnr0vrccU44s=";
   };
 
   INSTALL_DIR = (placeholder "out") + "/";
 
+  nativeBuildInputs = [meson ninja pkg-config];
+
   buildInputs = [
     gnunet
-    libsodium
     libgcrypt
     libgnunetchat
+    libsodium
     ncurses
   ];
 
-  preInstall = ''
-    mkdir -p $out/bin
-  '';
+  preInstall = "mkdir -p $out/bin";
 
-  preFixup = ''
-    mv $out/bin/messenger-cli $out/bin/gnunet-messenger-cli
-  '';
+  preFixup = "mv $out/bin/messenger-cli $out/bin/gnunet-messenger-cli";
 }
