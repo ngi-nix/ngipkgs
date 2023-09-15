@@ -37,25 +37,6 @@
         "type": "github"
       }
     },
-    "nix-php-composer-builder": {
-      "inputs": {
-        "flake-parts": "flake-parts"
-      },
-      "locked": {
-        "lastModified": 1691252882,
-        "narHash": "sha256-kCiFl72gV/OzDPCrw2CeHM6VEtVGFj57gaF8ZKD9LWI=",
-        "owner": "loophp",
-        "repo": "nix-php-composer-builder",
-        "rev": "0caf5a60753397cfa959a74fc9ea0562556573c1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "loophp",
-        "ref": "0caf5a60753397cfa959a74fc9ea0562556573c1",
-        "repo": "nix-php-composer-builder",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1694593561,
@@ -109,7 +90,6 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nix-php-composer-builder": "nix-php-composer-builder",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix",
         "systems": "systems",
