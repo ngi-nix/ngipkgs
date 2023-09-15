@@ -9,7 +9,7 @@
       listen = 10000;
     };
     rp = {
-      secret = ./server-pqsk;
+      secret = ./sops/server-pqsk.yaml;
       public = ./server-pqpk;
     };
   };
@@ -20,7 +20,7 @@
       secret = "uC5dfGMv7Oxf5UDfdPkj6rZiRZT2dRWp5x8IQxrNcUE=";
     };
     rp = {
-      secret = ./client-pqsk;
+      secret = ./sops/client-pqsk.yaml;
       public = ./client-pqpk;
     };
   };
@@ -29,11 +29,11 @@ in {
 
   nodes = let
     etcPath = config: name: "/etc/" + config.environment.etc.${name}.target;
-    etcPathBin = config: name: (etcPath config name) + ".bin";
 
     shared = peer: {
       config,
       modulesPath,
+      pkgs,
       ...
     }: {
       imports = [configurations.common];
@@ -42,69 +42,47 @@ in {
 
       services.rosenpass = {
         enable = true;
-        publicKeyFile = etcPathBin config "rosenpass/pqpk";
-        secretKeyFile = etcPathBin config "rosenpass/pqsk";
+        publicKeyFile = etcPath config "rosenpass/pqpk";
+        secretKeyFile = etcPath config "rosenpass/pqsk";
         defaultDevice = deviceName;
       };
 
       networking.firewall.allowedUDPPorts = [9999];
 
-      systemd = {
-        network = {
-          enable = true;
-          networks."rosenpass" = {
-            matchConfig.Name = deviceName;
-            networkConfig.IPForward = true;
-            address = ["${peer.ip}/64"];
-          };
-
-          netdevs."10-rp0" = {
-            netdevConfig = {
-              Kind = "wireguard";
-              Name = deviceName;
-            };
-            wireguardConfig.PrivateKeyFile = etcPath config "wireguard/wgsk";
-          };
+      systemd.network = {
+        enable = true;
+        networks."rosenpass" = {
+          matchConfig.Name = deviceName;
+          networkConfig.IPForward = true;
+          address = ["${peer.ip}/64"];
         };
 
-        # Rosenpass requires keys in binary format.
-        # However, we want to avoid storing binary files in the nixpkgs repository.
-        # We are providing keys in base64 encoded format
-        # in `/etc/rosenpass/**/*pq{p,s}k` via `environment.etc`.
-        # This service decodes those files back into the binary format that
-        # Rosenpass expects.
-        # See also `etcPath x y` and `etcPathBin x y`.
-        services."rosenpass-decode" = {
-          serviceConfig.Type = "oneshot";
-
-          before = ["rosenpass.service"];
-          requiredBy = ["rosenpass.service"];
-
-          script = ''
-            set -x
-            for src in $(find /etc/rosenpass -name '*pq[sp]k'); do
-              dst="''${src}.bin"
-              base64 --decode "$src" > "$dst"
-              chown --reference "$src" "$dst"
-              chmod --reference "$src" "$dst"
-            done
-          '';
+        netdevs."10-rp0" = {
+          netdevConfig = {
+            Kind = "wireguard";
+            Name = deviceName;
+          };
+          wireguardConfig.PrivateKeyFile = etcPath config "wireguard/wgsk";
         };
       };
 
-      environment.etc = {
+      environment.etc."rosenpass/pqpk" = {
+        inherit (config.services.rosenpass) user group;
+        source = peer.rp.public;
+      };
+
+      sops = pkgs.lib.mkForce {
+        age.keyFile = ./sops/keys.txt;
+
         "wireguard/wgsk" = {
-          text = peer.wg.secret;
-          user = "systemd-network";
+          sopsFile = peer.wg.secret;
+          owner = "systemd-network";
           group = "systemd-network";
         };
-        "rosenpass/pqpk" = {
+        "rosenpass-pqsk" = {
           inherit (config.services.rosenpass) user group;
-          source = peer.rp.public;
-        };
-        "rosenpass/pqsk" = {
-          inherit (config.services.rosenpass) user group;
-          source = peer.rp.secret;
+          sopsFile = peer.rp.secret;
+          format = "binary";
         };
       };
     };
@@ -130,7 +108,7 @@ in {
         listen = ["0.0.0.0:9999"];
         peers = [
           {
-            publicKeyFile = etcPathBin config "rosenpass/peers/client/pqpk";
+            publicKeyFile = etcPath config "rosenpass/peers/client/pqpk";
             wireguard.publicKey = client.wg.public;
           }
         ];
@@ -157,7 +135,7 @@ in {
       services.rosenpass = {
         peers = [
           {
-            publicKeyFile = etcPathBin config "rosenpass/peers/server/pqpk";
+            publicKeyFile = etcPath config "rosenpass/peers/server/pqpk";
             endpoint = "server:9999";
             wireguard.publicKey = server.wg.public;
           }
