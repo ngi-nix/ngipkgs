@@ -16,40 +16,20 @@ with lib; let
   gunicornSocket = "unix:${gunicornSocketPath}";
   pretalxWebServiceName = "pretalx-web";
 
-  # NOTE: This expect script might be replaced as soon as <https://github.com/pretalx/pretalx/issues/1551> is resolved.
-  pretalxInit = pkgs.writeScriptBin "expect-pretalx-init" ''
-    #! ${pkgs.expect}/bin/expect -f
-    set timeout 10
-    spawn ${cfg.package}/bin/pretalx init
-    log_user 0
+  extras =
+    cfg.package.optional-dependencies.redis
+    ++ lib.optionals (cfg.database.backend == "mysql") cfg.package.optional-dependencies.mysql
+    ++ lib.optionals (cfg.database.backend == "postgresql") cfg.package.optional-dependencies.postgres;
 
-    expect "E-Mail: "
-    send -- "${cfg.init.admin.email}\n"
+  PYTHONPATH = "${cfg.package.PYTHONPATH}:${cfg.package.python.pkgs.makePythonPath extras}";
 
-    set password [string trim [read [open "${cfg.init.admin.passwordFile}"]]]
-
-    expect {
-    "Password: " { send -- "$password\n" }
-    "Error: That E-Mail is already taken." { puts "pretalx appears to be already initialized"; exit 0 }
-    }
-
-    expect "Password (again): "
-    send -- "$password\n"
-
-    expect {
-    -ex {Bypass password validation and create user anyway? [y/N]: } { puts "password is too weak"; exit 1 }
-    -ex {Name (e.g. "The Conference Organiser"): } { send -- "${cfg.init.organiser.name}\n" }
-    }
-
-    expect -ex {Slug (e.g. "conforg", used in urls): }
-    send -- "${cfg.init.organiser.slug}\n"
-
-    expect eof
-  '';
-
-  environmentFile = pkgs.runCommand "pretalx-environ" {
-    buildInputs = [cfg.package gunicorn]; # Sets PYTHONPATH in derivation
-  } "echo PYTHONPATH=$PYTHONPATH > $out;";
+  pretalxWrapped =
+    pkgs.runCommand "pretalx-wrapper"
+    {nativeBuildInputs = [pkgs.makeWrapper pkgs.python3Packages.wrapPython];}
+    ''
+      makeWrapper ${cfg.package}/bin/pretalx \
+        $out/bin/pretalx --prefix PYTHONPATH : "${PYTHONPATH}"
+    '';
 
   secretRecommendation = "Consider using a secret managing scheme such as `agenix` or `sops-nix` to generate this file.";
 in {
@@ -128,7 +108,7 @@ in {
         description = ''
           Directory that contains static files. It needs to be writable by the pretalx process. pretalx will put files there.
         '';
-        default = "${cfg.filesystem.data}/static";
+        default = "${cfg.package.static}";
       };
     };
 
@@ -288,6 +268,16 @@ in {
         default = null;
         example = "/run/secrets/pretalx/celery-broker";
       };
+
+      extraArgs = mkOption {
+        type = listOf str;
+        default = [];
+        description = ''
+          Extra arguments to pass to celery.
+          See <https://docs.celeryq.dev/en/stable/reference/cli.html#celery-worker> for more info.
+        '';
+        apply = escapeShellArgs;
+      };
     };
 
     redis = {
@@ -417,9 +407,7 @@ in {
     users.groups."${cfg.group}" = {};
 
     environment.systemPackages = [
-      cfg.package
-      pkgs.tmux
-      pkgs.htop
+      pretalxWrapped
     ];
 
     environment.etc."pretalx/pretalx.cfg".text = let
@@ -429,9 +417,8 @@ in {
         then s
         else {};
       pretalxCfg =
-        filterAttrs (n: v:
-          v != {}) # Removes empty attrsets, otherwise `generators.toINI` will fail.
-        
+        # Removes empty attrsets, otherwise `generators.toINI` will fail.
+        filterAttrs (n: v: v != {})
         (filterAttrsRecursive (n: v: (!(elem n hiddenNames) && v != null)) {
           inherit (cfg) filesystem site database locale;
 
@@ -443,7 +430,24 @@ in {
     in
       generators.toINI {} (recursiveUpdate pretalxCfg cfg.extraConfig);
 
-    systemd = {
+    systemd = let
+      commonUnitConfig = {
+        serviceConfig = {
+          User = cfg.user;
+          Group = cfg.group;
+          StateDirectory = "pretalx";
+          LogsDirectory = "pretalx";
+          WorkingDirectory = libDir;
+          RuntimeDirectory = "pretalx";
+          SupplementaryGroups = ["redis-pretalx"];
+        };
+        after =
+          []
+          ++ lib.optionals cfg.redis.enable ["redis-pretalx.service"]
+          ++ lib.optionals (cfg.database.backend == "postgresql") ["postgresql.service"]
+          ++ lib.optionals (cfg.database.backend == "mysql") ["mysql.service"];
+      };
+    in {
       sockets."pretalx-web" = {
         listenStreams = [gunicornSocketPath];
         socketConfig.SocketUser = config.services.nginx.user;
@@ -458,36 +462,28 @@ in {
           ++ optional (cfg.site.secretFile != null) (catFile "SECRET_KEY" cfg.site.secretFile)
           ++ optional cfg.celery.enable ''
             ${catFile "PRETALX_CELERY_BACKEND" cfg.celery.backendFile}
+            ${catFile "RESULT_BACKEND" cfg.celery.brokerFile}
             ${catFile "PRETALX_CELERY_BROKER" cfg.celery.brokerFile}
+            ${catFile "BROKER_URL" cfg.celery.brokerFile}
           '');
-        oneshotServiceConfig = {
-          Type = "oneshot";
-          EnvironmentFile = environmentFile;
-          User = cfg.user;
-          Group = cfg.group;
-        };
-        mkOneshot = command: {
-          serviceConfig = oneshotServiceConfig;
-          script = ''
-            ${exportPasswordEnv}
-            ${cfg.package}/bin/pretalx ${command}
-          '';
-        };
-      in {
-        ${pretalxWebServiceName} = {
-          serviceConfig = {
-            Type = "notify";
-            Restart = "on-failure";
-            EnvironmentFile = environmentFile;
-            User = cfg.user;
-            Group = cfg.group;
+        mkOneshot = command:
+          recursiveUpdate commonUnitConfig {
+            serviceConfig = {
+              Type = "oneshot";
+            };
+            script = ''
+              ${exportPasswordEnv}
+              ${pretalxWrapped}/bin/pretalx ${command}
+            '';
           };
+      in {
+        ${pretalxWebServiceName} = recursiveUpdate commonUnitConfig {
+          serviceConfig = {
+            Restart = "on-failure";
+          };
+          environment.PYTHONPATH = PYTHONPATH;
           script = ''
             ${exportPasswordEnv}
-
-            # ${cfg.package}/bin/pretalx compilemessages # FIXME: when run, pretalx-web hangs
-            ${cfg.package}/bin/pretalx collectstatic --noinput
-            ${cfg.package}/bin/pretalx compress
 
             exec ${gunicorn}/bin/gunicorn pretalx.wsgi --name=${pretalxWebServiceName} --bind=${gunicornSocket} ${cfg.gunicorn.extraArgs}
           '';
@@ -496,20 +492,38 @@ in {
           after = ["pretalx-init.service"];
         };
 
-        pretalx-init = {
-          serviceConfig = oneshotServiceConfig;
+        pretalx-init = recursiveUpdate commonUnitConfig {
+          unitConfig.ConditionPathExists = "!${libDir}/init-will-not-run-again-if-this-file-exists";
+          serviceConfig.Type = "oneshot";
+          environment = {
+            PRETALX_INIT_ORGANISER_NAME = cfg.init.organiser.name;
+            PRETALX_INIT_ORGANISER_SLUG = cfg.init.organiser.slug;
+            DJANGO_SUPERUSER_EMAIL = cfg.init.admin.email;
+          };
           script = ''
             ${exportPasswordEnv}
-            ${pretalxInit}/bin/expect-pretalx-init
+            export DJANGO_SUPERUSER_PASSWORD=$(cat ${cfg.init.admin.passwordFile})
+            ${pretalxWrapped}/bin/pretalx init --noinput
+            touch ${libDir}/init-will-not-run-again-if-this-file-exists
           '';
           requires = ["pretalx-migrate.service"];
           after = ["network.target" "pretalx-migrate.service"];
         };
 
         pretalx-migrate = mkOneshot "migrate";
-        pretalx-rebuild = mkOneshot "rebuild";
         pretalx-clearsessions = mkOneshot "clearsessions";
         pretalx-runperiodic = mkOneshot "runperiodic";
+
+        pretalx-worker = mkIf cfg.celery.enable (recursiveUpdate commonUnitConfig {
+          description = "pretalx asynchronous job runner";
+          environment.PYTHONPATH = PYTHONPATH;
+          after = commonUnitConfig.after ++ ["network.target"];
+          wantedBy = ["multi-user.target"];
+          script = ''
+            ${exportPasswordEnv}
+            ${cfg.package.python.pkgs.celery}/bin/celery --app pretalx.celery_app worker ${cfg.celery.extraArgs}
+          '';
+        });
       };
 
       timers = let

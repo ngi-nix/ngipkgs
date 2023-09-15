@@ -2,7 +2,11 @@
   name = "pretalx tests";
 
   nodes = {
-    server = {pkgs, ...}: {
+    server = {
+      pkgs,
+      config,
+      ...
+    }: {
       imports = [
         configurations.server
       ];
@@ -11,6 +15,8 @@
         age.keyFile = ./sops/keys.txt;
         defaultSopsFile = ./sops/pretalx.yaml;
       };
+
+      services.pretalx.site.url = pkgs.lib.mkForce "http://localhost:8000";
 
       # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
       # to provide a slightly nicer console, and while we're at it,

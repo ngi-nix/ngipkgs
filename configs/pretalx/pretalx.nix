@@ -3,9 +3,7 @@
   pkgs,
   ...
 }: {
-  imports = [
-    ./vm.nix
-  ];
+  imports = [./vm.nix];
 
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -35,7 +33,7 @@
   services = {
     pretalx = {
       enable = true;
-      package = pkgs.pretalx;
+      package = pkgs.pretalx-full;
       nginx = {
         # For a production configuration use this attribute set to configure the virtual host for pretalx.
       };

@@ -26,7 +26,7 @@
     with builtins; let
       importPackages = pkgs:
         import ./all-packages.nix {
-          inherit (pkgs) newScope;
+          inherit (pkgs) newScope lib;
         };
 
       importNixpkgs = system: overlays:

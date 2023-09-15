@@ -1,5 +1,11 @@
-{newScope, ...}: let
-  self = rec {
+{
+  newScope,
+  lib,
+  ...
+}: let
+  self = let
+    pretalxPlugins = lib.recurseIntoAttrs (callPackage ./pkgs/pretalx/plugins.nix {});
+  in rec {
     flarum = callPackage ./pkgs/flarum {};
     gnunet-messenger-cli = callPackage ./pkgs/gnunet-messenger-cli {};
     kikit = callPackage ./pkgs/kikit {};
@@ -13,20 +19,23 @@
 
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
     librecast = callPackage ./pkgs/librecast {inherit lcrq;};
-    pretalx-mysql = callPackage ./pkgs/pretalx {
-      withMysql = true;
-      withRedis = true;
+    pretalx = callPackage ./pkgs/pretalx {};
+    pretalx-frontend = callPackage ./pkgs/pretalx/frontend.nix {};
+    pretalx-full = callPackage ./pkgs/pretalx {
+      withPlugins = [
+        pretalx-downstream
+        pretalx-media-ccc-de
+        pretalx-pages
+      ];
     };
-    pretalx-postgresql = callPackage ./pkgs/pretalx {
-      withPostgresql = true;
-      withRedis = true;
-    };
-    pretalx = callPackage ./pkgs/pretalx {
-      withMysql = true;
-      withPostgresql = true;
-      withRedis = true;
-      withTest = true;
-    };
+
+    inherit
+      (pretalxPlugins)
+      pretalx-downstream
+      pretalx-media-ccc-de
+      pretalx-pages
+      ;
+
     rosenpass = callPackage ./pkgs/rosenpass {};
     rosenpass-tools = callPackage ./pkgs/rosenpass-tools {};
   };
