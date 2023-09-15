@@ -1,7 +1,7 @@
 {
-  newScope,
   lib,
-  ...
+  newScope,
+  nixosTests,
 }: let
   self = let
     pretalxPlugins = lib.recurseIntoAttrs (callPackage ./pkgs/pretalx/plugins.nix {});
@@ -51,6 +51,6 @@
     euclid3 = callPackage ./nixpkgs-candidates/euclid3 {};
   };
 
-  callPackage = newScope (self // nixpkgs-candidates // {inherit callPackage;});
+  callPackage = newScope (self // nixpkgs-candidates // {inherit callPackage nixosTests;});
 in
   self

@@ -27,6 +27,7 @@
       importPackages = pkgs:
         import ./all-packages.nix {
           inherit (pkgs) newScope lib;
+          nixosTests = pkgs.nixosTests // self.nixosTests.${pkgs.system};
         };
 
       importNixpkgs = system: overlays:
@@ -38,7 +39,8 @@
 
       loadTreefmt = pkgs: treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
 
-      # Attribute set containing all modules obtained via `inputs` and defined in this flake towards definition of `nixosConfigurations` and `nixosTests`.
+      # Attribute set containing all modules obtained via `inputs` and defined
+      # in this flake towards definition of `nixosConfigurations` and `nixosTests`.
       extendedModules =
         self.nixosModules
         // {
@@ -85,8 +87,10 @@
 
         # To generate a Hydra jobset for CI builds of all packages and tests.
         # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
-        hydraJobs.packages.${linuxSystem} = self.packages.${linuxSystem};
-        hydraJobs.nixosTests.${linuxSystem} = self.nixosTests.${linuxSystem};
+        hydraJobs = {
+          packages.${linuxSystem} = self.packages.${linuxSystem};
+          nixosTests.${linuxSystem} = self.nixosTests.${linuxSystem};
+        };
 
         # `nixosTests` is a non-standard name for a flake output.
         # See <https://github.com/ngi-nix/ngipkgs/issues/28>.
@@ -102,7 +106,7 @@
           mapAttrs (
             _: config:
               nixpkgs.lib.nixosSystem {
-                modules = [config] ++ nixpkgs.lib.attrValues extendedModules;
+                modules = [config] ++ attrValues extendedModules;
               }
           )
           importNixosConfigurations;
