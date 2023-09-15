@@ -20,15 +20,12 @@
     libgnunetchat = callPackage ./pkgs/libgnunetchat {};
     librecast = callPackage ./pkgs/librecast {inherit lcrq;};
     pretalx = callPackage ./pkgs/pretalx {};
+    pretalx-frontend = callPackage ./pkgs/pretalx/frontend.nix {};
     pretalx-full = callPackage ./pkgs/pretalx {
       withPlugins = [
         pretalx-downstream
         pretalx-media-ccc-de
         pretalx-pages
-        pretalx-public-voting
-        pretalx-venueless
-        pretalx-vimeo
-        pretalx-youtube
       ];
     };
 
@@ -37,10 +34,6 @@
       pretalx-downstream
       pretalx-media-ccc-de
       pretalx-pages
-      pretalx-public-voting
-      pretalx-venueless
-      pretalx-vimeo
-      pretalx-youtube
       ;
 
     rosenpass = callPackage ./pkgs/rosenpass {};

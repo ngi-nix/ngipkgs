@@ -3,8 +3,11 @@
   gettext,
   python3,
   fetchFromGitHub,
+  fetchpatch,
   fetchPypi,
   pretalx,
+  pretalx-frontend,
+  nodejs,
   withPlugins ? [],
 }:
 with builtins; let
@@ -13,8 +16,8 @@ with builtins; let
       django-formtools = super.django-formtools.overridePythonAttrs rec {
         version = "2.3";
         src = fetchPypi {
-          pname = "django-formtools";
           inherit version;
+          pname = "django-formtools";
           hash = "sha256-lmO27KZHd7aNbUFC762Fl/6aaFkkZzslqoodz/TbAMM=";
         };
       };
@@ -23,109 +26,106 @@ with builtins; let
 in
   python.pkgs.buildPythonApplication rec {
     pname = "pretalx";
-    version = "2.3.2";
-    format = "setuptools";
+    version = "2023.1.0";
+    format = "pyproject";
 
     src = fetchFromGitHub {
-      owner = "pretalx";
-      repo = "pretalx";
+      owner = pname;
+      repo = pname;
       rev = "v${version}";
-      hash = "sha256-EtREzTMXLsNSm7MkaK0Ho5eUwNisp0+RO39LwOyVyxo=";
+      hash = "sha256-Few4Ojd2i0ELKWPJfkmfd3HeKFx/QK+aP5hYAHDdHeE=";
     };
 
-    outputs = [
-      "out"
-      "static"
-    ];
+    outputs = ["out" "static"];
 
-    sourceRoot = "source/src";
-
-    pythonRelaxDeps = [
-      "beautifulsoup4"
-      "bleach"
-      "celery"
-      "cssutils"
-      "defusedcsv"
-      "django-bootstrap4"
-      "django-compressor"
-      "django-filter"
-      "django-formset-js-improved"
-      "django-hierarkey"
-      "django-scopes"
-      "djangorestframework"
-      "libsass"
-      "Markdown"
-      "Pillow"
-      "publicsuffixlist"
-      "reportlab"
-      "requests"
-      "rules"
-      "whitenoise"
+    patches = [
+      (fetchpatch {
+        url = "https://github.com/pretalx/pretalx/pull/1579.patch";
+        hash = "sha256-YVfD4h6bpTC3xIRHwDdpTf+njGZppcGLxcOzT3aMGAw=";
+      })
     ];
 
     nativeBuildInputs = [
       gettext
-      python.pkgs.pythonRelaxDepsHook
+      nodejs
+      pretalx-frontend
     ];
 
-    propagatedBuildInputs = with python.pkgs; [
-      beautifulsoup4
-      bleach
-      celery
-      csscompressor
-      cssutils
-      defusedcsv
-      django
-      django-bootstrap4
-      django-compressor
-      django-context-decorator
-      django-countries
-      django-csp
-      django-filter
-      django-formset-js-improved
-      django-formtools
-      django-hierarkey
-      django-i18nfield
-      django-libsass
-      django-scopes
-      djangorestframework
-      inlinestyler
-      libsass
-      markdown
-      pillow
-      publicsuffixlist
-      python-dateutil
-      pytz
-      qrcode
-      reportlab
-      requests
-      rules
-      urlman
-      vobject
-      whitenoise
-      zxcvbn
-    ] ++ withPlugins;
+    propagatedBuildInputs = with python.pkgs;
+      [
+        beautifulsoup4
+        bleach
+        celery
+        css-inline
+        csscompressor
+        cssutils
+        defusedcsv
+        django
+        django-bootstrap4
+        django-compressor
+        django-context-decorator
+        django-countries
+        django-csp
+        django-filter
+        django-formset-js-improved
+        django-formtools
+        django-hierarkey
+        django-i18nfield
+        django-libsass
+        django-scopes
+        djangorestframework
+        inlinestyler
+        libsass
+        markdown
+        pillow
+        publicsuffixlist
+        python-dateutil
+        pytz
+        qrcode
+        reportlab
+        requests
+        rules
+        urlman
+        vobject
+        whitenoise
+        zxcvbn
+      ]
+      ++ withPlugins;
 
-    passthru.optional-dependencies = {
-      mysql = with python.pkgs; [mysqlclient];
-      postgres = with python.pkgs; [psycopg2];
-      redis = with python.pkgs; [django-redis redis];
+    passthru.optional-dependencies = with python.pkgs; {
+      mysql = [mysqlclient];
+      postgres = [psycopg2];
+      redis = [redis];
     };
 
-    postBuild = ''
-      python -m pretalx rebuild
+    postPatch = ''
+      substituteInPlace src/pretalx/common/management/commands/rebuild.py --replace \
+        'subprocess.check_call(["npm", "run", "build"], cwd=frontend_dir, env=env)' '#'
     '';
+
+    postBuild = ''
+      rm -r ./src/pretalx/frontend/schedule-editor
+      ln -s ${pretalx-frontend}/lib/node_modules/@pretalx/schedule-editor ./src/pretalx/frontend/schedule-editor
+
+      PYTHONPATH=$PYTHONPATH:./src python -m pretalx rebuild
+    '';
+
+    doCheck = false;
 
     postInstall = ''
       mkdir -p $out/bin
-      cp ./manage.py $out/bin/pretalx
+      cp ./src/manage.py $out/bin/pretalx
 
       # the processed source files are in the static output
       rm -rf $out/${python.sitePackages}/pretalx/static
 
-      # copy generated static files into dedicated output
       mkdir -p $static
-      cp -r ./static.dist/** $static/
+
+      # Copy generated static files into dedicated output.
+      cp -r ./src/static.dist/** $static/
+
+      # Copy frontend files.
+      cp -r ${pretalx-frontend}/lib/node_modules/@pretalx/schedule-editor/dist/* $static
     '';
 
     nativeCheckInputs = with python.pkgs;
@@ -140,23 +140,21 @@ in
       ]
       ++ lib.flatten (builtins.attrValues passthru.optional-dependencies);
 
-    disabledTests = [
-      # Expected to perform X queries or less but Y were done
-      "test_schedule_export_public"
-      "test_schedule_frab_json_export"
-      "test_schedule_frab_xml_export"
-    ];
-
     passthru = {
       python = python;
       PYTHONPATH = "${python.pkgs.makePythonPath propagatedBuildInputs}:${pretalx.outPath}/${python.sitePackages}";
-      # tests = { inherit (nixosTests) pretalx; }; # Used in nixpkgs
     };
 
     meta = with lib; {
       description = "Conference planning tool: CfP, scheduling, speaker management";
       homepage = "https://github.com/pretalx/pretalx";
       license = licenses.asl20;
-      maintainers = with maintainers; [hexa];
+      maintainers = with maintainers;
+        [
+          andresnav
+          imincik
+          lorenzleutgeb
+        ]
+        ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
     };
   }

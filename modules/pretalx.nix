@@ -31,37 +31,6 @@ with lib; let
         $out/bin/pretalx --prefix PYTHONPATH : "${PYTHONPATH}"
     '';
 
-  # NOTE: This expect script might be replaced as soon as <https://github.com/pretalx/pretalx/issues/1551> is resolved.
-  pretalxInit = pkgs.writeScriptBin "expect-pretalx-init" ''
-    #! ${pkgs.expect}/bin/expect -f
-    set timeout 10
-    spawn ${pretalxWrapped}/bin/pretalx init
-    log_user 0
-
-    expect "E-Mail: "
-    send -- "${cfg.init.admin.email}\n"
-
-    set password [string trim [read [open "${cfg.init.admin.passwordFile}"]]]
-
-    expect {
-    "Password: " { send -- "$password\n" }
-    "Error: That E-Mail is already taken." { puts "pretalx appears to be already initialized"; exit 0 }
-    }
-
-    expect "Password (again): "
-    send -- "$password\n"
-
-    expect {
-    -ex {Bypass password validation and create user anyway? [y/N]: } { puts "password is too weak"; exit 1 }
-    -ex {Name (e.g. "The Conference Organiser"): } { send -- "${cfg.init.organiser.name}\n" }
-    }
-
-    expect -ex {Slug (e.g. "conforg", used in urls): }
-    send -- "${cfg.init.organiser.slug}\n"
-
-    expect eof
-  '';
-
   secretRecommendation = "Consider using a secret managing scheme such as `agenix` or `sops-nix` to generate this file.";
 in {
   options.services.pretalx = with types; {
@@ -524,10 +493,18 @@ in {
         };
 
         pretalx-init = recursiveUpdate commonUnitConfig {
+          unitConfig.ConditionPathExists = "!${libDir}/init-will-not-run-again-if-this-file-exists";
           serviceConfig.Type = "oneshot";
+          environment = {
+            PRETALX_INIT_ORGANISER_NAME = cfg.init.organiser.name;
+            PRETALX_INIT_ORGANISER_SLUG = cfg.init.organiser.slug;
+            DJANGO_SUPERUSER_EMAIL = cfg.init.admin.email;
+          };
           script = ''
             ${exportPasswordEnv}
-            ${pretalxInit}/bin/expect-pretalx-init
+            export DJANGO_SUPERUSER_PASSWORD=$(cat ${cfg.init.admin.passwordFile})
+            ${pretalxWrapped}/bin/pretalx init --noinput
+            touch ${libDir}/init-will-not-run-again-if-this-file-exists
           '';
           requires = ["pretalx-migrate.service"];
           after = ["network.target" "pretalx-migrate.service"];

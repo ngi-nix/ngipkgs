@@ -16,6 +16,8 @@
         defaultSopsFile = ./sops/pretalx.yaml;
       };
 
+      services.pretalx.site.url = pkgs.lib.mkForce "http://localhost:8000";
+
       # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
       # to provide a slightly nicer console, and while we're at it,
       # also use a nice font.
