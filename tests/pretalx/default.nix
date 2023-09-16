@@ -1,4 +1,7 @@
-{configurations, ...}: {
+{
+  configurations,
+  modules,
+}: {
   name = "pretalx tests";
 
   nodes = {
@@ -8,7 +11,10 @@
       ...
     }: {
       imports = [
-        configurations.server
+        configurations.pretalx-postgresql
+        modules.default
+        modules.pretalx
+        modules.sops-nix
       ];
 
       sops = pkgs.lib.mkForce {

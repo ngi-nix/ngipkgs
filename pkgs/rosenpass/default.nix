@@ -63,7 +63,5 @@ rustPlatform.buildRustPackage rec {
       ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
   };
 
-  passthru.tests = {
-    inherit (nixosTests) rosenpass;
-  };
+  passthru.tests.rosenpass = nixosTests.rosenpass;
 }
