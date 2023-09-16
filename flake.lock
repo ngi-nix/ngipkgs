@@ -121,16 +121,16 @@
     "weblate": {
       "flake": false,
       "locked": {
-        "lastModified": 1692937663,
-        "narHash": "sha256-c/h2gse5lr/XZnvF6ijjqA/03LNFFlY4xpewFddPXyc=",
+        "lastModified": 1694767736,
+        "narHash": "sha256-GVKSJZAiH1Sfr9n0zSK+EXqWqejrNYHj1OFtZQPbMa4=",
         "owner": "WeblateOrg",
         "repo": "weblate",
-        "rev": "c880b98c54e7a56434ee1f3c7b30f09c3d953771",
+        "rev": "d57ba204e4943d1fe1b16f9206cfdc5dbf3d1bc8",
         "type": "github"
       },
       "original": {
         "owner": "WeblateOrg",
-        "ref": "weblate-5.0",
+        "ref": "weblate-5.0.2",
         "repo": "weblate",
         "type": "github"
       }

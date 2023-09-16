@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     poetry2nix.url = "github:nix-community/poetry2nix/master";
     poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-    weblate.url = "github:WeblateOrg/weblate/weblate-5.0";
+    weblate.url = "github:WeblateOrg/weblate/weblate-5.0.2";
     weblate.flake = false;
     aeidon-src.url = "github:otsaloma/gaupol/1.12";
     aeidon-src.flake = false;
@@ -123,6 +123,21 @@
               old: {
                 buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.leptonica pkgs.tesseract ];
                 nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
+              }
+            );
+            ahocorasick-rs = super.ahocorasick-rs.overridePythonAttrs (
+              old: {
+                nativeBuildInputs = (old.nativeBuildInputs or []) ++ [
+                  pkgs.rustPlatform.maturinBuildHook
+            pkgs.rustPlatform.cargoSetupHook
+
+		  ];
+                cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
+                  inherit (old) src;
+                  name = "${old.pname}-${old.version}";
+                  hash = "sha256-/sel54PV58y6oUgIzHXSCL4RMljPL9kZ6ER/pRTAjAI=";
+                };
+
               }
             );
           }
