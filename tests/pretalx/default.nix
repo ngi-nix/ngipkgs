@@ -15,7 +15,10 @@
         modules.default
         modules.pretalx
         modules.sops-nix
+        modules.unbootable
       ];
+
+      unbootable = pkgs.lib.mkForce false;
 
       sops = pkgs.lib.mkForce {
         age.keyFile = ./sops/keys.txt;

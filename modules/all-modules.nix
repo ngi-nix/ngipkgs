@@ -5,4 +5,5 @@
   flarum = import ./flarum.nix;
   pretalx = import ./pretalx.nix;
   rosenpass = import ./rosenpass.nix;
+  unbootable = import ./unbootable.nix;
 }

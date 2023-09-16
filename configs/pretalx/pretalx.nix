@@ -3,10 +3,6 @@
   pkgs,
   ...
 }: {
-  imports = [./vm.nix];
-
-  nixpkgs.hostPlatform = "x86_64-linux";
-
   networking = {
     firewall.allowedTCPPorts = [config.services.nginx.defaultHTTPListenPort];
     hostName = "server";
@@ -14,10 +10,14 @@
   };
 
   sops = {
+    # See <https://github.com/Mic92/sops-nix>.
+
+    age.keyFile = "/dev/null"; # For a production configuration, set this option.
+    defaultSopsFile = "/dev/null"; # For a production configuration, set this option.
+    validateSopsFiles = false; # For a production configuration, remove this line.
+
     secrets = let
       pretalxSecret = {
-        # For a production configuration also `sopsFile` is required.
-        # See <https://github.com/Mic92/sops-nix>.
         owner = config.services.pretalx.user;
         group = config.services.pretalx.group;
       };
@@ -50,7 +50,6 @@
         backendFile = config.sops.secrets."pretalx/celery/backend".path;
         brokerFile = config.sops.secrets."pretalx/celery/broker".path;
       };
-
       init = {
         admin = {
           email = "pretalx@localhost";
@@ -77,6 +76,4 @@
       recommendedProxySettings = true;
     };
   };
-
-  system.stateVersion = "22.11";
 }
