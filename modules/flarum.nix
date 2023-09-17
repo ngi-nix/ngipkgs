@@ -155,7 +155,7 @@ in {
         '';
         extraConfig = ''
           index index.php
-          include ${cfg.package}/build/.nginx.conf;
+          include ${cfg.package}/share/php/flarum/.nginx.conf;
         '';
       };
     };
@@ -198,9 +198,9 @@ in {
           mkdir -p ${cfg.stateDir}/{extensions,public/assets/avatars}
           mkdir -p ${cfg.stateDir}/storage/{formatter,sessions,views}
           cd ${cfg.stateDir}
-          cp -f ${cfg.package}/build/{extend.php,site.php,flarum} .
-          ln -sf ${cfg.package}/build/vendor .
-          ln -sf ${cfg.package}/build/public/index.php public/
+          cp -f ${cfg.package}/share/php/flarum/{extend.php,site.php,flarum} .
+          ln -sf ${cfg.package}/share/php/flarum/vendor .
+          ln -sf ${cfg.package}/share/php/flarum/public/index.php public/
           chmod a+x . public
           chmod +x site.php extend.php flarum
         ''
