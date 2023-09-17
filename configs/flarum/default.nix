@@ -7,8 +7,9 @@
 
   services.nginx.enable = true;
   nixpkgs.hostPlatform = "x86_64-linux";
-  services.flarum = {
+  services.flarum = rec {
     enable = true;
-    domain = "10.233.2.2";
+    # domain = "localhost"; # Default, Set this to whatever your local container IP address is
+    # baseUrl = "https://{domain}" # Default, if you need http override manually
   };
 }
