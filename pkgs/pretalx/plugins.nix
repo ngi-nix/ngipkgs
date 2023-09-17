@@ -47,19 +47,17 @@ in {
     hash = "sha256-tR8oR54lUv/05S+SzXSyuSpFw3nH2hxQnMiciMkDQiU=";
   };
 
-  # The following plugins are broken as of 2023-09-15 in
-  # combination with pretalx v2023.1.0.
+  # The following plugins are broken as of 2023-09-17 in
+  # combination with pretalx v2023.1.3.
 
-  # Broken because `src/pretalx/static/vendored/moment-timezone-with-data-2012-2022.js`
-  # was renamed to `src/pretalx/static/vendored/moment-timezone-with-data-10-year-range.js`.
+  # See <https://github.com/pretalx/pretalx-public-voting/issues/31>.
   # pretalx-public-voting = plugin {
   #   name = "public-voting";
   #   version = "1.2.2";
   #   hash = "sha256-imL0sV2qGU9yVRJhtT5Hpv4cX+NDYmoEoTncNEp2Dc8=";
   # };
 
-  # Broken because `src/pretalx/static/vendored/moment-timezone-with-data-2012-2022.js`
-  # was renamed to `src/pretalx/static/vendored/moment-timezone-with-data-10-year-range.js`.
+  # See <https://github.com/pretalx/pretalx-venueless/issues/3>.
   # pretalx-venueless = plugin {
   #   name = "venueless";
   #   version = "1.2.2";
