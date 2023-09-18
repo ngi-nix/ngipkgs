@@ -3,7 +3,6 @@
   gettext,
   python3,
   fetchFromGitHub,
-  fetchpatch,
   fetchPypi,
   pretalx,
   pretalx-frontend,
@@ -26,24 +25,17 @@ with builtins; let
 in
   python.pkgs.buildPythonApplication rec {
     pname = "pretalx";
-    version = "2023.1.0";
+    version = "2023.1.3";
     format = "pyproject";
 
     src = fetchFromGitHub {
       owner = pname;
       repo = pname;
       rev = "v${version}";
-      hash = "sha256-Few4Ojd2i0ELKWPJfkmfd3HeKFx/QK+aP5hYAHDdHeE=";
+      hash = "sha256-YxmkjfftNrInIcSkK21wJXiEU6hbdDa1Od8p+HiLprs=";
     };
 
     outputs = ["out" "static"];
-
-    patches = [
-      (fetchpatch {
-        url = "https://github.com/pretalx/pretalx/pull/1579.patch";
-        hash = "sha256-YVfD4h6bpTC3xIRHwDdpTf+njGZppcGLxcOzT3aMGAw=";
-      })
-    ];
 
     nativeBuildInputs = [
       gettext
@@ -116,8 +108,14 @@ in
       mkdir -p $out/bin
       cp ./src/manage.py $out/bin/pretalx
 
-      # the processed source files are in the static output
-      rm -rf $out/${python.sitePackages}/pretalx/static
+      # The processed source files are in the static output,
+      # except for fonts, which are duplicated.
+      # See <https://github.com/pretalx/pretalx/issues/1585>
+      # for more details.
+      find $out/${python.sitePackages}/pretalx/static \
+        -mindepth 1 \
+        -not -path "$out/${python.sitePackages}/pretalx/static/fonts*" \
+        -delete
 
       mkdir -p $static
 
