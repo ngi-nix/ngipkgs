@@ -154,8 +154,8 @@ in {
           fastcgi_index site.php;
         '';
         extraConfig = ''
-          index index.php
-          include ${cfg.package}/build/.nginx.conf;
+          index index.php;
+          include ${cfg.package}/share/php/flarum/.nginx.conf;
         '';
       };
     };
@@ -196,11 +196,11 @@ in {
       script =
         ''
           mkdir -p ${cfg.stateDir}/{extensions,public/assets/avatars}
-          mkdir -p ${cfg.stateDir}/storage/{formatter,sessions,views}
+          mkdir -p ${cfg.stateDir}/storage/{cache,formatter,sessions,views}
           cd ${cfg.stateDir}
-          cp -f ${cfg.package}/build/{extend.php,site.php,flarum} .
-          ln -sf ${cfg.package}/build/vendor .
-          ln -sf ${cfg.package}/build/public/index.php public/
+          cp -f ${cfg.package}/share/php/flarum/{extend.php,site.php,flarum} .
+          ln -sf ${cfg.package}/share/php/flarum/vendor .
+          ln -sf ${cfg.package}/share/php/flarum/public/index.php public/
           chmod a+x . public
           chmod +x site.php extend.php flarum
         ''
@@ -210,7 +210,7 @@ in {
              php flarum install --file=${flarumInstallConfig}
           fi
           php flarum migrate
-          # php flarum cache:clear
+          php flarum cache:clear
         '';
     };
   };

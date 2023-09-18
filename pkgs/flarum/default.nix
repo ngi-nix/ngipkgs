@@ -2,9 +2,9 @@
   fetchFromGitHub,
   fetchurl,
   lib,
-  pkgs,
+  php,
 }:
-pkgs.api.buildComposerProject (finalAttrs: {
+php.buildComposerProject (finalAttrs: {
   pname = "flarum";
   version = "1.8.0";
 
