@@ -1,0 +1,17 @@
+name: "Update flake.lock"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * */3' # https://crontab.guru/#0_0_*_*_*/3
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@v1
+      - uses: DeterminateSystems/update-flake-lock@v20
+        with:
+          pr-title: "flake: Update flake.lock"
+          pr-labels: |
+            automated
