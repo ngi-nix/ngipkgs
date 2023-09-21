@@ -103,8 +103,6 @@ in
       PYTHONPATH=$PYTHONPATH:./src python -m pretalx rebuild
     '';
 
-    doCheck = false;
-
     postInstall = ''
       mkdir -p $out/bin
       cp ./src/manage.py $out/bin/pretalx
@@ -131,6 +129,7 @@ in
       [
         faker
         freezegun
+        pytest-cov
         pytest-django
         pytest-mock
         pytest-xdist
@@ -139,8 +138,26 @@ in
       ]
       ++ lib.flatten (builtins.attrValues passthru.optional-dependencies);
 
+    doCheck = true;
+
+    preCheck = ''
+      export PRETALX_CONFIG_FILE="$src/src/tests/ci_sqlite.cfg"
+      cd src
+    '';
+
+    disabledTests = [
+      # AssertionError: assert 'https://localhost' == None
+      "test_change_custom_domain[http://localhost-None]"
+      # npm run i18n:extract
+      "test_common_custom_makemessages_does_not_blow_up"
+      # Expected to perform X queries or less but Y were done
+      "test_schedule_export_public"
+      "test_schedule_frab_json_export"
+      "test_schedule_frab_xml_export"
+    ];
+
     passthru = {
-      python = python;
+      inherit python;
       PYTHONPATH = "${python.pkgs.makePythonPath propagatedBuildInputs}:${pretalx.outPath}/${python.sitePackages}";
 
       tests.pretalx = nixosTests.pretalx;

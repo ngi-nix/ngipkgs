@@ -26,6 +26,8 @@
         pretalx-downstream
         pretalx-media-ccc-de
         pretalx-pages
+        pretalx-venueless
+        pretalx-public-voting
       ];
     };
 
@@ -34,6 +36,8 @@
       pretalx-downstream
       pretalx-media-ccc-de
       pretalx-pages
+      pretalx-venueless
+      pretalx-public-voting
       ;
 
     rosenpass = callPackage ./pkgs/rosenpass {};
