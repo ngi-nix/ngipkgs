@@ -4,6 +4,7 @@
   python3,
   fetchFromGitHub,
   fetchPypi,
+  nixosTests,
   pretalx,
   pretalx-frontend,
   nodejs,
@@ -141,6 +142,8 @@ in
     passthru = {
       python = python;
       PYTHONPATH = "${python.pkgs.makePythonPath propagatedBuildInputs}:${pretalx.outPath}/${python.sitePackages}";
+
+      tests.pretalx = nixosTests.pretalx;
     };
 
     meta = with lib; {

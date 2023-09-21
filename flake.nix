@@ -22,9 +22,30 @@
     ...
   }:
     with builtins; let
+      inherit
+        (nixpkgs.lib)
+        concatMapAttrs
+        nixosSystem
+        ;
+
       importPackages = pkgs:
         import ./all-packages.nix {
           inherit (pkgs) newScope lib;
+
+          # nixosTests is overriden with tests defined in this
+          # flake.
+          nixosTests =
+            pkgs.nixosTests
+            // (
+              let
+                dir = ./tests;
+              in
+                mapAttrs (name: _:
+                  pkgs.nixosTest (import (dir + "/${name}") {
+                    modules = extendedModules;
+                    configurations = importNixosConfigurations;
+                  })) (readDir dir)
+            );
         };
 
       importNixpkgs = system: overlays:
@@ -36,7 +57,8 @@
 
       loadTreefmt = pkgs: treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
 
-      # Attribute set containing all modules obtained via `inputs` and defined in this flake towards definition of `nixosConfigurations` and `nixosTests`.
+      # Attribute set containing all modules obtained via `inputs` and defined
+      # in this flake towards definition of `nixosConfigurations` and `nixosTests`.
       extendedModules =
         self.nixosModules
         // {
@@ -81,26 +103,23 @@
 
         # To generate a Hydra jobset for CI builds of all packages and tests.
         # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
-        hydraJobs.packages.${linuxSystem} = self.packages.${linuxSystem};
-        hydraJobs.nixosTests.${linuxSystem} = self.nixosTests.${linuxSystem};
-
-        # `nixosTests` is a non-standard name for a flake output.
-        # See <https://github.com/ngi-nix/ngipkgs/issues/28>.
-        nixosTests.${linuxSystem} = mapAttrs (_: pkgs.nixosTest) (import ./tests/all-tests.nix {
-          modules = extendedModules;
-          configurations = importNixosConfigurations;
-        });
+        hydraJobs = let
+          packages = self.packages.${linuxSystem};
+          passthruTests = concatMapAttrs (name: value:
+            if value ? passthru.tests
+            then {${name} = value.passthru.tests;}
+            else {})
+          packages;
+        in {
+          packages.${linuxSystem} = packages;
+          tests.${linuxSystem} = passthruTests;
+        };
       })
       #
       # 3.
       // {
         nixosConfigurations =
-          mapAttrs (
-            _: config:
-              nixpkgs.lib.nixosSystem {
-                modules = [config] ++ nixpkgs.lib.attrValues extendedModules;
-              }
-          )
+          mapAttrs (_: config: nixosSystem {modules = [config] ++ attrValues extendedModules;})
           importNixosConfigurations;
 
         nixosModules =

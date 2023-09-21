@@ -1,4 +1,7 @@
-{configurations, ...}: let
+{
+  configurations,
+  modules,
+}: let
   deviceName = "rp0";
 
   server = {
@@ -48,7 +51,11 @@ in {
       modulesPath,
       ...
     }: {
-      imports = [configurations.shared];
+      imports = [
+        modules.default
+        modules.sops-nix
+        modules.rosenpass
+      ];
 
       boot.kernelModules = ["wireguard"];
 

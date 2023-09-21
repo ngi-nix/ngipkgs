@@ -37,6 +37,6 @@ stdenv.mkDerivation (finalAttrs: rec {
   passthru.tests.pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
 
   meta = {
-    pkgConfigModules = ["gunetchat"];
+    pkgConfigModules = ["gnunetchat"];
   };
 })
