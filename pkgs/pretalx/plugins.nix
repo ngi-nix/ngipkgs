@@ -47,24 +47,20 @@ in {
     hash = "sha256-tR8oR54lUv/05S+SzXSyuSpFw3nH2hxQnMiciMkDQiU=";
   };
 
-  # The following plugins are broken as of 2023-09-17 in
-  # combination with pretalx v2023.1.3.
+  pretalx-public-voting = plugin {
+    name = "public-voting";
+    version = "1.3.0";
+    hash = "sha256-pve/EIfrFg4g6Qvz5oIsw9I0dwNGrVaL7lSSlZ6CnVc=";
+  };
 
-  # See <https://github.com/pretalx/pretalx-public-voting/issues/31>.
-  # pretalx-public-voting = plugin {
-  #   name = "public-voting";
-  #   version = "1.2.2";
-  #   hash = "sha256-imL0sV2qGU9yVRJhtT5Hpv4cX+NDYmoEoTncNEp2Dc8=";
-  # };
-
-  # See <https://github.com/pretalx/pretalx-venueless/issues/3>.
-  # pretalx-venueless = plugin {
-  #   name = "venueless";
-  #   version = "1.2.2";
-  #   hash = "sha256-aD9JKETtPIYsmQzL368Dkjm49x3TzDfTr/OAO/Nn504=";
-  #   nativeBuildInputs = defaultNativeBuildInputs ++ [py.pkgs.pyjwt];
-  #   propagatedBuildInputs = [py.pkgs.pyjwt];
-  # };
+  pretalx-venueless = plugin {
+    name = "venueless";
+    version = "1.3.0";
+    rev = "4a5f040c523d039537dfe4635ead96f6d4792fa2";
+    hash = "sha256-h8o5q1roFm8Bct/Qf8obIJYkkGPcz3WJ15quxZH48H8=";
+    nativeBuildInputs = defaultNativeBuildInputs ++ [py.pkgs.pyjwt];
+    propagatedBuildInputs = [py.pkgs.pyjwt];
+  };
 
   # Broken because some field `is_visible` cannot be found.
   # pretalx-vimeo = plugin {
