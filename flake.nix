@@ -65,12 +65,17 @@
           sops-nix = sops-nix.nixosModules.default;
         };
 
+      nixosSystemWithModules = config: nixosSystem {modules = [config] ++ attrValues extendedModules;};
+
       # Compute outputs that are invariant in the system architecture.
       allSystemsOutputs = system: let
         pkgs = importNixpkgs system [];
         treefmtEval = loadTreefmt pkgs;
+        toplevel = name: config: {
+          "${name}-toplevel" = (nixosSystemWithModules config).config.system.build.toplevel;
+        };
       in {
-        packages = importPackages pkgs;
+        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations);
         formatter = treefmtEval.config.build.wrapper;
       };
     in
@@ -119,7 +124,7 @@
       # 3.
       // {
         nixosConfigurations =
-          mapAttrs (_: config: nixosSystem {modules = [config] ++ attrValues extendedModules;})
+          mapAttrs (_: config: nixosSystemWithModules config)
           importNixosConfigurations;
 
         nixosModules =
