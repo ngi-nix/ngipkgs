@@ -1,0 +1,191 @@
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = ["poetry-core>=1.0.0", "setuptools", "wheel", "translate-toolkit"]  # PEP 508 specifications.
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+target-version = ['py39']
+
+[tool.codespell]
+skip = '*.po,*.pot,*.json,*.tmx,*.tbx,yarn.lock,known_hosts'
+
+[tool.pylint.main]
+disable = [
+  "C",
+  "W",
+  "R",
+  "I",
+  "no-member",
+  "not-a-mapping",
+  "unsubscriptable-object",
+  "unsupported-membership-test",
+  "not-an-iterable",
+  "unsupported-binary-operation",
+  "c-extension-no-member",
+  "not-callable",
+  "invalid-str-returned",
+  "raising-bad-type",
+  "no-name-in-module",
+  "import-error"
+]
+extension-pkg-whitelist = ["siphashc"]
+ignore = [
+  "migrations",
+  "settings.py",
+  "settings_test.py",
+  ".git",
+  "test-repos",
+  "repos",
+  "build",
+  ".venv"
+]
+
+[tool.ruff]
+format = "github"
+# CONFIG - intentional configuration
+# TODO - needs decision whether intention, add noqa tags or fix
+# WONTFIX - not fixable in current codebase, might be better to go for noqa
+ignore = [
+  "COM",  # CONFIG: No trailing commas
+  "PT",  # CONFIG: Not using pytest
+  "D203",  # CONFIG: incompatible with D211
+  "D212",  # CONFIG: incompatible with D213
+  "FIX002",  # CONFIG: we use TODO
+  "TD002",  # CONFIG: no detailed TODO documentation is required
+  "TD003",  # CONFIG: no detailed TODO documentation is required
+  "S603",  # CONFIG: `subprocess` call: check for execution of untrusted input
+  "S607",  # CONFIG: executing system installed tools
+  "EM",  # TODO: Exception strings
+  "PTH",  # TODO: Not using pathlib
+  "FBT",  # TODO: Boolean in function definition
+  "BLE001",  # WONTFIX: Do not catch blind exception: `Exception`, third-party modules do not have defined exceptions
+  "ARG001",  # TODO: Unused function argument (mostly for API compatibility)
+  "ARG002",  # TODO: Unused method argument (mostly for API compatibility)
+  "ANN",  # TODO: we are missing many annotations
+  "D10",  # TODO: we are missing many docstrings
+  "D401",  # TODO: many strings need rephrasing
+  "TRY003",  # WONTFIX: Avoid specifying long messages outside the exception class
+  "TRY200",  # TODO: Use `raise from` to specify exception cause
+  "B904",  # TODO: Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  "PERF203",  # WONTFIX: This rule is only enforced for Python versions prior to 3.1
+  "PLR0911",  # WONTFIX: Too many return statements
+  "PLR0912",  # WONTFIX: Too many branches
+  "PLR0913",  # WONTFIX: Too many arguments to function call
+  "PLR0915",  # WONTFIX: Too many statements
+  "PLR2004",  # TODO: Magic value used in comparison, consider replacing 201 with a constant variable
+  "RUF001",  # WONTFIX: String contains ambiguous unicode character, we are using Unicode
+  "RUF012",  # TODO: Mutable class attributes should be annotated with `typing.ClassVar`
+  "RUF100",  # TODO: unused noqa, compatibility with flake8, can be dropped once we stop using it
+  "E501",  # WONTFIX: we accept long strings (rest is formatted by black)
+  "PLW2901",  # TODO: overwriting variables inside loop
+  "A001",  # TODO: overriding builtins (might need noqa tags)
+  "A002",  # TODO: overriding builtins (might need noqa tags)
+  "A003",  # TODO: overriding builtins (might need noqa tags)
+  "SLF001"  # TODO: Private member accessed (might need noqa tags)
+]
+select = ["ALL"]
+target-version = "py39"
+
+[tool.ruff.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.mccabe]
+max-complexity = 16
+
+[tool.ruff.per-file-ignores]
+"docs/_ext/djangodocs.py" = ["INP001"]
+"docs/conf.py" = ["INP001", "ERA001", "A001"]
+"scripts/*" = ["T201", "T203"]
+"weblate/*/management/commands/*.py" = ["A003"]  # Needed by Django API
+"weblate/*/migrations/*.py" = ["C405", "E501", "N806", "DJ01"]
+"weblate/*/tests.py" = ["S106", "S105"]
+"weblate/*/tests/test_*.py" = ["S106", "S105"]
+"weblate/addons/management/commands/list_addons.py" = ["E501"]
+"weblate/addons/utils.py" = ["N806"]
+"weblate/auth/migrations/0018_fixup_role.py" = ["T201", "N806"]
+"weblate/examples/*.py" = ["INP001"]
+"weblate/lang/data.py" = ["E501"]
+"weblate/machinery/management/commands/list_machinery.py" = ["E501"]
+"weblate/settings_*.py" = ["F405"]
+"weblate/settings_docker.py" = ["ERA001"]
+"weblate/settings_example.py" = ["ERA001"]
+"weblate/trans/migrations/0103_update_source_unit.py" = ["T201", "N806"]
+"weblate/trans/migrations/0116_migrate_glossaries.py" = ["T201", "N806", "E501"]
+"weblate/trans/migrations/0127_fix_source_glossary.py" = ["T201", "N806"]
+"weblate/trans/migrations/0133_glossary_missing_files.py" = ["T201", "N806"]
+"weblate/trans/tests/test_files.py" = ["E501"]
+"weblate/utils/generate_secret_key.py" = ["T201"]
+"weblate/utils/licensedata.py" = ["E501"]
+"weblate/utils/locale.py" = ["B012"]
+
+[tool.poetry]
+name = "weblate"
+version = "5.0.2"
+description = ""
+authors = ["Your Name <you@example.com>"]
+license = "GPLv3+"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+translate-toolkit = ">=3.10.0,<3.11"
+GitPython = ">=3.1.0,<3.2"
+user-agents = ">=2.0,<2.3"
+Django = {version = ">=4.2,<4.3", extras = ["argon2"]}
+translation-finder = ">=2.15,<3.0"
+social-auth-core = {version = ">=4.3.0,<5.0.0", extras = ["openidconnect"]}
+djangorestframework = ">=3.14.0,<3.15"
+social-auth-app-django = ">=5.0.0,<6.0.0"
+django-redis = ">=5.0.0,<6.0"
+django-appconf = ">=1.0.3,<1.1"
+siphashc = ">=2.1,<3.0"
+ahocorasick-rs = ">=0.16.0,<0.18.0"
+borgbackup = ">=1.2.5,<1.3"
+charset-normalizer = ">=2.0.12,<4.0"
+cssselect = ">=1.2,<1.3"
+Cython = ">=0.29.14,<3.1"
+diff-match-patch = "20230430"
+django-compressor = ">=2.4,<5"
+django-cors-headers = ">=3.13.0,<4.3"
+django-crispy-forms = ">=2.0.0,<2.1"
+django-filter = ">=21.1,<23.3"
+filelock = "<4,>=3.12.2"
+hiredis = ">=1.0.1,<2.3"
+html2text = ">=2019.8.11,<2020.1.17"
+jsonschema = ">=4.5,<5"
+lxml = ">=4.9.1,<4.10"
+misaka = ">=2.1.0,<2.2"
+openpyxl = ">=2.6.0,<3.2,!=3.0.2"
+Pillow = ">=9.0.0,<10.1"
+pycairo = ">=1.15.3"
+PyGObject = ">=3.34.0"
+pyicumessageformat= ">=1.0.0,<1.1"
+pyparsing = ">=3.1.1,<3.2"
+python-dateutil = ">=2.8.1"
+python-redis-lock = { extras = ["django"], version = ">=4,<4.1" }
+rapidfuzz = ">=2.6.0,<3.4"
+requests = ">=2.31.0,<2.32"
+sentry-sdk = ">=1.25.0,<2"
+weblate-language-data = ">=2022.7"
+weblate-schemas = "==2023.3"
+psycopg = ">=3.1.8,<4"
+psycopg-binary = ">=3.1.8,<4"
+celery = {extras = ["redis"], version = ">=5.2.3,<5.4"}
+aeidon = ">=1.10,<1.13.0"
+"fluent.syntax" = ">=0.18.1,<0.20"
+iniparse = "0.5"
+phply = ">=1.2.6,<1.3"
+Pygments = ">=2.15.0,<3.0"
+pygobject = ">=3.34.0"
+packaging = ">=22,<23.2"
+crispy-bootstrap3 = "2022.1"
+django-celery-beat = ">=2.4.0,<2.6"
+nh3 = ">=0.2.14,<0.3"
+mistletoe = ">=1.1.0,<1.3"
+"ruamel.yaml" = ">=0.17.2,<0.18.0"
+tesserocr = ">=2.6.1,<2.7.0"
+
+# TODO remove
+hatch-fancy-pypi-readme = "*"
+
+[tool.poetry.dev-dependencies]
+

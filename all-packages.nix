@@ -42,6 +42,7 @@
 
     rosenpass = callPackage ./pkgs/rosenpass {};
     rosenpass-tools = callPackage ./pkgs/rosenpass-tools {};
+    weblate = callPackage ./pkgs/weblate {};
   };
 
   nixpkgs-candidates = {

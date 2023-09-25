@@ -6,4 +6,5 @@
   pretalx = import ./pretalx.nix;
   rosenpass = import ./rosenpass.nix;
   unbootable = import ./unbootable.nix;
+  weblate = import ./weblate.nix;
 }
