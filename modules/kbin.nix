@@ -64,7 +64,7 @@ in {
     services.nginx = {
       enable = true;
       virtualHosts."${cfg.domain}" = {
-        root = "${cfg.stateDir}/public";
+        root = "${cfg.package}/share/php/kbin/public";
         locations."~ \.php$".extraConfig = ''
           fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
           fastcgi_index site.php;
@@ -75,7 +75,6 @@ in {
         '';
       };
     };
-
 
     services.phpfpm.pools.kbin = {
       user = cfg.user;
@@ -94,25 +93,6 @@ in {
         error_log = syslog
         log_errors = on
       '';
-    };
-
-    # NOTE: It would be possible to use systemd credentials for pqsk.
-    # <https://systemd.io/CREDENTIALS/>
-    systemd.services.kbin = let
-      toml = pkgs.formats.toml {};
-      configFile = toml.generate "config.toml" (recursiveUpdate (generateConfig cfg) cfg.extraConfig);
-    in {
-      wantedBy = ["multi-user.target"];
-      after = ["network-online.target"];
-      path = [];
-
-      script = "${cfg.package}/bin/kbin exchange-config ${configFile}";
-
-      serviceConfig = {
-        User = cfg.user;
-        Group = cfg.group;
-        AmbientCapabilities = ["CAP_NET_ADMIN"];
-      };
     };
   };
 }

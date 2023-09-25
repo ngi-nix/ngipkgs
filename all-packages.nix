@@ -9,6 +9,7 @@
     flarum = callPackage ./pkgs/flarum {};
     gnunet-messenger-cli = callPackage ./pkgs/gnunet-messenger-cli {};
     kbin = callPackage ./pkgs/kbin {};
+    kbin-frontend = callPackage ./pkgs/kbin-frontend {};
     kikit = callPackage ./pkgs/kikit {};
     lcrq = callPackage ./pkgs/lcrq {};
     lcsync = callPackage ./pkgs/lcsync {inherit lcrq librecast;};
