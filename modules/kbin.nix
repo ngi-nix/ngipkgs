@@ -1,0 +1,118 @@
+{
+  config,
+  lib,
+  options,
+  pkgs,
+  ...
+}:
+with builtins;
+with lib; let
+  cfg = config.services.kbin;
+  opt = options.services.kbin;
+in {
+  options.services.kbin = with types; {
+    enable = mkEnableOption "kbin";
+
+    package = mkPackageOption pkgs "kbin" {};
+
+    user = mkOption {
+      type = str;
+      default = "kbin";
+      description = "User to run Kbin as.";
+    };
+
+    group = mkOption {
+      type = str;
+      default = "kbin";
+      description = "Primary group of the user running Kbin.";
+    };
+
+    domain = mkOption {
+      type = types.str;
+      default = "localhost";
+      example = "forum.example.com";
+      description = "Domain to serve on.";
+    };
+
+    stateDir = mkOption {
+      type = types.path;
+      default = "/var/lib/kbin";
+      description = "Home directory for writable storage";
+    };
+
+    extraConfig = mkOption {
+      type = attrs;
+      description = ''
+        Extra configuration to be merged with the generated Kbin configuration file.
+      '';
+      default = {};
+    };
+  };
+
+  config = mkIf cfg.enable {
+
+    environment.systemPackages = [ cfg.package ];
+
+    users.users."${cfg.user}" = {
+      isSystemUser = true;
+      createHome = false;
+      group = cfg.group;
+    };
+
+    users.groups."${cfg.group}" = {};
+
+    services.nginx = {
+      enable = true;
+      virtualHosts."${cfg.domain}" = {
+        root = "${cfg.stateDir}/public";
+        locations."~ \.php$".extraConfig = ''
+          fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
+          fastcgi_index site.php;
+        '';
+        extraConfig = ''
+          index index.php;
+          # include ${cfg.package}/share/php/kbin/.nginx.conf;
+        '';
+      };
+    };
+
+
+    services.phpfpm.pools.kbin = {
+      user = cfg.user;
+      settings = {
+        "listen.owner" = config.services.nginx.user;
+        "listen.group" = config.services.nginx.group;
+        "listen.mode" = "0600";
+        "pm" = mkDefault "dynamic";
+        "pm.max_children" = mkDefault 10;
+        "pm.max_requests" = mkDefault 500;
+        "pm.start_servers" = mkDefault 2;
+        "pm.min_spare_servers" = mkDefault 1;
+        "pm.max_spare_servers" = mkDefault 3;
+      };
+      phpOptions = ''
+        error_log = syslog
+        log_errors = on
+      '';
+    };
+
+    # NOTE: It would be possible to use systemd credentials for pqsk.
+    # <https://systemd.io/CREDENTIALS/>
+    systemd.services.kbin = let
+      toml = pkgs.formats.toml {};
+      configFile = toml.generate "config.toml" (recursiveUpdate (generateConfig cfg) cfg.extraConfig);
+    in {
+      wantedBy = ["multi-user.target"];
+      after = ["network-online.target"];
+      path = [];
+
+      script = "${cfg.package}/bin/kbin exchange-config ${configFile}";
+
+      serviceConfig = {
+        User = cfg.user;
+        Group = cfg.group;
+        AmbientCapabilities = ["CAP_NET_ADMIN"];
+      };
+    };
+  };
+}
