@@ -11,13 +11,13 @@ php.buildComposerProject (finalAttrs: {
   src = fetchgit {
     url = "https://codeberg.org/Kbin/kbin-core/";
     rev = "cc727b9133b60fe7411b8c4dbd90c0319d225916";
-    hash = "";
+    hash = "sha256-I4dyV+yvEEIJ0AA6LzXa6QVROAZnraBiCtkdy9WqOXI=";
 
     postFetch = ''
       substituteInPlace $out/package.json \
         --replace '"devDependencies": {' '"name": "${finalAttrs.pname}-frontend", "devDependencies": {' \
         --replace 'UNLICENSED' 'AGPL-3.0-or-later' \
-        --replace 'encore' 'echo $PATH | tr ':' '\n' | xargs ls -lR; set -x; encore'
+        --replace 'encore' 'echo $PATH | tr ':' \"\\n\" | xargs ls -lR; set -x; encore'
 
       substituteInPlace $out/yarn.lock \
         --replace '@symfony/stimulus-bundle' '_symfony/stimulus-bundle' \
