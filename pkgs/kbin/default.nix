@@ -11,7 +11,7 @@ php.buildComposerProject (finalAttrs: {
   src = fetchgit {
     url = "https://codeberg.org/Kbin/kbin-core/";
     rev = "cc727b9133b60fe7411b8c4dbd90c0319d225916";
-    hash = "sha256-I4dyV+yvEEIJ0AA6LzXa6QVROAZnraBiCtkdy9WqOXI=";
+    hash = "sha256-eIQT35qmYJofVbR8vrMIa7bBSHd8+uuu1oUmPXM5nZQ=";
 
     postFetch = ''
       substituteInPlace $out/package.json \
@@ -19,12 +19,15 @@ php.buildComposerProject (finalAttrs: {
         --replace 'UNLICENSED' 'AGPL-3.0-or-later' \
         --replace 'encore' 'echo $PATH | tr ':' \"\\n\" | xargs ls -lR; set -x; encore'
 
-      substituteInPlace $out/yarn.lock \
-        --replace '@symfony/stimulus-bundle' '_symfony/stimulus-bundle' \
-        --replace '@symfony/ux-autocomplete' '_symfony/ux-autocomplete' \
-        --replace '@symfony/ux-chartjs'      '_symfony/ux-chartjs'
+      # substituteInPlace $out/yarn.lock \
+      #   --replace '@symfony/stimulus-bundle' '_symfony/stimulus-bundle' \
+      #   --replace '@symfony/ux-autocomplete' '_symfony/ux-autocomplete' \
+      #   --replace '@symfony/ux-chartjs'      '_symfony/ux-chartjs'
     '';
   };
+  patches = [
+    ./node_modules.patch
+  ];
 
   preConfigure = ''
     cp .env.example .env
