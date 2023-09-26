@@ -15,14 +15,24 @@ mkYarnPackage rec {
     hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
   };
 
-  preBuild = ''
-    export HOME=$(mktemp -d)
-  '';
+  # pkgConfig.${name}.postInstall = "yarn run --offline build";
+
+  yarnFlags = ["--verbose"];
 
   postBuild = ''
-    echo "OUT IS"
-    echo $out
-    #ls -lR deps/kbin-frontend/node_modules
-    #yarn --offline build
+    cd deps/${pname}
+    ls -RH
+    # yarn --offline build
   '';
+
+  installPhase = ''
+    runHook preInstall
+
+    cd deps/${pname}
+    mv dist $out
+
+    runHook postInstall
+  '';
+
+  doDist = false;
 }
