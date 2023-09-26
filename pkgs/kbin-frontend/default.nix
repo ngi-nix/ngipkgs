@@ -15,11 +15,8 @@ mkYarnPackage rec {
     hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
   };
 
-  buildPhase = ''
-    runHook preBuild
-    export HOME=$(mktemp -d)
-    # ls -lHR deps/kbin-frontend/node_modules
+  postBuild = ''
+
     yarn --offline build
-    runHook postBuild
   '';
 }
