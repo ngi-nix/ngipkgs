@@ -3,7 +3,6 @@
   kbin,
   mkYarnPackage,
   fetchYarnDeps,
-
 }:
 mkYarnPackage rec {
   pname = "${kbin.pname}-frontend";
@@ -19,7 +18,7 @@ mkYarnPackage rec {
   buildPhase = ''
     runHook preBuild
     export HOME=$(mktemp -d)
-    ls -lHR deps/kbin-frontend/node_modules
+    # ls -lHR deps/kbin-frontend/node_modules
     yarn --offline build
     runHook postBuild
   '';
