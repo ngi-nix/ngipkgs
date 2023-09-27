@@ -1,9 +1,9 @@
-{ lib
-, rustPlatform
-, fetchCrate
-, stdenv
+{
+  lib,
+  rustPlatform,
+  fetchCrate,
+  stdenv,
 }:
-
 rustPlatform.buildRustPackage rec {
   pname = "atomic-server";
   version = "0.34.5";
@@ -21,6 +21,6 @@ rustPlatform.buildRustPackage rec {
     description = "A Rust library to serialize, parse, store, convert, validate, edit, fetch and store Atomic Data. Powers both atomic-cli and atomic-server.";
     homepage = "docs.atomicdata.dev";
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [];
   };
 }
