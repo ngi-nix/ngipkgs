@@ -6,6 +6,8 @@
   self = let
     pretalxPlugins = lib.recurseIntoAttrs (callPackage ./pkgs/pretalx/plugins.nix {});
   in rec {
+    atomic-cli = callPackage ./pkgs/atomic-cli {};
+    atomic-server = callPackage ./pkgs/atomic-server {};
     flarum = callPackage ./pkgs/flarum {};
     gnunet-messenger-cli = callPackage ./pkgs/gnunet-messenger-cli {};
     kikit = callPackage ./pkgs/kikit {};
