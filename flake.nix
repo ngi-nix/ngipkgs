@@ -61,7 +61,15 @@
       import ./projects {inherit lib pkgs sources;};
 
     # Functions to ease access of imported projects, by "picking" certain paths.
-    pick = {
+    pick = rec {
+      packages = mapAttrByPath ["packages"] {};
+      modulePaths = x:
+        mapAttrs (_: v:
+          concatMapAttrs (n: v:
+            if v ? path
+            then {${n} = v.path;}
+            else {})
+          v) (modules x);
       modules = mapAttrByPath ["nixos" "modules"] {};
       tests = mapAttrByPath ["nixos" "tests"] {};
       configurations = x: mapAttrs (_: v: mapAttrs (_: v: v.path) v) (mapAttrByPath ["nixos" "configurations"] {} x);
@@ -110,10 +118,52 @@
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = importNixpkgs system [rust-overlay.overlays.default];
+
+      importedProjects = importProjects {
+        pkgs = pkgs // importPack;
+      };
+
       treefmtEval = loadTreefmt pkgs;
       toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
+
+      importPack = importPackages pkgs;
+
+      optionsDoc = pkgs.nixosOptionsDoc {
+        options =
+          (import (nixpkgs + "/nixos/lib/eval-config.nix") {
+            inherit system;
+            modules =
+              [
+                {
+                  networking = {
+                    domain = "invalid";
+                    hostName = "options";
+                  };
+                }
+              ]
+              ++ attrValues self.nixosModules;
+          })
+          .options;
+      };
     in {
-      packages = importPackages pkgs;
+      packages =
+        importPack
+        // {
+          overview = import ./overview {
+            inherit self pkgs;
+            projects = importedProjects;
+            options = optionsDoc.optionsNix;
+          };
+
+          options =
+            pkgs.runCommand "options.json" {
+              build = optionsDoc.optionsJSON;
+            } ''
+              mkdir $out
+              cp $build/share/doc/nixos/options.json $out/
+            '';
+        };
+
       formatter = treefmtEval.config.build.wrapper;
       checks = mapAttrs' toplevel nixosConfigurations;
     });
@@ -164,12 +214,12 @@
 
       nixosModules =
         {
-          unbootable = import ./modules/unbootable.nix;
+          unbootable = ./modules/unbootable.nix;
           # The default module adds the default overlay on top of Nixpkgs.
           # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
           default.nixpkgs.overlays = [self.overlays.default];
         }
-        // (flattenAttrsSlash (pick.modules (importProjects {})));
+        // (flattenAttrsSlash (pick.modulePaths (importProjects {})));
 
       # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
       overlays.default = final: prev: importPackages prev;

@@ -5,7 +5,10 @@
 } @ args: {
   packages = {inherit (pkgs) kbin kbin-frontend kbin-backend;};
   nixos = {
-    modules.service = ./service.nix;
+    modules.service = {
+      path = ./service.nix;
+      options = "services\\.kbin\\..*";
+    };
     configurations = {
       base = {
         path = ./configuration.nix;

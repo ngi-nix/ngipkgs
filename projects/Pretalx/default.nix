@@ -9,7 +9,10 @@
 
   nixos = {
     modules = {
-      service = ./service.nix;
+      service = {
+        path = ./service.nix;
+        options = "services\\.ngi-pretalx\\..*";
+      };
     };
     tests = {
       pretalx = import ./test args;

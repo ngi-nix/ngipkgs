@@ -1,0 +1,39 @@
+name: overview
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = no-url-literals
+      - uses: cachix/cachix-action@v10
+        with:
+          name: ngi
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix ${{ runner.debug && '--debug --print-build-logs' }} build .#overview
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: result
+
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

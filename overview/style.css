@@ -1,0 +1,9 @@
+body {
+	font-family: sans-serif;
+}
+body > section {
+	padding: 0.5cm 0 0.5cm 0;
+}
+details > summary > h2, details > summary > h3 {
+	display: inline;
+}
