@@ -3,91 +3,33 @@
   kbin,
   mkYarnPackage,
   fetchYarnDeps,
-  jq,
 }:
 mkYarnPackage rec {
   inherit (kbin) version src;
 
   pname = "${kbin.pname}-frontend";
 
-  yarnLock = ./yarn.lock;
-
   offlineCache = fetchYarnDeps {
-    # yarnLock = src + "/yarn.lock";
-    yarnLock = ./yarn.lock;
-    hash = "sha256-wPzckzfA3apUffk7NLYX/RY9aObgbIURNd17ZlkHGeE=";
-    # preBuild = ''
-    #   echo ====================================================================
-    #   echo Fetching other dependences
-    #   mkdir $out
-    #   cd $out
-    #   echo vendor_symfony_stimulus-bundle_assets.lock
-    #   prefetch-yarn-deps --verbose --builder ${./vendor_symfony_stimulus-bundle_assets.lock}
-    #   echo vendor_symfony_ux-autocomplete_assets.lock
-    #   prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-autocomplete_assets.lock}
-    #   echo vendor_symfony_ux-chartjs_assets.lock
-    #   prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-chartjs_assets.lock}
-    #   echo Fetched other dependences
-    #   echo ====================================================================
-    # '';
-
-    # postBuild = ''
-    #   rm $out/yarn.lock
-    # '';
+    yarnLock = "${src}/yarn.lock";
+    hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
   };
 
-  #yarnFlags = ["--production" "--verbose"];
-
-  yarnPreBuild = ''
-    FROM="${kbin}/share/php/kbin"
-    TO="deps/${pname}"
-
-    for DIR in $(${lib.getExe jq} -r '.devDependencies | to_entries | .[].value | select(startswith("file:")) | ltrimstr("file:")' < ${src}/package.json)
-    do
-      echo "{$FROM => $TO}/$DIR"
-      mkdir -pv $TO/$DIR
-      cp -rv $FROM/$DIR $TO/$DIR/
-    done
-
-    chmod -R 777 $TO/
-
-    # pwd
-    # ls -lR */yarn.lock
-    # wc -l deps/kbin-frontend/yarn.lock
-    # cat \
-    #   ${./vendor_symfony_stimulus-bundle_assets.lock} \
-    #   ${./vendor_symfony_ux-autocomplete_assets.lock} \
-    #   ${./vendor_symfony_ux-chartjs_assets.lock} \
-    #   >> deps/kbin-frontend/yarn.lock
-    # wc -l deps/kbin-frontend/yarn.lock
-  '';
+  packageResolutions = builtins.listToAttrs (builtins.map (package: {
+    name = "@symfony/${package}";
+    value = "${kbin}/share/php/kbin/vendor/symfony/${package}/assets";
+  }) ["stimulus-bundle" "ux-autocomplete" "ux-chartjs"]);
 
   buildPhase = ''
-    export HOME=$(mktemp -d)
-    echo YARN BUILD
-
-    FROM="${kbin}/share/php/kbin"
-    TO="deps/kbin-frontend"
-
-    mkdir -p $TO/vendor/friendsofsymfony/jsrouting-bundle/Resources/
-    cp -rv $FROM/vendor/friendsofsymfony/jsrouting-bundle/Resources/public $TO/vendor/friendsofsymfony/jsrouting-bundle/Resources/public/
-
-    chmod -R 777 $TO/
-
-    pwd
-    find . -type d -maxdepth 3
-    find . -name routing.js
+    mkdir -p deps/${pname}/vendor/friendsofsymfony/jsrouting-bundle/Resources
+    cp -r ${kbin}/share/php/kbin/vendor/friendsofsymfony/jsrouting-bundle/Resources/public \
+      deps/${pname}/vendor/friendsofsymfony/jsrouting-bundle/Resources
 
     yarn --offline build
   '';
 
   installPhase = ''
-    runHook preInstall
-
-    cd deps/${pname}
-    cp dist $out
-
-    runHook postInstall
+    mkdir $out
+    cp -r deps/${pname}/public/build/* $out
   '';
 
   distPhase = "true";

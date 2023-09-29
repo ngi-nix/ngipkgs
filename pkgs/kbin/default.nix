@@ -18,8 +18,7 @@ in {
     postFetch = ''
       substituteInPlace $out/package.json \
         --replace '"devDependencies": {' '"name": "${pname}-frontend", "version": "${version}", "devDependencies": {' \
-        --replace 'UNLICENSED' 'AGPL-3.0-or-later' #\
-        #--replace 'encore' 'echo $PATH | tr ':' \"\\n\" | xargs ls -lR; set -x; encore'
+        --replace 'UNLICENSED' 'AGPL-3.0-or-later'
 
        substituteInPlace $out/yarn.lock \
          --replace '@symfony/stimulus-bundle' '_symfony/stimulus-bundle' \
@@ -28,23 +27,17 @@ in {
     '';
   };
 
-  /*
-  patches = [
-    ./node_modules.patch
-  ];
-  */
+  php = php.withExtensions ({ enabled, all }:
+    enabled ++ [all.amqp all.redis]
+  );
+
+  vendorHash = "sha256-lv13ze8PlJyOMDIrXrPzvQr4AgDpYx8Ns9+lUEFUEJ4=";
 
   preConfigure = ''
     cp .env.example .env
   '';
 
   composerNoPlugins = false;
-  php = php.withExtensions ({
-    enabled,
-    all,
-  }:
-    enabled ++ [all.amqp all.redis]);
-  vendorHash = "sha256-lv13ze8PlJyOMDIrXrPzvQr4AgDpYx8Ns9+lUEFUEJ4=";
 
   passthru.tests.kbin = nixosTests.kbin;
 })
