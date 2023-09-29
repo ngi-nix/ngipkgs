@@ -14,6 +14,22 @@
       services.kbin = {
         enable = true;
       };
+
+      services = {
+        postgresql = {
+          enable = true;
+          authentication = "local all all trust";
+          ensureUsers = [
+            {
+              name = "kbin";
+              ensurePermissions."DATABASE \"kbin\"" = "ALL PRIVILEGES";
+            }
+          ];
+          ensureDatabases = ["kbin"];
+          enableTCPIP = true;
+        };
+      };
+      
     };
   };
 

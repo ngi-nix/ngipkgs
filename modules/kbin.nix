@@ -96,6 +96,8 @@ in {
         APP_CACHE_DIR = "/tmp";
         APP_LOG_DIR = "/tmp/log";
         APP_DEBUG = "1";
+
+        DATABASE_URL="postgresql:///kbin";
       };
     };
   };
