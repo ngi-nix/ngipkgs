@@ -14,7 +14,10 @@ mkYarnPackage rec {
     yarnLock = src + "/yarn.lock";
     hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
     preBuild = ''
-      cat ${./yarn-additions.lock}>> yarn.lock
+      cd $out
+      prefetch-yarn-deps --verbose --builder ${./vendor_symfony_stimulus-bundle_assets.lock}
+      prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-autocomplete_assets.lock}
+      prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-chartjs_assets.lock}
     '';
   };
 
