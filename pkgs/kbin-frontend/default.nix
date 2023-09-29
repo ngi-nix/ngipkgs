@@ -42,15 +42,11 @@ mkYarnPackage rec {
     FROM="${kbin}/share/php/kbin"
     TO="deps/${pname}"
 
-    mkdir -p $TO/vendor/friendsofsymfony/jsrouting-bundle/Resources/
-    cp -rv $FROM/vendor/friendsofsymfony/jsrouting-bundle/Resources/public $TO/vendor/friendsofsymfony/jsrouting-bundle/Resources/public/
-
     for DIR in $(${lib.getExe jq} -r '.devDependencies | to_entries | .[].value | select(startswith("file:")) | ltrimstr("file:")' < ${src}/package.json)
     do
       echo "{$FROM => $TO}/$DIR"
       mkdir -pv $TO/$DIR
       cp -rv $FROM/$DIR $TO/$DIR/
-      rm -fv $TO/$DIR/package.json
     done
 
     chmod -R 777 $TO/
@@ -69,7 +65,19 @@ mkYarnPackage rec {
   buildPhase = ''
     export HOME=$(mktemp -d)
     echo YARN BUILD
+
+    FROM="${kbin}/share/php/kbin"
+    TO="deps/kbin-frontend"
+
+    mkdir -p $TO/vendor/friendsofsymfony/jsrouting-bundle/Resources/
+    cp -rv $FROM/vendor/friendsofsymfony/jsrouting-bundle/Resources/public $TO/vendor/friendsofsymfony/jsrouting-bundle/Resources/public/
+
+    chmod -R 777 $TO/
+
     pwd
+    find . -type d -maxdepth 3
+    find . -name routing.js
+
     yarn --offline build
   '';
 
