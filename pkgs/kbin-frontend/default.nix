@@ -28,8 +28,13 @@ mkYarnPackage rec {
   '';
 
   installPhase = ''
-    mkdir $out
-    cp -r deps/${pname}/public/build/* $out
+    mkdir -p $out/share/php/kbin
+    # FIXME
+    cp -r ${kbin}/share/php/kbin $out/share/php
+    # FIXME
+    chmod -R 777 $out/share
+    # cp -r deps/${pname}/public/build/* $out
+    cp -r deps/${pname}/* $out/share/php/kbin
   '';
 
   distPhase = "true";
