@@ -3,7 +3,7 @@
   kbin,
   mkYarnPackage,
   fetchYarnDeps,
-  jq
+  jq,
 }:
 mkYarnPackage rec {
   inherit (kbin) version src;
@@ -12,7 +12,7 @@ mkYarnPackage rec {
 
   offlineCache = fetchYarnDeps {
     yarnLock = src + "/yarn.lock";
-    hash = "sha256-pH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
+    hash = "sha256-++uJtTKaXJR7K8H+nk19QyX0xiIQB+4v6Rhtvf9cz4U=";
     preBuild = ''
       echo ====================================================================
       echo Fetching other dependences
@@ -26,6 +26,10 @@ mkYarnPackage rec {
       prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-chartjs_assets.lock}
       echo Fetched other dependences
       echo ====================================================================
+    '';
+
+    postBuild = ''
+      rm $out/yarn.lock
     '';
   };
 
