@@ -35,6 +35,8 @@ mkYarnPackage rec {
     chmod -R 777 $out/share
     # cp -r deps/${pname}/public/build/* $out
     cp -r deps/${pname}/* $out/share/php/kbin
+
+    mkdir $out/share/php/kbin/public/media
   '';
 
   distPhase = "true";
