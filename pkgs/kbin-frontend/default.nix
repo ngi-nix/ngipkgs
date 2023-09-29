@@ -12,12 +12,20 @@ mkYarnPackage rec {
 
   offlineCache = fetchYarnDeps {
     yarnLock = src + "/yarn.lock";
-    hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
+    hash = "sha256-pH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
     preBuild = ''
+      echo ====================================================================
+      echo Fetching other dependences
+      mkdir $out
       cd $out
+      echo vendor_symfony_stimulus-bundle_assets.lock
       prefetch-yarn-deps --verbose --builder ${./vendor_symfony_stimulus-bundle_assets.lock}
+      echo vendor_symfony_ux-autocomplete_assets.lock
       prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-autocomplete_assets.lock}
+      echo vendor_symfony_ux-chartjs_assets.lock
       prefetch-yarn-deps --verbose --builder ${./vendor_symfony_ux-chartjs_assets.lock}
+      echo Fetched other dependences
+      echo ====================================================================
     '';
   };
 
