@@ -197,7 +197,7 @@
         mainProgram = "mcaptcha";
       };
 
-      passthru.tests = {inherit (nixosTests) mcaptcha-create-locally mcaptcha-bring-your-own-services;};
+      passthru.tests = {inherit (nixosTests.mCaptcha) create-locally bring-your-own-services;};
     };
 in
   mcaptcha

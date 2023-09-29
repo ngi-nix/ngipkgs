@@ -22,7 +22,6 @@
     mapAttrsToList
     optional
     getExe
-    strings
     concatLines
     generators
     ;
@@ -100,6 +99,7 @@ in {
     };
 
     secrets = mkOption {
+      description = "Paths to files containing secrets, keyed by the respective environment variable.";
       type = submodule {
         freeformType = attrsOf (nullOr path);
 

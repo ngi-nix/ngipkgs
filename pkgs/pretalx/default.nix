@@ -13,7 +13,7 @@ pretalx.overrideAttrs (
         tests =
           previousAttrs.passthru.tests
           // {
-            inherit (nixosTests) pretalx;
+            inherit (nixosTests.Pretalx) pretalx;
           };
       };
   }

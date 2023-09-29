@@ -1,6 +1,5 @@
 {
-  configurations,
-  modules,
+  sources,
   lib,
   ...
 }: let
@@ -18,11 +17,12 @@ in {
       ...
     }: {
       imports = [
-        configurations.pretalx-postgresql
-        modules.default
-        modules.pretalx
-        modules.sops-nix
-        modules.unbootable
+        sources.configurations."Pretalx/base"
+        sources.configurations."Pretalx/postgresql"
+        sources.modules.default
+        sources.modules."Pretalx/service"
+        sources.modules.sops-nix
+        sources.modules.unbootable
       ];
 
       unbootable = mkForce false;

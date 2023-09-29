@@ -1,8 +1,6 @@
 {
-  configurations,
-  modules,
+  sources,
   pkgs,
-  lib,
   ...
 }: let
   deviceName = "rp0";
@@ -54,8 +52,8 @@ in {
       ...
     }: {
       imports = [
-        modules.default
-        modules.sops-nix
+        sources.modules.default
+        sources.modules.sops-nix
       ];
 
       services.rosenpass = {
