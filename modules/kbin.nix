@@ -11,9 +11,9 @@ with lib; let
   opt = options.services.kbin;
 in {
   options.services.kbin = with types; {
-    enable = mkEnableOption "kbin";
+    enable = mkEnableOption "Kbin";
 
-    package = mkPackageOption pkgs "kbin" {};
+    package = mkPackageOption pkgs "kbin-frontend" {};
 
     user = mkOption {
       type = str;
@@ -50,8 +50,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-
-    environment.systemPackages = [ cfg.package ];
+    environment.systemPackages = [cfg.package];
 
     users.users."${cfg.user}" = {
       isSystemUser = true;

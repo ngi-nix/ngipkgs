@@ -38,10 +38,14 @@ mkYarnPackage rec {
 
     #mkdir $out/share/php/kbin/public/media
 
-    sed -i "s##" $out/share/php/kbin/config/services.yaml
-    substituteInPlace 
-      --replace 
-      %kernel.project_dir%/public/%uploads_dir_name%=:
+    # sed -i "s##" $out/share/php/kbin/config/services.yaml
+    substituteInPlace $out/share/php/kbin/config/packages/oneup_flysystem.yaml \
+      --replace \
+      "%kernel.project_dir%/public/%uploads_dir_name%" \
+      /tmp
+    substituteInPlace $out/share/php/kbin/config/services.yaml \
+      --replace "media" TEST
+
 
   '';
 
