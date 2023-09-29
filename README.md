@@ -2,6 +2,30 @@
 
 [NGIpkgs](https://github.com/ngi-nix/NGIpkgs) is a collection of [Nix](https://nixos.org/) packages and services for software projects that are supported through the [Next Generation Internet](https://www.ngi.eu/) (NGI) initiative of the European Commission.
 
+## Packages
+
+|Name                                                            |Website                                     |Version |Description                                                                                                                               |License   |
+|----------------------------------------------------------------|--------------------------------------------|--------|------------------------------------------------------------------------------------------------------------------------------------------|----------|
+|[`atomic-cli`](/pkgs/atomic-cli/default.nix)                    |[link](https://crates.io/crates/atomic-cli) |0.34.5  |CLI tool to create, store, query, validate and convert Atomic Data                                                                        |MIT       |
+|[`atomic-server`](/pkgs/atomic-server/default.nix)              |[link](docs.atomicdata.dev)                 |0.34.5  |A Rust library to serialize, parse, store, convert, validate, edit, fetch and store Atomic Data. Powers both atomic-cli and atomic-server.|MIT       |
+|[`flarum`](/pkgs/flarum/default.nix)                            |[link](https://github.com/flarum/flarum)    |1.8.0   |Flarum is a delightfully simple discussion platform for your website                                                                      |MIT       |
+|[`gnunet-messenger-cli`](/pkgs/gnunet-messenger-cli/default.nix)|                                            |0.1.1   |                                                                                                                                          |          |
+|[`kikit`](/pkgs/kikit/default.nix)                              |[link](https://github.com/yaqwsx/KiKit/)    |1.3.0   |Automation for KiCAD boards                                                                                                               |MIT       |
+|[`lcrq`](/pkgs/lcrq/default.nix)                                |[link](https://librecast.net/lcrq.html)     |0.1.0   |Librecast RaptorQ library.                                                                                                                |...       |
+|[`lcsync`](/pkgs/lcsync/default.nix)                            |[link](https://librecast.net/lcsync.html)   |0.2.1   |Librecast File and Syncing Tool                                                                                                           |...       |
+|[`libgnunetchat`](/pkgs/libgnunetchat/default.nix)              |                                            |0.1.3   |                                                                                                                                          |          |
+|[`librecast`](/pkgs/librecast/default.nix)                      |[link](https://librecast.net/librecast.html)|0.7-RC3 |IPv6 multicast library                                                                                                                    |...       |
+|[`pretalx`](/pkgs/pretalx/default.nix)                          |[link](https://github.com/pretalx/pretalx)  |2023.1.3|Conference planning tool: CfP, scheduling, speaker management                                                                             |Apache-2.0|
+|[`pretalx-downstream`](/pkgs/pretalx/plugins.nix)               |                                            |1.1.5   |                                                                                                                                          |          |
+|[`pretalx-frontend`](/pkgs/pretalx/frontend.nix)                |[link](https://github.com/pretalx/pretalx)  |2023.1.0|Conference planning tool: CfP, scheduling, speaker management                                                                             |Apache-2.0|
+|[`pretalx-full`](/pkgs/pretalx/default.nix)                     |[link](https://github.com/pretalx/pretalx)  |2023.1.3|Conference planning tool: CfP, scheduling, speaker management                                                                             |Apache-2.0|
+|[`pretalx-media-ccc-de`](/pkgs/pretalx/plugins.nix)             |                                            |1.1.1   |                                                                                                                                          |          |
+|[`pretalx-pages`](/pkgs/pretalx/plugins.nix)                    |                                            |1.3.3   |                                                                                                                                          |          |
+|[`pretalx-public-voting`](/pkgs/pretalx/plugins.nix)            |                                            |1.3.0   |                                                                                                                                          |          |
+|[`pretalx-venueless`](/pkgs/pretalx/plugins.nix)                |                                            |1.3.0   |                                                                                                                                          |          |
+|[`rosenpass`](/pkgs/rosenpass/default.nix)                      |[link](https://rosenpass.eu/)               |0.2.0   |Build post-quantum-secure VPNs with WireGuard!                                                                                            |...       |
+|[`rosenpass-tools`](/pkgs/rosenpass-tools/default.nix)          |[link](https://rosenpass.eu/)               |0.2.0   |Build post-quantum-secure VPNs with WireGuard! This package contains `rp`, which is a script that wraps the `rosenpass` binary.           |...       |
+
 ## Structure of NGIpkgs
 
 The software in NGIpkgs can be divided into two broad categories: Nix packages, and NixOS modules.
