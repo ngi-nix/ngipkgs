@@ -67,7 +67,7 @@ in {
         root = "${cfg.package}/share/php/kbin/public";
         locations."~ \.php$".extraConfig = ''
           fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
-          fastcgi_index site.php;
+          fastcgi_index index.php;
         '';
         extraConfig = ''
           index index.php;
@@ -93,6 +93,11 @@ in {
         error_log = syslog
         log_errors = on
       '';
+      phpEnv = {
+        APP_CACHE_DIR = "/tmp";
+        APP_LOG_DIR = "/tmp/log";
+        APP_DEBUG = "1";
+      };
     };
   };
 }

@@ -36,7 +36,13 @@ mkYarnPackage rec {
     # cp -r deps/${pname}/public/build/* $out
     cp -r deps/${pname}/* $out/share/php/kbin
 
-    mkdir $out/share/php/kbin/public/media
+    #mkdir $out/share/php/kbin/public/media
+
+    sed -i "s##" $out/share/php/kbin/config/services.yaml
+    substituteInPlace 
+      --replace 
+      %kernel.project_dir%/public/%uploads_dir_name%=:
+
   '';
 
   distPhase = "true";
