@@ -8,6 +8,7 @@
   in rec {
     atomic-cli = callPackage ./pkgs/atomic-cli {};
     atomic-server = callPackage ./pkgs/atomic-server {};
+    atomic-web = callPackage ./pkgs/atomic-web {};
     flarum = callPackage ./pkgs/flarum {};
     gnunet-messenger-cli = callPackage ./pkgs/gnunet-messenger-cli {};
     kikit = callPackage ./pkgs/kikit {};
