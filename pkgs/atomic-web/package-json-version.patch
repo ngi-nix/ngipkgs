@@ -1,0 +1,10 @@
+diff --git a/package.json b/package.json
+index e31f630a..ea720206 100644
+--- a/package.json
++++ b/package.json
+@@ -1,4 +1,5 @@
+ {
++  "version": "v0.34.5",
+   "devDependencies": {
+     "@esm-bundle/chai": "4.3.4",
+     "@jest/globals": "^29.3.1",
