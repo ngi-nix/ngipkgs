@@ -106,10 +106,11 @@ in {
       after = ["postgresql.service"];
     };
 
-    redis.servers."kbin" = {
+    services.redis.servers."kbin" = {
       enable = true;
-      user = cfg.services.kbin.user;
+      user = cfg.user;
       port = 6379;
+      openFirewall = true;
     };
 
     services.phpfpm.pools.kbin = {
