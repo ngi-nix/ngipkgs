@@ -75,6 +75,12 @@ in {
       };
     };
 
+    environment.etc."doctrine.yaml".text = ''
+      doctrine:
+        dbal:
+          host: /var/pgsql_socket
+    '';
+
     systemd.services = {
       "kbin-migrate" = {
         serviceConfig = {
@@ -85,7 +91,7 @@ in {
           DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
           APP_LOG_DIR=/tmp/log \
           APP_CACHE_DIR=/tmp \
-          ${pkgs.php}/bin/php ${cfg.package}/share/php/kbin/bin/console doctrine:migrations:migrate
+          ${pkgs.php}/bin/php ${cfg.package}/share/php/kbin/bin/console doctrine:migrations:migrate --configuration /etc/doctrine.yaml
         '';
       };
     };
