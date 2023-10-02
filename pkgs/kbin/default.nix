@@ -27,15 +27,17 @@ in {
     '';
   };
 
-  php = php.withExtensions ({ enabled, all }:
-    enabled ++ [all.amqp all.redis]
+  php = php.withExtensions (
+    {
+      enabled,
+      all,
+    }:
+      enabled ++ [all.amqp all.redis]
   );
 
   vendorHash = "sha256-lv13ze8PlJyOMDIrXrPzvQr4AgDpYx8Ns9+lUEFUEJ4=";
 
-  preConfigure = ''
-    cp .env.example .env
-  '';
+  preConfigure = "touch .env";
 
   composerNoPlugins = false;
 

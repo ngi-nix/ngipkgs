@@ -19,9 +19,49 @@ with lib; let
       enabled ++ [all.amqp all.redis]
   );
 
-  DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin";
-  APP_CACHE_DIR = "/tmp";
-  APP_LOG_DIR = "/tmp/log";
+  env = lib.attrsets.mapAttrs (_: v: "\"${v}\"") {
+    SERVER_NAME = "kbin.localhost, caddy:80"; # Docker
+    KBIN_DOMAIN = "kbin.localhost";
+    KBIN_TITLE = "/kbin";
+    KBIN_DEFAULT_LANG = "en";
+    KBIN_FEDERATION_ENABLED = "true";
+    KBIN_CONTACT_EMAIL = "contact@kbin.localhost";
+    KBIN_SENDER_EMAIL = "noreply@kbin.localhost";
+    KBIN_JS_ENABLED = "true";
+    KBIN_REGISTRATIONS_ENABLED = "true";
+    KBIN_API_ITEMS_PER_PAGE = "25";
+    KBIN_STORAGE_URL = "https://kbin.localhost/media";
+    KBIN_META_TITLE = "Kbin Lab";
+    KBIN_META_DESCRIPTION = "content aggregator and micro-blogging platform for the fediverse";
+    KBIN_META_KEYWORDS = "kbin, content agregator, open source, fediverse";
+    KBIN_HEADER_LOGO = "false";
+    KBIN_FEDERATION_PAGE_ENABLED = "true";
+    KBIN_CAPTCHA_ENABLED = "false";
+
+    # RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
+    # MESSENGER_TRANSPORT_DSN="amqp://kbin:${RABBITMQ_PASSWORD}@rabbitmq:5672/%2f/messages";
+    #MESSENGER_TRANSPORT_DSN=doctrine://default
+    MESSENGER_TRANSPORT_DSN = "redis://localhost:6379/messages";
+
+    MAILER_DSN = "mailgun+smtp://postmaster@sandboxxx.mailgun.org:key@default?region=us";
+    #MAILER_DSN=smtp://localhost
+
+    LOCK_DSN = "flock";
+
+    APP_ENV = "prod";
+    APP_SECRET = "427f5e2940e5b2472c1b44b2d06e0525";
+    APP_CACHE_DIR = APP_CACHE_DIR;
+    APP_LOG_DIR = APP_LOG_DIR;
+    APP_DEBUG = "1";
+
+    POSTGRES_VERSION = "14";
+    # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
+    # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
+    DATABASE_URL = DATABASE_URL;
+    REDIS_DNS = "redis:///var/run/redis-kbin/redis.sock";
+
+    KBIN_HOME = cfg.stateDir;
+  };
 in {
   options.services.kbin = with types; {
     enable = mkEnableOption "Kbin";
@@ -78,19 +118,19 @@ in {
       virtualHosts."${cfg.domain}" = {
         root = "${cfg.package}/share/php/kbin/public";
         locations = {
-        "~ ^/index\.php(/|$)".extraConfig = ''
-          default_type application/x-httpd-php;
-          fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
-          fastcgi_split_path_info ^(.+\.php)(/.*)$;
-          include ${config.services.nginx.package}/conf/fastcgi_params;
-          fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-          fastcgi_param DOCUMENT_ROOT $realpath_root;
-          internal;
-        '';
+          "~ ^/index\.php(/|$)".extraConfig = ''
+            default_type application/x-httpd-php;
+            fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
+            fastcgi_split_path_info ^(.+\.php)(/.*)$;
+            include ${config.services.nginx.package}/conf/fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+            fastcgi_param DOCUMENT_ROOT $realpath_root;
+            internal;
+          '';
 
-        "/".extraConfig = ''
-          try_files $uri /index.php$is_args$args;
-        '';
+          "/".extraConfig = ''
+            try_files $uri /index.php$is_args$args;
+          '';
         };
         extraConfig = ''
           index index.php;
@@ -102,13 +142,7 @@ in {
       serviceConfig = {
         Type = "oneshot";
       };
-      environment = {
-        # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
-        # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
-        DATABASE_URL = DATABASE_URL;
-        APP_LOG_DIR = APP_LOG_DIR;
-        APP_CACHE_DIR = APP_CACHE_DIR;
-      };
+      environment = env;
       script = ''
         ${php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
       '';
@@ -139,17 +173,8 @@ in {
         log_errors = on
         error_reporting = E_ALL
       '';
-      phpEnv = {
-        APP_CACHE_DIR = APP_CACHE_DIR;
-        APP_LOG_DIR = APP_LOG_DIR;
-        APP_DEBUG = "1";
 
-        DATABASE_URL = DATABASE_URL;
-        REDIS_HOST = "localhost";
-        REDIS_DNS = "redis:///var/run/redis-kbin/redis.sock";
-
-        KBIN_HOME = cfg.stateDir;
-      };
+      phpEnv = env;
     };
 
     systemd.services."phpfpm-kbin" = {
