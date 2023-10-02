@@ -5,7 +5,10 @@
   fetchYarnDeps,
 }:
 mkYarnPackage rec {
-  inherit (kbin) version src;
+  # FIXME: Do not inherit passthru, but recombine
+  # kbin and kbin-frontend into one nice store path.
+  # Mabe use symlinkJoin?
+  inherit (kbin) version src passthru;
 
   pname = "${kbin.pname}-frontend";
 

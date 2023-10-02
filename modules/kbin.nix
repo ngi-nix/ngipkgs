@@ -5,38 +5,35 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib; let
+let
+  inherit (lib)
+    boolToString
+    isBool
+    mkDefault
+    mkIf
+    ;
+
   cfg = config.services.kbin;
   opt = options.services.kbin;
 
-  # TODO: move this to some better place
-  php = pkgs.php.withExtensions (
-    {
-      enabled,
-      all,
-    }:
-      enabled ++ [all.amqp all.redis]
-  );
-
-  env = lib.attrsets.mapAttrs (_: v: "\"${v}\"") {
+  environment = lib.attrsets.mapAttrs (_: v: if isBool v then boolToString v else builtins.toString v) {
     SERVER_NAME = "kbin.localhost, caddy:80"; # Docker
     KBIN_DOMAIN = "kbin.localhost";
     KBIN_TITLE = "/kbin";
     KBIN_DEFAULT_LANG = "en";
-    KBIN_FEDERATION_ENABLED = "true";
+    KBIN_FEDERATION_ENABLED = true;
     KBIN_CONTACT_EMAIL = "contact@kbin.localhost";
     KBIN_SENDER_EMAIL = "noreply@kbin.localhost";
-    KBIN_JS_ENABLED = "true";
-    KBIN_REGISTRATIONS_ENABLED = "true";
-    KBIN_API_ITEMS_PER_PAGE = "25";
+    KBIN_JS_ENABLED = true;
+    KBIN_REGISTRATIONS_ENABLED = true;
+    KBIN_API_ITEMS_PER_PAGE = 25;
     KBIN_STORAGE_URL = "https://kbin.localhost/media";
     KBIN_META_TITLE = "Kbin Lab";
     KBIN_META_DESCRIPTION = "content aggregator and micro-blogging platform for the fediverse";
     KBIN_META_KEYWORDS = "kbin, content agregator, open source, fediverse";
-    KBIN_HEADER_LOGO = "false";
-    KBIN_FEDERATION_PAGE_ENABLED = "true";
-    KBIN_CAPTCHA_ENABLED = "false";
+    KBIN_HEADER_LOGO = false;
+    KBIN_FEDERATION_PAGE_ENABLED = true;
+    KBIN_CAPTCHA_ENABLED = false;
 
     # RABBITMQ_PASSWORD=!ChangeThisRabbitPass!
     # MESSENGER_TRANSPORT_DSN="amqp://kbin:${RABBITMQ_PASSWORD}@rabbitmq:5672/%2f/messages";
@@ -52,18 +49,18 @@ with lib; let
     APP_SECRET = "427f5e2940e5b2472c1b44b2d06e0525";
     APP_CACHE_DIR = "/tmp";
     APP_LOG_DIR = "/tmp/log";
-    APP_DEBUG = "1";
+    APP_DEBUG = 1;
 
-    POSTGRES_VERSION = "14";
+    POSTGRES_VERSION = 14;
     # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
     # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
     DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin";
-    REDIS_DNS = "redis:///var/run/redis-kbin/redis.sock";
+    REDIS_DNS = "redis://${config.services.redis.servers.kbin.unixSocket}";
 
     KBIN_HOME = cfg.stateDir;
   };
 in {
-  options.services.kbin = with types; {
+  options.services.kbin = with lib.types; with lib.options; {
     enable = mkEnableOption "Kbin";
 
     package = mkPackageOption pkgs "kbin-frontend" {};
@@ -139,24 +136,30 @@ in {
     };
 
     systemd.services."kbin-migrate" = {
+      environment = environment // { REDIS_DNS = ""; };
       serviceConfig = {
         Type = "oneshot";
       };
-      environment = env;
       script = ''
-        ${php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
+        ${cfg.package.passthru.php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
       '';
-      requires = ["postgresql.service"];
-      after = ["postgresql.service"];
+      requires = ["postgresql.service" "redis-kbin.service"];
+      after = ["postgresql.service" "redis-kbin.service"];
     };
 
     services.redis.servers."kbin" = {
+      inherit (cfg) user;
       enable = true;
-      user = cfg.user;
     };
 
     services.phpfpm.pools.kbin = {
-      user = cfg.user;
+      inherit (cfg) user;
+      phpPackage = cfg.package.passthru.php;
+      phpOptions = ''
+        error_log = syslog
+        log_errors = on
+        error_reporting = E_ALL
+      '';
       settings = {
         "listen.owner" = config.services.nginx.user;
         "listen.group" = config.services.nginx.group;
@@ -168,16 +171,10 @@ in {
         "pm.min_spare_servers" = mkDefault 1;
         "pm.max_spare_servers" = mkDefault 3;
       };
-      phpOptions = ''
-        error_log = syslog
-        log_errors = on
-        error_reporting = E_ALL
-      '';
-
-      phpEnv = env;
     };
 
     systemd.services."phpfpm-kbin" = {
+      inherit environment;
       requires = ["kbin-migrate.service"];
     };
   };

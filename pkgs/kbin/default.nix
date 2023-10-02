@@ -4,7 +4,13 @@
   php,
   nixosTests,
 }:
-php.buildComposerProject (finalAttrs: let
+let 
+  phpWithExtensions = php.withExtensions (
+    { enabled, all }:
+      enabled ++ [all.amqp all.redis]
+  );
+in
+phpWithExtensions.buildComposerProject (finalAttrs: let
   pname = "kbin";
   version = "0.0.1";
 in {
@@ -27,19 +33,14 @@ in {
     '';
   };
 
-  php = php.withExtensions (
-    {
-      enabled,
-      all,
-    }:
-      enabled ++ [all.amqp all.redis]
-  );
-
   vendorHash = "sha256-lv13ze8PlJyOMDIrXrPzvQr4AgDpYx8Ns9+lUEFUEJ4=";
 
   preConfigure = "touch .env";
 
   composerNoPlugins = false;
 
-  passthru.tests.kbin = nixosTests.kbin;
+  passthru = {
+    php = phpWithExtensions;
+    tests.kbin = nixosTests.kbin;
+  };
 })
