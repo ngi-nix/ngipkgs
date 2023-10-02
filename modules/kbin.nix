@@ -75,6 +75,21 @@ in {
       };
     };
 
+    systemd.services = {
+      "kbin-migrate" = {
+        serviceConfig = {
+          Type = "oneshot";
+        };
+        script = ''
+          # FIXME
+          DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
+          APP_LOG_DIR=/tmp/log \
+          APP_CACHE_DIR=/tmp \
+          ${pkgs.php}/bin/php ${cfg.package}/share/php/kbin/bin/console doctrine:migrations:migrate
+        '';
+      };
+    };
+
     services.phpfpm.pools.kbin = {
       user = cfg.user;
       settings = {
@@ -97,7 +112,7 @@ in {
         APP_LOG_DIR = "/tmp/log";
         APP_DEBUG = "1";
 
-        DATABASE_URL="postgresql:///kbin";
+        DATABASE_URL = "postgresql:///kbin";
       };
     };
   };
