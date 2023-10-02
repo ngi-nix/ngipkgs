@@ -1,0 +1,1 @@
+DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ APP_LOG_DIR=/tmp/log APP_CACHE_DIR=/tmp /nix/store/rzcijhxwxbld02mpvx288nf6bzv7ybhz-php-with-extensions-8.2.10/bin/php /nix/store/2c3h2v5grdw89x4zlsn528izfmpakh2d-kbin-0.0.1/share/php/kbin/bin/console doctrine:migrations:migrate
