@@ -11,10 +11,17 @@ with lib; let
   opt = options.services.kbin;
 
   # TODO: move this to some better place
-  php = pkgs.php.withExtensions ({ enabled, all }:
-    enabled ++ [all.amqp all.redis]
+  php = pkgs.php.withExtensions (
+    {
+      enabled,
+      all,
+    }:
+      enabled ++ [all.amqp all.redis]
   );
 
+  DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin";
+  APP_CACHE_DIR = "/tmp";
+  APP_LOG_DIR = "/tmp/log";
 in {
   options.services.kbin = with types; {
     enable = mkEnableOption "Kbin";
@@ -88,13 +95,15 @@ in {
       environment = {
         # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
         # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
-        DATABASE_URL="postgresql://kbin:kbin@127.0.0.1:5432/kbin";
-        APP_LOG_DIR="/tmp/log";
-        APP_CACHE_DIR="/tmp";
+        DATABASE_URL = DATABASE_URL;
+        APP_LOG_DIR = APP_LOG_DIR;
+        APP_CACHE_DIR = APP_CACHE_DIR;
       };
       script = ''
         ${php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
       '';
+      requires = ["postgresql.service"];
+      after = ["postgresql.service"];
     };
 
     services.phpfpm.pools.kbin = {
@@ -115,16 +124,16 @@ in {
         log_errors = on
       '';
       phpEnv = {
-        APP_CACHE_DIR = "/tmp";
-        APP_LOG_DIR = "/tmp/log";
+        APP_CACHE_DIR = APP_CACHE_DIR;
+        APP_LOG_DIR = APP_LOG_DIR;
         APP_DEBUG = "1";
 
-        DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin";
+        DATABASE_URL = DATABASE_URL;
       };
     };
 
     systemd.services."phpfpm-kbin" = {
-      requires = [ "kbin-migrate.service" ];
+      requires = ["kbin-migrate.service"];
     };
   };
 }
