@@ -50,14 +50,14 @@ with lib; let
 
     APP_ENV = "prod";
     APP_SECRET = "427f5e2940e5b2472c1b44b2d06e0525";
-    APP_CACHE_DIR = APP_CACHE_DIR;
-    APP_LOG_DIR = APP_LOG_DIR;
+    APP_CACHE_DIR = "/tmp";
+    APP_LOG_DIR = "/tmp/log";
     APP_DEBUG = "1";
 
     POSTGRES_VERSION = "14";
     # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
     # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
-    DATABASE_URL = DATABASE_URL;
+    DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin";
     REDIS_DNS = "redis:///var/run/redis-kbin/redis.sock";
 
     KBIN_HOME = cfg.stateDir;
