@@ -106,6 +106,12 @@ in {
       after = ["postgresql.service"];
     };
 
+    redis.servers."kbin" = {
+      enable = true;
+      user = cfg.services.kbin.user;
+      port = 6379;
+    };
+
     services.phpfpm.pools.kbin = {
       user = cfg.user;
       settings = {
@@ -129,6 +135,7 @@ in {
         APP_DEBUG = "1";
 
         DATABASE_URL = DATABASE_URL;
+        REDIS_HOST = "localhost";
       };
     };
 
