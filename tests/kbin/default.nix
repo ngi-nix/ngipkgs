@@ -11,6 +11,8 @@
         modules.kbin
       ];
 
+      networking.firewall.allowedTCPPorts = [80];
+
       services.kbin = {
         enable = true;
       };
@@ -61,6 +63,6 @@
       };
     };
   in {
-    server = niceConsoleAndAutologin;
+    server.imports = [ niceConsoleAndAutologin ];
   };
 }

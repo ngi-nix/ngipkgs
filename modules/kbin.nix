@@ -77,13 +77,23 @@ in {
       enable = true;
       virtualHosts."${cfg.domain}" = {
         root = "${cfg.package}/share/php/kbin/public";
-        locations."~ ^/index\.php(/|$)".extraConfig = ''
+        locations = {
+        "~ ^/index\.php(/|$)".extraConfig = ''
+          default_type application/x-httpd-php;
           fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
-          fastcgi_index index.php;
+          fastcgi_split_path_info ^(.+\.php)(/.*)$;
+          include ${config.services.nginx.package}/conf/fastcgi_params;
+          fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+          fastcgi_param DOCUMENT_ROOT $realpath_root;
+          internal;
         '';
+
+        "/".extraConfig = ''
+          try_files $uri /index.php$is_args$args;
+        '';
+        };
         extraConfig = ''
           index index.php;
-          # include ${cfg.package}/share/php/kbin/.nginx.conf;
         '';
       };
     };
@@ -109,8 +119,6 @@ in {
     services.redis.servers."kbin" = {
       enable = true;
       user = cfg.user;
-      port = 6379;
-      openFirewall = true;
     };
 
     services.phpfpm.pools.kbin = {
@@ -129,6 +137,7 @@ in {
       phpOptions = ''
         error_log = syslog
         log_errors = on
+        error_reporting = E_ALL
       '';
       phpEnv = {
         APP_CACHE_DIR = APP_CACHE_DIR;
@@ -137,6 +146,9 @@ in {
 
         DATABASE_URL = DATABASE_URL;
         REDIS_HOST = "localhost";
+        REDIS_DNS = "redis:///var/run/redis-kbin/redis.sock";
+
+        KBIN_HOME = cfg.stateDir;
       };
     };
 
