@@ -18,7 +18,9 @@
       services = {
         postgresql = {
           enable = true;
-          authentication = "local all all trust";
+          # FIXME: Change this back once we've managed to connect to postgres via unix socket rather than TCP
+          # authentication = "local all all trust";
+          authentication = "host all all 127.0.0.1/32 trust";
           ensureUsers = [
             {
               name = "kbin";
@@ -29,7 +31,6 @@
           enableTCPIP = true;
         };
       };
-      
     };
   };
 
@@ -47,14 +48,16 @@
     # also use a nice font.
     # With kmscon, we can for example zoom in/out using [Ctrl] + [+]
     # and [Ctrl] + [-]
-    niceConsoleAndAutologin = { pkgs, ...}: {
+    niceConsoleAndAutologin = {pkgs, ...}: {
       services.kmscon = {
         enable = true;
         autologinUser = "root";
-        fonts = [{
-          name = "Fira Code";
-          package = pkgs.fira-code;
-        }];
+        fonts = [
+          {
+            name = "Fira Code";
+            package = pkgs.fira-code;
+          }
+        ];
       };
     };
   in {

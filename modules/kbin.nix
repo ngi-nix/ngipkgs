@@ -75,11 +75,11 @@ in {
       };
     };
 
-    environment.etc."doctrine.yaml".text = ''
-      doctrine:
-        dbal:
-          host: /var/pgsql_socket
-    '';
+    # environment.etc."doctrine.yaml".text = ''
+    #   doctrine:
+    #     dbal:
+    #       host: /var/run/postgresql/
+    # '';
 
     systemd.services = {
       "kbin-migrate" = {
@@ -87,11 +87,13 @@ in {
           Type = "oneshot";
         };
         script = ''
-          # FIXME
-          DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
+          # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
+          # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
+          DATABASE_URL="postgresql://kbin:kbin@127.0.0.1:5432/kbin?charset=utf8" \
           APP_LOG_DIR=/tmp/log \
           APP_CACHE_DIR=/tmp \
-          ${pkgs.php}/bin/php ${cfg.package}/share/php/kbin/bin/console doctrine:migrations:migrate --configuration /etc/doctrine.yaml
+          # ${pkgs.php}/bin/php ${cfg.package}/share/php/kbin/bin/console doctrine:migrations:migrate --configuration /etc/doctrine.yaml
+          ${pkgs.php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
         '';
       };
     };
