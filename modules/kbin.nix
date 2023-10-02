@@ -81,22 +81,20 @@ in {
       };
     };
 
-    systemd.services = {
-      "kbin-migrate" = {
-        serviceConfig = {
-          Type = "oneshot";
-        };
-        environment = {
-          # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
-          # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
-          DATABASE_URL="postgresql://kbin:kbin@127.0.0.1:5432/kbin?charset=utf8";
-          APP_LOG_DIR="/tmp/log";
-          APP_CACHE_DIR="/tmp";
-        };
-        script = ''
-          ${php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
-        '';
+    systemd.services."kbin-migrate" = {
+      serviceConfig = {
+        Type = "oneshot";
       };
+      environment = {
+        # FIXME: Symfony (doctrine) does not support unix sockets in DATABASE_URL: https://stackoverflow.com/questions/58743591/symfony-doctrine-how-to-make-doctrine-working-with-unix-socket
+        # DATABASE_URL=postgres:///kbin?host=/var/run/postgresql/ \
+        DATABASE_URL="postgresql://kbin:kbin@127.0.0.1:5432/kbin";
+        APP_LOG_DIR="/tmp/log";
+        APP_CACHE_DIR="/tmp";
+      };
+      script = ''
+        ${php}/bin/php ${cfg.package}/share/php/kbin/bin/console --no-interaction doctrine:migrations:migrate
+      '';
     };
 
     services.phpfpm.pools.kbin = {
@@ -121,8 +119,12 @@ in {
         APP_LOG_DIR = "/tmp/log";
         APP_DEBUG = "1";
 
-        DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin?charset=utf8";
+        DATABASE_URL = "postgresql://kbin:kbin@127.0.0.1:5432/kbin";
       };
+    };
+
+    systemd.services."phpfpm-kbin" = {
+      requires = [ "kbin-migrate.service" ];
     };
   };
 }
