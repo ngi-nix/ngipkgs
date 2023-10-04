@@ -1,20 +1,21 @@
-{ pkgs, fetchFromGitHub, ... }:
-with (import ./pnpm2nix-lockfile-6.0 { inherit pkgs; });
+{ pkgs, fetchFromGitHub, mkYarnPackage, fetchYarnDeps, ... }:
 
-mkPnpmPackage rec {
+mkYarnPackage rec {
   version = "v0.34.5";
-
-  prePatch = "exit 1";
-
-  patches = [
-    ./package-json-version.patch
-  ];
 
   src = fetchFromGitHub {
     owner = "atomicdata-dev";
-    repo = "atomic-data-browser";
-    rev = "9b913058508c9da6a4062fd0fe39fcefc1205c4d";
-    hash = "sha256-lQDfFXnXCW+fhs1ayjbsm3VojxvMEh9eiUyHoTm3qtg=";
+    repo = "atomic-server";
+    rev = "873caf39d99f703427aa50fe32ec1aca19e4b3b0";
+    hash = "sha256-mcnPv51rhfqrWGU/Gas6CJ0h0PdpRvJ2onnCw8Mccew=";
   };
+  sourceRoot = "${src}/browser";
 
+  packageJSON = "${sourceRoot}/package.json";
+  # Upstream does not contain a yarn.lock
+  yarnLock = ./yarn.lock;
+  offlineCache = fetchYarnDeps {
+    yarnLock = ./yarn.lock;
+    hash = "sha256-GK5Ehk82VQ5ajuBTQlPwTB0aaxhjAoD2Uis8wiam7Z0=";
+  };
 }
