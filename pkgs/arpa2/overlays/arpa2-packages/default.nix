@@ -1,6 +1,6 @@
 inputs: sources: final: prev:
 with final.pkgs; rec {
-  helpers = import ./lib { inherit (final) pkgs stdenv lib; };
+  helpers = import ./lib {inherit (final) pkgs stdenv lib;};
 
   arpa2cm = callPackage ./pkgs/arpa2cm {
     src = sources.arpa2cm-src;

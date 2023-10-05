@@ -1,5 +1,3 @@
 inputs: sources: final: prev:
-with final.pkgs;
-{
-
+with final.pkgs; {
 }

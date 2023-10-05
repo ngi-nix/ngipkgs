@@ -1,6 +1,17 @@
-{ src, pname, version, stdenv, lib, helpers, openldap, flex, bison, sqlite
-, catch2, log4cpp }:
-
+{
+  src,
+  pname,
+  version,
+  stdenv,
+  lib,
+  helpers,
+  openldap,
+  flex,
+  bison,
+  sqlite,
+  catch2,
+  log4cpp,
+}:
 helpers.mkArpa2Derivation {
   inherit src pname version;
 
@@ -18,11 +29,10 @@ helpers.mkArpa2Derivation {
   cmakeBuildType = "Debug";
 
   meta = with lib; {
-    description =
-      "Configuration information distributed over LDAP in near realtime";
+    description = "Configuration information distributed over LDAP in near realtime";
     homepage = "https://gitlab.com/arpa2/steamworks";
     license = licenses.bsd2;
-    maintainers = [ ];
+    maintainers = [];
     platforms = platforms.linux;
   };
 }

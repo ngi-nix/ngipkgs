@@ -1,12 +1,23 @@
-{ src, pname, version, stdenv, helpers, steamworks, lua, doxygen, graphviz
-, libressl, lmdb, libuuid }:
-
+{
+  src,
+  pname,
+  version,
+  stdenv,
+  helpers,
+  steamworks,
+  lua,
+  doxygen,
+  graphviz,
+  libressl,
+  lmdb,
+  libuuid,
+}:
 helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  buildInputs = [ steamworks lua doxygen graphviz libuuid ];
+  buildInputs = [steamworks lua doxygen graphviz libuuid];
 
-  patches = [ ./install-dirs.patch ];
+  patches = [./install-dirs.patch];
 
   configurePhase = ''
     mkdir -p build

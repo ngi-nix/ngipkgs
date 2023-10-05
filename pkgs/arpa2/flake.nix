@@ -1,47 +1,76 @@
 rec {
-  description =
-    "Development projects for InternetWide.org, which builds a modern (domain) hosting stack intended to make users once more first-class citizens of the Internet.";
+  description = "Development projects for InternetWide.org, which builds a modern (domain) hosting stack intended to make users once more first-class citizens of the Internet.";
 
-  outputs = { self, nixpkgs, ... }@args:
-    let
-      supportedSystems = [ "x86_64-linux" ];
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ args: let
+    supportedSystems = ["x86_64-linux"];
 
-      # BEGIN Helper functions
-      forAllSystems = f:
-        nixpkgs.lib.genAttrs supportedSystems (system: f system);
+    # BEGIN Helper functions
+    forAllSystems = f:
+      nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
-      nixpkgsFor = forAllSystems (system:
-        import nixpkgs {
-          inherit system;
-          overlays = [ self.overlay ];
-        });
-      # END Helper functions
-    in {
-      overlay = final: prev:
-        nixpkgs.lib.composeManyExtensions [
-          args.poetry2nix.overlay
-          self.overlays.arpa2-packages
-        ] final prev;
-
-      overlays = {
-        arpa2-packages = import ./overlays/arpa2-packages inputs args;
-        arpa2-python-packages =
-          import ./overlays/arpa2-python-packages inputs args;
-      };
-
-      packages = forAllSystems (system: {
-        inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks quick-mem quick-der lillydap leaf
-          quick-sasl tlspool tlspool-gui kip freeDiameter steamworks-pulleyback;
+    nixpkgsFor = forAllSystems (system:
+      import nixpkgs {
+        inherit system;
+        overlays = [self.overlay];
       });
+    # END Helper functions
+  in {
+    overlay = final: prev:
+      nixpkgs.lib.composeManyExtensions [
+        args.poetry2nix.overlay
+        self.overlays.arpa2-packages
+      ]
+      final
+      prev;
 
-      checks = forAllSystems (system: {
-        inherit (nixpkgsFor.${system})
-          arpa2cm arpa2common steamworks steamworks-pulleyback quick-mem
-          quick-der lillydap leaf quick-sasl tlspool tlspool-gui freeDiameter
-          kip;
-      });
+    overlays = {
+      arpa2-packages = import ./overlays/arpa2-packages inputs args;
+      arpa2-python-packages =
+        import ./overlays/arpa2-python-packages inputs args;
     };
+
+    packages = forAllSystems (system: {
+      inherit
+        (nixpkgsFor.${system})
+        arpa2cm
+        arpa2common
+        steamworks
+        quick-mem
+        quick-der
+        lillydap
+        leaf
+        quick-sasl
+        tlspool
+        tlspool-gui
+        kip
+        freeDiameter
+        steamworks-pulleyback
+        ;
+    });
+
+    checks = forAllSystems (system: {
+      inherit
+        (nixpkgsFor.${system})
+        arpa2cm
+        arpa2common
+        steamworks
+        steamworks-pulleyback
+        quick-mem
+        quick-der
+        lillydap
+        leaf
+        quick-sasl
+        tlspool
+        tlspool-gui
+        freeDiameter
+        kip
+        ;
+    });
+  };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
