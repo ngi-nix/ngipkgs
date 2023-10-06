@@ -7,7 +7,6 @@
   quick-mem,
   cyrus_sasl,
   quick-der,
-  pkgconfig,
   libkrb5,
   libev,
   e2fsprogs,

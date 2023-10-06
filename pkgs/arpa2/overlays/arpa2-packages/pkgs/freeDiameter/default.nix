@@ -4,7 +4,7 @@
   version,
   stdenv,
   cmake,
-  pkgconfig,
+  pkg-config,
   flex,
   bison,
   lksctp-tools,
@@ -15,7 +15,7 @@
 stdenv.mkDerivation {
   inherit src pname version;
 
-  nativeBuildInputs = [cmake pkgconfig flex bison lksctp-tools libidn libgcrypt gnutls];
+  nativeBuildInputs = [cmake pkg-config flex bison lksctp-tools libidn libgcrypt gnutls];
 
   configurePhase = ''
     mkdir -p build

@@ -10,7 +10,7 @@
   lmdb,
   libressl,
   libsodium,
-  pkgconfig,
+  pkg-config,
   libkrb5,
   e2fsprogs,
   doxygen,
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
     lmdb
     libressl
     libsodium
-    pkgconfig
+    pkg-config
     libkrb5
     e2fsprogs
     doxygen

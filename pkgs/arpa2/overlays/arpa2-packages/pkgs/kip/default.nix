@@ -4,7 +4,7 @@
   version,
   stdenv,
   cmake,
-  pkgconfig,
+  pkg-config,
   arpa2cm,
   arpa2common,
   quick-mem,
@@ -32,7 +32,7 @@ in
   stdenv.mkDerivation {
     inherit src pname version;
 
-    nativeBuildInputs = [cmake pkgconfig cacert openssl libressl gnutls];
+    nativeBuildInputs = [cmake pkg-config cacert openssl libressl gnutls];
 
     buildInputs = [
       arpa2cm
