@@ -28,25 +28,31 @@
         nixosSystem
         ;
 
-      importPackages = pkgs:
-        import ./all-packages.nix {
-          inherit (pkgs) newScope lib;
-
-          # nixosTests is overriden with tests defined in this
-          # flake.
-          nixosTests =
-            pkgs.nixosTests
-            // (
-              let
-                dir = ./tests;
-              in
-                mapAttrs (name: _:
-                  pkgs.nixosTest (import (dir + "/${name}") {
-                    modules = extendedModules;
-                    configurations = importNixosConfigurations;
-                  })) (readDir dir)
-            );
+      importPackages = pkgs: let
+        # nixosTests is overriden with tests defined in this
+        # flake.
+        nixosTests =
+          pkgs.nixosTests
+          // (
+            let
+              dir = ./tests;
+            in
+              mapAttrs (name: _:
+                pkgs.nixosTest (import (dir + "/${name}") {
+                  modules = extendedModules;
+                  configurations = importNixosConfigurations;
+                })) (readDir dir)
+          );
+        callPackage = pkgs.newScope (
+          result // {inherit callPackage nixosTests;}
+        );
+        args = {
+          inherit (pkgs) lib;
+          inherit callPackage;
         };
+        result = (import ./pkgs/by-name args) // (import ./pkgs args);
+      in
+        result;
 
       importNixpkgs = system: overlays:
         import nixpkgs {

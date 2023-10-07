@@ -13,7 +13,7 @@
   ncurses,
 }:
 stdenv.mkDerivation rec {
-  name = "gnunet-messenger-cli";
+  pname = "gnunet-messenger-cli";
   version = "0.1.1";
 
   src = fetchgit {
