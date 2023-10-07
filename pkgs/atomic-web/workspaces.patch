@@ -1,0 +1,26 @@
+diff --git browser/data-browser/package.json browser/data-browser/package.json
+index 299289f..cab5b09 100644
+--- browser/data-browser/package.json
++++ browser/data-browser/package.json
+@@ -14,7 +14,7 @@
+     "@emoji-mart/react": "^1.1.1",
+     "@radix-ui/react-popover": "^1.0.6",
+     "@radix-ui/react-scroll-area": "^1.0.1",
+-    "@tomic/react": "workspace:*",
++    "@tomic/react": "0.35.0",
+     "emoji-mart": "^5.5.2",
+     "polished": "^4.1.0",
+     "query-string": "^7.0.0",
+diff --git browser/react/package.json browser/react/package.json
+index cfd525f..8aa5cbd 100644
+--- browser/react/package.json
++++ browser/react/package.json
+@@ -3,7 +3,7 @@
+   "author": "Joep Meindertsma",
+   "description": "Atomic Data React library",
+   "dependencies": {
+-    "@tomic/lib": "workspace:*"
++    "@tomic/lib": "0.35.1"
+   },
+   "devDependencies": {
+     "typescript": "^4.8"
