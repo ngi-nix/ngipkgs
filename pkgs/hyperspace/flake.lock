@@ -169,22 +169,6 @@
         "type": "github"
       }
     },
-    "hyperbeam": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1638275937,
-        "narHash": "sha256-qD5kpPUualXPYCZlIgBOgIrg7YCmm9iNkIBadx+XV+M=",
-        "owner": "mafintosh",
-        "repo": "hyperbeam",
-        "rev": "35269d8fe2b486843fd324881e71a4e9f2cc395b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mafintosh",
-        "repo": "hyperbeam",
-        "type": "github"
-      }
-    },
     "hyperblobs": {
       "flake": false,
       "locked": {
@@ -294,7 +278,6 @@
       "inputs": {
         "corestore": "corestore",
         "dream2nix": "dream2nix",
-        "hyperbeam": "hyperbeam",
         "hyperblobs": "hyperblobs",
         "hyperswarm": "hyperswarm",
         "nixpkgs": "nixpkgs"
