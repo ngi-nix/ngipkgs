@@ -153,22 +153,6 @@
         "type": "github"
       }
     },
-    "hyperblobs": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1661263996,
-        "narHash": "sha256-z382PRsdWnPMzoqjheWDGuEeuq/ErB0tjUTjZcNS3j8=",
-        "owner": "hypercore-protocol",
-        "repo": "hyperblobs",
-        "rev": "d2ea6b1b496f5fd1e39f361bc9c102ae35c15626",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hypercore-protocol",
-        "repo": "hyperblobs",
-        "type": "github"
-      }
-    },
     "hyperswarm": {
       "flake": false,
       "locked": {
@@ -261,7 +245,6 @@
     "root": {
       "inputs": {
         "dream2nix": "dream2nix",
-        "hyperblobs": "hyperblobs",
         "hyperswarm": "hyperswarm",
         "nixpkgs": "nixpkgs"
       }

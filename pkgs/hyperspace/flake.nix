@@ -7,10 +7,6 @@
       url = "github:nix-community/dream2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyperblobs = {
-      url = "github:hypercore-protocol/hyperblobs";
-      flake = false;
-    };
     hyperswarm = {
       url = "github:hyperswarm/hyperswarm";
       flake = false;
@@ -38,7 +34,6 @@
       };
   in
     nixpkgs.lib.foldl' nixpkgs.lib.recursiveUpdate {} (map mkOuts [
-      inputs.hyperblobs
       inputs.hyperswarm
     ]);
 }
