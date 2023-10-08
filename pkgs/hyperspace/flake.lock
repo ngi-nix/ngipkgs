@@ -201,22 +201,6 @@
         "type": "github"
       }
     },
-    "hypercore": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1661943035,
-        "narHash": "sha256-a6uE/4p+WBGnj4fsVX8yp6aXSZd/DOoESgj3zLCeCqc=",
-        "owner": "hypercore-protocol",
-        "repo": "hypercore",
-        "rev": "6b691a7c52c17c42bb5878d9eb465d570200b7a1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hypercore-protocol",
-        "repo": "hypercore",
-        "type": "github"
-      }
-    },
     "hyperswarm": {
       "flake": false,
       "locked": {
@@ -312,7 +296,6 @@
         "dream2nix": "dream2nix",
         "hyperbeam": "hyperbeam",
         "hyperblobs": "hyperblobs",
-        "hypercore": "hypercore",
         "hyperswarm": "hyperswarm",
         "nixpkgs": "nixpkgs"
       }

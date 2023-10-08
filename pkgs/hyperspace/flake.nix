@@ -11,10 +11,6 @@
       url = "github:mafintosh/hyperbeam";
       flake = false;
     };
-    hypercore = {
-      url = "github:hypercore-protocol/hypercore";
-      flake = false;
-    };
     corestore = {
       url = "github:hypercore-protocol/corestore";
       flake = false;
@@ -51,7 +47,6 @@
   in
     nixpkgs.lib.foldl' nixpkgs.lib.recursiveUpdate {} (map mkOuts [
       inputs.hyperbeam
-      inputs.hypercore
       inputs.corestore
       inputs.hyperblobs
       inputs.hyperswarm
