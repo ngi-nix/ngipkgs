@@ -16,6 +16,11 @@
       rev = "v1.0.0-alpha.9";
       sha256 = "sha256-aKs39/9GG3tRq5UBBDWcz1h64kaCt+1Cru3C4fKv5RU=";
     };
+
+    doCheck = true;
+    checkPhase = ''
+      npm run test
+    '';
   };
 
   deps = {nixpkgs, ...}: {
