@@ -23,22 +23,6 @@
         "type": "github"
       }
     },
-    "corestore": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1661793769,
-        "narHash": "sha256-/QFAoggSOf70mS04Bobaj4LmOrV22+0I+Ib7pPVW4kk=",
-        "owner": "hypercore-protocol",
-        "repo": "corestore",
-        "rev": "7f4f2fde727a816d4736de5bdee8612508595122",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hypercore-protocol",
-        "repo": "corestore",
-        "type": "github"
-      }
-    },
     "crane": {
       "flake": false,
       "locked": {
@@ -276,7 +260,6 @@
     },
     "root": {
       "inputs": {
-        "corestore": "corestore",
         "dream2nix": "dream2nix",
         "hyperblobs": "hyperblobs",
         "hyperswarm": "hyperswarm",

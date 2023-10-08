@@ -7,10 +7,6 @@
       url = "github:nix-community/dream2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    corestore = {
-      url = "github:hypercore-protocol/corestore";
-      flake = false;
-    };
     hyperblobs = {
       url = "github:hypercore-protocol/hyperblobs";
       flake = false;
@@ -42,7 +38,6 @@
       };
   in
     nixpkgs.lib.foldl' nixpkgs.lib.recursiveUpdate {} (map mkOuts [
-      inputs.corestore
       inputs.hyperblobs
       inputs.hyperswarm
     ]);
