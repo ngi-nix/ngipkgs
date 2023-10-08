@@ -23,22 +23,6 @@
         "type": "github"
       }
     },
-    "autobase": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1661795007,
-        "narHash": "sha256-67pmU2QtWAPWUwaPDHuJkSKejSc2asXou1ZNtVqiqL8=",
-        "owner": "hypercore-protocol",
-        "repo": "autobase",
-        "rev": "1a14bd32d2621446b94eaac26a2688b9fa9ef618",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hypercore-protocol",
-        "repo": "autobase",
-        "type": "github"
-      }
-    },
     "corestore": {
       "flake": false,
       "locked": {
@@ -324,7 +308,6 @@
     },
     "root": {
       "inputs": {
-        "autobase": "autobase",
         "corestore": "corestore",
         "dream2nix": "dream2nix",
         "hyperbeam": "hyperbeam",

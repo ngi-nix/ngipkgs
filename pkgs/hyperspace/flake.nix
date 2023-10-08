@@ -8,7 +8,6 @@
     hypercore = { url = "github:hypercore-protocol/hypercore"; flake = false; };
     corestore = { url = "github:hypercore-protocol/corestore"; flake = false; };
     hyperblobs = { url = "github:hypercore-protocol/hyperblobs"; flake = false; };
-    autobase = { url = "github:hypercore-protocol/autobase"; flake = false; };
     hyperswarm = { url = "github:hyperswarm/hyperswarm"; flake = false; };
   };
 
@@ -32,7 +31,6 @@
       inputs.hypercore
       inputs.corestore
       inputs.hyperblobs
-      inputs.autobase
       inputs.hyperswarm
     ]);
 }

@@ -8,6 +8,8 @@
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/x86_64-linux";
   inputs.flake-utils.inputs.systems.follows = "systems";
+  inputs.dream2nix.url = "github:nix-community/dream2nix";
+  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
   inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
@@ -17,6 +19,7 @@
     self,
     nixpkgs,
     flake-utils,
+    dream2nix,
     treefmt-nix,
     sops-nix,
     ...
@@ -28,7 +31,10 @@
         nixosSystem
         ;
 
-      importPackages = pkgs: let
+      # To use when extra flake inputs need to be passed to the packages
+      extraScope = {inherit dream2nix;};
+
+      importPackages = pkgs: extraScope: let
         # nixosTests is overriden with tests defined in this
         # flake.
         nixosTests =
@@ -44,7 +50,11 @@
                 })) (readDir dir)
           );
         callPackage = pkgs.newScope (
-          result // {inherit callPackage nixosTests;}
+          pkgs.lib.attrsets.mergeAttrsList [
+            result
+            {inherit callPackage nixosTests;}
+            extraScope
+          ]
         );
         args = {
           inherit (pkgs) lib;
@@ -81,7 +91,7 @@
           "${name}-toplevel" = (nixosSystemWithModules config).config.system.build.toplevel;
         };
       in {
-        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations);
+        packages = (importPackages pkgs extraScope) // (concatMapAttrs toplevel importNixosConfigurations);
         formatter = treefmtEval.config.build.wrapper;
       };
     in
@@ -142,6 +152,6 @@
           };
 
         # Overlays a package set (e.g. nixpkgs) with the packages defined in this flake.
-        overlays.default = final: prev: importPackages prev;
+        overlays.default = final: prev: (importPackages prev extraScope);
       };
 }
