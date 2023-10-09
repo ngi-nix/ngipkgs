@@ -60,7 +60,7 @@ rustPlatform.buildRustPackage rec {
         imincik
         lorenzleutgeb
       ]
-      ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
+      ++ (with (import ../../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
   };
 
   passthru.tests.rosenpass = nixosTests.rosenpass;
