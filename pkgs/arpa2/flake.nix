@@ -36,11 +36,7 @@ rec {
     packages = forAllSystems (system: {
       inherit
         (nixpkgsFor.${system})
-        arpa2cm
-        arpa2common
         steamworks
-        quickmem
-        quickder
         lillydap
         leaf
         quicksasl
@@ -55,12 +51,8 @@ rec {
     checks = forAllSystems (system: {
       inherit
         (nixpkgsFor.${system})
-        arpa2cm
-        arpa2common
         steamworks
         steamworks-pulleyback
-        quickmem
-        quickder
         lillydap
         leaf
         quicksasl
@@ -73,27 +65,11 @@ rec {
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/44881e03af1c730cbb1d72a4d41274a2c957813a";
     poetry2nix.url = "github:nix-community/poetry2nix";
 
     flake-compat = {
       url = "github:edolstra/flake-compat";
-      flake = false;
-    };
-
-    arpa2cm-src = {
-      type = "gitlab";
-      owner = "arpa2";
-      repo = "arpa2cm";
-      ref = "v0.9.0";
-      flake = false;
-    };
-
-    arpa2common-src = {
-      type = "gitlab";
-      owner = "arpa2";
-      repo = "arpa2common";
-      ref = "v2.2.14";
       flake = false;
     };
 
@@ -110,22 +86,6 @@ rec {
       owner = "arpa2";
       repo = "steamworks-pulleyback";
       ref = "v0.3.0";
-      flake = false;
-    };
-
-    quickmem-src = {
-      type = "gitlab";
-      owner = "arpa2";
-      repo = "quick-mem";
-      ref = "v0.2.2";
-      flake = false;
-    };
-
-    quickder-src = {
-      type = "gitlab";
-      owner = "arpa2";
-      repo = "quick-der";
-      ref = "v1.6.2";
       flake = false;
     };
 

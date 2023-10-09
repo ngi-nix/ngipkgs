@@ -1,39 +1,5 @@
 {
   "nodes": {
-    "arpa2cm-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1625752594,
-        "narHash": "sha256-1z0fH8vZJiPkY/C654us9s2BULM1tlvvYcszNqk34yI=",
-        "owner": "arpa2",
-        "repo": "arpa2cm",
-        "rev": "c3aa5b6ce5c3c14a66bbf27044c517186176cb66",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.9.0",
-        "repo": "arpa2cm",
-        "type": "gitlab"
-      }
-    },
-    "arpa2common-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1625776969,
-        "narHash": "sha256-LWsWoHRdLWRSF9JaEwrw+CXm5Azgh7zNeq0a8Z/hijQ=",
-        "owner": "arpa2",
-        "repo": "arpa2common",
-        "rev": "c65fbe034a288ba504b4b68b62b1546b8c3ddf5a",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v2.2.14",
-        "repo": "arpa2common",
-        "type": "gitlab"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -135,17 +101,17 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1629292755,
-        "narHash": "sha256-5xMo32NVLnloY9DveqwJO/Cab1+PbTMPqU4WMmawX5M=",
+        "lastModified": 1697886341,
+        "narHash": "sha256-AdE67xPty9M9wn36nPVp6aDntIdigrs7UbyaGv1VAaM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "253aecf69ed7595aaefabde779aa6449195bebb7",
+        "rev": "44881e03af1c730cbb1d72a4d41274a2c957813a",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "rev": "44881e03af1c730cbb1d72a4d41274a2c957813a",
         "type": "github"
       }
     },
@@ -183,40 +149,6 @@
         "type": "github"
       }
     },
-    "quickder-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1626773097,
-        "narHash": "sha256-9vOCH6YnJ8mulersZnE4ox9D9bhdQBh2spVzvB/43So=",
-        "owner": "arpa2",
-        "repo": "quick-der",
-        "rev": "bda3d1e8f6e021778531ab61a434960931dd88a1",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v1.6.2",
-        "repo": "quick-der",
-        "type": "gitlab"
-      }
-    },
-    "quickmem-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1626340583,
-        "narHash": "sha256-b3g8xzPUhp+inV08uxljyFTLxzEkIfkxsnGTFFf6HOU=",
-        "owner": "arpa2",
-        "repo": "quick-mem",
-        "rev": "4f8df4475ba5a48eaf633885c15f38f13b4f7392",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.2.2",
-        "repo": "quick-mem",
-        "type": "gitlab"
-      }
-    },
     "quicksasl-src": {
       "flake": false,
       "locked": {
@@ -236,8 +168,6 @@
     },
     "root": {
       "inputs": {
-        "arpa2cm-src": "arpa2cm-src",
-        "arpa2common-src": "arpa2common-src",
         "flake-compat": "flake-compat",
         "freeDiameter-src": "freeDiameter-src",
         "kip-src": "kip-src",
@@ -245,8 +175,6 @@
         "lillydap-src": "lillydap-src",
         "nixpkgs": "nixpkgs",
         "poetry2nix": "poetry2nix",
-        "quickder-src": "quickder-src",
-        "quickmem-src": "quickmem-src",
         "quicksasl-src": "quicksasl-src",
         "steamworks-pulleyback-src": "steamworks-pulleyback-src",
         "steamworks-src": "steamworks-src",

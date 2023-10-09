@@ -28,6 +28,19 @@
   python-with-packages =
     python3.withPackages
     (ps: with ps; [setuptools asn1ate six pyparsing colored]);
+  libkrb5' = libkrb5.overrideAttrs (old: {
+    # kip needs the symbol `_et_list` associated with the com_err library.
+    # This is provided by e2fsprogs.
+    # Another dependency of kip, libkrb5, also provides the com_err library,
+    # but a version of it that doesn't provide `_et_list`.
+    # Without intervention, com_err from libkrb5 is selected, failing the build.
+    #
+    # Exclude com_err from libkrb5's outputs.
+    configureFlags = old.configureFlags ++ ["--with-system-et"];
+
+    # Provide libkrb5 with the com_err library.
+    buildInputs = old.buildInputs ++ [e2fsprogs];
+  });
 in
   stdenv.mkDerivation {
     inherit src pname version;
@@ -43,7 +56,7 @@ in
       unbound
       e2fsprogs
       cyrus_sasl
-      libkrb5
+      libkrb5'
       libev
       json_c
       bison
