@@ -174,5 +174,9 @@ in
           lorenzleutgeb
         ]
         ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
+      ngi = {
+        project = "Rosenpass";
+        options = [["services" pname]];
+      };
     };
   }

@@ -61,6 +61,10 @@ rustPlatform.buildRustPackage rec {
         lorenzleutgeb
       ]
       ++ (with (import ../../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
+    ngi = {
+      project = "Pretalx";
+      options = [["services" pname]];
+    };
   };
 
   passthru.tests.rosenpass = nixosTests.rosenpass;
