@@ -1,6 +1,7 @@
 {
   lib,
   callPackage,
+  ...
 }: let
   self = rec {
     # LiberaForms is intentionally disabled.
