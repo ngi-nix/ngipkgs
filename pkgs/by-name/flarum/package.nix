@@ -28,6 +28,10 @@ in
       changelog = "https://github.com/flarum/framework/blob/main/CHANGELOG.md";
       description = "Flarum is a delightfully simple discussion platform for your website";
       homepage = "https://github.com/flarum/flarum";
-      license = licenses.mit;
+      license = lib.licenses.mit;
+      ngi = {
+        project = "Flarum";
+        options = [["services" finalAttrs.pname]];
+      };
     };
   })
