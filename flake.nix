@@ -58,7 +58,7 @@
         );
         args = {
           inherit (pkgs) lib;
-          inherit callPackage;
+          inherit callPackage dream2nix pkgs;
         };
         result = (import ./pkgs/by-name args) // (import ./pkgs args);
       in
