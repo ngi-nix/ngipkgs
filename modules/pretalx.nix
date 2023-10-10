@@ -14,6 +14,7 @@
 
   inherit
     (lib)
+    literalExpression
     optionals
     modules
     types
@@ -201,6 +202,7 @@ in {
         type = nullOr str;
         default = null;
         example = "pretalx";
+        description = "Database user that pretalx should connect as.";
       };
 
       passwordFile = mkOption {
