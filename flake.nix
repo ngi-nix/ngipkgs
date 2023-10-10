@@ -80,8 +80,25 @@
         toplevel = name: config: {
           "${name}-toplevel" = (nixosSystemWithModules config).config.system.build.toplevel;
         };
+
+        dummy = import (nixpkgs + "/nixos/lib/eval-config.nix") {
+          inherit system;
+          modules = builtins.attrValues self.nixosModules ++ [
+            {
+              networking = {
+                domain = "invalid";
+                hostName = "options";
+              };
+            }
+          ];
+        };
+        options = builtins.mapAttrs (name: _: dummy.options.services.${name} or {}) self.nixosModules;
       in {
-        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations);
+        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations) // {
+         options = pkgs.runCommand "options.json" {
+            build = (pkgs.nixosOptionsDoc { inherit options; }).optionsJSON;
+          } "cp $build/share/doc/nixos/options.json $out";
+        };
         formatter = treefmtEval.config.build.wrapper;
       };
     in
