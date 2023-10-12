@@ -19,4 +19,10 @@
       ./dummy.nix
     ];
   };
+  kbin = {
+    imports = [
+      ./kbin
+      ./dummy.nix
+    ];
+  };
 }
