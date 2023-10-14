@@ -44,7 +44,6 @@
   in
     evaluated.config.public;
 
-
   self =
     mapAttrs (
       _: directory:

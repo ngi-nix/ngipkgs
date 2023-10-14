@@ -31,10 +31,7 @@
         nixosSystem
         ;
 
-      # To use when extra flake inputs need to be passed to the packages
-      extraScope = {inherit dream2nix;};
-
-      importPackages = pkgs: extraScope: let
+      importPackages = pkgs: let
         # nixosTests is overriden with tests defined in this
         # flake.
         nixosTests =
@@ -53,7 +50,6 @@
           pkgs.lib.attrsets.mergeAttrsList [
             result
             {inherit callPackage nixosTests;}
-            extraScope
           ]
         );
         args = {
@@ -91,7 +87,7 @@
           "${name}-toplevel" = (nixosSystemWithModules config).config.system.build.toplevel;
         };
       in {
-        packages = (importPackages pkgs extraScope) // (concatMapAttrs toplevel importNixosConfigurations);
+        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations);
         formatter = treefmtEval.config.build.wrapper;
       };
     in
@@ -152,6 +148,6 @@
           };
 
         # Overlays a package set (e.g. nixpkgs) with the packages defined in this flake.
-        overlays.default = final: prev: (importPackages prev extraScope);
+        overlays.default = final: prev: (importPackages prev);
       };
 }
