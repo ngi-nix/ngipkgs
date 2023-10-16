@@ -34,12 +34,10 @@
     pretalx = {
       enable = true;
       package = pkgs.pretalx-full;
+      settings.database.user = "pretalx";
+      secrets.database.passwordFile = config.sops.secrets."pretalx/database/password".path;
       nginx = {
         # For a production configuration use this attribute set to configure the virtual host for pretalx.
-      };
-      database = {
-        user = "pretalx";
-        passwordFile = config.sops.secrets."pretalx/database/password".path;
       };
       redis = {
         enable = true;
@@ -60,7 +58,6 @@
           slug = "ngipkgs";
         };
       };
-      mail.enable = false;
     };
 
     redis.servers."pretalx" = {
