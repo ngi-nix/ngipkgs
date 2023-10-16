@@ -4,7 +4,7 @@
   version,
   stdenv,
   helpers,
-  quick-der,
+  quickder,
   gnutls,
   db,
   ldns,
@@ -17,5 +17,5 @@
 helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  nativeBuildInputs = [quick-der gnutls db ldns libtasn1 p11-kit unbound libkrb5 openldap];
+  nativeBuildInputs = [quickder gnutls db ldns libtasn1 p11-kit unbound libkrb5 openldap];
 }

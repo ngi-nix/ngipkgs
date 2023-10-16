@@ -4,11 +4,11 @@
   version,
   stdenv,
   helpers,
-  quick-der,
+  quickder,
   gperf,
 }:
 helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  nativeBuildInputs = [quick-der gperf];
+  nativeBuildInputs = [quickder gperf];
 }

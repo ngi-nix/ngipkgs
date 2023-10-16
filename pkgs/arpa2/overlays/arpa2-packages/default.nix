@@ -32,10 +32,10 @@ with final.pkgs; rec {
     version = inputs.quick-mem-src.ref;
   };
 
-  quick-der = callPackage ./pkgs/quick-der {
-    src = sources.quick-der-src;
-    pname = inputs.quick-der-src.repo;
-    version = inputs.quick-der-src.ref;
+  quickder = callPackage ./pkgs/quickder {
+    src = sources.quickder-src;
+    pname = "quickder";
+    version = inputs.quickder-src.ref;
   };
 
   lillydap = callPackage ./pkgs/lillydap {

@@ -8,7 +8,7 @@
   arpa2cm,
   arpa2common,
   quick-mem,
-  quick-der,
+  quickder,
   quick-sasl,
   unbound,
   openssl,
@@ -38,7 +38,7 @@ in
       arpa2cm
       arpa2common
       quick-mem
-      quick-der
+      quickder
       quick-sasl
       unbound
       e2fsprogs

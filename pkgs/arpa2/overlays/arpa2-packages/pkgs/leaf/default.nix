@@ -4,11 +4,11 @@
   version,
   stdenv,
   helpers,
-  quick-der,
+  quickder,
   lillydap,
 }:
 helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  nativeBuildInputs = [quick-der lillydap];
+  nativeBuildInputs = [quickder lillydap];
 }
