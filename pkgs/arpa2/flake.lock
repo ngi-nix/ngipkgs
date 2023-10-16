@@ -183,23 +183,6 @@
         "type": "github"
       }
     },
-    "quick-mem-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1626340583,
-        "narHash": "sha256-b3g8xzPUhp+inV08uxljyFTLxzEkIfkxsnGTFFf6HOU=",
-        "owner": "arpa2",
-        "repo": "quick-mem",
-        "rev": "4f8df4475ba5a48eaf633885c15f38f13b4f7392",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.2.2",
-        "repo": "quick-mem",
-        "type": "gitlab"
-      }
-    },
     "quick-sasl-src": {
       "flake": false,
       "locked": {
@@ -234,6 +217,23 @@
         "type": "gitlab"
       }
     },
+    "quickmem-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1626340583,
+        "narHash": "sha256-b3g8xzPUhp+inV08uxljyFTLxzEkIfkxsnGTFFf6HOU=",
+        "owner": "arpa2",
+        "repo": "quick-mem",
+        "rev": "4f8df4475ba5a48eaf633885c15f38f13b4f7392",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "arpa2",
+        "ref": "v0.2.2",
+        "repo": "quick-mem",
+        "type": "gitlab"
+      }
+    },
     "root": {
       "inputs": {
         "arpa2cm-src": "arpa2cm-src",
@@ -245,9 +245,9 @@
         "lillydap-src": "lillydap-src",
         "nixpkgs": "nixpkgs",
         "poetry2nix": "poetry2nix",
-        "quick-mem-src": "quick-mem-src",
         "quick-sasl-src": "quick-sasl-src",
         "quickder-src": "quickder-src",
+        "quickmem-src": "quickmem-src",
         "steamworks-pulleyback-src": "steamworks-pulleyback-src",
         "steamworks-src": "steamworks-src",
         "tlspool-gui-src": "tlspool-gui-src",

@@ -26,10 +26,10 @@ with final.pkgs; rec {
     version = inputs.steamworks-pulleyback-src.ref;
   };
 
-  quick-mem = callPackage ./pkgs/quick-mem {
-    src = sources.quick-mem-src;
-    pname = inputs.quick-mem-src.repo;
-    version = inputs.quick-mem-src.ref;
+  quickmem = callPackage ./pkgs/quickmem {
+    src = sources.quickmem-src;
+    pname = "quickmem";
+    version = inputs.quickmem-src.ref;
   };
 
   quickder = callPackage ./pkgs/quickder {

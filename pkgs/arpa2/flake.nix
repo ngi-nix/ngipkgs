@@ -39,7 +39,7 @@ rec {
         arpa2cm
         arpa2common
         steamworks
-        quick-mem
+        quickmem
         quickder
         lillydap
         leaf
@@ -59,7 +59,7 @@ rec {
         arpa2common
         steamworks
         steamworks-pulleyback
-        quick-mem
+        quickmem
         quickder
         lillydap
         leaf
@@ -113,7 +113,7 @@ rec {
       flake = false;
     };
 
-    quick-mem-src = {
+    quickmem-src = {
       type = "gitlab";
       owner = "arpa2";
       repo = "quick-mem";

@@ -4,7 +4,7 @@
   version,
   stdenv,
   helpers,
-  quick-mem,
+  quickmem,
   cyrus_sasl,
   quickder,
   libkrb5,
@@ -14,5 +14,5 @@
 helpers.mkArpa2Derivation {
   inherit src pname version;
 
-  nativeBuildInputs = [libkrb5 quick-mem cyrus_sasl quickder libev e2fsprogs];
+  nativeBuildInputs = [libkrb5 quickmem cyrus_sasl quickder libev e2fsprogs];
 }

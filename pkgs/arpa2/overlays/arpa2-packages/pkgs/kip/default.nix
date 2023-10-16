@@ -7,7 +7,7 @@
   pkg-config,
   arpa2cm,
   arpa2common,
-  quick-mem,
+  quickmem,
   quickder,
   quick-sasl,
   unbound,
@@ -37,7 +37,7 @@ in
     buildInputs = [
       arpa2cm
       arpa2common
-      quick-mem
+      quickmem
       quickder
       quick-sasl
       unbound

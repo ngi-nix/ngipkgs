@@ -4,7 +4,7 @@
   version,
   stdenv,
   helpers,
-  quick-mem,
+  quickmem,
   python37,
   ensureNewerSourcesHook,
 }: let
@@ -15,7 +15,7 @@ in
   helpers.mkArpa2Derivation {
     inherit src pname version;
 
-    nativeBuildInputs = [quick-mem python-with-packages];
+    nativeBuildInputs = [quickmem python-with-packages];
 
     buildInputs = [
       # Why DOS, why didn't you just make epcoh 1970...
