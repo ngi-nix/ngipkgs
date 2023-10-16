@@ -171,7 +171,8 @@ in {
 
       mail = {
         passwordFile = mkOption {
-          type = path;
+          type = nullOr path;
+          default = null;
           description = "Path to a file containing the password for SMTP server authentication. ${secretRecommendation}";
           example = "/run/secrets/pretalx/mail";
         };
@@ -423,7 +424,6 @@ in {
     users.users."${cfg.user}" = {
       isSystemUser = true;
       createHome = true;
-      home = libDir;
       group = cfg.group;
     };
 
@@ -451,7 +451,7 @@ in {
           Group = cfg.group;
           StateDirectory = "pretalx";
           LogsDirectory = "pretalx";
-          WorkingDirectory = libDir;
+          # WorkingDirectory = libDir;
           RuntimeDirectory = "pretalx";
           SupplementaryGroups = ["redis-pretalx"];
         };
@@ -470,7 +470,7 @@ in {
       services = let
         catFile = varname: filename: "export ${varname}=\"$(cat ${filename})\"";
         exportPasswordEnv = lib.concatStringsSep "\n" ([]
-          ++ optional cfg.settings.mail.enable (catFile "PRETALX_MAIL_PASSWORD" cfg.secrets.mail.passwordFile)
+          ++ optional (cfg.secrets.mail.passwordFile != null) (catFile "PRETALX_MAIL_PASSWORD" cfg.secrets.mail.passwordFile)
           ++ optional (cfg.secrets.database.passwordFile != null) (catFile "PRETALX_DB_PASS" cfg.secrets.database.passwordFile)
           ++ optional cfg.redis.enable (catFile "PRETALX_REDIS" cfg.redis.locationFile)
           ++ optional (cfg.secrets.site.secretFile != null) (catFile "SECRET_KEY" cfg.secrets.site.secretFile)
