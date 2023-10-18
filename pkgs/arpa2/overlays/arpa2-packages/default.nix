@@ -50,10 +50,10 @@ with final.pkgs; rec {
     version = inputs.leaf-src.ref;
   };
 
-  quick-sasl = callPackage ./pkgs/quick-sasl {
-    src = sources.quick-sasl-src;
-    pname = inputs.quick-sasl-src.repo;
-    version = inputs.quick-sasl-src.ref;
+  quicksasl = callPackage ./pkgs/quicksasl {
+    src = sources.quicksasl-src;
+    pname = "quicksasl";
+    version = inputs.quicksasl-src.ref;
   };
 
   tlspool = callPackage ./pkgs/tlspool {

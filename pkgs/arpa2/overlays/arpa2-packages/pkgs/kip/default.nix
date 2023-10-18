@@ -9,7 +9,7 @@
   arpa2common,
   quickmem,
   quickder,
-  quick-sasl,
+  quicksasl,
   unbound,
   openssl,
   e2fsprogs,
@@ -39,7 +39,7 @@ in
       arpa2common
       quickmem
       quickder
-      quick-sasl
+      quicksasl
       unbound
       e2fsprogs
       cyrus_sasl

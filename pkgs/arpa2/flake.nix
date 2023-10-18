@@ -43,7 +43,7 @@ rec {
         quickder
         lillydap
         leaf
-        quick-sasl
+        quicksasl
         tlspool
         tlspool-gui
         kip
@@ -63,7 +63,7 @@ rec {
         quickder
         lillydap
         leaf
-        quick-sasl
+        quicksasl
         tlspool
         tlspool-gui
         freeDiameter
@@ -145,7 +145,7 @@ rec {
       flake = false;
     };
 
-    quick-sasl-src = {
+    quicksasl-src = {
       type = "gitlab";
       owner = "arpa2";
       repo = "quick-sasl";
