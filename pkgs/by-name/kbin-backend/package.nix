@@ -10,7 +10,7 @@
     enabled,
     all,
   }:
-    enabled ++ [all.amqp all.redis]);
+    enabled ++ (with all; [amqp redis]));
 in
   phpWithExtensions.buildComposerProject (finalAttrs: let
     pname = "kbin";
@@ -58,6 +58,19 @@ in
     vendorHash = "sha256-lv13ze8PlJyOMDIrXrPzvQr4AgDpYx8Ns9+lUEFUEJ4=";
 
     composerNoPlugins = false;
+    composerStrictValidation = false;
+    doInstallCheck = false;
+
+    installCheckPhase = ''
+      runHook preInstallCheck
+
+      export DATABASE_URL="sqlite:///test.db"
+      php bin/console doctrine:database:create
+      php bin/console doctrine:migrations:migrate
+      SYMFONY_DEPRECATIONS_HELPER=disabled php bin/phpunit --testdox tests/Functional
+
+      runHook postInstallCheck
+    '';
 
     passthru = {
       inherit withS3;
