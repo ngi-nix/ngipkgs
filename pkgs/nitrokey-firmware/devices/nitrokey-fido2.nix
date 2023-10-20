@@ -1,5 +1,14 @@
-{ lib, gcc-arm-embedded, stdenv, fetchFromGitHub, pynitrokey, python3, part ? "release-buildv", release ? true, pages ? 128 }:
-
+{
+  lib,
+  gcc-arm-embedded,
+  stdenv,
+  fetchFromGitHub,
+  pynitrokey,
+  python3,
+  part ? "release-buildv",
+  release ? true,
+  pages ? 128,
+}:
 stdenv.mkDerivation rec {
   pname = "nitrokey-fido2-firmware";
   version = "2.4.1";
@@ -29,13 +38,13 @@ stdenv.mkDerivation rec {
   '';
 
   # only gcc-arm-embedded includes libc_nano.a
-  nativeBuildInputs = [ gcc-arm-embedded pynitrokey python3 ];
+  nativeBuildInputs = [gcc-arm-embedded pynitrokey python3];
 
   preBuild = ''
     cd targets/stm32l432
   '';
 
-  makeFlags = [ "${part}" "RELEASE=${toString release}" "PAGES=${toString pages}" ];
+  makeFlags = ["${part}" "RELEASE=${toString release}" "PAGES=${toString pages}"];
 
   installPhase = ''
     runHook preInstall
@@ -46,6 +55,6 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "Firmware for the Nitrokey FIDO2 device";
     homepage = "https://github.com/Nitrokey/nitrokey-fido2-firmware";
-    license = with licenses; [ asl20 mit ];
+    license = with licenses; [asl20 mit];
   };
 }

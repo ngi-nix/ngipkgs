@@ -1,5 +1,8 @@
-{ lib, stdenv, fetchFromGitHub }:
-
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+}:
 stdenv.mkDerivation rec {
   pname = "nitrokey-trng-rs232-firmware";
   version = "unstable-2022-05-16";
@@ -17,7 +20,7 @@ stdenv.mkDerivation rec {
     rm TRNGSerial.bin
   '';
 
-  makeFlags = [ "all" ];
+  makeFlags = ["all"];
 
   installPhase = ''
     runHook preInstall

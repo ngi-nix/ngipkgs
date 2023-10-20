@@ -1,5 +1,10 @@
-{ lib, stdenv, fetchFromGitHub, python3, srecord }:
-
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  python3,
+  srecord,
+}:
 stdenv.mkDerivation rec {
   pname = "nitrokey-pro-firmware";
   version = "0.15";
@@ -20,7 +25,7 @@ stdenv.mkDerivation rec {
     patchShebangs dapboot/libopencm3/scripts
   '';
 
-  nativeBuildInputs = [ python3 srecord ];
+  nativeBuildInputs = [python3 srecord];
 
   installPhase = ''
     runHook preInstall
