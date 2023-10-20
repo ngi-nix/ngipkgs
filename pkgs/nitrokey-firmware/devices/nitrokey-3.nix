@@ -1,5 +1,16 @@
-{ lib, rustPlatform, fetchFromGitHub, fetchpatch, cargo-binutils, flip-link, gcc-arm-embedded, llvmPackages, board ? "nk3xn", provisioner ? false, develop ? false }:
-
+{
+  lib,
+  rustPlatform,
+  fetchFromGitHub,
+  fetchpatch,
+  cargo-binutils,
+  flip-link,
+  gcc-arm-embedded,
+  llvmPackages,
+  board ? "nk3xn",
+  provisioner ? false,
+  develop ? false,
+}:
 rustPlatform.buildRustPackage rec {
   pname = "nitrokey-3-firmware";
   version = "unstable-2022-08-10";
@@ -13,7 +24,7 @@ rustPlatform.buildRustPackage rec {
 
   sourceRoot = "source/runners/lpc55";
 
-  nativeBuildInputs = [ cargo-binutils flip-link gcc-arm-embedded ];
+  nativeBuildInputs = [cargo-binutils flip-link gcc-arm-embedded];
 
   cargoLock = {
     lockFile = "${src}/runners/lpc55/Cargo.lock";
@@ -27,7 +38,7 @@ rustPlatform.buildRustPackage rec {
   dontCargoInstall = true;
   doCheck = false;
 
-  makeFlags = [ "objcopy" "BOARD=${board}" "PROVISIONER=${toString provisioner}" "DEVELOP=${toString develop}" ];
+  makeFlags = ["objcopy" "BOARD=${board}" "PROVISIONER=${toString provisioner}" "DEVELOP=${toString develop}"];
 
   "CC_thumbv8m.main-none-eabi" = "arm-none-eabi-gcc";
   LIBCLANG_PATH = "${llvmPackages.libclang.lib}/lib";
@@ -35,13 +46,17 @@ rustPlatform.buildRustPackage rec {
   installPhase = ''
     runHook preInstall
     mkdir $out
-    cp ${if provisioner then "provisioner" else "firmware"}-${board}${lib.optionalString develop "-develop"}.bin $out/
+    cp ${
+      if provisioner
+      then "provisioner"
+      else "firmware"
+    }-${board}${lib.optionalString develop "-develop"}.bin $out/
     runHook postInstall
   '';
 
   meta = with lib; {
     description = "Firmware for the Nitrokey 3 device";
     homepage = "https://github.com/Nitrokey/nitrokey-3-firmware";
-    license = with licenses; [ asl20 mit ];
+    license = with licenses; [asl20 mit];
   };
 }

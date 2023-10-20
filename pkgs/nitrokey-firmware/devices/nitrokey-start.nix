@@ -1,5 +1,8 @@
-{ lib, stdenv, fetchFromGitHub }:
-
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+}:
 stdenv.mkDerivation rec {
   pname = "nitrokey-start-firmware";
   version = "12";
@@ -18,7 +21,7 @@ stdenv.mkDerivation rec {
     patchShebangs configure
   '';
 
-  configurePlatforms = [ ]; # otherwise additional arguments are added to configureFlags
+  configurePlatforms = []; # otherwise additional arguments are added to configureFlags
   # from release/Makefile
   configureFlags = [
     "--target=NITROKEY_START-g"

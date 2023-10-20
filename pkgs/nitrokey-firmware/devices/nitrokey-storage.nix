@@ -1,5 +1,9 @@
-{ lib, stdenv, fetchzip, fetchFromGitHub }:
-let
+{
+  lib,
+  stdenv,
+  fetchzip,
+  fetchFromGitHub,
+}: let
   pname = "nitrokey-storage-firmware";
   version = "0.57";
 
@@ -38,33 +42,33 @@ let
       # it should be licensed under GPLv2+
       license = lib.licenses.gpl2Plus;
       description = "AVR32 toolchain";
-      platforms = [ "x86_64-linux" ];
+      platforms = ["x86_64-linux"];
     };
   };
 in
-stdenv.mkDerivation rec {
-  inherit pname version src;
+  stdenv.mkDerivation rec {
+    inherit pname version src;
 
-  sourceRoot = "source/src";
+    sourceRoot = "source/src";
 
-  postPatch = ''
-    substituteInPlace Makefile \
-      --replace '$(shell git describe)' "V${version}"
-  '';
+    postPatch = ''
+      substituteInPlace Makefile \
+        --replace '$(shell git describe)' "V${version}"
+    '';
 
-  makeFlags = [ "CC=${toolchain}/bin/avr32-gcc" "nitrokey-storage-V${version}-reproducible.hex" ];
+    makeFlags = ["CC=${toolchain}/bin/avr32-gcc" "nitrokey-storage-V${version}-reproducible.hex"];
 
-  enableParallelBuilding = true;
+    enableParallelBuilding = true;
 
-  installPhase = ''
-    runHook preInstall
-    install -D nitrokey-storage-V${version}-reproducible.hex $out/nitrokey-storage-V${version}-reproducible.hex
-    runHook postInstall
-  '';
+    installPhase = ''
+      runHook preInstall
+      install -D nitrokey-storage-V${version}-reproducible.hex $out/nitrokey-storage-V${version}-reproducible.hex
+      runHook postInstall
+    '';
 
-  meta = with lib; {
-    description = "Firmware for the Nitrokey Storage device";
-    homepage = "https://github.com/Nitrokey/nitrokey-storage-firmware";
-    license = licenses.gpl3Plus;
-  };
-}
+    meta = with lib; {
+      description = "Firmware for the Nitrokey Storage device";
+      homepage = "https://github.com/Nitrokey/nitrokey-storage-firmware";
+      license = licenses.gpl3Plus;
+    };
+  }
