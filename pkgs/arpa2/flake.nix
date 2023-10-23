@@ -29,8 +29,6 @@ rec {
 
     overlays = {
       arpa2-packages = import ./overlays/arpa2-packages inputs args;
-      arpa2-python-packages =
-        import ./overlays/arpa2-python-packages inputs args;
     };
 
     packages = forAllSystems (system: {
