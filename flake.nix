@@ -1,7 +1,7 @@
 {
   description = "NGIpkgs";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/master"; # FIXME: Change back to nixos-unstable once rosenpass has arrived.
   inputs.flake-utils.url = "github:numtide/flake-utils";
   # Set default system to `x86_64-linux`,
   # as we currently only support Linux.
@@ -39,6 +39,8 @@
             in
               mapAttrs (name: _:
                 pkgs.nixosTest (import (dir + "/${name}") {
+                  inherit pkgs;
+                  inherit (pkgs) lib;
                   modules = extendedModules;
                   configurations = importNixosConfigurations;
                 })) (readDir dir)
@@ -93,11 +95,15 @@
           ];
         };
         options = builtins.mapAttrs (name: _: dummy.options.services.${name} or {}) self.nixosModules;
+
+        packages = importPackages pkgs;
       in {
-        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations) // {
-         options = pkgs.runCommand "options.json" {
-            build = (pkgs.nixosOptionsDoc { inherit options; }).optionsJSON;
-          } "cp $build/share/doc/nixos/options.json $out";
+        packages = packages // (concatMapAttrs toplevel importNixosConfigurations) // {
+          meta = import ./meta.nix {
+            inherit options pkgs;
+            inherit (pkgs) lib;
+            self = packages;
+          };
         };
         formatter = treefmtEval.config.build.wrapper;
       };
@@ -151,7 +157,7 @@
           importNixosConfigurations;
 
         nixosModules =
-          (import ./modules/all-modules.nix)
+          (import ./modules/all-modules.nix "${nixpkgs}/nixos/modules")
           // {
             # The default module adds the default overlay on top of nixpkgs.
             # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
