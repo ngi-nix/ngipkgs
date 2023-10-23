@@ -1,6 +1,7 @@
 {
   configurations,
   modules,
+  ...
 }: {
   name = "pretalx tests";
 

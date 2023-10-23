@@ -39,6 +39,8 @@
             in
               mapAttrs (name: _:
                 pkgs.nixosTest (import (dir + "/${name}") {
+                  inherit pkgs;
+                  inherit (pkgs) lib;
                   modules = extendedModules;
                   configurations = importNixosConfigurations;
                 })) (readDir dir)

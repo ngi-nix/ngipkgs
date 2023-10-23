@@ -4,44 +4,44 @@
   nixosTests,
   rustPlatform,
   targetPlatform,
+  installShellFiles,
   cmake,
   libsodium,
   pkg-config,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rosenpass";
-  version = "0.2.0";
+  version = "unstable-2023-09-28";
+
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
-    rev = "v${version}";
-    hash = "sha256-r7/3C5DzXP+9w4rp9XwbP+/NK1axIP6s3Iiio1xRMbk=";
+    rev = "b15f17133f8b5c3c5175b4cfd4fc10039a4e203f";
+    hash = "sha256-UXAkmt4VY0irLK2k4t6SW+SEodFE3CbX5cFbsPG0ZCo=";
   };
 
-  cargoHash = "sha256-g2w3lZXQ3Kg3ydKdFs8P2lOPfIkfTbAF0MhxsJoX/E4=";
+  cargoHash = "sha256-N1DQHkgKgkDQ6DbgQJlpZkZ7AMTqX3P8R/cWr14jK2I=";
 
   nativeBuildInputs = [
     cmake # for oqs build in the oqs-sys crate
-    pkg-config # let libsodium-sys-stable find libsodium
+    pkg-config
     rustPlatform.bindgenHook # for C-bindings in the crypto libs
+    installShellFiles
   ];
 
   buildInputs = [libsodium];
 
-  # liboqs requires quite a lot of stack memory, thus we adjust
-  # Increase the default stack size picked for new threads (which is used
-  # by `cargo test`) to be _big enough_.
-  # Only set this value for the check phase (not as an environment variable for the derivation),
-  # because it is only required in this phase.
-  preCheck = "export RUST_MIN_STACK=${builtins.toString (8 * 1024 * 1024)}"; # 8 MiB
-
   # nix defaults to building for aarch64 _without_ the armv8-a
   # crypto extensions, but liboqs depends on these
-  preBuild =
-    lib.optionalString targetPlatform.isAarch
-    ''NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -march=armv8-a+crypto"'';
+  preBuild = lib.optionalString targetPlatform.isAarch64 ''
+    NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -march=armv8-a+crypto"
+  '';
 
-  preInstall = "install -D doc/rosenpass.1 $out/share/man/man1/rosenpass.1";
+  postInstall = ''
+    installManPage doc/rosenpass.1
+  '';
+
+  passthru.tests.rosenpass = nixosTests.rosenpass;
 
   meta = with lib; {
     description = "Build post-quantum-secure VPNs with WireGuard!";
@@ -53,15 +53,8 @@ rustPlatform.buildRustPackage rec {
       */
       asl20
     ];
-    platforms = platforms.all;
-    maintainers = with maintainers;
-      [
-        andresnav
-        imincik
-        lorenzleutgeb
-      ]
-      ++ (with (import ../../maintainers/maintainers-list.nix); [augustebaum kubaneko]);
+    maintainers = with maintainers; [wucke13];
+    platforms = ["aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux"];
+    mainProgram = "rosenpass";
   };
-
-  passthru.tests.rosenpass = nixosTests.rosenpass;
 }

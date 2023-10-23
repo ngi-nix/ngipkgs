@@ -1,9 +1,11 @@
 {
   configurations,
   modules,
+  pkgs,
+  lib,
+  ...
 }: let
   deviceName = "rp0";
-
   server = {
     ip = "fe80::1";
     wg = {
@@ -57,13 +59,14 @@ in {
         modules.rosenpass
       ];
 
-      boot.kernelModules = ["wireguard"];
-
       services.rosenpass = {
         enable = true;
-        publicKeyFile = etcPath config "rosenpass/pqpk";
-        secretKeyFile = sopsPath config "rosenpass/pqsk";
         defaultDevice = deviceName;
+        settings = {
+          verbosity = "Verbose";
+          public_key = etcPath config "rosenpass/pqpk";
+          secret_key = sopsPath config "rosenpass/pqsk";
+        };
       };
 
       networking.firewall.allowedUDPPorts = [9999];
@@ -87,10 +90,7 @@ in {
         };
       };
 
-      environment.etc."rosenpass/pqpk" = {
-        inherit (config.services.rosenpass) user group;
-        source = peer.rp.public;
-      };
+      environment.etc."rosenpass/pqpk".source = peer.rp.public;
 
       sops = {
         age.keyFile = ./keys.txt;
@@ -101,12 +101,7 @@ in {
               owner = "systemd-network";
               group = "systemd-network";
             };
-          "rosenpass/pqsk" =
-            peer.rp.secret
-            // {
-              inherit (config.services.rosenpass) group;
-              owner = config.services.rosenpass.user;
-            };
+          "rosenpass/pqsk" = peer.rp.secret;
         };
       };
     };
@@ -128,20 +123,17 @@ in {
         ];
       };
 
-      services.rosenpass = {
+      services.rosenpass.settings = {
         listen = ["0.0.0.0:9999"];
         peers = [
           {
-            publicKeyFile = etcPath config "rosenpass/peers/client/pqpk";
-            wireguard.publicKey = client.wg.public;
+            public_key = "/etc/rosenpass/peers/client/pqpk";
+            peer = client.wg.public;
           }
         ];
       };
 
-      environment.etc."rosenpass/peers/client/pqpk" = {
-        inherit (config.services.rosenpass) user group;
-        source = ./client/pqpk.bin;
-      };
+      environment.etc."rosenpass/peers/client/pqpk".source = ./client/pqpk.bin;
     };
     client = {config, ...}: {
       imports = [(shared client)];
@@ -156,35 +148,54 @@ in {
         }
       ];
 
-      services.rosenpass = {
-        peers = [
-          {
-            publicKeyFile = etcPath config "rosenpass/peers/server/pqpk";
-            endpoint = "server:9999";
-            wireguard.publicKey = server.wg.public;
-          }
-        ];
-      };
+      services.rosenpass.settings.peers = [
+        {
+          public_key = "/etc/rosenpass/peers/server/pqpk";
+          endpoint = "server:9999";
+          peer = server.wg.public;
+        }
+      ];
 
-      environment.etc."rosenpass/peers/server/pqpk" = {
-        inherit (config.services.rosenpass) user group;
-        source = ./server/pqpk.bin;
-      };
+      environment.etc."rosenpass/peers/server/pqpk".source = ./server/pqpk.bin;
     };
   };
 
   testScript = {nodes, ...}: ''
     start_all()
 
-    with subtest("rosenpass"):
-        server.wait_for_unit("rosenpass.service")
-        client.wait_for_unit("rosenpass.service")
+    for machine in [server, client]:
+        machine.wait_for_unit("rosenpass.service")
 
+    with subtest("ping"):
         client.succeed("ping -c 2 -i 0.5 ${server.ip}%${deviceName}")
 
+    with subtest("preshared-keys"):
         # Rosenpass works by setting the WireGuard preshared key at regular intervals.
         # Thus, if it is not active, then no key will be set, and the output of `wg show` will contain "none".
         # Otherwise, if it is active, then the key will be set and "none" will not be found in the output of `wg show`.
-        server.wait_until_succeeds("wg show all preshared-keys | grep --invert-match none", timeout=5)
+        for machine in [server, client]:
+            machine.wait_until_succeeds("wg show all preshared-keys | grep --invert-match none", timeout=5)
   '';
+
+  # NOTE: Below configuration is for "interactive" (=developing/debugging) only.
+  interactive.nodes = let
+    # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
+    # to provide a slightly nicer console, and while we're at it,
+    # also use a nice font.
+    # With kmscon, we can for example zoom in/out using [Ctrl] + [+]
+    # and [Ctrl] + [-]
+    niceConsoleAndAutologin.services.kmscon = {
+      enable = true;
+      autologinUser = "root";
+      fonts = [
+        {
+          name = "Fira Code";
+          package = pkgs.fira-code;
+        }
+      ];
+    };
+  in {
+    server = niceConsoleAndAutologin;
+    client = niceConsoleAndAutologin;
+  };
 }
