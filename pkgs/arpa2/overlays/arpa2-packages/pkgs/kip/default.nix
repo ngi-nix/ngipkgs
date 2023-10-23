@@ -1,7 +1,4 @@
 {
-  src,
-  pname,
-  version,
   stdenv,
   cmake,
   pkg-config,
@@ -24,6 +21,7 @@
   libressl,
   cacert,
   gnutls,
+  fetchFromGitLab,
 }: let
   python-with-packages =
     python3.withPackages
@@ -43,7 +41,15 @@
   });
 in
   stdenv.mkDerivation {
-    inherit src pname version;
+    pname = "kip";
+    version = "unstable-2021-07-27";
+
+    src = fetchFromGitLab {
+      owner = "arpa2";
+      repo = "kip";
+      rev = "7683e76368cfd432c740907f4d27592b1364b732";
+      hash = "sha256-SImz4ZzUXRmk4ZPbVjtUuRPqla8AiiVGa4HdSKVVI6g=";
+    };
 
     nativeBuildInputs = [cmake pkg-config cacert openssl libressl gnutls];
 

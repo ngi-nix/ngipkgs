@@ -1,7 +1,4 @@
 {
-  src,
-  pname,
-  version,
   stdenv,
   helpers,
   steamworks,
@@ -11,9 +8,18 @@
   libressl,
   lmdb,
   libuuid,
+  fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation {
-  inherit src pname version;
+helpers.mkArpa2Derivation rec {
+  pname = "steamworks-pulleyback";
+  version = "0.3.0";
+
+  src = fetchFromGitLab {
+    owner = "arpa2";
+    repo = "steamworks-pulleyback";
+    rev = "v${version}";
+    hash = "sha256-MtZDwWLcKVrNlNqhsT9tnT6qEpt2rR5S37UhHS232XI=";
+  };
 
   buildInputs = [steamworks lua doxygen graphviz libuuid];
 

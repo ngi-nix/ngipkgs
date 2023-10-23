@@ -1,7 +1,4 @@
 {
-  src,
-  pname,
-  version,
   stdenv,
   lib,
   helpers,
@@ -11,9 +8,18 @@
   sqlite,
   catch2,
   log4cpp,
+  fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation {
-  inherit src pname version;
+helpers.mkArpa2Derivation rec {
+  pname = "steamworks";
+  version = "0.97.2";
+
+  src = fetchFromGitLab {
+    owner = "arpa2";
+    repo = "steamworks";
+    rev = "v${version}";
+    hash = "sha256-hD1nTyv/t7MQdopqivfSE0o4Qk1ymG8zQVg56lY+t9o=";
+  };
 
   buildInputs = [
     openldap
