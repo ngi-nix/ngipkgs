@@ -21,7 +21,6 @@ rec {
   in {
     overlay = final: prev:
       nixpkgs.lib.composeManyExtensions [
-        args.poetry2nix.overlay
         self.overlays.arpa2-packages
       ]
       final
@@ -64,7 +63,6 @@ rec {
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/44881e03af1c730cbb1d72a4d41274a2c957813a";
-    poetry2nix.url = "github:nix-community/poetry2nix";
 
     flake-compat = {
       url = "github:edolstra/flake-compat";
