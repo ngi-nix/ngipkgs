@@ -4,6 +4,9 @@
   dream2nix,
   ...
 }: rec {
+  name = "autobase-${version}";
+  version = "1.0.0-alpha.9";
+
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
     dream2nix.modules.dream2nix.nodejs-granular-v3
@@ -42,7 +45,4 @@
   nodejs-package-lock-v3 = {
     packageLockFile = ./package-lock.json;
   };
-
-  name = "autobase-${version}";
-  version = "1.0.0-alpha.9";
 }
