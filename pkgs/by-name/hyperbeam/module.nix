@@ -4,6 +4,9 @@
   dream2nix,
   ...
 }: rec {
+  name = "hyperbeam-${version}";
+  version = "3.0.1";
+
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
     dream2nix.modules.dream2nix.nodejs-granular-v3
@@ -42,7 +45,4 @@
   nodejs-package-lock-v3 = {
     packageLockFile = ./package-lock.json;
   };
-
-  name = "hyperbeam-${version}";
-  version = "3.0.1";
 }
