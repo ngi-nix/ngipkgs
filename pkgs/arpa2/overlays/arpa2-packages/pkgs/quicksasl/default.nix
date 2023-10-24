@@ -1,7 +1,9 @@
 {
   pkg-config,
   stdenv,
-  helpers,
+  cmake,
+  arpa2cm,
+  arpa2common,
   quickmem,
   cyrus_sasl,
   quickder,
@@ -10,7 +12,7 @@
   e2fsprogs,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation rec {
+stdenv.mkDerivation rec {
   pname = "quicksasl";
   version = "0.11.0";
 
@@ -21,5 +23,5 @@ helpers.mkArpa2Derivation rec {
     hash = "sha256-z9kgKssuXq8qae9dTLP5REzkp1C4/jnJr7ydOavPWKM=";
   };
 
-  nativeBuildInputs = [libkrb5 quickmem cyrus_sasl quickder libev e2fsprogs pkg-config];
+  nativeBuildInputs = [cmake arpa2cm arpa2common libkrb5 quickmem cyrus_sasl quickder libev e2fsprogs pkg-config];
 }

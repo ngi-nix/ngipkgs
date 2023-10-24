@@ -1,11 +1,13 @@
 {
   stdenv,
-  helpers,
+  cmake,
+  arpa2cm,
+  arpa2common,
   quickder,
   gperf,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation rec {
+stdenv.mkDerivation rec {
   pname = "lillydap";
   version = "0.9.2";
 
@@ -16,5 +18,5 @@ helpers.mkArpa2Derivation rec {
     hash = "sha256-L2zmitXezGzDZXLDxohU3DTuHE18KUZEMg98ui2AF+c=";
   };
 
-  nativeBuildInputs = [quickder gperf];
+  nativeBuildInputs = [cmake arpa2cm arpa2common quickder gperf];
 }

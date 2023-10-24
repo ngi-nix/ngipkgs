@@ -1,13 +1,15 @@
 {
   stdenv,
   lib,
-  helpers,
+  cmake,
+  arpa2common,
+  arpa2cm,
   tlspool,
   qtbase,
   wrapQtAppsHook,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation rec {
+stdenv.mkDerivation rec {
   pname = "tlspool-gui";
   version = "0.0.6";
 
@@ -18,6 +20,6 @@ helpers.mkArpa2Derivation rec {
     hash = "sha256-87AY5GxIeDvsc9jrjam1aAYK+RQwhEgt+GO4TE4d6Js=";
   };
 
-  nativeBuildInputs = [tlspool wrapQtAppsHook];
+  nativeBuildInputs = [cmake arpa2common arpa2cm tlspool wrapQtAppsHook];
   buildInputs = [qtbase];
 }

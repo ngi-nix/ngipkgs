@@ -1,11 +1,13 @@
 {
   stdenv,
-  helpers,
+  cmake,
+  arpa2cm,
+  arpa2common,
   quickder,
   lillydap,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation {
+stdenv.mkDerivation {
   pname = "leaf";
   version = "unstable-2020-04-28";
 
@@ -16,5 +18,5 @@ helpers.mkArpa2Derivation {
     hash = "sha256-woEzlXyulVSpeJJQU0SsfC3U90cv3b9zzVh/w5iouJY=";
   };
 
-  nativeBuildInputs = [quickder lillydap];
+  nativeBuildInputs = [cmake arpa2cm arpa2common quickder lillydap];
 }

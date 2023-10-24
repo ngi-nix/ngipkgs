@@ -1,6 +1,8 @@
 {
   stdenv,
-  helpers,
+  cmake,
+  arpa2common,
+  arpa2cm,
   pkg-config,
   quickder,
   gnutls,
@@ -13,7 +15,7 @@
   openldap,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation rec {
+stdenv.mkDerivation rec {
   pname = "tlspool";
   version = "0.9.6";
 
@@ -24,5 +26,5 @@ helpers.mkArpa2Derivation rec {
     hash = "sha256-cscA7204nONYyuthDoVOlVwN1AW2EtvSamXpqjAAaqY=";
   };
 
-  nativeBuildInputs = [quickder gnutls db ldns libtasn1 p11-kit unbound libkrb5 openldap pkg-config];
+  nativeBuildInputs = [cmake arpa2common arpa2cm quickder gnutls db ldns libtasn1 p11-kit unbound libkrb5 openldap pkg-config];
 }

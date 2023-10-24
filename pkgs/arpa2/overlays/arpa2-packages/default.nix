@@ -1,7 +1,5 @@
 inputs: sources: final: prev:
 with final.pkgs; rec {
-  helpers = import ./lib {inherit (final) pkgs stdenv lib;};
-
   steamworks = callPackage ./pkgs/steamworks {};
 
   steamworks-pulleyback = callPackage ./pkgs/steamworks-pulleyback {};

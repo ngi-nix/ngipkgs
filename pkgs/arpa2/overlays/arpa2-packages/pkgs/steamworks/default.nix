@@ -1,7 +1,9 @@
 {
   stdenv,
   lib,
-  helpers,
+  cmake,
+  arpa2cm,
+  arpa2common,
   openldap,
   flex,
   bison,
@@ -10,7 +12,7 @@
   log4cpp,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation rec {
+stdenv.mkDerivation rec {
   pname = "steamworks";
   version = "0.97.2";
 
@@ -20,6 +22,8 @@ helpers.mkArpa2Derivation rec {
     rev = "v${version}";
     hash = "sha256-hD1nTyv/t7MQdopqivfSE0o4Qk1ymG8zQVg56lY+t9o=";
   };
+
+  nativeBuildInputs = [cmake arpa2cm arpa2common];
 
   buildInputs = [
     openldap

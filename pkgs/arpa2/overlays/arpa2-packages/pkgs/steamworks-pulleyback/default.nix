@@ -1,6 +1,8 @@
 {
   stdenv,
-  helpers,
+  cmake,
+  arpa2common,
+  arpa2cm,
   steamworks,
   lua,
   doxygen,
@@ -10,7 +12,7 @@
   libuuid,
   fetchFromGitLab,
 }:
-helpers.mkArpa2Derivation rec {
+stdenv.mkDerivation rec {
   pname = "steamworks-pulleyback";
   version = "0.3.0";
 
@@ -20,6 +22,8 @@ helpers.mkArpa2Derivation rec {
     rev = "v${version}";
     hash = "sha256-MtZDwWLcKVrNlNqhsT9tnT6qEpt2rR5S37UhHS232XI=";
   };
+
+  nativeBuildInputs = [cmake arpa2common arpa2cm];
 
   buildInputs = [steamworks lua doxygen graphviz libuuid];
 
