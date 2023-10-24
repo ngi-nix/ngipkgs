@@ -1,0 +1,17 @@
+name: Migration
+description: You're migrating a repository.
+title: Migrate `NAME_OF_REPO (as in github.com/ngi-nix/NAME_OF_REPO)`
+labels: migration
+assignees: []
+body:
+ - type: input
+   id: url
+   attributes:
+     label: Repository URL
+     description: Full URL to the repository that you are migrating.
+     placeholder: https://github.com/ngi-nix/example
+ - type: textarea
+   id: notes
+   attributes:
+     label: Notes
+     description: Any further notes regarding the migration.
