@@ -1,0 +1,22 @@
+{
+  "name": "mcaptcha",
+  "version": "0.1.0",
+  "description": "mCaptcha CAPTCHA service's API",
+  "main": "index.js",
+  "scripts": {
+    "build": "redocly bundle openapi.yaml --output dist/openapi.yaml",
+    "clean": "rm -r dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mCaptcha/mCaptcha.git"
+  },
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/mCaptcha/mCaptcha/issues"
+  },
+  "homepage": "https://github.com/mCaptcha/mCaptcha#readme",
+  "devDependencies": {
+    "@redocly/cli": "^1.0.0-beta.129"
+  }
+}
