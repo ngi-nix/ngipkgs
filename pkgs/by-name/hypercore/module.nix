@@ -3,7 +3,7 @@
   config,
   dream2nix,
   ...
-}: {
+}: rec {
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
     dream2nix.modules.dream2nix.nodejs-granular-v3
@@ -13,7 +13,7 @@
     src = config.deps.fetchFromGitHub {
       owner = "holepunchto";
       repo = "hypercore";
-      rev = "v10.28.11";
+      rev = "v${version}";
       sha256 = "sha256-u8gpe0t/ljkYQYvC6H1G1IXQgr4pVdonyiYuMJ5P4lo=";
     };
 
@@ -21,6 +21,12 @@
     checkPhase = ''
       npm run test
     '';
+
+    meta = with lib; {
+      description = "Hypercore is a secure, distributed append-only log.";
+      homepage = "https://github.com/holepunchto/autobase";
+      license = licenses.mit;
+    };
   };
 
   deps = {nixpkgs, ...}: {
@@ -37,6 +43,6 @@
     packageLockFile = ./package-lock.json;
   };
 
-  name = "hypercore";
-  version = "v10.28.11";
+  name = "hypercore-${version}";
+  version = "10.28.11";
 }

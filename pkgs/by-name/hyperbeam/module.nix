@@ -3,7 +3,7 @@
   config,
   dream2nix,
   ...
-}: {
+}: rec {
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
     dream2nix.modules.dream2nix.nodejs-granular-v3
@@ -13,7 +13,7 @@
     src = config.deps.fetchFromGitHub {
       owner = "holepunchto";
       repo = "hyperbeam";
-      rev = "v3.0.1";
+      rev = "v${version}";
       sha256 = "sha256-2JiVJmfhhE4ntb1lTtqqi5RD44hhGGAwnc5Nw0HLBcw=";
     };
 
@@ -21,6 +21,12 @@
     checkPhase = ''
       npm run test
     '';
+
+    meta = with lib; {
+      description = "A 1-1 end-to-end encrypted internet pipe powered by Hyperswarm";
+      homepage = "https://github.com/holepunchto/hyperbeam";
+      license = licenses.mit;
+    };
   };
 
   deps = {nixpkgs, ...}: {
@@ -37,6 +43,6 @@
     packageLockFile = ./package-lock.json;
   };
 
-  name = "hyperbeam";
-  version = "v3.0.1";
+  name = "hyperbeam-${version}";
+  version = "3.0.1";
 }

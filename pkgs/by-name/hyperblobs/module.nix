@@ -3,7 +3,7 @@
   config,
   dream2nix,
   ...
-}: {
+}: rec {
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
     dream2nix.modules.dream2nix.nodejs-granular-v3
@@ -13,7 +13,7 @@
     src = config.deps.fetchFromGitHub {
       owner = "holepunchto";
       repo = "hyperblobs";
-      rev = "v2.3.3";
+      rev = "v${version}";
       sha256 = "sha256-ybC6X/3zluoIRcoEtUD+zi6u5OWHaRCMPimK1kznIGk=";
     };
 
@@ -21,6 +21,12 @@
     checkPhase = ''
       npm run test
     '';
+
+    meta = with lib; {
+      description = "A blob store for Hypercore";
+      homepage = "https://github.com/holepunchto/hyperblobs";
+      license = licenses.asl20;
+    };
   };
 
   deps = {nixpkgs, ...}: {
@@ -37,6 +43,6 @@
     packageLockFile = ./package-lock.json;
   };
 
-  name = "hyperblobs";
-  version = "v2.3.3";
+  name = "hyperblobs-${version}";
+  version = "2.3.3";
 }

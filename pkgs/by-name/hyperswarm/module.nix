@@ -3,7 +3,7 @@
   config,
   dream2nix,
   ...
-}: {
+}: rec {
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
     dream2nix.modules.dream2nix.nodejs-granular-v3
@@ -13,7 +13,7 @@
     src = config.deps.fetchFromGitHub {
       owner = "holepunchto";
       repo = "hyperswarm";
-      rev = "v4.7.3";
+      rev = "v${version}";
       sha256 = "sha256-VjRPTsgkc2179ZRS2wAtXlf20jmaPbtyrwcFgG7+N5A=";
     };
 
@@ -21,6 +21,12 @@
     checkPhase = ''
       npm run test
     '';
+
+    meta = with lib; {
+      description = "A distributed networking stack for connecting peers.";
+      homepage = "https://github.com/holepunchto/hyperswarm";
+      license = licenses.mit;
+    };
   };
 
   deps = {nixpkgs, ...}: {
@@ -37,6 +43,6 @@
     packageLockFile = ./package-lock.json;
   };
 
-  name = "hyperswarm";
-  version = "v4.7.3";
+  name = "hyperswarm-${version}";
+  version = "4.7.3";
 }
