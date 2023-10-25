@@ -46,15 +46,19 @@
                 })) (readDir dir)
           );
         callPackage = pkgs.newScope (
-          result // {inherit callPackage nixosTests;}
+          allPackages // {inherit callPackage nixosTests;}
         );
-        args = {
+        pkgsByName = import ./pkgs/by-name {
           inherit (pkgs) lib;
           inherit callPackage;
         };
-        result = (import ./pkgs/by-name args) // (import ./pkgs args);
+        explicitPkgs = import ./pkgs {
+          inherit (pkgs) lib;
+          inherit callPackage;
+        };
+        allPackages = pkgsByName // explicitPkgs;
       in
-        result;
+        allPackages;
 
       importNixpkgs = system: overlays:
         import nixpkgs {
