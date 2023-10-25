@@ -15,4 +15,4 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
         with:
           upstream-cache: https://ngi.cachix.org/
-      - run: nix flake check
+      - run: nix flake check --print-build-logs
