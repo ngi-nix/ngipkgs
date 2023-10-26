@@ -31,74 +31,6 @@
         "type": "github"
       }
     },
-    "freeDiameter-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1602305907,
-        "narHash": "sha256-hd71wR4b/pnAUcd2U4/InmubCAqkKUZeZTBrGTV3FSY=",
-        "owner": "freeDiameter",
-        "repo": "freeDiameter",
-        "rev": "8ac823b77653a03da82232470b376c2b281b0973",
-        "type": "github"
-      },
-      "original": {
-        "owner": "freeDiameter",
-        "ref": "1.5.0",
-        "repo": "freeDiameter",
-        "type": "github"
-      }
-    },
-    "kip-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1627382481,
-        "narHash": "sha256-SImz4ZzUXRmk4ZPbVjtUuRPqla8AiiVGa4HdSKVVI6g=",
-        "owner": "arpa2",
-        "repo": "kip",
-        "rev": "7683e76368cfd432c740907f4d27592b1364b732",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "master",
-        "repo": "kip",
-        "type": "gitlab"
-      }
-    },
-    "leaf-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1588106772,
-        "narHash": "sha256-woEzlXyulVSpeJJQU0SsfC3U90cv3b9zzVh/w5iouJY=",
-        "owner": "arpa2",
-        "repo": "leaf",
-        "rev": "b3861efce0ba143f6eb5451aac5be24f18e6d8ab",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "master",
-        "repo": "leaf",
-        "type": "gitlab"
-      }
-    },
-    "lillydap-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1588631263,
-        "narHash": "sha256-L2zmitXezGzDZXLDxohU3DTuHE18KUZEMg98ui2AF+c=",
-        "owner": "arpa2",
-        "repo": "lillydap",
-        "rev": "7dd28599dad7068d0f373f01f4bb106fd14deca6",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.9.2",
-        "repo": "lillydap",
-        "type": "gitlab"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1697886341,
@@ -149,105 +81,11 @@
         "type": "github"
       }
     },
-    "quicksasl-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1627185159,
-        "narHash": "sha256-z9kgKssuXq8qae9dTLP5REzkp1C4/jnJr7ydOavPWKM=",
-        "owner": "arpa2",
-        "repo": "quick-sasl",
-        "rev": "9b7981254e14e53c41a118193ca550d503a46cba",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.11.0",
-        "repo": "quick-sasl",
-        "type": "gitlab"
-      }
-    },
     "root": {
       "inputs": {
         "flake-compat": "flake-compat",
-        "freeDiameter-src": "freeDiameter-src",
-        "kip-src": "kip-src",
-        "leaf-src": "leaf-src",
-        "lillydap-src": "lillydap-src",
         "nixpkgs": "nixpkgs",
-        "poetry2nix": "poetry2nix",
-        "quicksasl-src": "quicksasl-src",
-        "steamworks-pulleyback-src": "steamworks-pulleyback-src",
-        "steamworks-src": "steamworks-src",
-        "tlspool-gui-src": "tlspool-gui-src",
-        "tlspool-src": "tlspool-src"
-      }
-    },
-    "steamworks-pulleyback-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1629005270,
-        "narHash": "sha256-MtZDwWLcKVrNlNqhsT9tnT6qEpt2rR5S37UhHS232XI=",
-        "owner": "arpa2",
-        "repo": "steamworks-pulleyback",
-        "rev": "41cb49b697d4a3af443d281b235f1327933d0792",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.3.0",
-        "repo": "steamworks-pulleyback",
-        "type": "gitlab"
-      }
-    },
-    "steamworks-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1627597248,
-        "narHash": "sha256-hD1nTyv/t7MQdopqivfSE0o4Qk1ymG8zQVg56lY+t9o=",
-        "owner": "arpa2",
-        "repo": "steamworks",
-        "rev": "93935c899cd14b7659af0dbca05c776f7dc85ff4",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.97.2",
-        "repo": "steamworks",
-        "type": "gitlab"
-      }
-    },
-    "tlspool-gui-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1588676874,
-        "narHash": "sha256-87AY5GxIeDvsc9jrjam1aAYK+RQwhEgt+GO4TE4d6Js=",
-        "owner": "arpa2",
-        "repo": "tlspool-gui",
-        "rev": "371858d5b19d0d32ef12c13dd1284a9560f47f9d",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.0.6",
-        "repo": "tlspool-gui",
-        "type": "gitlab"
-      }
-    },
-    "tlspool-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1625046693,
-        "narHash": "sha256-cscA7204nONYyuthDoVOlVwN1AW2EtvSamXpqjAAaqY=",
-        "owner": "arpa2",
-        "repo": "tlspool",
-        "rev": "dcfea4f6e504b9109d7f2300261a38d85db05025",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "arpa2",
-        "ref": "v0.9.6",
-        "repo": "tlspool",
-        "type": "gitlab"
+        "poetry2nix": "poetry2nix"
       }
     }
   },
