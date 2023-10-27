@@ -56,5 +56,6 @@ stdenv.mkDerivation rec {
     description = "Firmware for the Nitrokey FIDO2 device";
     homepage = "https://github.com/Nitrokey/nitrokey-fido2-firmware";
     license = with licenses; [asl20 mit];
+    broken = true;
   };
 }

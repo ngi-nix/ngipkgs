@@ -1,7 +1,6 @@
 {
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:sbruder/nixpkgs/polkit-cross-fix";
+    nixpkgs.url = "github:nixos/nixpkgs/8b5ab8341e33322e5b66fb46ce23d724050f6606";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 

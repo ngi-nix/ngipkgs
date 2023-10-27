@@ -58,5 +58,6 @@ rustPlatform.buildRustPackage rec {
     description = "Firmware for the Nitrokey 3 device";
     homepage = "https://github.com/Nitrokey/nitrokey-3-firmware";
     license = with licenses; [asl20 mit];
+    broken = true;
   };
 }
