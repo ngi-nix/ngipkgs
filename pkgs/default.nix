@@ -30,6 +30,7 @@
       ;
 
     libresoc = rec {
+      libresoc-nmutil = callPackage ./libresoc/libresoc-nmutil.nix {};
       openpower-isa = callPackage ./libresoc/openpower-isa.nix {inherit power-instruction-analyzer libresoc-nmutil;};
     };
   };
