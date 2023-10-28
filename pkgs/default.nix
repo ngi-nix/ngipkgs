@@ -28,6 +28,10 @@
       pretalx-venueless
       pretalx-public-voting
       ;
+
+    libresoc = rec {
+      openpower-isa = callPackage ./libresoc/openpower-isa.nix {inherit power-instruction-analyzer libresoc-nmutil;};
+    };
   };
 in
   self
