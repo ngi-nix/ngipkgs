@@ -1,0 +1,28 @@
+diff --git a/sat_tmp/wokkel/test/test_pubsub.py b/sat_tmp/wokkel/test/test_pubsub.py
+index 1fd44bf..d6462e7 100644
+--- a/sat_tmp/wokkel/test/test_pubsub.py
++++ b/sat_tmp/wokkel/test/test_pubsub.py
+@@ -18,7 +18,7 @@ from wokkel import data_form, disco, iwokkel, shim
+ from wokkel.generic import parseXml
+ from wokkel.test.helpers import TestableRequestHandlerMixin, XmlStreamStub
+ 
+-from sat.tmp.wokkel import pubsub
++from sat_tmp.wokkel import pubsub
+ 
+ NS_PUBSUB = 'http://jabber.org/protocol/pubsub'
+ NS_PUBSUB_NODE_CONFIG = 'http://jabber.org/protocol/pubsub#node_config'
+diff --git a/sat_tmp/wokkel/test/test_rsm.py b/sat_tmp/wokkel/test/test_rsm.py
+index e3db0d3..d4c07be 100644
+--- a/sat_tmp/wokkel/test/test_rsm.py
++++ b/sat_tmp/wokkel/test/test_rsm.py
+@@ -17,8 +17,8 @@ from wokkel.generic import parseXml
+ from wokkel import iwokkel
+ from wokkel.test.helpers import XmlStreamStub, TestableRequestHandlerMixin
+ 
+-from sat.tmp.wokkel import pubsub
+-from sat.tmp.wokkel.rsm import NS_RSM, RSMRequest, RSMResponse, PubSubClient, PubSubService
++from sat_tmp.wokkel import pubsub
++from sat_tmp.wokkel.rsm import NS_RSM, RSMRequest, RSMResponse, PubSubClient, PubSubService
+ 
+ import uuid
+ 
