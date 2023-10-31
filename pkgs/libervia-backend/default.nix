@@ -2,6 +2,8 @@
   lib,
   fetchhg,
   python3,
+  sat-tmp,
+  wokkel
 }:
 python3.pkgs.buildPythonApplication {
   pname = "libervia-backend";
@@ -16,32 +18,27 @@ python3.pkgs.buildPythonApplication {
 
   buildInputs = with python3.pkgs; [
     hatchling
+    sat-tmp
+    wokkel
+  ];
+
+  propagatedBuildInputs = with python3.pkgs; [
+    alembic
+    lxml
+    pyxdg
+    shortuuid
+    twisted.optional-dependencies.tls
   ];
 
   nativeCheckInputs = with python3.pkgs; [
     pytestCheckHook
     aiosmtpd
-    twisted
-    # FIXME: The version of the `sh` Python package is not correct
-    sh
   ];
 
-  # FIXME: The version of the `sh` Python package is not correct
-  # See <https://github.com/ngi-nix/ngipkgs/issues/87>
-  doCheck = true;
-
-  #disabledTestsPaths = ["tests/e2e/*"];
+  # Ignoring end-to-end tests because they run in Docker containers
   pytestFlagsArray = [
-    "tests/"
     "--ignore=tests/e2e"
   ];
-
-  # passthru = {
-  #   python = python3;
-  #   PYTHONPATH = "${python3.pkgs.makePythonPath propagatedBuildInputs}:${pretalx.outPath}/${python3.sitePackages}";
-
-  #   tests.pretalx = nixosTests.pretalx;
-  # };
 
   meta = with lib; {
     description = "An XMPP client with multiple frontends";

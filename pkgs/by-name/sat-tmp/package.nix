@@ -29,6 +29,10 @@ in
         wokkel
       ];
 
+    propagatedBuildInputs = with python3.pkgs; [
+      python-dateutil
+    ];
+
     nativeCheckInputs = with python3.pkgs; [
       pytestCheckHook
     ];
