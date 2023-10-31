@@ -28,6 +28,8 @@
       pretalx-venueless
       pretalx-public-voting
       ;
+
+    libervia-backend = callPackage ./libervia-backend {};
   };
 in
   self
