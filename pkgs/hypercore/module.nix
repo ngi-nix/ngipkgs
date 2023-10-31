@@ -29,6 +29,7 @@
       description = "Hypercore is a secure, distributed append-only log.";
       homepage = "https://github.com/holepunchto/autobase";
       license = licenses.mit;
+      broken = true;
     };
   };
 
