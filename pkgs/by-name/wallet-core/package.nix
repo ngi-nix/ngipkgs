@@ -6,9 +6,13 @@
   nodejs,
   nodePackages,
   python3,
-  zip
+  zip,
 }: let
-  pnpm7 = ;
+  nixpkgs-22_11 = import (fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/nixos-22.11.tar.gz";
+    sha256 = "sha256:1xi53rlslcprybsvrmipm69ypd3g3hr7wkxvzc73ag8296yclyll";
+  }) {system = "x86_64-linux";};
+  pnpm7 = nixpkgs-22_11.nodePackages.pnpm;
 
   version = "0.9.2";
 in
@@ -25,7 +29,7 @@ in
     buildInputs = [
       jq
       nodejs
-      nodePackages.pnpm
+      pnpm7
       python3
       zip
     ];
