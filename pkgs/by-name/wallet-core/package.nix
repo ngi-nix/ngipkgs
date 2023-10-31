@@ -8,6 +8,8 @@
   python3,
   zip
 }: let
+  pnpm7 = ;
+
   version = "0.9.2";
 in
   stdenv.mkDerivation {
