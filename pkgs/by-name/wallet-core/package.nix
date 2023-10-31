@@ -1,7 +1,12 @@
 {
   fetchgit,
   lib,
-  stdenv
+  stdenv,
+  jq,
+  nodejs,
+  nodePackages,
+  python3,
+  zip
 }: let
   version = "0.9.2";
 in
@@ -14,6 +19,18 @@ in
       rev = "v${version}";
       hash = "sha256-DTnwj/pkowR1b1+N94pnuLykD2O37Nh8AKhUIzY7NaU=";
     };
+
+    buildInputs = [
+      jq
+      nodejs
+      nodePackages.pnpm
+      python3
+      zip
+    ];
+
+    configurePhase = ''
+      build-system/taler-build-scripts/configure
+    '';
 
     meta = with lib; {
       description = "GNU Taler wallet core";
