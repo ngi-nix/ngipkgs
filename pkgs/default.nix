@@ -1,6 +1,7 @@
 {
   lib,
   callPackage,
+  inputs,
 }: let
   self = rec {
     # LiberaForms is intentionally disabled.
@@ -27,6 +28,18 @@
       pretalx-pages
       pretalx-venueless
       pretalx-public-voting
+      ;
+
+    # Broken packages:
+    # - nitrokey-3
+    # - nitrokey-fido2
+
+    inherit
+      (lib.recurseIntoAttrs (callPackage ./nitrokey-firmware {inherit inputs;}))
+      nitrokey-storage
+      nitrokey-pro
+      nitrokey-start
+      nitrokey-trng-rs232
       ;
   };
 in

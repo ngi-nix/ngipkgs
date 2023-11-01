@@ -10,6 +10,9 @@
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
   inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -20,7 +23,7 @@
     treefmt-nix,
     sops-nix,
     ...
-  }:
+  } @ inputs:
     with builtins; let
       inherit
         (nixpkgs.lib)
@@ -50,7 +53,7 @@
           inherit (pkgs) lib;
           inherit callPackage;
         };
-        result = (import ./pkgs/by-name args) // (import ./pkgs args);
+        result = (import ./pkgs/by-name args) // (import ./pkgs (args // {inherit inputs;}));
       in
         result;
 
