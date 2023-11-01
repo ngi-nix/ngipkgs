@@ -100,6 +100,9 @@
         linuxSystem = "x86_64-linux";
         pkgs = importNixpkgs linuxSystem [self.overlays.default];
         treefmtEval = loadTreefmt pkgs;
+        nonBrokenPkgs =
+          nixpkgs.lib.attrsets.filterAttrs (_: v: !v.meta.broken)
+          self.packages.${linuxSystem};
       in {
         # Github Actions executes `nix flake check` therefore this output
         # should only contain derivations that can built within CI.
@@ -107,7 +110,7 @@
         checks.${linuxSystem} =
           # For `nix flake check` to *build* all packages, because by default
           # `nix flake check` only evaluates packages and does not build them.
-          self.packages.${linuxSystem}
+          nonBrokenPkgs
           // {
             formatting = treefmtEval.config.build.check self;
           };
@@ -115,14 +118,13 @@
         # To generate a Hydra jobset for CI builds of all packages and tests.
         # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
         hydraJobs = let
-          packages = self.packages.${linuxSystem};
           passthruTests = concatMapAttrs (name: value:
             if value ? passthru.tests
             then {${name} = value.passthru.tests;}
             else {})
-          packages;
+          nonBrokenPkgs;
         in {
-          packages.${linuxSystem} = packages;
+          packages.${linuxSystem} = nonBrokenPkgs;
           tests.${linuxSystem} = passthruTests;
         };
       })
