@@ -5,13 +5,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "nitrokey-start-firmware";
-  version = "12";
+  version = "13";
 
   src = fetchFromGitHub {
     owner = "Nitrokey";
     repo = pname;
     rev = "RTM.${version}";
-    sha256 = "sha256-7vFAp+rYvIcq2tfNha94YsYvQPqMgBVk2OYGoHxbdNQ=";
+    hash = "sha256-POW1d/fgOyYa7127FSTCtHGyMWYzKW0qqA1WUyvNc3w=";
     fetchSubmodules = true;
   };
 

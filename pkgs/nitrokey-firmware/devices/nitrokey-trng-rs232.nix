@@ -5,13 +5,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "nitrokey-trng-rs232-firmware";
-  version = "unstable-2022-05-16";
+  version = "1.0.0";
 
   src = fetchFromGitHub {
     owner = "Nitrokey";
     repo = pname;
-    rev = "50c83c93d1e4021695759b2949e6bbfba2e1867e";
-    sha256 = "sha256-6B87l56j/a+VJSSt5aNkm3DXjnlQGscKPGV2BM7IKNw=";
+    rev = "v${version}";
+    hash = "sha256-6B87l56j/a+VJSSt5aNkm3DXjnlQGscKPGV2BM7IKNw=";
   };
 
   sourceRoot = "source/src";
