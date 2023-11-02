@@ -1,5 +1,5 @@
 final: prev: {
-  nitrokey-3 = prev.callPackage ./devices/nitrokey-3.nix (
+  nitrokey-3 = prev.callPackage ./devices/nitrokey-3 (
     let
       rust = prev.rust-bin.stable.latest.default.override {
         extensions = ["llvm-tools-preview"];
