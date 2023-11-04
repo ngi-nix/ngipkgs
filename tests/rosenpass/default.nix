@@ -56,7 +56,6 @@ in {
       imports = [
         modules.default
         modules.sops-nix
-        modules.rosenpass
       ];
 
       services.rosenpass = {
