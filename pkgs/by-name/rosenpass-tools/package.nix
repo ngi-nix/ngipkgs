@@ -1,7 +1,8 @@
 {
   lib,
-  makeWrapper,
   stdenv,
+  makeWrapper,
+  installShellFiles,
   coreutils,
   findutils,
   gawk,
@@ -9,27 +10,28 @@
   wireguard-tools,
 }:
 stdenv.mkDerivation {
-  pname = "rosenpass-tools";
   inherit (rosenpass) version src;
+  pname = "rosenpass-tools";
 
-  nativeBuildInputs = [makeWrapper];
+  nativeBuildInputs = [makeWrapper installShellFiles];
 
-  postInstall = let
-    rpDependencies = [
+  postInstall = ''
+    install -D $src/rp $out/bin/rp
+    installManPage $src/doc/rp.1
+    wrapProgram $out/bin/rp \
+      --prefix PATH : ${lib.makeBinPath [
       coreutils
       findutils
       gawk
       rosenpass
       wireguard-tools
-    ];
-  in ''
-    install -D $src/rp $out/bin/rp
-    install -D $src/doc/rp.1 $out/share/man/man1/rp.1
-    wrapProgram $out/bin/rp --prefix PATH : ${lib.makeBinPath rpDependencies}
+    ]}
   '';
 
-  meta = {
-    inherit (rosenpass.meta) homepage license maintainers;
-    description = rosenpass.meta.description + " This package contains `rp`, which is a script that wraps the `rosenpass` binary.";
-  };
+  meta =
+    rosenpass.meta
+    // {
+      description = "This package contains the Rosenpass tool `rp`, which is a script that wraps the `rosenpass` binary.";
+      mainProgram = "rp";
+    };
 }

@@ -16,6 +16,7 @@ php.buildComposerProject (finalAttrs: {
   };
 
   composerLock = ./composer.lock;
+  composerStrictValidation = false;
   vendorHash = "sha256-G/EPHcvcppuyAC0MAzE11ZjlOSTlphQrHnO3yS4+j5g=";
 
   meta = {
