@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    poetry2nix.url = "github:nix-community/poetry2nix/master";
+    poetry2nix.url = "github:nix-community/poetry2nix";
     poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
     weblate.url = "github:WeblateOrg/weblate/weblate-5.0.2";
     weblate.flake = false;
@@ -15,14 +15,14 @@
     let
       pkgs = import nixpkgs {
         system = "x86_64-linux";
-        overlays = [ poetry2nix.overlay ];
       };
+      poetry2nix_instanciated = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
     in
     {
 
       packages.x86_64-linux.default = self.packages.x86_64-linux.weblate;
 
-      packages.x86_64-linux.weblate = (pkgs.poetry2nix.mkPoetryApplication {
+      packages.x86_64-linux.weblate = (poetry2nix_instanciated.mkPoetryApplication {
         src = weblate;
         pyproject = ./pyproject.toml;
         poetrylock = ./poetry.lock;
@@ -41,7 +41,7 @@
           license = licenses.gpl3Plus;
           maintainers = with maintainers; [ erictapen ];
         };
-        overrides = pkgs.poetry2nix.overrides.withDefaults (
+        overrides = poetry2nix_instanciated.overrides.withDefaults (
           self: super: {
             aeidon = super.aeidon.overridePythonAttrs (old: {
               src = aeidon-src;
@@ -56,10 +56,6 @@
             });
             phply = super.phply.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
-            });
-            pycairo = super.pycairo.overridePythonAttrs (old: {
-              # See: https://discourse.nixos.org/t/nix-flake-direnv-fails-to-build-pycairo/26639/6
-              nativeBuildInputs = [ self.meson pkgs.buildPackages.pkg-config ];
             });
             pygobject = super.pygobject.overridePythonAttrs (old: {
               nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ self.setuptools ];
