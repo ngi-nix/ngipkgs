@@ -190,6 +190,10 @@ in
         assertion = cfg.smtp.createLocally -> cfg.smtp.host == "127.0.0.1";
         message = ''services.weblate.smtp.host should be "127.0.0.1" if you want to to use services.weblate.smtp.createLocally.'';
       }
+      {
+        assertion = builtins.compareVersions config.services.postgresql.package.version "15.0" == -1;
+        message = "Weblate doesn't work with PostgreSQL 15 and higher right now (currently ${config.services.postgresql.package.version}). This is a bug in the NixOS module, so feel free to open a PR.";
+      }
     ];
 
     services.nginx = {

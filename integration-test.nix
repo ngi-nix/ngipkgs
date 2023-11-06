@@ -17,6 +17,8 @@ in
   nodes.server = { config, pkgs, lib, ... }: {
     virtualisation.memorySize = 2048;
 
+    services.postgresql.package = pkgs.postgresql_14;
+
     imports = [ weblateModule ];
 
     services.weblate = {
