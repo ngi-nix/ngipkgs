@@ -123,11 +123,11 @@
             );
             ahocorasick-rs = super.ahocorasick-rs.overridePythonAttrs (
               old: {
-                nativeBuildInputs = (old.nativeBuildInputs or []) ++ [
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
                   pkgs.rustPlatform.maturinBuildHook
-            pkgs.rustPlatform.cargoSetupHook
+                  pkgs.rustPlatform.cargoSetupHook
 
-		  ];
+                ];
                 cargoDeps = pkgs.rustPlatform.fetchCargoTarball {
                   inherit (old) src;
                   name = "${old.pname}-${old.version}";
