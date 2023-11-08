@@ -7,11 +7,16 @@
   gcc-arm-embedded,
   llvmPackages,
   python3,
+  git,
   board ? "nk3xn",
 }:
 rustPlatform.buildRustPackage rec {
   pname = "nitrokey-3-firmware";
   version = "1.5.0";
+
+  # without this the build errors with
+  # note: rust-lld: error: unknown argument '-Wl,--undefined=AUDITABLE_VERSION_INFO'
+  auditable = false;
 
   src = fetchFromGitHub {
     owner = "Nitrokey";
@@ -21,6 +26,7 @@ rustPlatform.buildRustPackage rec {
   };
 
   nativeBuildInputs = [
+    git
     cargo-binutils
     flip-link
     gcc-arm-embedded
