@@ -13,23 +13,26 @@
     packages = {
       x86_64-linux = let
         system = "x86_64-linux";
-        overlays = [rust-overlay.overlays.default];
         pkgs = import nixpkgs {
-          inherit system overlays;
+          inherit system;
+        };
+        pkgsWithRust = import nixpkgs {
+          inherit system;
+          overlays = [rust-overlay.overlays.default];
         };
         pkgsArm = import nixpkgs {
-          inherit system overlays;
+          inherit system;
           crossSystem.config = "arm-none-eabi";
           config.allowUnfree = true; # nitrokey-fido2 → pynitrokey → nrfutil
         };
         pkgsAvr = import nixpkgs {
-          inherit system overlays;
+          inherit system;
           crossSystem.config = "avr";
         };
       in {
         nitrokey-3 = pkgs.callPackage ./devices/nitrokey-3 (
           let
-            rust = pkgs.rust-bin.stable.latest.default.override {
+            rust = pkgsWithRust.rust-bin.stable.latest.default.override {
               extensions = ["llvm-tools-preview"];
               targets = ["thumbv8m.main-none-eabi"];
             };
