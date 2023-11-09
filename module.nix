@@ -89,7 +89,7 @@ let
     uid = "weblate";
     gid = "weblate";
     wsgi-file = "${pkgs.weblate}/lib/${pkgs.python3.libPrefix}/site-packages/weblate/wsgi.py";
-    pyhome = pkgs.weblate;
+    pyhome = pkgs.weblate.dependencyEnv;
 
     # Some more recommendations by upstream:
     # https://docs.weblate.org/en/latest/admin/install.html#sample-configuration-for-nginx-and-uwsgi
@@ -276,7 +276,7 @@ in
           pidFile = "/run/celery/%%n.pid";
           nodes = "celery notify memory backup translate";
           cmd = verb: ''
-            ${pkgs.weblate}/bin/celery multi ${verb} \
+            ${pkgs.weblate.dependencyEnv}/bin/celery multi ${verb} \
               ${nodes} \
               -A "weblate.utils" \
               --pidfile=${pidFile} \
@@ -307,7 +307,7 @@ in
           ExecStart = cmd "start";
           ExecReload = cmd "restart";
           ExecStop = ''
-            ${pkgs.weblate}/bin/celery multi stopwait \
+            ${pkgs.weblate.dependencyEnv}/bin/celery multi stopwait \
               ${nodes} \
               --pidfile=${pidFile}
           '';

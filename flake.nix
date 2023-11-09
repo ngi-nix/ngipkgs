@@ -28,7 +28,7 @@
           packages =
             {
               default = self.packages.${system}.weblate;
-              weblate = (poetry2nix_instanciated.mkPoetryApplication {
+              weblate = poetry2nix_instanciated.mkPoetryApplication {
                 src = weblate;
                 pyproject = ./pyproject.toml;
                 poetrylock = ./poetry.lock;
@@ -43,7 +43,7 @@
                 ];
                 meta = with pkgs.lib; {
                   description = "Web based translation tool with tight version control integration";
-                  homepage = https://weblate.org/;
+                  homepage = "https://weblate.org/";
                   license = licenses.gpl3Plus;
                   maintainers = with maintainers; [ erictapen ];
                 };
@@ -144,7 +144,7 @@
                     );
                   }
                 );
-              }).dependencyEnv;
+              };
             };
 
           checks = {
