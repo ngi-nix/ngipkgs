@@ -2,10 +2,6 @@
 
 This Nix flake packages [Weblate](https://weblate.org/en/), a web based translation tool. It is fully usable and tested regularly.
 
-# Putting Weblate into Nixpkgs
-
-Currently I try to get this package module [to be merged into Nixpkgs](https://github.com/NixOS/nixpkgs/pull/169797). If you want to help, please leave a review there! If the module gets merged, this repository will be archived.
-
 # Usage
 
 The primary use of this flake is deploying Weblate on NixOS. For that you would use the NixOS module available in `.#nixosModule`.
@@ -30,4 +26,10 @@ If you have that module available in your NixOS config, configuration is straigh
 }
 ```
 
+
+# Putting Weblate into Nixpkgs
+
+Originally the goal of this flake was to [package Weblate in Nixpkgs](https://github.com/NixOS/nixpkgs/pull/169797), but as [support for Poetry2nix was dropped in Nixpkgs](https://github.com/NixOS/nixpkgs/pull/263308), that is no longer feasible.
+
+AFAIR there is no current effort to make Weblate available in Nixpkgs directly, even though it would be possible to achieve without using Poetry2nix.
 
