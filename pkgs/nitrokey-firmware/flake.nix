@@ -1,7 +1,6 @@
 {
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:sbruder/nixpkgs/polkit-cross-fix";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=27ead4fec31f241baed776d046b1dcac431a5919";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
@@ -48,7 +47,7 @@
         nitrokey-storage = pkgs.callPackage ./devices/nitrokey-storage.nix {};
         nitrokey-fido2 = pkgs.callPackage ./devices/nitrokey-fido2.nix {inherit stdenvArm;};
         nitrokey-pro = pkgs.callPackage ./devices/nitrokey-pro.nix {inherit stdenvArm;};
-        nitrokey-start = pkgs.callPackage ./devices/nitrokey-start.nix {inherit stdenvArm;};
+        nitrokey-start = pkgs.callPackage ./devices/nitrokey-start.nix {gcc11StdenvArm = pkgsArm.gcc11Stdenv;};
         nitrokey-trng-rs232 = pkgs.callPackage ./devices/nitrokey-trng-rs232.nix {inherit stdenvAvr;};
       };
     };
