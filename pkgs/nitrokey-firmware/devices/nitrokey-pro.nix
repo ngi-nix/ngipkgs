@@ -1,11 +1,11 @@
 {
   lib,
-  stdenv,
+  stdenvArm,
   fetchFromGitHub,
   python3,
   srecord,
 }:
-stdenv.mkDerivation rec {
+stdenvArm.mkDerivation rec {
   pname = "nitrokey-pro-firmware";
   version = "0.15";
 

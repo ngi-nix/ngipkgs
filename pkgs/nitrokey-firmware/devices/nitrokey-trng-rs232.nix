@@ -1,9 +1,9 @@
 {
   lib,
-  stdenv,
+  stdenvAvr,
   fetchFromGitHub,
 }:
-stdenv.mkDerivation rec {
+stdenvAvr.mkDerivation rec {
   pname = "nitrokey-trng-rs232-firmware";
   version = "1.0.0";
 

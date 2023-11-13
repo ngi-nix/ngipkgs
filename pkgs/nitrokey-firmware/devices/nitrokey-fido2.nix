@@ -1,7 +1,7 @@
 {
   lib,
   gcc-arm-embedded,
-  stdenv,
+  stdenvArm,
   fetchFromGitHub,
   pynitrokey,
   python3,
@@ -9,7 +9,7 @@
   release ? true,
   pages ? 128,
 }:
-stdenv.mkDerivation rec {
+stdenvArm.mkDerivation rec {
   pname = "nitrokey-fido2-firmware";
   version = "2.4.1";
 

@@ -1,9 +1,9 @@
 {
   lib,
-  stdenv,
+  stdenvArm,
   fetchFromGitHub,
 }:
-stdenv.mkDerivation rec {
+stdenvArm.mkDerivation rec {
   pname = "nitrokey-start-firmware";
   version = "13";
 

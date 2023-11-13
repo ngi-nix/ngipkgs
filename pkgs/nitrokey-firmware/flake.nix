@@ -29,6 +29,8 @@
           inherit system;
           crossSystem.config = "avr";
         };
+        stdenvArm = pkgsArm.stdenv;
+        stdenvAvr = pkgsAvr.stdenv;
       in {
         nitrokey-3 = pkgs.callPackage ./devices/nitrokey-3 (
           let
@@ -44,10 +46,10 @@
           }
         );
         nitrokey-storage = pkgs.callPackage ./devices/nitrokey-storage.nix {};
-        nitrokey-fido2 = pkgsArm.callPackage ./devices/nitrokey-fido2.nix {};
-        nitrokey-pro = pkgsArm.callPackage ./devices/nitrokey-pro.nix {};
-        nitrokey-start = pkgsArm.callPackage ./devices/nitrokey-start.nix {};
-        nitrokey-trng-rs232 = pkgsAvr.callPackage ./devices/nitrokey-trng-rs232.nix {};
+        nitrokey-fido2 = pkgs.callPackage ./devices/nitrokey-fido2.nix {inherit stdenvArm;};
+        nitrokey-pro = pkgs.callPackage ./devices/nitrokey-pro.nix {inherit stdenvArm;};
+        nitrokey-start = pkgs.callPackage ./devices/nitrokey-start.nix {inherit stdenvArm;};
+        nitrokey-trng-rs232 = pkgs.callPackage ./devices/nitrokey-trng-rs232.nix {inherit stdenvAvr;};
       };
     };
   };
