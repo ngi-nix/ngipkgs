@@ -1,8 +1,7 @@
 {
   description = "Noise Socket library in OCaml";
 
-  # we're using this commit since the required dependencies aren't in master yet
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/9e14dd7220446ed5889138e024f33dfe367556d0";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs = { self, nixpkgs }:
     let
