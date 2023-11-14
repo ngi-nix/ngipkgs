@@ -1,0 +1,13 @@
+(tests
+ (names test_noise_socket)
+ (package noise-socket)
+ (libraries
+  noise_socket
+  angstrom-lwt-unix
+  lwt
+  lwt.unix
+  oUnit
+ )
+ (preprocess
+  (pps lwt_ppx))
+)
