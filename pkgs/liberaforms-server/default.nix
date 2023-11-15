@@ -111,9 +111,20 @@ in
       )
       EOF
     '';
+  
+  checkPhase = ''
+    runHook preCheck
+    cd ./tests
+    pytest -v
+    pytest -v unit
+    pytest -v functional
+    pytest -s -v -rP
+    runHook postCheck
+  '';
+    
 
     nativeCheckInputs = with python3.pkgs; [
-      pytestCheckHook
+      #pytestCheckHook
       # smtpdfix
     ];
   }
