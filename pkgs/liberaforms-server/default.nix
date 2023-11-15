@@ -17,6 +17,30 @@ in
     };
 
     propagatedBuildInputs = with python3.pkgs; [
+      aiosmtpd
+      alembic
+      atpublic
+      attrs
+      babel
+      beautifulsoup4
+      bleach
+      cachelib
+      certifi
+      cffi
+      charset-normalizer
+      click
+      cryptography
+      dnspython
+      email-validator
+      feedgen
+      flask
+      flask-babel
+      flask-login
+      flask-marshmallow
+      flask-migrate
+      # flask-session2
+      flask-sqlalchemy
+      flask-wtf
       greenlet
       gunicorn
       idna
@@ -57,11 +81,10 @@ in
       pytz
       requests
       six
-      smtpdfix
       snowballstemmer
       soupsieve
       sqlalchemy
-      sqlalchemy-json
+      # sqlalchemy-json
       toml
       typed-ast
       unicodecsv
@@ -91,5 +114,6 @@ in
 
     nativeCheckInputs = with python3.pkgs; [
       pytestCheckHook
+      # smtpdfix
     ];
   }
