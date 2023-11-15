@@ -7,6 +7,7 @@
     # Refer to <https://github.com/ngi-nix/ngipkgs/issues/40>.
     #liberaforms = callPackage ./pkgs/liberaforms {};
     #liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
+    liberaforms-server = callPackage ./liberaforms-server {};
 
     pretalx = callPackage ./pretalx {};
     pretalx-frontend = callPackage ./pretalx/frontend.nix {};
