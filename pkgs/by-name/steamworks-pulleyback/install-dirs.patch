@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 440bf0d..cd2d463 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -60,6 +60,9 @@ set_package_properties(Steamworks PROPERTIES
+     PURPOSE "Required for building any Pulley backends"
+ )
+ 
++set(Steamworks_PULLEY_DIR ${CMAKE_PREFIX_PATH}/steamworks/pulleyback/)
++set(Steamworks_EXAMPLE_DIR ${CMAKE_PREFIX_PATH}/steamworks/examples/)
++
+ find_package(ARPA2Common 2.2.4)
+ set_package_properties(ARPA2Common PROPERTIES
+     DESCRIPTION "ARPA2 libraries for ACL"
