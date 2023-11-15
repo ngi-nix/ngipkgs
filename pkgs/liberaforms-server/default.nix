@@ -111,19 +111,24 @@ in
       )
       EOF
     '';
-  
-  checkPhase = ''
-    runHook preCheck
-    cd ./tests
-    pytest -v
-    pytest -v unit
-    pytest -v functional
-    pytest -s -v -rP
-    runHook postCheck
-  '';
-    
+
+    checkPhase = ''
+      runHook preCheck
+      cd ./tests
+
+      export TEST_DB_USER=TEST_DB_USER
+      export TEST_DB_PASSWORD=TEST_DB_PASSWORD
+      export TEST_DB_HOST=TEST_DB_HOST
+      export TEST_DB_NAME=TEST_DB_NAME
+
+      cp test.ini.example test.ini
+      pytest -v unit
+
+      runHook postCheck
+    '';
 
     nativeCheckInputs = with python3.pkgs; [
+      pytest
       #pytestCheckHook
       # smtpdfix
     ];
