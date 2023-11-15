@@ -115,13 +115,19 @@ in
     checkPhase = ''
       runHook preCheck
       cd ./tests
+      cp test.ini.example test.ini
+      ls -l
+      pwd
 
       export TEST_DB_USER=TEST_DB_USER
       export TEST_DB_PASSWORD=TEST_DB_PASSWORD
       export TEST_DB_HOST=TEST_DB_HOST
       export TEST_DB_NAME=TEST_DB_NAME
+      export ROOT_USER=ROOT_USER
+      export EDITOR_USERNAME=EDITOR_USERNAME
+      export EDITOR_EMAIL=EDITOR_EMAIL
+      export INVITEE_EMAIL=INVITEE_EMAIL
 
-      cp test.ini.example test.ini
       pytest -v unit
 
       runHook postCheck
