@@ -10,12 +10,10 @@
     nixpkgs,
     rust-overlay,
   }: {
-    overlays.default = import ./overlay.nix;
-
     packages = {
       x86_64-linux = let
         system = "x86_64-linux";
-        overlays = [rust-overlay.overlays.default self.overlays.default];
+        overlays = [rust-overlay.overlays.default];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
@@ -29,21 +27,24 @@
           crossSystem.config = "avr";
         };
       in {
-        inherit
-          (pkgs)
-          nitrokey-3
-          nitrokey-storage
-          ;
-        inherit
-          (pkgsArm)
-          nitrokey-fido2
-          nitrokey-pro
-          nitrokey-start
-          ;
-        inherit
-          (pkgsAvr)
-          nitrokey-trng-rs232
-          ;
+        nitrokey-3 = pkgs.callPackage ./devices/nitrokey-3 (
+          let
+            rust = pkgs.rust-bin.stable.latest.default.override {
+              extensions = ["llvm-tools-preview"];
+              targets = ["thumbv8m.main-none-eabi"];
+            };
+          in {
+            rustPlatform = pkgs.recurseIntoAttrs (pkgs.makeRustPlatform {
+              rustc = rust;
+              cargo = rust;
+            });
+          }
+        );
+        nitrokey-storage = pkgs.callPackage ./devices/nitrokey-storage.nix {};
+        nitrokey-fido2 = pkgsArm.callPackage ./devices/nitrokey-fido2.nix {};
+        nitrokey-pro = pkgsArm.callPackage ./devices/nitrokey-pro.nix {};
+        nitrokey-start = pkgsArm.callPackage ./devices/nitrokey-start.nix {};
+        nitrokey-trng-rs232 = pkgsAvr.callPackage ./devices/nitrokey-trng-rs232.nix {};
       };
     };
   };
