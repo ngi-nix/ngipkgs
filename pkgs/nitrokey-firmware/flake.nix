@@ -23,7 +23,6 @@
         pkgsArm = import nixpkgs {
           inherit system;
           crossSystem.config = "arm-none-eabi";
-          config.allowUnfree = true; # nitrokey-fido2 → pynitrokey → nrfutil
         };
         pkgsAvr = import nixpkgs {
           inherit system;
@@ -46,7 +45,6 @@
           }
         );
         nitrokey-storage = pkgs.callPackage ./devices/nitrokey-storage.nix {};
-        nitrokey-fido2 = pkgs.callPackage ./devices/nitrokey-fido2.nix {inherit stdenvArm;};
         nitrokey-pro = pkgs.callPackage ./devices/nitrokey-pro.nix {inherit stdenvArm;};
         nitrokey-start = pkgs.callPackage ./devices/nitrokey-start.nix {gcc11StdenvArm = pkgsArm.gcc11Stdenv;};
         nitrokey-trng-rs232 = pkgs.callPackage ./devices/nitrokey-trng-rs232.nix {inherit stdenvAvr;};

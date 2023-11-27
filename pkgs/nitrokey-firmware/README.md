@@ -10,7 +10,6 @@ see [the NixOS wiki](https://nixos.wiki/wiki/Flakes#Enable_flakes) for how to en
 ## Supported devices
 
  * [Nitrokey 3](https://github.com/Nitrokey/nitrokey-3-firmware)
- * [Nitrokey FIDO2](https://github.com/Nitrokey/nitrokey-fido2-firmware)
  * [Nitrokey Pro](https://github.com/Nitrokey/nitrokey-pro-firmware)
  * [Nitrokey Start](https://github.com/Nitrokey/nitrokey-start-firmware)
  * [Nitrokey Storage](https://github.com/Nitrokey/nitrokey-storage-firmware)
