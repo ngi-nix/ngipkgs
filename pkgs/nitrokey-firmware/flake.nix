@@ -38,10 +38,10 @@
               targets = ["thumbv8m.main-none-eabi"];
             };
           in {
-            rustPlatform = pkgs.recurseIntoAttrs (pkgs.makeRustPlatform {
+            rustPlatform = pkgs.makeRustPlatform {
               rustc = rust;
               cargo = rust;
-            });
+            };
           }
         );
         nitrokey-storage = pkgs.callPackage ./devices/nitrokey-storage.nix {};
