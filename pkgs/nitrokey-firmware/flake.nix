@@ -31,19 +31,7 @@
         stdenvArm = pkgsArm.stdenv;
         stdenvAvr = pkgsAvr.stdenv;
       in {
-        nitrokey-3 = pkgs.callPackage ./devices/nitrokey-3 (
-          let
-            rust = pkgsWithRust.rust-bin.stable.latest.default.override {
-              extensions = ["llvm-tools-preview"];
-              targets = ["thumbv8m.main-none-eabi"];
-            };
-          in {
-            rustPlatform = pkgs.makeRustPlatform {
-              rustc = rust;
-              cargo = rust;
-            };
-          }
-        );
+        nitrokey-3 = pkgsWithRust.callPackage ./devices/nitrokey-3 {};
         nitrokey-storage = pkgs.callPackage ./devices/nitrokey-storage.nix {};
         nitrokey-pro = pkgs.callPackage ./devices/nitrokey-pro.nix {inherit stdenvArm;};
         nitrokey-start = pkgs.callPackage ./devices/nitrokey-start.nix {gcc11StdenvArm = pkgsArm.gcc11Stdenv;};
