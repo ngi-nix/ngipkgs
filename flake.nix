@@ -12,6 +12,9 @@
   inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
+  inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = {
     self,
@@ -19,8 +22,9 @@
     flake-utils,
     treefmt-nix,
     sops-nix,
+    rust-overlay,
     ...
-  }:
+  } @ inputs:
     with builtins; let
       inherit
         (nixpkgs.lib)
@@ -54,7 +58,7 @@
         };
         explicitPkgs = import ./pkgs {
           inherit (pkgs) lib;
-          inherit callPackage;
+          inherit callPackage inputs;
         };
         allPackages = pkgsByName // explicitPkgs;
       in
@@ -62,7 +66,8 @@
 
       importNixpkgs = system: overlays:
         import nixpkgs {
-          inherit system overlays;
+          inherit system;
+          overlays = overlays ++ [rust-overlay.overlays.default];
         };
 
       importNixosConfigurations = import ./configs/all-configurations.nix;
