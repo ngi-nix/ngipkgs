@@ -32,8 +32,8 @@
         nixosTests = let
           dir = ./tests;
           testDirs = readDir dir;
-        in
-          mapAttrs (name: _: let
+
+          dirToTest = name: _: let
             mkTestModule = import "${dir}/${name}";
 
             testModule = mkTestModule {
@@ -43,8 +43,9 @@
               configurations = importNixosConfigurations;
             };
           in
-            pkgs.nixosTest testModule)
-          testDirs;
+            pkgs.nixosTest testModule;
+        in
+          mapAttrs dirToTest testDirs;
         callPackage = pkgs.newScope (
           allPackages // {inherit callPackage nixosTests;}
         );
