@@ -34,13 +34,15 @@
         in
           mapAttrs (name: _: let
             mkTestModule = import "${dir}/${name}";
-          in
-            pkgs.nixosTest (mkTestModule {
+
+            testModule = mkTestModule {
               inherit pkgs;
               inherit (pkgs) lib;
               modules = extendedModules;
               configurations = importNixosConfigurations;
-            })) (readDir dir);
+            };
+          in
+            pkgs.nixosTest testModule) (readDir dir);
         callPackage = pkgs.newScope (
           allPackages // {inherit callPackage nixosTests;}
         );
