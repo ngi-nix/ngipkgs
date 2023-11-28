@@ -31,14 +31,21 @@
       importPackages = pkgs: let
         nixosTests = let
           dir = ./tests;
-        in
-          mapAttrs (name: _:
-            pkgs.nixosTest (import (dir + "/${name}") {
+          testDirs = readDir dir;
+
+          dirToTest = name: _: let
+            mkTestModule = import "${dir}/${name}";
+
+            testModule = mkTestModule {
               inherit pkgs;
               inherit (pkgs) lib;
               modules = extendedModules;
               configurations = importNixosConfigurations;
-            })) (readDir dir);
+            };
+          in
+            pkgs.nixosTest testModule;
+        in
+          mapAttrs dirToTest testDirs;
         callPackage = pkgs.newScope (
           allPackages // {inherit callPackage nixosTests;}
         );
