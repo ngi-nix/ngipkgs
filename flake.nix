@@ -29,22 +29,16 @@
         ;
 
       importPackages = pkgs: let
-        # nixosTests is overriden with tests defined in this
-        # flake.
-        nixosTests =
-          pkgs.nixosTests
-          // (
-            let
-              dir = ./tests;
-            in
-              mapAttrs (name: _:
-                pkgs.nixosTest (import (dir + "/${name}") {
-                  inherit pkgs;
-                  inherit (pkgs) lib;
-                  modules = extendedModules;
-                  configurations = importNixosConfigurations;
-                })) (readDir dir)
-          );
+        nixosTests = let
+          dir = ./tests;
+        in
+          mapAttrs (name: _:
+            pkgs.nixosTest (import (dir + "/${name}") {
+              inherit pkgs;
+              inherit (pkgs) lib;
+              modules = extendedModules;
+              configurations = importNixosConfigurations;
+            })) (readDir dir);
         callPackage = pkgs.newScope (
           allPackages // {inherit callPackage nixosTests;}
         );
