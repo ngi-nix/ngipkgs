@@ -32,8 +32,10 @@
         nixosTests = let
           dir = ./tests;
         in
-          mapAttrs (name: _:
-            pkgs.nixosTest (import "${dir}/${name}" {
+          mapAttrs (name: _: let
+            mkTestModule = import "${dir}/${name}";
+          in
+            pkgs.nixosTest (mkTestModule {
               inherit pkgs;
               inherit (pkgs) lib;
               modules = extendedModules;
