@@ -18,14 +18,22 @@ jobs:
       - id: flake-show
         name: Obtain `nix flake show` output
         run: |
-          sudo apt install colorized-logs
-          echo 'output<<EOF' >> $GITHUB_OUTPUT
-          nix flake show --all-systems | ansi2txt >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          SHOW="nix flake show --all-systems"
+          FILTER="nix run nixpkgs#ansifilter | grep -v \"git+file.*$GITHUB_REPOSITORY?\""
+          git fetch origin ${GITHUB_BASE_REF}:${GITHUB_BASE_REF}
+          if diff -u \
+           --label "$GITHUB_BASE_REF" <($SHOW ".?ref=refs/heads/${GITHUB_BASE_REF}&rev=$(git rev-parse origin/${GITHUB_BASE_REF})" | $FILTER) \
+           --label "$GITHUB_REF_NAME" <($SHOW | $FILTER) \
+           >> diff
+          then
+            echo 'output="None."' >> "$GITHUB_OUTPUT"
+          else
+            echo -e 'output<<EOF\n\n```diff' >> "$GITHUB_OUTPUT"
+            cat diff >> "$GITHUB_OUTPUT"
+            echo -e '```\nEOF' >> "$GITHUB_OUTPUT"
+          fi
       - uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            ```text
-            ${{ steps.flake-show.outputs.output }}
-            ```
+            Difference in `nix flake show`: ${{ steps.flake-show.outputs.output }}
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
