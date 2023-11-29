@@ -92,17 +92,17 @@
       });
 
       x86_64-linuxOutputs = let
-        linuxSystem = "x86_64-linux";
-        pkgs = importNixpkgs linuxSystem [self.overlays.default];
+        system = "x86_64-linux";
+        pkgs = importNixpkgs system [self.overlays.default];
         treefmtEval = loadTreefmt pkgs;
         nonBrokenPkgs =
           nixpkgs.lib.attrsets.filterAttrs (_: v: !v.meta.broken)
-          self.packages.${linuxSystem};
+          self.packages.${system};
       in {
         # Github Actions executes `nix flake check` therefore this output
         # should only contain derivations that can built within CI.
         # See `.github/workflows/ci.yaml`.
-        checks.${linuxSystem} =
+        checks.${system} =
           # For `nix flake check` to *build* all packages, because by default
           # `nix flake check` only evaluates packages and does not build them.
           nonBrokenPkgs
@@ -119,8 +119,8 @@
             else {})
           nonBrokenPkgs;
         in {
-          packages.${linuxSystem} = nonBrokenPkgs;
-          tests.${linuxSystem} = passthruTests;
+          packages.${system} = nonBrokenPkgs;
+          tests.${system} = passthruTests;
         };
       };
 
