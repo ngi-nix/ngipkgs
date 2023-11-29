@@ -93,8 +93,9 @@
         treefmtEval = loadTreefmt pkgs;
         toplevel = name: config: nameValuePair "${name}-toplevel" config.config.system.build.toplevel;
       in {
-        packages = (importPackages pkgs) // (mapAttrs' toplevel nixosConfigurations);
+        packages = importPackages pkgs;
         formatter = treefmtEval.config.build.wrapper;
+        checks = mapAttrs' toplevel nixosConfigurations;
       });
 
       x86_64-linuxOutputs = let
@@ -125,6 +126,11 @@
         in {
           packages.${system} = nonBrokenPkgs;
           tests.${system} = passthruTests;
+
+          nixosConfigurations.${system} =
+            mapAttrs
+            (name: config: config.config.system.build.toplevel)
+            nixosConfigurations;
         };
       };
 
