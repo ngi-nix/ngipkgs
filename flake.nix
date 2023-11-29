@@ -83,17 +83,17 @@
           sops-nix = sops-nix.nixosModules.default;
         };
 
-      nixosSystemWithModules = config: nixosSystem {modules = [config] ++ attrValues extendedModules;};
+      nixosConfigurations =
+        mapAttrs
+        (_: config: nixosSystem {modules = [config] ++ attrValues extendedModules;})
+        rawNixosConfigs;
 
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
         pkgs = importNixpkgs system [];
         treefmtEval = loadTreefmt pkgs;
-        toplevel = name: config:
-          nameValuePair
-          "${name}-toplevel"
-          (nixosSystemWithModules config).config.system.build.toplevel;
+        toplevel = name: config: nameValuePair "${name}-toplevel" config.config.system.build.toplevel;
       in {
-        packages = (importPackages pkgs) // (mapAttrs' toplevel rawNixosConfigs);
+        packages = (importPackages pkgs) // (mapAttrs' toplevel nixosConfigurations);
         formatter = treefmtEval.config.build.wrapper;
       });
 
@@ -129,7 +129,7 @@
       };
 
       systemAgnosticOutputs = {
-        nixosConfigurations = mapAttrs (_: config: nixosSystemWithModules config) rawNixosConfigs;
+        inherit nixosConfigurations;
 
         nixosModules =
           (import ./modules/all-modules.nix)
