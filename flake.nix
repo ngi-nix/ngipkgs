@@ -83,8 +83,10 @@
           sops-nix = sops-nix.nixosModules.default;
         };
 
-      nixosSystemWithModules = config: nixosSystem {modules = [config] ++ attrValues extendedModules;};
-      nixosConfigurations = mapAttrs (_: config: nixosSystemWithModules config) rawNixosConfigs;
+      nixosConfigurations =
+        mapAttrs
+        (_: config: nixosSystem {modules = [config] ++ attrValues extendedModules;})
+        rawNixosConfigs;
 
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
         pkgs = importNixpkgs system [];
