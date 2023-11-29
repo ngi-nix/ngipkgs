@@ -26,6 +26,7 @@
         (nixpkgs.lib)
         concatMapAttrs
         nixosSystem
+        filterAttrs
         ;
 
       importPackages = pkgs: let
@@ -95,9 +96,7 @@
         system = "x86_64-linux";
         pkgs = importNixpkgs system [self.overlays.default];
         treefmtEval = loadTreefmt pkgs;
-        nonBrokenPkgs =
-          nixpkgs.lib.attrsets.filterAttrs (_: v: !v.meta.broken)
-          self.packages.${system};
+        nonBrokenPkgs = filterAttrs (_: v: !v.meta.broken) self.packages.${system};
       in {
         # Github Actions executes `nix flake check` therefore this output
         # should only contain derivations that can built within CI.
