@@ -41,7 +41,7 @@
               inherit pkgs;
               inherit (pkgs) lib;
               modules = extendedModules;
-              configurations = importNixosConfigurations;
+              configurations = rawNixosConfigs;
             };
           in
             pkgs.nixosTest testModule;
@@ -67,7 +67,7 @@
           inherit system overlays;
         };
 
-      importNixosConfigurations = import ./configs/all-configurations.nix;
+      rawNixosConfigs = import ./configs/all-configurations.nix;
 
       loadTreefmt = pkgs: treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
 
@@ -88,7 +88,7 @@
           "${name}-toplevel" = (nixosSystemWithModules config).config.system.build.toplevel;
         };
       in {
-        packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations);
+        packages = (importPackages pkgs) // (concatMapAttrs toplevel rawNixosConfigs);
         formatter = treefmtEval.config.build.wrapper;
       });
 
@@ -124,9 +124,7 @@
       };
 
       systemAgnosticOutputs = {
-        nixosConfigurations =
-          mapAttrs (_: config: nixosSystemWithModules config)
-          importNixosConfigurations;
+        nixosConfigurations = mapAttrs (_: config: nixosSystemWithModules config) rawNixosConfigs;
 
         nixosModules =
           (import ./modules/all-modules.nix)
