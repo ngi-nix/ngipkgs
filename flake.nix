@@ -80,8 +80,7 @@
 
       nixosSystemWithModules = config: nixosSystem {modules = [config] ++ attrValues extendedModules;};
 
-      # Compute outputs that are invariant in the system architecture.
-      allSystemsOutputs = system: let
+      eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
         pkgs = importNixpkgs system [];
         treefmtEval = loadTreefmt pkgs;
         toplevel = name: config: {
@@ -90,20 +89,9 @@
       in {
         packages = (importPackages pkgs) // (concatMapAttrs toplevel importNixosConfigurations);
         formatter = treefmtEval.config.build.wrapper;
-      };
-    in
-      # We merge three attribute sets to construct all outputs:
-      #  1. Outputs that are invariant in the system architecture
-      #     via `flake-utils.lib.eachDefaultSystem`.
-      #  2. Outputs that are specific to a system architecture
-      #     (as of 2023-08-22, only `x86_64-linux`).
-      #  3. Outputs that are not tied to any system at all.
-      #
-      # 1.
-      (flake-utils.lib.eachDefaultSystem allSystemsOutputs)
-      #
-      # 2.
-      // (let
+      });
+
+      x86_64-linuxOutputs = let
         linuxSystem = "x86_64-linux";
         pkgs = importNixpkgs linuxSystem [self.overlays.default];
         treefmtEval = loadTreefmt pkgs;
@@ -134,10 +122,9 @@
           packages.${linuxSystem} = nonBrokenPkgs;
           tests.${linuxSystem} = passthruTests;
         };
-      })
-      #
-      # 3.
-      // {
+      };
+
+      systemAgnosticOutputs = {
         nixosConfigurations =
           mapAttrs (_: config: nixosSystemWithModules config)
           importNixosConfigurations;
@@ -153,4 +140,6 @@
         # Overlays a package set (e.g. nixpkgs) with the packages defined in this flake.
         overlays.default = final: prev: importPackages prev;
       };
+    in
+      eachDefaultSystemOutputs // x86_64-linuxOutputs // systemAgnosticOutputs;
 }
