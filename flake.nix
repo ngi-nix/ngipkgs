@@ -26,6 +26,8 @@
         (nixpkgs.lib)
         concatMapAttrs
         mapAttrs'
+        foldr
+        recursiveUpdate
         nameValuePair
         nixosSystem
         filterAttrs
@@ -141,5 +143,9 @@
         overlays.default = final: prev: importPackages prev;
       };
     in
-      eachDefaultSystemOutputs // x86_64-linuxOutputs // systemAgnosticOutputs;
+      foldr recursiveUpdate {} [
+        eachDefaultSystemOutputs
+        x86_64-linuxOutputs
+        systemAgnosticOutputs
+      ];
 }
