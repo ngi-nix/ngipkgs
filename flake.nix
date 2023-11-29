@@ -25,6 +25,8 @@
       inherit
         (nixpkgs.lib)
         concatMapAttrs
+        mapAttrs'
+        nameValuePair
         nixosSystem
         filterAttrs
         ;
@@ -84,11 +86,12 @@
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
         pkgs = importNixpkgs system [];
         treefmtEval = loadTreefmt pkgs;
-        toplevel = name: config: {
-          "${name}-toplevel" = (nixosSystemWithModules config).config.system.build.toplevel;
-        };
+        toplevel = name: config:
+          nameValuePair
+          "${name}-toplevel"
+          (nixosSystemWithModules config).config.system.build.toplevel;
       in {
-        packages = (importPackages pkgs) // (concatMapAttrs toplevel rawNixosConfigs);
+        packages = (importPackages pkgs) // (mapAttrs' toplevel rawNixosConfigs);
         formatter = treefmtEval.config.build.wrapper;
       });
 
