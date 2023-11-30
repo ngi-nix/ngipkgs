@@ -51,25 +51,26 @@
             pkgs.nixosTest testModule;
         in
           mapAttrs dirToTest testDirs;
+
         callPackage = pkgs.newScope (
           allPackages // {inherit callPackage nixosTests;}
         );
+
         pkgsByName = import ./pkgs/by-name {
           inherit (pkgs) lib;
           inherit callPackage;
         };
+
         explicitPkgs = import ./pkgs {
           inherit (pkgs) lib;
           inherit callPackage;
         };
+
         allPackages = pkgsByName // explicitPkgs;
       in
         allPackages;
 
-      importNixpkgs = system: overlays:
-        import nixpkgs {
-          inherit system overlays;
-        };
+      importNixpkgs = system: overlays: import nixpkgs {inherit system overlays;};
 
       rawNixosConfigs = import ./configs/all-configurations.nix;
 
