@@ -6,6 +6,11 @@
   yq,
   withS3 ? false,
 }: let
+  inherit
+    (lib)
+    optionalString
+    ;
+
   phpWithExtensions = php.withExtensions ({
     enabled,
     all,
@@ -46,7 +51,7 @@ in
           < config/packages/oneup_flysystem.yaml \
           | sponge config/packages/oneup_flysystem.yaml
       ''
-      + (lib.optionalString withS3 ''
+      + (optionalString withS3 ''
         yq '(
           .oneup_flysystem.filesystems.public_uploads_filesystem.adapter = "kbin.s3_adapter" |
           .oneup_flysystem.adapters.kbin.s3_adapter.awss3v3 = {client: "kbin.s3_client", bucket: "%amazon.s3.bucket%"}

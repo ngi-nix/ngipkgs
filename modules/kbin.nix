@@ -5,11 +5,32 @@
   pkgs,
   ...
 }: let
-  inherit (lib.attrsets) filterAttrs mapAttrs mapAttrsToList;
-  inherit (lib.generators) mkValueStringDefault;
-  inherit (lib.lists) map optional;
-  inherit (lib.meta) getExe;
-  inherit (lib.strings) concatLines;
+  inherit
+    (builtins)
+    map
+    attrNames
+    listToAttrs
+    ;
+
+  inherit
+    (lib)
+    options
+    types
+    modules
+    filterAttrs
+    mapAttrs
+    mapAttrsToList
+    optional
+    getExe
+    strings
+    concatLines
+    generators
+    ;
+
+  inherit
+    (generators)
+    mkValueStringDefault
+    ;
 
   cfg = config.services.kbin;
   opt = options.services.kbin;
@@ -19,8 +40,8 @@
   secretsNonNull = filterAttrs (_: value: value != null) cfg.secrets;
 
   # For usage of secrets via systemd credentials:
-  credentialIds = builtins.attrNames secretsNonNull;
-  loadCredentials = mapAttrsToList (name: value: "${name}:${builtins.toString value}") secretsNonNull;
+  credentialIds = attrNames secretsNonNull;
+  loadCredentials = mapAttrsToList (name: value: "${name}:${toString value}") secretsNonNull;
 
   kbin-console = pkgs.writeShellApplication rec {
     name = "kbin-console";
@@ -48,8 +69,8 @@
     '';
   };
 in {
-  options.services.kbin = with lib.types;
-  with lib.options; {
+  options.services.kbin = with types;
+  with options; {
     enable = mkEnableOption "Kbin";
 
     package = mkPackageOption pkgs "kbin" {};
@@ -82,7 +103,7 @@ in {
       type = submodule {
         freeformType = attrsOf (nullOr path);
 
-        options = builtins.listToAttrs (builtins.map (
+        options = listToAttrs (map (
             name: {
               inherit name;
               value = mkOption {
@@ -106,8 +127,8 @@ in {
     };
   };
 
-  config = with lib.modules;
-  with lib.options;
+  config = with modules;
+  with options;
     mkIf cfg.enable {
       warnings =
         optional (cfg.settings.APP_ENV == "prod" && cfg.settings.APP_DEBUG != "0")

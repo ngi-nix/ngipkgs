@@ -9,8 +9,19 @@
   pretalx-frontend,
   nodejs,
   withPlugins ? [],
-}:
-with builtins; let
+}: let
+  inherit
+    (builtins)
+    attrValues
+    ;
+
+  inherit
+    (lib)
+    flatten
+    licenses
+    maintainers
+    ;
+
   python = python3.override {
     packageOverrides = self: super: {
       django-formtools = super.django-formtools.overridePythonAttrs rec {
@@ -136,7 +147,7 @@ in
         pytestCheckHook
         responses
       ]
-      ++ lib.flatten (builtins.attrValues passthru.optional-dependencies);
+      ++ flatten (attrValues passthru.optional-dependencies);
 
     doCheck = true;
 
@@ -163,7 +174,7 @@ in
       tests.pretalx = nixosTests.pretalx;
     };
 
-    meta = with lib; {
+    meta = {
       description = "Conference planning tool: CfP, scheduling, speaker management";
       homepage = "https://github.com/pretalx/pretalx";
       license = licenses.asl20;
