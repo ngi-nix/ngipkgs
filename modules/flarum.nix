@@ -9,7 +9,6 @@
 with builtins;
 with lib; let
   cfg = config.services.flarum;
-  opt = options.services.flarum;
 
   flarumInstallConfig = pkgs.writeText "config.json" (builtins.toJSON {
     debug = false;
