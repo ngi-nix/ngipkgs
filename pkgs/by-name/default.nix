@@ -10,7 +10,7 @@
     ;
 
   inherit
-    (lib.attrsets)
+    (lib)
     mapAttrs
     concatMapAttrs
     ;
