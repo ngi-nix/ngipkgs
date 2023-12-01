@@ -1,17 +1,31 @@
 {
   config,
+  options,
   lib,
   pkgs,
   self,
   utils,
   ...
-}:
-with builtins;
-with lib; let
-  cfg = config.services.flarum;
-  opt = options.services.flarum;
+}: let
+  inherit
+    (builtins)
+    toJSON
+    ;
 
-  flarumInstallConfig = pkgs.writeText "config.json" (builtins.toJSON {
+  inherit
+    (lib)
+    types
+    mkOption
+    mkIf
+    mkEnableOption
+    mkPackageOption
+    optionalString
+    mkDefault
+    ;
+
+  cfg = config.services.flarum;
+
+  flarumInstallConfig = pkgs.writeText "config.json" (toJSON {
     debug = false;
     offline = false;
 
@@ -204,7 +218,7 @@ in {
           chmod a+x . public
           chmod +x site.php extend.php flarum
         ''
-        + lib.optionalString
+        + optionalString
         (cfg.createDatabaseLocally && cfg.database.driver == "mysql") ''
           if [ ! -f config.php ]; then
              php flarum install --file=${flarumInstallConfig}

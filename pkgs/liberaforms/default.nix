@@ -5,15 +5,25 @@
   postgresql_11,
   fetchFromGitLab,
   fetchFromGitHub,
-  pkgs,
   system,
+  lib,
   ...
 }: let
+  inherit
+    (builtins)
+    readFile
+    ;
+
+  inherit
+    (lib)
+    replaceStrings
+    ;
+
   src = callPackage ./src.nix {};
 in
   stdenv.mkDerivation {
     pname = "liberaforms";
-    version = with builtins; let
+    version = let
       remove-newline = replaceStrings ["\n"] [""];
     in
       remove-newline (readFile "${src}/VERSION.txt");

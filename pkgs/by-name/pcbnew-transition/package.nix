@@ -3,7 +3,15 @@
   fetchPypi,
   lib,
 }: let
-  inherit (python3.pkgs) buildPythonPackage;
+  inherit
+    (lib)
+    licenses
+    ;
+
+  inherit
+    (python3.pkgs)
+    buildPythonPackage
+    ;
 
   properCaseName = "pcbnewTransition";
 in
@@ -31,7 +39,7 @@ in
       properCaseName
     ];
 
-    meta = with lib; {
+    meta = {
       description = "Library that allows you to support both, KiCAD 5 and KiCAD 6 in your plugins";
       homepage = "https://github.com/yaqwsx/pcbnewTransition";
       changelog = "https://github.com/yaqwsx/pcbnewTransition/releases/tag/v${version}";

@@ -4,6 +4,12 @@
   system,
   ...
 }: let
+  inherit
+    (builtins)
+    readFile
+    replaceStrings
+    ;
+
   liberaforms-src = callPackage ./src.nix {};
 
   # Mach Nix is broken on recent Nixpkgs
@@ -28,10 +34,10 @@
     {pkgs = machPkgs;};
 
   requirements = let
-    req = builtins.readFile "${liberaforms-src}/requirements.txt";
+    req = readFile "${liberaforms-src}/requirements.txt";
     #TODO lots of notes here; mach-nix doesnt handle (??xref various issues) range of cryptography package - because it doesnt support pyproject.toml?
     #I don't like this, but doing this is the fastest way to get the cryptography from nixpkgs, which is at 36.0.0 (mach-nix automatically finds it)
-    filteredReq = builtins.replaceStrings ["cryptography==36.0.1"] ["cryptography==36.0.0"] req; # for liberaforms > v2.0.1
+    filteredReq = replaceStrings ["cryptography==36.0.1"] ["cryptography==36.0.0"] req; # for liberaforms > v2.0.1
     # Needed for tests only; TODO upstream should make a dev-requirements.txt or whatever?
     # https://gitlab.com/liberaforms/liberaforms/-/commit/16c893ff539bfb6249b3b02f4c834eb8848c16d5
     extraReq = "factory_boy";

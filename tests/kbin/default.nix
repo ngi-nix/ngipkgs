@@ -1,8 +1,14 @@
 {
   configurations,
   modules,
+  lib,
   ...
-}: {
+}: let
+  inherit
+    (lib)
+    mkForce
+    ;
+in {
   name = "kbin";
 
   nodes = {
@@ -18,14 +24,14 @@
         configurations.kbin
       ];
 
-      unbootable = lib.mkForce false;
+      unbootable = mkForce false;
 
       services.phpfpm.pools.kbin = {
         settings = {
           "pm.start_servers" = 1;
           "pm.min_spare_servers" = 1;
         };
-        phpOptions = lib.mkForce ''
+        phpOptions = mkForce ''
           error_log = stderr
           log_errors = on
           error_reporting = E_ALL
