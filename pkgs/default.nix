@@ -2,6 +2,11 @@
   lib,
   callPackage,
 }: let
+  inherit
+    (lib)
+    recurseIntoAttrs
+    ;
+
   self = rec {
     # LiberaForms is intentionally disabled.
     # Refer to <https://github.com/ngi-nix/ngipkgs/issues/40>.
@@ -21,7 +26,7 @@
     };
 
     inherit
-      (lib.recurseIntoAttrs (callPackage ./pretalx/plugins.nix {}))
+      (recurseIntoAttrs (callPackage ./pretalx/plugins.nix {}))
       pretalx-downstream
       pretalx-media-ccc-de
       pretalx-pages

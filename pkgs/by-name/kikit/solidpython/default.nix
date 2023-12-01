@@ -7,7 +7,15 @@
   lib,
   euclid3,
 }: let
-  inherit (python3.pkgs) buildPythonPackage;
+  inherit
+    (lib)
+    licenses
+    ;
+
+  inherit
+    (python3.pkgs)
+    buildPythonPackage
+    ;
 
   pypng = python3.pkgs.pypng.overrideAttrs (old: rec {
     version = "0.0.19";
@@ -68,7 +76,7 @@ in
       "solid"
     ];
 
-    meta = with lib; {
+    meta = {
       description = "Python interface to the OpenSCAD declarative geometry language";
       homepage = "https://github.com/SolidCode/SolidPython";
       changelog = "https://github.com/SolidCode/SolidPython/releases/tag/v${version}";

@@ -3,8 +3,14 @@
   lib,
   pkgs,
   ...
-}:
-with lib; let
+}: let
+  inherit
+    (lib)
+    mkForce
+    mkIf
+    types
+    ;
+
   cfg = config.services.liberaforms;
   user = "liberaforms";
   group = "liberaforms";
@@ -344,7 +350,7 @@ in {
     services.postgresql = mkIf cfg.enablePostgres {
       enable = true;
       package = pkgs.postgresql_11;
-      authentication = lib.mkForce ''
+      authentication = mkForce ''
         # TYPE  DATABASE         USER            ADDRESS          METHOD
         local   postgres         postgres                         trust
         local   liberaforms      liberaforms                      trust

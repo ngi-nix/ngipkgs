@@ -5,9 +5,32 @@
   options,
   pkgs,
   ...
-}:
-with builtins;
-with lib; let
+}: let
+  inherit
+    (builtins)
+    elem
+    concatStringsSep
+    ;
+
+  inherit
+    (lib)
+    optionals
+    modules
+    types
+    mkIf
+    mkEnableOption
+    mkDefault
+    mkOption
+    mkPackageOption
+    mkMerge
+    recursiveUpdate
+    optional
+    escapeShellArgs
+    generators
+    filterAttrs
+    filterAttrsRecursive
+    ;
+
   cfg = config.services.pretalx;
   opt = options.services.pretalx;
   gunicorn = pkgs.python3Packages.gunicorn;
@@ -18,8 +41,8 @@ with lib; let
 
   extras =
     cfg.package.optional-dependencies.redis
-    ++ lib.optionals (cfg.database.backend == "mysql") cfg.package.optional-dependencies.mysql
-    ++ lib.optionals (cfg.database.backend == "postgresql") cfg.package.optional-dependencies.postgres;
+    ++ optionals (cfg.database.backend == "mysql") cfg.package.optional-dependencies.mysql
+    ++ optionals (cfg.database.backend == "postgresql") cfg.package.optional-dependencies.postgres;
 
   PYTHONPATH = "${cfg.package.PYTHONPATH}:${cfg.package.python.pkgs.makePythonPath extras}";
 
@@ -443,9 +466,9 @@ in {
         };
         after =
           []
-          ++ lib.optionals cfg.redis.enable ["redis-pretalx.service"]
-          ++ lib.optionals (cfg.database.backend == "postgresql") ["postgresql.service"]
-          ++ lib.optionals (cfg.database.backend == "mysql") ["mysql.service"];
+          ++ optionals cfg.redis.enable ["redis-pretalx.service"]
+          ++ optionals (cfg.database.backend == "postgresql") ["postgresql.service"]
+          ++ optionals (cfg.database.backend == "mysql") ["mysql.service"];
       };
     in {
       sockets."pretalx-web" = {
@@ -455,7 +478,7 @@ in {
       };
       services = let
         catFile = varname: filename: "export ${varname}=\"$(cat ${filename})\"";
-        exportPasswordEnv = lib.concatStringsSep "\n" ([]
+        exportPasswordEnv = concatStringsSep "\n" ([]
           ++ optional cfg.mail.enable (catFile "PRETALX_MAIL_PASSWORD" cfg.mail.passwordFile)
           ++ optional (cfg.database.passwordFile != null) (catFile "PRETALX_DB_PASS" cfg.database.passwordFile)
           ++ optional cfg.redis.enable (catFile "PRETALX_REDIS" cfg.redis.locationFile)

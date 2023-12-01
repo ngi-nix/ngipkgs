@@ -7,13 +7,19 @@
   bats,
   callPackage,
 }: let
+  inherit
+    (lib)
+    toLower
+    licenses
+    ;
+
   properCaseName = "KiKit";
 
   shapely = callPackage ./shapely {};
   solidpython = callPackage ./solidpython {};
 in
   python3.pkgs.buildPythonPackage rec {
-    pname = lib.toLower properCaseName;
+    pname = toLower properCaseName;
     version = "1.3.0";
     format = "setuptools";
 
@@ -67,7 +73,7 @@ in
       runHook postCheck
     '';
 
-    meta = with lib; {
+    meta = {
       description = "Automation for KiCAD boards";
       homepage = "https://github.com/yaqwsx/KiKit/";
       changelog = "https://github.com/yaqwsx/KiKit/releases/tag/v${version}";

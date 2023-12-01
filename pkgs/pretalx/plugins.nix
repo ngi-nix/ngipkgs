@@ -5,6 +5,11 @@
   python3,
   py ? python3,
 }: let
+  inherit
+    (lib)
+    fakeHash
+    ;
+
   defaultNativeBuildInputs = [gettext py.pkgs.django];
   plugin = {
     name,
@@ -12,7 +17,7 @@
     version,
     rev ? "v${version}",
     repo ? "pretalx-${name}",
-    hash ? lib.fakeHash,
+    hash ? fakeHash,
     format ? "setuptools",
     doCheck ? false,
     nativeBuildInputs ? defaultNativeBuildInputs,

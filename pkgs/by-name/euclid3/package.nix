@@ -3,7 +3,15 @@
   lib,
   fetchPypi,
 }: let
-  inherit (python3.pkgs) buildPythonPackage;
+  inherit
+    (lib)
+    licenses
+    ;
+
+  inherit
+    (python3.pkgs)
+    buildPythonPackage
+    ;
 in
   buildPythonPackage rec {
     pname = "euclid3";
@@ -19,7 +27,7 @@ in
       "euclid3"
     ];
 
-    meta = with lib; {
+    meta = {
       description = "2D and 3D vector, matrix, quaternion and geometry module.";
       homepage = "http://code.google.com/p/pyeuclid/";
       license = licenses.lgpl21Plus;

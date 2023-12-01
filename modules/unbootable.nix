@@ -22,8 +22,15 @@
   lib,
   config,
   ...
-}:
-with lib; {
+}: let
+  inherit
+    (lib)
+    mkIf
+    types
+    mkOption
+    mkDefault
+    ;
+in {
   options = {
     unbootable = mkOption {
       type = types.bool;
