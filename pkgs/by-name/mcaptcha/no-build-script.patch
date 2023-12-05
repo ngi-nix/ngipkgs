@@ -1,0 +1,12 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 25058093..a7d13eb7 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -9,7 +9,6 @@ license = "AGPLv3 or later version"
+ authors = ["realaravinth <realaravinth@batsense.net>"]
+ edition = "2021"
+ default-run = "mcaptcha"
+-build = "build.rs"
+ 
+ # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+ 

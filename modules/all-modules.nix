@@ -4,6 +4,7 @@
   #liberaforms = import ./liberaforms.nix;
   flarum = import ./flarum.nix;
   kbin = import ./kbin.nix;
+  mcaptcha = import ./mcaptcha.nix;
   pretalx = import ./pretalx.nix;
   unbootable = import ./unbootable.nix;
 }
