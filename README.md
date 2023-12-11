@@ -6,7 +6,7 @@
 
 The software in NGIpkgs can be divided into two broad categories: Nix packages, and NixOS modules.
 
-Nix packages can theoretically be built and run on any operating system that runs the Nix package manager. The output of building a Nix package is often a usable library or executable and most if not all of its dependencies. In NGIpkgs, these packages are all contained in the `pkgs` directory. For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspired by [Nix RFC 140](https://github.com/NixOS/rfcs/blob/c8569f6719356009204133cd00d92010889ed56d/rfcs/0140-simple-package-paths.md). Otherwise, packages are added in `pkgs/<pname>/default.nix` imported in `pkgs/default.nix`.  
+Nix packages can theoretically be built and run on any operating system that runs the Nix package manager. The output of building a Nix package is often a usable library or executable and most if not all of its dependencies. In NGIpkgs, these packages are all contained in the `pkgs` directory. For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspired by [Nix RFC 140](https://github.com/NixOS/rfcs/blob/c8569f6719356009204133cd00d92010889ed56d/rfcs/0140-simple-package-paths.md). Otherwise, packages are added in `pkgs/<pname>/default.nix` imported in `pkgs/default.nix`.
 
 NixOS modules are components that can be easily integrated into NixOS. Usually they enrich Nix packages with configuration parameters. Many of them represent services that map to one or more systemd service(s) that are designed to, run persistently on NixOS. These modules are defined in the `modules` directory of NGIpkgs, and they are ready to be deployed to a new NixOS system (such as a container, VM, or physical machine). Templates in `configs` are a good starting point for anyone interested in using modules, and they are also used for testing.
 
@@ -19,7 +19,7 @@ NixOS modules are components that can be easily integrated into NixOS. Usually t
 │   ├── default.nix       # imports all packages that are not in `by-name`
 │   └── ...               # directories for packages
 ├── modules
-│   └── ...                       # add module files here  
+│   └── ...                       # add module files here
 ├── README.md                     # this file
 ├── configs
 │   ├── all-configurations.nix    # import configuration files here
