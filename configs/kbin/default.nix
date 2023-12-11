@@ -13,7 +13,7 @@
       ensureUsers = [
         {
           name = "kbin";
-          ensurePermissions."DATABASE \"kbin\"" = "ALL PRIVILEGES";
+          ensureDBOwnership = true;
         }
       ];
       ensureDatabases = ["kbin"];
