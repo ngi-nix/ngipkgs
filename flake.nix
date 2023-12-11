@@ -106,7 +106,7 @@
     });
 
     x86_64-linuxOutputs = let
-      system = "x86_64-linux";
+      system = flake-utils.lib.system.x86_64-linux;
       pkgs = importNixpkgs system [self.overlays.default];
       treefmtEval = loadTreefmt pkgs;
       nonBrokenPkgs = filterAttrs (_: v: !v.meta.broken) self.packages.${system};
