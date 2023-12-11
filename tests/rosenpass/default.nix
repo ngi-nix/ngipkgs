@@ -70,6 +70,8 @@ in {
 
       networking.firewall.allowedUDPPorts = [9999];
 
+      networking.useNetworkd = true;
+
       systemd = {
         network = {
           enable = true;
