@@ -22,11 +22,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1701979503,
-        "narHash": "sha256-GaPRhbpkwsj2x+AW0DFoimS9Ri4W25Fjt6EP8/tLnIA=",
+        "lastModified": 1702321518,
+        "narHash": "sha256-D5DeV0WfydK3uhu1jajdBIBzgBjFdzouLav/ufm5/P0=",
         "owner": "NixOS",
         "repo": "hydra",
-        "rev": "2ee0068fdca7d9fb8bef23b3671a86b8f0fcff07",
+        "rev": "6e67884ff164d9d1c115aef066e18f8de0c5fc44",
         "type": "github"
       },
       "original": {
@@ -63,16 +63,16 @@
         "nixpkgs-regression": "nixpkgs-regression"
       },
       "locked": {
-        "lastModified": 1701122567,
-        "narHash": "sha256-iA8DqS+W2fWTfR+nNJSvMHqQ+4NpYMRT3b+2zS6JTvE=",
+        "lastModified": 1702314838,
+        "narHash": "sha256-calxK+fZ4/tZy1fbph8qyx4ePUAf4ZdvIugpzWeFIGE=",
         "owner": "NixOS",
         "repo": "nix",
-        "rev": "50f8f1c8bc019a4c0fd098b9ac674b94cfc6af0d",
+        "rev": "ae451e2247b18be6bd36b9d85e41b632e774f40b",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "2.19.2",
+        "ref": "2.19-maintenance",
         "repo": "nix",
         "type": "github"
       }
