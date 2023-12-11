@@ -1,6 +1,12 @@
 # NGIpkgs
 
-[NGIpkgs](https://github.com/ngi-nix/NGIpkgs) is a collection of [Nix](https://nixos.org/) packages and services for software projects that are supported through the [Next Generation Internet](https://www.ngi.eu/) (NGI) initiative of the European Commission.
+[Nix] packages, [NixOS] modules and example NixOS configurations
+of software projects funded by
+the [Next Generation Internet][NGI] (NGI) initiative of the European Commission
+
+[Nix]: https://nixos.org/manual/nix
+[NixOS]: https://nixos.org/manual/nixos
+[NGI]: https://www.ngi.eu
 
 ## Structure of NGIpkgs
 
