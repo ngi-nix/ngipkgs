@@ -1,14 +1,23 @@
 {
   lib,
-  rustPlatform,
   fetchCrate,
   stdenv,
+  makeRustPlatform,
+  rust-bin,
 }: let
   inherit
     (lib)
     licenses
     maintainers
     ;
+
+  # Fixes: https://github.com/atomicdata-dev/atomic-server/issues/733
+  rust = rust-bin.stable.latest.default;
+
+  rustPlatform = makeRustPlatform {
+    rustc = rust;
+    cargo = rust;
+  };
 in
   rustPlatform.buildRustPackage rec {
     pname = "atomic-server";
