@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   fetchgit,
   autoreconfHook,
@@ -11,6 +12,8 @@
   pkg-config,
   postgresql,
   taler-exchange,
+  taler-merchant,
+  callPackage,
 }: let
   version = "0.9.3";
 in
@@ -28,6 +31,7 @@ in
       autoreconfHook
       curl
       taler-exchange
+      taler-merchant
       gnunet
       jansson
       libgcrypt
@@ -36,4 +40,13 @@ in
       pkg-config
       postgresql
     ];
+
+    # Tests run with `make check`.
+    doCheck = false; # `test_sync_api` looks like an integration test
+
+    meta = {
+      homepage = "https://git.taler.net/sync.git";
+      description = "Backup and synchronization service.";
+      license = lib.licenses.agpl3Plus;
+    };
   }
