@@ -1,0 +1,25 @@
+diff --git a/src/authorization/Makefile.am b/src/authorization/Makefile.am
+index cfcd89e..180913c 100644
+--- a/src/authorization/Makefile.am
++++ b/src/authorization/Makefile.am
+@@ -3,10 +3,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/include
+ 
+ cfgdir = $(prefix)/share/anastasis/config.d/
+ 
+-cfg_DATA = \
+-  authorization-email.conf
+-
+-
+ SUBDIRS = libanastasiseufin .
+ 
+ pkgcfgdir = $(prefix)/share/anastasis/config.d/
+@@ -32,9 +28,6 @@ endif
+ bin_PROGRAMS = \
+   anastasis-helper-authorization-iban
+ 
+-bin_SCRIPTS = \
+-  anastasis-authorization-email.sh
+-
+ anastasis_helper_authorization_iban_SOURCES = \
+   anastasis-helper-authorization-iban.c
+ anastasis_helper_authorization_iban_LDADD = \
