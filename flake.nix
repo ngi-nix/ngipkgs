@@ -81,10 +81,7 @@
       allPackages;
 
     importNixpkgs = system: overlays:
-      import nixpkgs {
-        inherit system;
-        overlays = overlays ++ [rust-overlay.overlays.default];
-      };
+      import nixpkgs {inherit system overlays;};
 
     rawNixosConfigs = import ./configs/all-configurations.nix;
 
@@ -104,7 +101,7 @@
       rawNixosConfigs;
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = importNixpkgs system [];
+      pkgs = importNixpkgs system [rust-overlay.overlays.default];
       treefmtEval = loadTreefmt pkgs;
       toplevel = name: config: nameValuePair "${name}-toplevel" config.config.system.build.toplevel;
     in {
