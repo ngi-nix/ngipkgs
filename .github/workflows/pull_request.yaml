@@ -35,6 +35,7 @@ jobs:
             echo -e '```\n</details>\nEOF' >> "$GITHUB_OUTPUT"
           fi
       - uses: thollander/actions-comment-pull-request@v2
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         with:
           message: ${{ steps.flake-show-diff.outputs.output }}
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
