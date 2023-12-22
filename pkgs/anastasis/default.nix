@@ -19,24 +19,28 @@
   makeWrapper,
   which,
   jq,
+  git,
 }: let
   gnunet' = gnunet.override {postgresqlSupport = true;};
 in
   stdenv.mkDerivation rec {
     pname = "anastasis";
-    version = "0.2.0";
+    version = "0.4.0";
     src = fetchzip {
-      url = "mirror://gnu/anastasis/${pname}-${version}.tar.gz";
-      sha256 = "sha256-/13AqJUf8dwXhY554ZaXD8EuMPvrr3SoSe05Hc8Q+Io=";
+      url = "https://git.taler.net/anastasis.git/snapshot/${pname}-${version}.tar.gz";
+      sha256 = "sha256-zSjFYjlYQEhX2Uwd2qx3z1LGuHA/glBiH98XfrGoJlg=";
     };
     postPatch = ''
       patchShebangs src/cli
+      patchShebangs bootstrap
+      patchShebangs contrib
     '';
     outputs = ["out" "configured"];
     nativeBuildInputs = [
       pkg-config # hook that adds pkg-config files of buildInputs
       autoreconfHook # hook that triggers autoreconf to get the configure script
       makeWrapper # for wrapProgram
+      jq # used by extract.sh
     ];
     buildInputs = [
       taler-exchange
@@ -58,7 +62,14 @@ in
     postConfigure = ''
       mkdir -p $configured
       cp -r ./* $configured/
+      ./contrib/gana-update.sh
     '';
+
+    preBuild = ''
+      # ./bootstrap
+
+    '';
+
     postInstall = ''
       wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [
         # Fix "anastasis-config-wrapped needs gnunet-config to be installed"

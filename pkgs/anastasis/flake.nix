@@ -1,6 +1,6 @@
 {
   description = "GNU Anastasis is a key backup and recovery tool from the GNU project.";
-  inputs.nixpkgs.url = "github:JosephLucas/nixpkgs/anastasis";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs = {
     self,
