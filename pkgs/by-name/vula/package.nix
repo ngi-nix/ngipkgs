@@ -19,6 +19,11 @@ in
       hash = "sha256-hBB6jKCLwgfPsgINuvGuLgihrr9zhG46V6/G0SXdCSc=";
     };
 
+    postPatch = ''
+      substituteInPlace configs/systemd/* \
+        --replace 'ExecStart=vula' "ExecStart=$out/bin/vula"
+    '';
+
     propagatedBuildInputs = with python.pkgs;
       [
         setuptools
@@ -40,12 +45,20 @@ in
       ]
       ++ [highctidh];
 
+    postInstall = ''
+      mkdir -p $out/lib/systemd/system
+      cp configs/systemd/* $out/lib/systemd/system/
+    '';
+
     doCheck = true;
+
+    passthru.tests.vula = nixosTests.vula;
 
     meta = with lib; {
       description = "Automatic local network encryption";
       homepage = "https://vula.link/";
       license = licenses.gpl3;
       maintainers = with maintainers; [lorenzleutgeb];
+      mainProgram = "vula";
     };
   }
