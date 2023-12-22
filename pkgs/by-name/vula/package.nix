@@ -2,6 +2,7 @@
   lib,
   python3,
   fetchgit,
+  highctidh,
   nixosTests,
 }:
 with builtins; let
@@ -9,31 +10,35 @@ with builtins; let
 in
   python.pkgs.buildPythonApplication rec {
     pname = "vula";
-    version = "0.1.16";
+    version = "0.2.2023112801";
     format = "pyproject";
 
     src = fetchgit {
       url = "https://codeberg.org/vula/vula";
       rev = "v${version}";
-      hash = "sha256-AotWapYAONMRaIEdKV4O0fZmOd46vh5fosyvpaTLHvA=";
+      hash = "sha256-hBB6jKCLwgfPsgINuvGuLgihrr9zhG46V6/G0SXdCSc=";
     };
 
-    propagatedBuildInputs = with python.pkgs; [
-      setuptools
-      pyaudio
-      pyroute2
-      hkdf
-      pynacl
-      click
-      pyyaml
-      pystray
-      qrcode
-      pillow
-      pydbus
-      zeroconf
-      schema
-      cryptography
-    ];
+    propagatedBuildInputs = with python.pkgs;
+      [
+        setuptools
+        pyaudio
+        pyroute2
+        hkdf
+        pynacl
+        click
+        packaging
+        pyyaml
+        pystray
+        qrcode
+        pillow
+        pydbus
+        zeroconf
+        schema
+        cryptography
+        tkinter
+      ]
+      ++ [highctidh];
 
     doCheck = true;
 
