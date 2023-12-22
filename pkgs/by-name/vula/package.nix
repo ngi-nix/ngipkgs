@@ -4,6 +4,7 @@
   fetchgit,
   highctidh,
   nixosTests,
+  coreutils,
 }:
 with builtins; let
   python = python3;
@@ -22,6 +23,9 @@ in
     postPatch = ''
       substituteInPlace configs/systemd/* \
         --replace 'ExecStart=vula' "ExecStart=$out/bin/vula"
+
+      substituteInPlace configs/dbus/* \
+        --replace 'Exec=/bin/false' "Exec=${coreutils}/bin/false"
     '';
 
     propagatedBuildInputs = with python.pkgs;
@@ -46,8 +50,9 @@ in
       ++ [highctidh];
 
     postInstall = ''
-      mkdir -p $out/lib/systemd/system
+      mkdir -p $out/{lib/systemd/system,/share/dbus-1/system-services}
       cp configs/systemd/* $out/lib/systemd/system/
+      cp configs/dbus/* $out/share/dbus-1/system-services/
     '';
 
     doCheck = true;

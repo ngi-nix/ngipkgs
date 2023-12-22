@@ -71,5 +71,7 @@ in {
     environment.systemPackages = [cfg.package];
 
     systemd.packages = [cfg.package];
+
+    services.dbus.packages = [cfg.package];
   };
 }
