@@ -15,6 +15,8 @@
   inputs.rust-overlay.url = "github:oxalica/rust-overlay";
   inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
   inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.dream2nix.url = "github:nix-community/dream2nix";
+  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = {
     self,
@@ -23,6 +25,7 @@
     treefmt-nix,
     sops-nix,
     rust-overlay,
+    dream2nix,
     ...
   }: let
     inherit
@@ -41,6 +44,7 @@
       nameValuePair
       nixosSystem
       filterAttrs
+      attrByPath
       ;
 
     importPackages = pkgs: let
@@ -68,7 +72,7 @@
 
       pkgsByName = import ./pkgs/by-name {
         inherit (pkgs) lib;
-        inherit callPackage;
+        inherit callPackage dream2nix pkgs;
       };
 
       explicitPkgs = import ./pkgs {
@@ -114,7 +118,9 @@
       system = flake-utils.lib.system.x86_64-linux;
       pkgs = importNixpkgs system [self.overlays.default];
       treefmtEval = loadTreefmt pkgs;
-      nonBrokenPkgs = filterAttrs (_: v: !v.meta.broken) self.packages.${system};
+      # Dream2nix is failing to pass through the meta attribute set.
+      # As a workaround, consider packages with empty meta as non-broken.
+      nonBrokenPkgs = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) self.packages.${system};
     in {
       # Github Actions executes `nix flake check` therefore this output
       # should only contain derivations that can built within CI.
