@@ -1,0 +1,18 @@
+diff --git a/bootstrap b/bootstrap
+index 217bba297..143674d11 100755
+--- a/bootstrap
++++ b/bootstrap
+@@ -5,13 +5,6 @@
+ 
+ set -eu
+ 
+-if ! git --version >/dev/null; then
+-  echo "git not installed"
+-  exit 1
+-fi
+-
+-git submodule update --init
+-
+ copy_configure() {
+   src=$1
+   dst=$2
