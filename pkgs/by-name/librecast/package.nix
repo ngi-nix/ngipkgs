@@ -12,7 +12,7 @@
     ;
 in
   stdenv.mkDerivation rec {
-    name = "librecast";
+    pname = "librecast";
     version = "0.7-RC3";
 
     src = fetchFromGitea {

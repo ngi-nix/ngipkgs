@@ -13,7 +13,7 @@
     ;
 in
   stdenv.mkDerivation rec {
-    name = "lcsync";
+    pname = "lcsync";
     version = "0.2.1";
 
     src = fetchFromGitea {

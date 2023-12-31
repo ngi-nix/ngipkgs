@@ -18,7 +18,7 @@
   version = "0.9.3";
 in
   stdenv.mkDerivation {
-    name = "sync";
+    pname = "sync";
     inherit version;
 
     src = fetchgit {

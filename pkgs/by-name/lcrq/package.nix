@@ -10,7 +10,7 @@
     ;
 in
   stdenv.mkDerivation rec {
-    name = "lcrq";
+    pname = "lcrq";
     version = "0.1.0";
 
     src = fetchFromGitea {
