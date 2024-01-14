@@ -74,6 +74,29 @@
         "type": "github"
       }
     },
+    "pnpm2nix-nzbr": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1702270329,
+        "narHash": "sha256-Q3pg+Qc6OfVwf53o2lGoky5G4hDed0YkWw6PxocxPNE=",
+        "owner": "nzbr",
+        "repo": "pnpm2nix-nzbr",
+        "rev": "b88c9601da369ad4bc4fec1d5c28f830886e4ceb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nzbr",
+        "repo": "pnpm2nix-nzbr",
+        "type": "github"
+      }
+    },
     "purescript-overlay": {
       "inputs": {
         "nixpkgs": [
@@ -118,6 +141,7 @@
         "dream2nix": "dream2nix",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "pnpm2nix-nzbr": "pnpm2nix-nzbr",
         "rust-overlay": "rust-overlay",
         "sops-nix": "sops-nix",
         "systems": "systems",
