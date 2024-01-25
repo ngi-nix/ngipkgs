@@ -52,7 +52,7 @@ in
       experimental-features = [
         "nix-command"
         "flakes"
-        "ca-derivations"
+        #"ca-derivations"
       ];
       allowed-uris = "https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:";
   };
