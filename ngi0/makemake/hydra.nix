@@ -48,11 +48,10 @@ in
       max_concurrent_evals = 2
     '';
 
-  nix.extraOptions = lib.mkForce
-    ''
-      experimental-features = nix-command flakes ca-derivations
-      allowed-uris = https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:
-    '';
+  nix.settings = {
+      experimental-features = [ "nix-command" "flakes" "ca-derivations" ];
+      allowed-uris = "https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:";
+  };
 
   systemd.tmpfiles.rules =
     [ "d /var/cache/hydra 0755 hydra hydra -  -"

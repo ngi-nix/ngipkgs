@@ -34,5 +34,5 @@
   boot.initrd.availableKernelModules = [ "ahci" "nvme" ];
   boot.kernelModules = [ "kvm-amd" ];
 
-  nix.maxJobs = lib.mkDefault 16;
+  nix.settings.max-jobs = lib.mkDefault 16;
 }
