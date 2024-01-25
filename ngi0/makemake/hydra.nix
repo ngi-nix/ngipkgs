@@ -49,7 +49,11 @@ in
     '';
 
   nix.settings = {
-      experimental-features = [ "nix-command" "flakes" "ca-derivations" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "ca-derivations"
+      ];
       allowed-uris = "https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:";
   };
 
