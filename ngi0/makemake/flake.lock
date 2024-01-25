@@ -22,15 +22,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1706137962,
-        "narHash": "sha256-K5xmkhpWAsbKyO4sISmfwUQ+tdOubgjjMRoTxWsZlc8=",
-        "owner": "NixOS",
+        "lastModified": 1706138113,
+        "narHash": "sha256-OeIXCcrbIcSenYDJ9DvkeXTcBXRqgXUp27eHLRBQ0bg=",
+        "owner": "thufschmitt",
         "repo": "hydra",
-        "rev": "d45e14fd4381d1476a606c20ef3573215067472c",
+        "rev": "002a77a954259ddb49fd262607ba44fb2c3b34a9",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
+        "owner": "thufschmitt",
+        "ref": "nix-ca",
         "repo": "hydra",
         "type": "github"
       }
