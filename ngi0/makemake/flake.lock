@@ -23,11 +23,11 @@
         "nixpkgs-for-fileset": "nixpkgs-for-fileset"
       },
       "locked": {
-        "lastModified": 1706247298,
-        "narHash": "sha256-htgFoYi6ppg+SeuChx11CUWsH/mD5tiEcZDZvOXbc5o=",
+        "lastModified": 1706288038,
+        "narHash": "sha256-jeejAd6GQfnJh4gBAhJhXVmcaruCQVwrbGrfm6fuFaY=",
         "owner": "nixos",
         "repo": "hydra",
-        "rev": "323b556dc8c348f1f9d5bf5b8a35f2617bfe600c",
+        "rev": "b503280256bed6ced0c79d32ee17dda72827a381",
         "type": "github"
       },
       "original": {
