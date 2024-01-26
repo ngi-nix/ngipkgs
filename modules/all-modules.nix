@@ -7,4 +7,5 @@
   mcaptcha = import ./mcaptcha.nix;
   pretalx = import ./pretalx.nix;
   unbootable = import ./unbootable.nix;
+  vula = import ./vula.nix;
 }
