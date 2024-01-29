@@ -3,7 +3,10 @@
   # Refer to <https://github.com/ngi-nix/ngipkgs/issues/40>.
   #liberaforms-container = import ./liberaforms/container.nix;
   flarum = {
-    imports = [./flarum];
+    imports = [
+      ./flarum
+      ./dummy.nix
+    ];
   };
   pretalx-postgresql = {
     imports = [
