@@ -1,7 +1,7 @@
 {
   inputs.nixpkgs.follows = "hydra/nixpkgs";
   inputs.nix.follows = "hydra/nix";
-  inputs.hydra.url = "github:nixos/hydra/ca-no-new-col";
+  inputs.hydra.url = "github:nixos/hydra/nix-next";
 
   outputs = { self, nixpkgs, nix, hydra }: {
 
