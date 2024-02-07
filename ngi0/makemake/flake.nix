@@ -29,6 +29,22 @@
           nix.registry.nixpkgs.flake = nixpkgs;
           nix.nixPath = [ "nixpkgs=${nixpkgs}" ];
 
+          nix.buildMachines = [
+            {
+              hostName = "localhost";
+              systems = [ "x86_64-linux" "i686-linux" ];
+              maxJobs = 16;
+              speedFactor = 1;
+              supportedFeatures = [
+                "nixos-test"
+                "benchmark"
+                "big-parallel"
+                "kvm"
+                "ca-derivations"
+              ];
+            }
+          ];
+
           /*
           deployment.targetEnv = "hetzner";
           deployment.hetzner.mainIPv4 = "116.202.113.248"; # 2a01:4f8:231:4187::2
