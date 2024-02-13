@@ -101,7 +101,7 @@
 
     nixosConfigurations =
       mapAttrs
-      (_: config: nixosSystem {modules = [config] ++ attrValues extendedModules;})
+      (_: config: nixosSystem {modules = [config ./configs/dummy.nix] ++ attrValues extendedModules;})
       rawNixosConfigs;
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
