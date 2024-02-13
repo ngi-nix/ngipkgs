@@ -5,27 +5,23 @@
   flarum = {
     imports = [
       ./flarum
-      ./dummy.nix
     ];
   };
   pretalx-postgresql = {
     imports = [
       ./pretalx/pretalx.nix
       ./pretalx/postgresql.nix
-      ./dummy.nix
     ];
   };
   pretalx-mysql = {
     imports = [
       ./pretalx/pretalx.nix
       ./pretalx/mysql.nix
-      ./dummy.nix
     ];
   };
   kbin = {
     imports = [
       ./kbin
-      ./dummy.nix
     ];
   };
 }
