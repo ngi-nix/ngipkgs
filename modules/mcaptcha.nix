@@ -262,10 +262,13 @@ in {
       ensureUsers = [
         {
           name = cfg.user;
-          ensurePermissions = {"DATABASE ${cfg.settings.database.name}" = "ALL PRIVILEGES";};
         }
       ];
     };
+
+    systemd.services.postgresql.postStart = lib.mkIf cfg.database.createLocally (lib.mkAfter ''
+      $PSQL ${cfg.settings.database.name} -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO "${cfg.user}"'
+    '');
 
     services.redis.servers.mcaptcha = lib.mkIf cfg.redis.createLocally {
       enable = true;
