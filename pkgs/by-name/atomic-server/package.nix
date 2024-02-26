@@ -21,14 +21,14 @@
 in
   rustPlatform.buildRustPackage rec {
     pname = "atomic-server";
-    version = "0.34.5";
+    version = "0.37.0";
 
     src = fetchCrate {
       inherit pname version;
-      hash = "sha256-X7G/EYhs7CBRZ+7oVKyQRk5WDyFKnQmi8aLbi/KIwgI=";
+      hash = "sha256-/OKYac0HA9EWDQ5qNyMPITN5iUdLM9SAVmOm6PVIFOk=";
     };
 
-    cargoHash = "sha256-mox1MdWgCgzytjqAPu1xHKWP8D5oRnXvMyqRbZXM9Pc=";
+    cargoHash = "sha256-LwSyK/7EEoTf1x7KGtebPxYTqH3SCjXGONNMxcmdEv0=";
 
     doCheck = false; # TODO(jl): broken upstream
 
