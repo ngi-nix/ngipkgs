@@ -17,6 +17,8 @@
   inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
   inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.pnpm2nix-nzbr.url = "github:nzbr/pnpm2nix-nzbr";
+  inputs.pnpm2nix-nzbr.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = {
     self,
@@ -26,6 +28,7 @@
     sops-nix,
     rust-overlay,
     dream2nix,
+    pnpm2nix-nzbr,
     ...
   }: let
     inherit
@@ -72,6 +75,7 @@
 
       pkgsByName = import ./pkgs/by-name {
         inherit (pkgs) lib;
+        inherit (pkgs) mkPnpmPackage;
         inherit callPackage dream2nix pkgs;
       };
 
@@ -105,7 +109,10 @@
       rawNixosConfigs;
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = importNixpkgs system [rust-overlay.overlays.default];
+      pkgs = importNixpkgs system [
+        rust-overlay.overlays.default
+        pnpm2nix-nzbr.overlays.default
+      ];
       treefmtEval = loadTreefmt pkgs;
       toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
     in {
