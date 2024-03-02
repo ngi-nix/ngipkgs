@@ -107,7 +107,7 @@
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = importNixpkgs system [rust-overlay.overlays.default];
       treefmtEval = loadTreefmt pkgs;
-      toplevel = name: config: nameValuePair "${name}-toplevel" config.config.system.build.toplevel;
+      toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
     in {
       packages = importPackages pkgs;
       formatter = treefmtEval.config.build.wrapper;
@@ -128,7 +128,7 @@
       checks.${system} =
         # For `nix flake check` to *build* all packages, because by default
         # `nix flake check` only evaluates packages and does not build them.
-        nonBrokenPkgs
+        (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
         // {
           formatting = treefmtEval.config.build.check self;
         };
