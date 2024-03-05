@@ -1,0 +1,103 @@
+diff --git a/cmd/taldir-cli/main.go b/cmd/taldir-cli/main.go
+index 8d62544..047f358 100644
+--- a/cmd/taldir-cli/main.go
++++ b/cmd/taldir-cli/main.go
+@@ -25,8 +25,9 @@ import (
+ 	"os"
+ 
+ 	gnunetutil "gnunet/util"
+-	"taler.net/taldir/internal/util"
+-	taldir "taler.net/taldir/pkg/rest"
++
++	"git.taler.net/taldir/internal/util"
++	taldir "git.taler.net/taldir/pkg/rest"
+ )
+ 
+ // Generates a link from a challenge and address
+diff --git a/cmd/taldir-server/main.go b/cmd/taldir-server/main.go
+index 9d1a1f6..67dc730 100644
+--- a/cmd/taldir-server/main.go
++++ b/cmd/taldir-server/main.go
+@@ -31,7 +31,7 @@ import (
+ 	"log"
+ 	"net/http"
+ 
+-	taldir "taler.net/taldir/pkg/rest"
++	taldir "git.taler.net/taldir/pkg/rest"
+ )
+ 
+ var t taldir.Taldir
+diff --git a/cmd/taldir-server/main_test.go b/cmd/taldir-server/main_test.go
+index 3000e31..713e62e 100644
+--- a/cmd/taldir-server/main_test.go
++++ b/cmd/taldir-server/main_test.go
+@@ -30,10 +30,10 @@ import (
+ 
+ 	gnunetutil "gnunet/util"
+ 
++	_ "git.taler.net/taldir/cmd/taldir-server"
++	"git.taler.net/taldir/internal/util"
++	taldir "git.taler.net/taldir/pkg/rest"
+ 	"github.com/jarcoal/httpmock"
+-	_ "taler.net/taldir/cmd/taldir-server"
+-	"taler.net/taldir/internal/util"
+-	taldir "taler.net/taldir/pkg/rest"
+ )
+ 
+ var t taldir.Taldir
+diff --git a/go.mod b/go.mod
+index 4fec163..f39f561 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,4 +1,4 @@
+-module taler.net/taldir
++module git.taler.net/taldir
+ 
+ go 1.18
+ 
+@@ -30,3 +30,5 @@ require (
+ )
+ 
+ replace gnunet v0.1.27 => ./third_party/gnunet-go/src/gnunet
++
++replace taler.net/taler-go.git => git.taler.net/taler-go.git v0.0.0-20220719135513-36eb87bf37a3
+diff --git a/internal/util/helper.go b/internal/util/helper.go
+index 239980f..ba37921 100644
+--- a/internal/util/helper.go
++++ b/internal/util/helper.go
+@@ -23,8 +23,9 @@ import (
+ 	"fmt"
+ 	gnunetutil "gnunet/util"
+ 	"math/rand"
+-	talerutil "taler.net/taler-go.git/pkg/util"
+ 	"time"
++
++	talerutil "git.taler.net/taler-go.git/pkg/util"
+ )
+ 
+ // Generates a solution from a challenge and pubkey
+diff --git a/pkg/rest/taldir.go b/pkg/rest/taldir.go
+index 5e50edf..169b396 100644
+--- a/pkg/rest/taldir.go
++++ b/pkg/rest/taldir.go
+@@ -38,16 +38,16 @@ import (
+ 
+ 	gnunetutil "gnunet/util"
+ 
++	"git.taler.net/taldir/internal/gana"
++	"git.taler.net/taldir/internal/util"
++	"git.taler.net/taler-go.git/pkg/merchant"
++	tos "git.taler.net/taler-go.git/pkg/rest"
+ 	"github.com/gorilla/mux"
+ 	"github.com/skip2/go-qrcode"
+ 	"gopkg.in/ini.v1"
+ 	"gorm.io/driver/postgres"
+ 	"gorm.io/gorm"
+ 	"gorm.io/gorm/logger"
+-	"taler.net/taldir/internal/gana"
+-	"taler.net/taldir/internal/util"
+-	"taler.net/taler-go.git/pkg/merchant"
+-	tos "taler.net/taler-go.git/pkg/rest"
+ )
+ 
+ // Taldir is the primary object of the Taldir service
