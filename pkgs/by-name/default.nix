@@ -2,6 +2,7 @@
   lib,
   callPackage,
   dream2nix,
+  mkPnpmPackage,
   pkgs,
 }: let
   baseDirectory = ./.;
