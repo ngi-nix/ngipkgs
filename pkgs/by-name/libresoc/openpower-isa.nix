@@ -1,7 +1,7 @@
 {
   python39,
   python39Packages,
-  fetchgit,
+  fetchFromLibresoc,
   pkgsCross,
   writeShellApplication,
   gnumake,
@@ -16,11 +16,17 @@ with python39Packages;
     name = "libresoc-openpower-isa";
     version = "unstable-2024-03-31";
 
-    src = fetchgit {
-      url = "https://git.libre-soc.org/git/openpower-isa.git";
-      sha256 = "sha256-OKUb3BmVEZD2iRV8sbNEEA7ANJImWX8FEj06o5+HQwU=";
+    src = fetchFromLibresoc {
+      inherit pname;
       rev = "3cb597b99d414dbdb35336eb3734b5d46edd597f"; # HEAD @ version date
+      sha256 = "sha256-OKUb3BmVEZD2iRV8sbNEEA7ANJImWX8FEj06o5+HQwU=";
     };
+
+    prePatch = ''
+      # broken upstream, required for importing modules in tests
+      touch ./src/openpower/{sv,test/general}/__init__.py
+    '';
+
     propagatedNativeBuildInputs = [
       astor
       cached-property
