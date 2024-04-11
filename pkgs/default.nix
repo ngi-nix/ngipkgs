@@ -38,6 +38,7 @@
       libresoc-pyelftools = callPackage ./libresoc/libresoc-pyelftools.nix {};
       mdis = callPackage ./libresoc/mdis.nix {};
       nmigen = callPackage ./libresoc/nmigen.nix {};
+      nmigen-soc = callPackage ./libresoc/nmigen-soc.nix {inherit nmigen;};
     in rec {
     };
   };
