@@ -55,6 +55,17 @@
       power-instruction-analyzer = callPackage ./libresoc/power-instruction-analyzer.nix {};
       pytest-output-to-files = callPackage ./libresoc/pytest-output-to-files.nix {};
     in rec {
+      # SoC synthesized to nmigen(-soc)
+      soc = callPackage ./libresoc/soc.nix {
+        inherit
+          libresoc-c4m-jtag
+          libresoc-ieee754fpu
+          libresoc-openpower-isa
+          nmigen-soc
+          power-instruction-analyzer
+          pytest-output-to-files
+          ;
+      };
     };
   };
 in
