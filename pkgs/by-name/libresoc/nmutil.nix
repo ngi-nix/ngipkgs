@@ -1,21 +1,37 @@
-{ lib, buildPythonPackage, bigfloat, fetchgit, pyvcd }:
+{
+  lib,
+  fetchFromLibresoc,
+  python39Packages,
+  symbiyosys,
+  yices,
+  nmigen,
+  pytest-output-to-files,
+}:
+with python39Packages;
+  buildPythonPackage {
+    pname = "libresoc-nmutil";
+    version = "unstable-2024-03-31";
 
-buildPythonPackage {
-  pname = "libresoc-nmutil";
-  version = "unstable-2021-08-24";
+    src = fetchFromLibresoc {
+      inherit pname;
+      rev = "4bf2f20bddc057df1597d14e0b990c0b9bdeb10e"; # HEAD @ version date
+      hash = "sha256-8jXQGO4IeB6WjGtjuHO8UBh9n3ei7LukmRoXSbNJ1vM=";
+    };
 
-  propagatedBuildInputs = [ pyvcd ];
+    propagatedNativeBuildInputs = [
+      pyvcd
+      symbiyosys
+      yices
+    ];
 
-  src = fetchgit {
-    url = "https://git.libre-soc.org/git/nmutil.git";
-    rev = "efda080db6978d249a23003bec734f1cc07de329";
-    sha256 = "nTgUiZc4CC0VoUND29kHSIyMlP9IB3oZfehutoNK07w=";
-  };
+    nativeCheckInputs = [
+      nmigen
+      symbiyosys
+      yices
+      pytestCheckHook
+      pytest-xdist
+      pytest-output-to-files
+    ];
 
-  doCheck = false;
-
-  meta = with lib; {
-    homepage = "https://pypi.org/project/libresoc-ieee754fpu/";
-    license = licenses.lgpl3Plus;
-  };
-}
+    pythonImportsCheck = ["nmutil"];
+  }

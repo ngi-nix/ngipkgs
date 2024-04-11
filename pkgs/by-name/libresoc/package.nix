@@ -41,7 +41,7 @@
   # suffers from the same rename issue as the previous commit with renaming issue as nmigen/amaranth
   nmigen-soc = callPackage ./nmigen-soc.nix {inherit nmigen;};
   # libresoc's nmutil fork, used for differential testing
-  nmutil = callPackage ./nmutil.nix {inherit nmigen pytest-output-to-files;};
+  nmutil = callPackage ./nmutil.nix {inherit fetchFromLibresoc nmigen pytest-output-to-files;};
   # library for running pin multiplexers
   pinmux = callPackage ./pinmux.nix {inherit fetchFromLibresoc;};
   # libresoc's PowerPC emulator
