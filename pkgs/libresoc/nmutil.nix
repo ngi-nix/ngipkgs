@@ -33,6 +33,4 @@ with python39Packages;
     ];
 
     pythonImportsCheck = ["nmutil"];
-
-    doCheck = false; # FIXME: working, annoying while debugging
   }

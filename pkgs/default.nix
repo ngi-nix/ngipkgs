@@ -66,6 +66,9 @@
           pytest-output-to-files
           ;
       };
+
+      # SoC synthesized to Verilog
+      verilog = callPackage ./libresoc/verilog.nix {inherit pinmux soc;};
     };
   };
 in
