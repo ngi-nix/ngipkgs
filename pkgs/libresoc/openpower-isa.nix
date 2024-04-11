@@ -59,5 +59,8 @@ with python39Packages;
       ''
         # complement of `remove-gitignore-check.patch`
         mkdir -p $out/${python39.sitePackages}/openpower/decoder/isa/generated
+
+        # linker script vendored in test library
+        cp ./src/openpower/simulator/memmap $out/${python39.sitePackages}/openpower/simulator/
       ''
   }
