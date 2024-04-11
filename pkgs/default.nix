@@ -36,6 +36,7 @@
 
     libresoc = let
       libresoc-pyelftools = callPackage ./libresoc/libresoc-pyelftools.nix {};
+      mdis = callPackage ./libresoc/mdis.nix {};
     in rec {
     };
   };
