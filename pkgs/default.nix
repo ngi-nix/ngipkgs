@@ -42,6 +42,7 @@
       nmigen-soc = callPackage ./libresoc/nmigen-soc.nix {inherit nmigen;};
       pinmux = callPackage ./libresoc/pinmux.nix {};
       power-instruction-analyzer = callPackage ./libresoc/power-instruction-analyzer.nix {};
+      pytest-output-to-files = callPackage ./libresoc/pytest-output-to-files.nix {};
     in rec {
     };
   };
