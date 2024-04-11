@@ -16,7 +16,7 @@
   # JTAG debugging
   libresoc-c4m-jtag = callPackage ./libresoc-c4m-jtag.nix {inherit fetchFromLibresoc nmigen nmigen-soc;};
   # floating point implementation
-  libresoc-ieee754fpu = callPackage ./ieee754fpu.nix {inherit nmutil nmigen pytest-output-to-files sfpy bigfloat;};
+  libresoc-ieee754fpu = callPackage ./ieee754fpu.nix {inherit fetchFromLibresoc nmutil nmigen pytest-output-to-files sfpy bigfloat;};
   # openpower-isa definition
   libresoc-openpower-isa = callPackage ./openpower-isa.nix {
     inherit
