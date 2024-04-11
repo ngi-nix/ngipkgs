@@ -25,6 +25,13 @@ with python39Packages;
     prePatch = ''
       # broken upstream, required for importing modules in tests
       touch ./src/openpower/{sv,test/general}/__init__.py
+
+      # ignore $CC/$AS/etc environment variables and update hard-coded prefixes with pkgsCross compiler (powerpc64le-unknown-linux-gnu-gcc)
+      substituteInPlace src/openpower/syscalls/ppc_flags.py \
+        --replace 'powerpc64le-linux-gnu-gcc' '${pkgsCross.powernv.buildPackages.gcc.targetPrefix}gcc'
+      substituteInPlace src/openpower/simulator/envcmds.py \
+        --replace 'powerpc64-linux-gnu-' '${pkgsCross.powernv.buildPackages.gcc.targetPrefix}' \
+        --replace 'os.environ.get(cmd.upper(), default)' 'default'
     '';
 
     propagatedNativeBuildInputs = [
