@@ -37,6 +37,15 @@
     libresoc = let
       libresoc-c4m-jtag = callPackage ./libresoc/c4m-jtag.nix {inherit nmigen nmigen-soc;};
       libresoc-ieee754fpu = callPackage ./libresoc/ieee754fpu.nix {inherit nmutil nmigen pytest-output-to-files;};
+      libresoc-openpower-isa = callPackage ./libresoc/openpower-isa.nix {
+        inherit
+          libresoc-pyelftools
+          mdis
+          nmigen
+          nmutil
+          pytest-output-to-files
+          ;
+      };
       libresoc-pyelftools = callPackage ./libresoc/libresoc-pyelftools.nix {};
       mdis = callPackage ./libresoc/mdis.nix {};
       nmigen = callPackage ./libresoc/nmigen.nix {};
