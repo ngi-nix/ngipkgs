@@ -1,0 +1,49 @@
+diff --git a/setup.py b/setup.py
+index ca38ef9..d80d297 100644
+--- a/setup.py
++++ b/setup.py
+@@ -8,19 +8,6 @@ NEWS = open(os.path.join(here, 'NEWS.txt')).read()
+ 
+ version = '0.0.3'
+ 
+-# the only reason this is added is because it's become a part of python 3.9.
+-# the project standard is python 3.7 however in future that will be updated.
+-# for now, cached_property is RELUCTANTLY added but a *copy* is added so
+-# that the generation of HDL is not critically dependent on random crap
+-# off the internet. you're spending USD 16 *MILLION* on masks, you better
+-# be absolutely paranoid-level certain you know where every piece of the
+-# chain creating the HDL comes from.
+-cprop = "git+https://git.libre-soc.org/git/cached-property.git@1.5.2" \
+-        "#egg=cached-property-1.5.2"
+-
+-pyelftools = "git+https://git.libre-soc.org/git/pyelftools.git@v0.30" \
+-             "#egg=pyelftools-0.30"
+-
+ # using pip3 for ongoing development is a royal pain.  seriously not
+ # recommended.  therefore a number of these dependencies have been
+ # commented out.  *they are still required* - they will need installing
+@@ -39,14 +26,8 @@ install_requires = [
+     'cffi', # LuaJIT-style C FFI for Python
+ 
+     # git url needed for having `pip3 install -e .` install from libre-soc git
+-    'cached-property@'+cprop,
+-    "pyelftools@" + pyelftools,
+-]
+-
+-# git url needed for having `setup.py develop` install from libre-soc git
+-dependency_links = [
+-    cprop,
+-    pyelftools,
++    'cached-property',
++    "pyelftools",
+ ]
+ 
+ test_requires = [
+@@ -78,7 +59,6 @@ setup(
+     include_package_data=True,
+     zip_safe=False,
+     install_requires=install_requires,
+-    dependency_links=dependency_links,
+     tests_require=test_requires,
+     test_suite='nose.collector',
+     entry_points={
