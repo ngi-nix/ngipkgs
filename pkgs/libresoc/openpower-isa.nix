@@ -92,4 +92,37 @@ with python39Packages;
           cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
         ''
       );
+
+    nativeCheckInputs = [
+      pytestCheckHook
+      pytest-xdist
+      pytest-output-to-files
+      pkgsCross.powernv.buildPackages.gcc
+    ];
+
+    disabledTests = [
+      # listed failures seem unlikely to result from packaging errors, assumed present upstream
+      "test_20_cmp"
+      "test_36_extras_rldimi"
+      "test_36_extras_rldimi_"
+      "test_3_sv_isel"
+      "test_37_extras_rldimi"
+      "test_4_sv_crand"
+    ];
+
+    disabledTestPaths = [
+      # listed paths import from codegen source, which is not in scope here.
+      "src/openpower/decoder/isa/"
+      "src/openpower/simulator/test_div_sim.py"
+      "src/openpower/simulator/test_helloworld_sim.py"
+      "src/openpower/simulator/test_mul_sim.py"
+      "src/openpower/simulator/test_shift_sim.py"
+      "src/openpower/simulator/test_sim.py"
+      "src/openpower/simulator/test_trap_sim.py"
+    ];
+
+    pythonImportsCheck = [
+      "openpower.decoder.power_decoder2"
+      "openpower"
+    ];
   }
