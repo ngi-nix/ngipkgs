@@ -40,6 +40,9 @@ with python39Packages;
       # patch out hack to create empty directory in output build
       # see postInstall notes for complement
       ./remove-gitignore-check.patch
+      # Makefile attempts to use recently-built binaries via $PATH, expose instead with a $(OPENPOWER) prefix
+      # see postInstall notes for complement
+      ./prefixed-openpower-isa-tools.patch
     ];
 
     propagatedNativeBuildInputs = [
@@ -63,4 +66,30 @@ with python39Packages;
         # linker script vendored in test library
         cp ./src/openpower/simulator/memmap $out/${python39.sitePackages}/openpower/simulator/
       ''
+      + (
+        # this project's build steps do not map cleanly onto Nix's build stages.
+        # setuptools builds the the `entry_points` into binaries that are used to codegen
+        # directly into the source directory, which is then bundled into a wheel and installed.
+        #
+        # for Nix, there's a chicken-and-egg problem with this:
+        # only once the package has been built can the codegen be run to... build the package from source.
+        # as a result, the installPhase is overloaded to effectively double as the build phase,
+        # so, the majority of build steps actually occur here, at the end:
+        let
+          codegen = writeShellApplication {
+            name = "run-codegen";
+            runtimeInputs = [gnumake pkgsCross.powernv.buildPackages.gcc];
+            text = "make generate";
+          };
+        in ''
+          # copy special-purpose python modules into path expected by codegen
+          cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
+
+          # complement of `prefixed-openpower-isa-tools.patch`
+          OPENPOWER=$out ${codegen}/bin/run-codegen
+
+          # ...again now including codegen source
+          cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
+        ''
+      );
   }
