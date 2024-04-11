@@ -33,6 +33,11 @@
       pretalx-venueless
       pretalx-public-voting
       ;
+
+    libresoc = let
+      libresoc-pyelftools = callPackage ./libresoc/libresoc-pyelftools.nix {};
+    in rec {
+    };
   };
 in
   self
