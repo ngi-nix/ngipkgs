@@ -34,6 +34,11 @@ with python39Packages;
         --replace 'os.environ.get(cmd.upper(), default)' 'default'
     '';
 
+    patches = [
+      # setup.py uses @git syntax for version specifiers, prevent setuptools from attempting to clone
+      ./use-vendored-git-dependencies.patch
+    ];
+
     propagatedNativeBuildInputs = [
       astor
       cached-property
