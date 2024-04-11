@@ -40,6 +40,7 @@
       mdis = callPackage ./libresoc/mdis.nix {};
       nmigen = callPackage ./libresoc/nmigen.nix {};
       nmigen-soc = callPackage ./libresoc/nmigen-soc.nix {inherit nmigen;};
+      nmutil = callPackage ./libresoc/nmutil.nix {inherit nmigen pytest-output-to-files;};
       pinmux = callPackage ./libresoc/pinmux.nix {};
       power-instruction-analyzer = callPackage ./libresoc/power-instruction-analyzer.nix {};
       pytest-output-to-files = callPackage ./libresoc/pytest-output-to-files.nix {};
