@@ -41,6 +41,7 @@
       nmigen = callPackage ./libresoc/nmigen.nix {};
       nmigen-soc = callPackage ./libresoc/nmigen-soc.nix {inherit nmigen;};
       pinmux = callPackage ./libresoc/pinmux.nix {};
+      power-instruction-analyzer = callPackage ./libresoc/power-instruction-analyzer.nix {};
     in rec {
     };
   };
