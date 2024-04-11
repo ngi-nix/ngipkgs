@@ -37,6 +37,9 @@ with python39Packages;
     patches = [
       # setup.py uses @git syntax for version specifiers, prevent setuptools from attempting to clone
       ./use-vendored-git-dependencies.patch
+      # patch out hack to create empty directory in output build
+      # see postInstall notes for complement
+      ./remove-gitignore-check.patch
     ];
 
     propagatedNativeBuildInputs = [
@@ -51,4 +54,10 @@ with python39Packages;
       ply
       pygdbmi
     ];
+
+    postInstall =
+      ''
+        # complement of `remove-gitignore-check.patch`
+        mkdir -p $out/${python39.sitePackages}/openpower/decoder/isa/generated
+      ''
   }
