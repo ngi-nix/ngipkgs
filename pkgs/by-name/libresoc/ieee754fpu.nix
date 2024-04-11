@@ -1,27 +1,36 @@
-{ lib, buildPythonPackage, libresoc-nmutil, bigfloat, fetchgit }:
+{
+  python39Packages,
+  fetchFromLibresoc,
+  bigfloat,
+  sfpy,
+  symbiyosys,
+  nmutil,
+  nmigen,
+  pytest-output-to-files,
+}:
+with python39Packages;
+  buildPythonPackage {
+    pname = "libresoc-ieee754fpu";
+    version = "unstable-2024-03-31";
 
-buildPythonPackage {
-  pname = "libresoc-ieee754fpu";
-  version = "unstable-2021-06-05";
+    src = fetchFromLibresoc {
+      inherit pname;
+      hash = "sha256-Ghbvg2Y4YlmxVEa3EtcvEVai4hC4VU4q+XIQh4pQ7+c=";
+      rev = "829dfbc53ba38ec17bc544cb0b862e73cee223db"; # HEAD @ version date
+    };
 
-  src = fetchgit {
-    url = "https://git.libre-soc.org/git/ieee754fpu.git";
-    rev = "c62fa3a7ee95832587d7725729dcdb9a002ae015";
-    sha256 = "wbr1vGFzUlUtBT6IcRsykADYeksiVoq/LacU/dbRQ0o=";
-  };
+    prePatch = ''
+      touch ./src/ieee754/part{,_ass,_cat,_repl}/__init__.py
+    '';
 
-  propagatedBuildInputs = [ libresoc-nmutil bigfloat ];
+    propagatedBuildInputs = [nmutil];
 
-  doCheck = false;
+    nativeCheckInputs = [pytestCheckHook pytest-xdist pytest-output-to-files nmigen symbiyosys];
 
-  prePatch = ''
-    touch ./src/ieee754/part/__init__.py
-  '';
+    # TODO(jleightcap): all tests pass except formal methods,
+    # > ERROR: Module `\U$$0' referenced in module `\top' in cell `$15' is a blackbox/whitebox module.
+    # might be an issue with symbiyosys version?
+    doCheck = false;
 
-  pythonImportsCheck = [ "ieee754.part" ];
-
-  meta = with lib; {
-    homepage = "https://pypi.org/project/libresoc-ieee754fpu/";
-    license = licenses.lgpl3Plus;
-  };
-}
+    pythonImportsCheck = ["ieee754.part"];
+  }
