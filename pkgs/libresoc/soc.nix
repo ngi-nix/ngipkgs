@@ -20,6 +20,12 @@ with python39Packages;
       fetchSubmodules = false;
     };
 
+    patches = [./soc-nmigen-soc-no-implicit-arg.patch];
+
+    postPatch = ''
+      rm -r src/soc/litex
+    '';
+
     propagatedBuildInputs = [
       cached-property
       libresoc-c4m-jtag
