@@ -20,6 +20,7 @@
   # openpower-isa definition
   libresoc-openpower-isa = callPackage ./openpower-isa.nix {
     inherit
+      fetchFromLibresoc
       libresoc-pyelftools
       mdis
       nmigen
