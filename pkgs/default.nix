@@ -40,6 +40,7 @@
       mdis = callPackage ./libresoc/mdis.nix {};
       nmigen = callPackage ./libresoc/nmigen.nix {};
       nmigen-soc = callPackage ./libresoc/nmigen-soc.nix {inherit nmigen;};
+      pinmux = callPackage ./libresoc/pinmux.nix {};
     in rec {
     };
   };
