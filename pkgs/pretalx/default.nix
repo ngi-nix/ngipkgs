@@ -5,6 +5,7 @@
 }:
 pretalx.overrideAttrs (
   finalAttrs: previousAttrs: {
+    name = "pretalx-test";
     propagatedBuildInputs = previousAttrs.propagatedBuildInputs ++ withPlugins;
     passthru =
       previousAttrs.passthru

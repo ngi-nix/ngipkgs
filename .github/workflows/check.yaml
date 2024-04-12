@@ -29,6 +29,8 @@ jobs:
         run: echo "CACHIX_AUTH_TOKEN=$(tr 'A-Za-z' 'N-ZA-Mn-za-m' < .github/workflows/cachix)" >> $GITHUB_ENV
         if: steps.trusted.outcome == 'skipped'
 
+      - run: env
+
       - name: Cachix using untrusted cache for PRs from forks
         uses: cachix/cachix-action@v14
         if: steps.env.outcome == 'success'
