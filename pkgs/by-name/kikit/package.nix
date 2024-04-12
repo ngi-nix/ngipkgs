@@ -1,8 +1,8 @@
 {
   lib,
-  pcbnew-transition,
   pybars3,
   python3,
+  openscad,
   fetchFromGitHub,
   bats,
   callPackage,
@@ -15,12 +15,11 @@
 
   properCaseName = "KiKit";
 
-  shapely = callPackage ./shapely {};
   solidpython = callPackage ./solidpython {};
 in
   python3.pkgs.buildPythonPackage rec {
     pname = toLower properCaseName;
-    version = "1.3.0";
+    version = "1.5.1";
     format = "setuptools";
 
     disabled = python3.pythonOlder "3.7";
@@ -29,7 +28,7 @@ in
       owner = "yaqwsx";
       repo = properCaseName;
       rev = "v${version}";
-      hash = "sha256-kDTPk/R3eZtm4DjoUV4tSQzjGQ9k8MKQedX4oUXYzeo=";
+      hash = "sha256-iehA6FthNTJq+lDTL4eSUIIlYDJj86LMOyv/L2/ybyc=";
     };
 
     propagatedBuildInputs = with python3.pkgs;
@@ -41,13 +40,14 @@ in
         commentjson
         # https://github.com/yaqwsx/KiKit/issues/575
         wxPython_4_2
+        shapely
+        pcbnew-transition
       ]
       ++ [
-        pcbnew-transition
-        shapely
         pybars3
         # https://github.com/yaqwsx/KiKit/issues/576
         solidpython
+        openscad
       ];
 
     nativeBuildInputs = with python3.pkgs; [
