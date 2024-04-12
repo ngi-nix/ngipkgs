@@ -1,0 +1,35 @@
+name: nix flake check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = no-url-literals
+
+      - name: Cachix using trusted cache
+        uses: cachix/cachix-action@v14
+        if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
+        with:
+          name: ngi
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Cachix using untrusted cache for PRs from forks
+        uses: cachix/cachix-action@v14
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
+        with:
+          name: ngi-untrusted
+          extraPullNames: ngi
+          authToken: '${{ env.CACHIX_AUTH_TOKEN }}'
+
+      - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
