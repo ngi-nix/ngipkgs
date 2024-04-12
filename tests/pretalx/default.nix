@@ -64,10 +64,10 @@ in {
         server.wait_for_unit("pretalx-web.service")
         server.wait_until_succeeds("curl --fail --connect-timeout 2 localhost", timeout=60)
 
-        server.execute("pretalx create_test_event")
+        server.execute("${nodes.server.services.ngi-pretalx.package.meta.mainProgram} create_test_event")
 
         # NOTE: "democon" is the slug of the event created by
-        # `pretalx create_test_event`.
+        # `pretalx-manage create_test_event`.
         server.succeed("curl --fail --connect-timeout 10 http://localhost/democon")
   '';
 }
