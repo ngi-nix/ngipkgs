@@ -1,6 +1,7 @@
 {
   pretalx,
   withPlugins ? [],
+  nixosTests,
 }:
 pretalx.overrideAttrs (
   finalAttrs: previousAttrs: {
@@ -9,6 +10,11 @@ pretalx.overrideAttrs (
       previousAttrs.passthru
       // {
         PYTHONPATH = "${pretalx.python.pkgs.makePythonPath finalAttrs.propagatedBuildInputs}:${pretalx.outPath}/${pretalx.python.sitePackages}";
+        tests =
+          previousAttrs.passthru.tests
+          // {
+            inherit (nixosTests) pretalx;
+          };
       };
   }
 )
