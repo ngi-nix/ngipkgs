@@ -27,12 +27,13 @@
     optional
     escapeShellArgs
     generators
+    getExe
     filterAttrs
     filterAttrsRecursive
     ;
 
-  cfg = config.services.pretalx;
-  opt = options.services.pretalx;
+  cfg = config.services.ngi-pretalx;
+  opt = options.services.ngi-pretalx;
   gunicorn = pkgs.python3Packages.gunicorn;
   libDir = "/var/lib/pretalx";
   gunicornSocketPath = "/var/run/pretalx.sock";
@@ -48,15 +49,18 @@
 
   pretalxWrapped =
     pkgs.runCommand "pretalx-wrapper"
-    {nativeBuildInputs = [pkgs.makeWrapper pkgs.python3Packages.wrapPython];}
+    {
+      nativeBuildInputs = [pkgs.makeWrapper pkgs.python3Packages.wrapPython];
+      meta.mainProgram = cfg.package.meta.mainProgram;
+    }
     ''
-      makeWrapper ${cfg.package}/bin/pretalx \
-        $out/bin/pretalx --prefix PYTHONPATH : "${PYTHONPATH}"
+      makeWrapper ${getExe cfg.package} \
+        $out/bin/${cfg.package.meta.mainProgram} --prefix PYTHONPATH : "${PYTHONPATH}"
     '';
 
   secretRecommendation = "Consider using a secret managing scheme such as `agenix` or `sops-nix` to generate this file.";
 in {
-  options.services.pretalx = with types; {
+  options.services.ngi-pretalx = with types; {
     enable = mkEnableOption "Enable pretalx server.";
 
     package = mkPackageOption pkgs "pretalx" {};
@@ -496,7 +500,7 @@ in {
             };
             script = ''
               ${exportPasswordEnv}
-              ${pretalxWrapped}/bin/pretalx ${command}
+              ${getExe pretalxWrapped} ${command}
             '';
           };
       in {
@@ -526,7 +530,7 @@ in {
           script = ''
             ${exportPasswordEnv}
             export DJANGO_SUPERUSER_PASSWORD=$(cat ${cfg.init.admin.passwordFile})
-            ${pretalxWrapped}/bin/pretalx init --noinput
+            ${getExe pretalxWrapped} init --noinput
             touch ${libDir}/init-will-not-run-again-if-this-file-exists
           '';
           requires = ["pretalx-migrate.service"];

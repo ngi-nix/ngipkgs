@@ -13,8 +13,6 @@
     #liberaforms = callPackage ./pkgs/liberaforms {};
     #liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
 
-    pretalx = callPackage ./pretalx {};
-    pretalx-frontend = callPackage ./pretalx/frontend.nix {};
     pretalx-full = callPackage ./pretalx {
       withPlugins = [
         pretalx-downstream
