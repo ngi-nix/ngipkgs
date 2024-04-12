@@ -1,4 +1,4 @@
-name: "Update flake.lock"
+name: nix flake update
 on:
   workflow_dispatch:
   schedule:
