@@ -262,7 +262,7 @@ in {
       ensureUsers = [
         {
           name = cfg.user;
-          ensurePermissions = {"DATABASE ${cfg.settings.database.name}" = "ALL PRIVILEGES";};
+          ensureDBOwnership = true;
         }
       ];
     };
