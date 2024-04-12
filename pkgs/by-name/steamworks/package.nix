@@ -29,6 +29,11 @@ in
       hash = "sha256-hD1nTyv/t7MQdopqivfSE0o4Qk1ymG8zQVg56lY+t9o=";
     };
 
+    # src/common/logger.h:254:63: error: 'uint8_t' does not name a type
+    postPatch = ''
+      sed -i "38i #include <cstdint>" src/common/logger.h
+    '';
+
     nativeBuildInputs = [cmake arpa2cm arpa2common];
 
     buildInputs = [
