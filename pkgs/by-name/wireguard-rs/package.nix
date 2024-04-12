@@ -18,7 +18,11 @@ in
       hash = "sha256-UlT0c0J4oY+E1UM2ElueHECjrxErIBERwiF1huLvtds=";
     };
 
-    cargoSha256 = "sha256-zYcIGTExDcDnRvwTcBRaJGxkiFpft/RelEd4quP9RrA=";
+    cargoLock.lockFile = ./Cargo.lock;
+
+    postPatch = ''
+      cp ${./Cargo.lock} Cargo.lock
+    '';
 
     meta = {
       homepage = "https://git.zx2c4.com/wireguard-rs";
