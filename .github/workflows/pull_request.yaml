@@ -15,26 +15,4 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
         with:
           upstream-cache: https://ngi.cachix.org/
-      - id: flake-show-diff
-        name: Obtain `nix flake show` output
-        run: |
-          shopt -s expand_aliases
-          alias show="nix flake show --all-systems"
-          alias filter="nix run nixpkgs#ansifilter | tail -n +2"
-          alias short="git rev-parse --short"
-          git fetch origin ${GITHUB_BASE_REF}:${GITHUB_BASE_REF}
-          if diff -U 1024 \
-           --label "$(short $GITHUB_BASE_REF) $GITHUB_BASE_REF" <(show ".?rev=$(git rev-parse ${GITHUB_BASE_REF})" | filter) \
-           --label "$(short HEAD) $GITHUB_HEAD_REF" <(show | filter) \
-           >> diff
-          then
-            echo 'output=No difference in `nix flake show`.' >> "$GITHUB_OUTPUT"
-          else
-            echo -e 'output<<EOF\n<details><summary>Difference in <code>nix flake show</code>.</summary>\n\n```diff' >> "$GITHUB_OUTPUT"
-            cat diff >> "$GITHUB_OUTPUT"
-            echo -e '```\n</details>\nEOF' >> "$GITHUB_OUTPUT"
-          fi
-      - uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: ${{ steps.flake-show-diff.outputs.output }}
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
