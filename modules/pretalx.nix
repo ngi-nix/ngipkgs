@@ -31,8 +31,8 @@
     filterAttrsRecursive
     ;
 
-  cfg = config.services.pretalx;
-  opt = options.services.pretalx;
+  cfg = config.services.ngi-pretalx;
+  opt = options.services.ngi-pretalx;
   gunicorn = pkgs.python3Packages.gunicorn;
   libDir = "/var/lib/pretalx";
   gunicornSocketPath = "/var/run/pretalx.sock";
@@ -56,7 +56,7 @@
 
   secretRecommendation = "Consider using a secret managing scheme such as `agenix` or `sops-nix` to generate this file.";
 in {
-  options.services.pretalx = with types; {
+  options.services.ngi-pretalx = with types; {
     enable = mkEnableOption "Enable pretalx server.";
 
     package = mkPackageOption pkgs "pretalx" {};

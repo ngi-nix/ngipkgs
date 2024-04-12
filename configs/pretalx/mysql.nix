@@ -4,7 +4,7 @@
   ...
 }: {
   services = {
-    pretalx.database = {
+    ngi-pretalx.database = {
       backend = "mysql";
       host = "/var/run/mysqld/mysqld.sock";
     };
@@ -14,11 +14,11 @@
       package = pkgs.mysql;
       ensureUsers = [
         {
-          name = config.services.pretalx.database.user;
-          ensurePermissions."${config.services.pretalx.database.name}.*" = "ALL PRIVILEGES";
+          name = config.services.ngi-pretalx.database.user;
+          ensurePermissions."${config.services.ngi-pretalx.database.name}.*" = "ALL PRIVILEGES";
         }
       ];
-      ensureDatabases = [config.services.pretalx.database.name];
+      ensureDatabases = [config.services.ngi-pretalx.database.name];
     };
   };
 }

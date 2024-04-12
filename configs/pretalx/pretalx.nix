@@ -31,7 +31,7 @@
   };
 
   services = {
-    pretalx = {
+    ngi-pretalx = {
       enable = true;
       package = pkgs.pretalx-full;
       nginx = {
