@@ -2,7 +2,7 @@ name: nix flake update
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * */3' # https://crontab.guru/#0_0_*_*_*/3
+    - cron: '0 0 * * MON' # https://crontab.guru/#0_0_*_*_MON
 
 jobs:
   lockfile:
