@@ -4,38 +4,49 @@
 of software projects funded by
 the [Next Generation Internet][NGI] (NGI) initiative of the European Commission
 
-[Nix]: https://nixos.org/manual/nix
-[NixOS]: https://nixos.org/manual/nixos
-[NGI]: https://www.ngi.eu
-
 ## Structure of NGIpkgs
 
 The software in NGIpkgs can be divided into two broad categories: Nix packages, and NixOS modules.
 
-Nix packages can theoretically be built and run on any operating system that runs the Nix package manager. The output of building a Nix package is often a usable library or executable and most if not all of its dependencies. In NGIpkgs, these packages are all contained in the `pkgs` directory. For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspired by [Nix RFC 140](https://github.com/NixOS/rfcs/blob/c8569f6719356009204133cd00d92010889ed56d/rfcs/0140-simple-package-paths.md). Otherwise, packages are added in `pkgs/<pname>/default.nix` imported in `pkgs/default.nix`.
+Nix packages can theoretically be built and run on any operating system that runs the Nix package manager.
+The output of building a Nix package is often a usable library or executable and most if not all of its dependencies.
+In NGIpkgs, these packages are all contained in the `pkgs` directory.
+For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspired by [Nix RFC 140][rfc-140].
+Otherwise, packages are added in `pkgs/<pname>/default.nix` imported in `pkgs/default.nix`.
 
-NixOS modules are components that can be easily integrated into NixOS. Usually they enrich Nix packages with configuration parameters. Many of them represent services that map to one or more systemd service(s) that are designed to, run persistently on NixOS. These modules are defined in the `modules` directory of NGIpkgs, and they are ready to be deployed to a new NixOS system (such as a container, VM, or physical machine). Templates in `configs` are a good starting point for anyone interested in using modules, and they are also used for testing.
+Corresponding to [projects funded by NGI trough NLnet](https://nlnet.nl/project/) there are per-project subdirectories within the [`projects`](./projects) directory.
+These per-project directories contain a `default.nix` which
+(a) picks packages associated with the project from those defined in `pkgs` and Nixpkgs,
+(b) exposes NixOS modules, tests and configurations which are also contained in the per-project directory,
+(c) may contain additional metadata about the project.
+
+NixOS modules are components that can be easily integrated into NixOS.
+Usually they enrich Nix packages with configuration parameters.
+Many of them represent services that map to one or more systemd service(s) that are designed to, run persistently on NixOS.
+These modules are ready to be deployed to a new NixOS system (such as a container, VM, or physical machine).
+Template configurations found in the corresponding per-project directory are a good starting point for anyone interested in using modules, and they are also used for testing.
 
 ```
 .
 ├── flake.nix
 ├── pkgs
 │   ├── by-name
-│   │   └── ...           # directories of packages that are added `by-name`
-│   ├── default.nix       # imports all packages that are not in `by-name`
-│   └── ...               # directories for packages
-├── modules
-│   └── ...                       # add module files here
-├── README.md                     # this file
-├── configs
-│   ├── all-configurations.nix    # import configuration files here
-│   └── ...                       # add configuration directories here
-└── ...
+│   │   └── …            # directories of packages that are added `by-name`
+│   ├── default.nix      # imports all packages that are not in `by-name`
+│   └── …                # directories for packages
+├── projects
+│   ├── <project-name>   # names matching those at https://nlnet.nl/project
+│   │   ├── default.nix  # project definition
+│   │   └── …            # files of the project (e.g. NixOS module, configuration, tests, etc.)
+│   └── …
+├── README.md            # this file
+└── …
 ```
 
 ## Continuous Builds of Packages with Hydra
 
-All packages in the main branch of NGIpkgs are automatically built by a [Hydra](https://github.com/NixOS/hydra) server. The results of these builds can be seen at <https://hydra.ngi0.nixos.org/jobset/NGIpkgs/main#tabs-jobs>
+All packages in the main branch of NGIpkgs are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
+The results of these builds can be found at <https://hydra.ngi0.nixos.org/jobset/NGIpkgs/main#tabs-jobs>
 
 ## Reasoning for Creation of the NGIpkgs Monorepo
 
@@ -46,3 +57,8 @@ All packages in the main branch of NGIpkgs are automatically built by a [Hydra](
 ## Contributing to NGIpkgs
 
 Please see [`CONTRIBUTING.md`](CONTRIBUTING.md)
+
+[Nix]: https://nixos.org/manual/nix
+[NixOS]: https://nixos.org/manual/nixos
+[NGI]: https://www.ngi.eu
+[rfc-140]: https://github.com/NixOS/rfcs/blob/c8569f6719356009204133cd00d92010889ed56d/rfcs/0140-simple-package-paths.md

@@ -28,15 +28,17 @@
     dream2nix,
     ...
   }: let
+    # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
+    lib = nixpkgs.lib.recursiveUpdate nixpkgs.lib (import ./lib.nix {inherit (nixpkgs) lib;});
+
     inherit
       (builtins)
-      readDir
       mapAttrs
       attrValues
       ;
 
     inherit
-      (nixpkgs.lib)
+      (lib)
       concatMapAttrs
       mapAttrs'
       foldr
@@ -45,26 +47,28 @@
       nixosSystem
       filterAttrs
       attrByPath
+      mapAttrByPath
+      flattenAttrsSlash
       ;
 
+    importProjects = {
+      pkgs ? {},
+      sources ? {
+        configurations = rawNixosConfigs;
+        modules = extendedModules;
+      },
+    }:
+      import ./projects {inherit lib pkgs sources;};
+
+    # Functions to ease access of imported projects, by "picking" certain paths.
+    pick = {
+      modules = mapAttrByPath ["nixos" "modules"] {};
+      tests = mapAttrByPath ["nixos" "tests"] {};
+      configurations = x: mapAttrs (_: v: mapAttrs (_: v: v.path) v) (mapAttrByPath ["nixos" "configurations"] {} x);
+    };
+
     importPackages = pkgs: let
-      nixosTests = let
-        dir = ./tests;
-        testDirs = readDir dir;
-
-        dirToTest = name: _: let
-          mkTestModule = import "${dir}/${name}";
-
-          testModule = mkTestModule {
-            inherit pkgs;
-            inherit (pkgs) lib;
-            modules = extendedModules;
-            configurations = rawNixosConfigs;
-          };
-        in
-          pkgs.nixosTest testModule;
-      in
-        mapAttrs dirToTest testDirs;
+      nixosTests = pick.tests (importProjects {pkgs = pkgs // allPackages;});
 
       callPackage = pkgs.newScope (
         allPackages // {inherit callPackage nixosTests;}
@@ -87,7 +91,7 @@
     importNixpkgs = system: overlays:
       import nixpkgs {inherit system overlays;};
 
-    rawNixosConfigs = import ./configs/all-configurations.nix;
+    rawNixosConfigs = flattenAttrsSlash (pick.configurations (importProjects {}));
 
     loadTreefmt = pkgs: treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
 
@@ -101,7 +105,7 @@
 
     nixosConfigurations =
       mapAttrs
-      (_: config: nixosSystem {modules = [config ./configs/dummy.nix] ++ attrValues extendedModules;})
+      (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedModules;})
       rawNixosConfigs;
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
@@ -143,7 +147,10 @@
         nonBrokenPkgs;
       in {
         packages.${system} = nonBrokenPkgs;
-        tests.${system} = passthruTests;
+        tests.${system} = {
+          passthru = passthruTests;
+          nixos = pick.tests (importProjects {pkgs = pkgs // nonBrokenPkgs;});
+        };
 
         nixosConfigurations.${system} =
           mapAttrs
@@ -156,14 +163,15 @@
       inherit nixosConfigurations;
 
       nixosModules =
-        (import ./modules/all-modules.nix)
-        // {
-          # The default module adds the default overlay on top of nixpkgs.
+        {
+          unbootable = import ./modules/unbootable.nix;
+          # The default module adds the default overlay on top of Nixpkgs.
           # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
           default.nixpkgs.overlays = [self.overlays.default];
-        };
+        }
+        // (flattenAttrsSlash (pick.modules (importProjects {})));
 
-      # Overlays a package set (e.g. nixpkgs) with the packages defined in this flake.
+      # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
       overlays.default = final: prev: importPackages prev;
     };
   in

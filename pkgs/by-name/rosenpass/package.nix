@@ -48,7 +48,7 @@ in
       installManPage doc/rosenpass.1
     '';
 
-    passthru.tests.rosenpass = nixosTests.rosenpass;
+    passthru.tests.rosenpass = nixosTests.Rosenpass.rosenpass;
 
     meta = {
       description = "Build post-quantum-secure VPNs with WireGuard!";

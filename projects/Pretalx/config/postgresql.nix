@@ -1,6 +1,9 @@
 {config, ...}: {
   services = {
-    ngi-pretalx.database.backend = "postgresql";
+    ngi-pretalx.database = {
+      backend = "postgresql";
+      user = "pretalx";
+    };
 
     postgresql = {
       enable = true;

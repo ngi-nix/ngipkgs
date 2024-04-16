@@ -1,4 +1,4 @@
-{modules, ...}: let
+{sources, ...}: let
   port = 7000;
   urlRoot = "http://localhost:${builtins.toString port}";
   redisPassword = "(*&(*):ps@r}";
@@ -11,8 +11,8 @@ in {
     ...
   }: {
     imports = [
-      modules.default
-      modules.mcaptcha
+      sources.modules.default
+      sources.modules."mCaptcha/service"
     ];
 
     services.mcaptcha.enable = true;
@@ -33,7 +33,7 @@ in {
 
   nodes.my_own_services = {pkgs, ...}: {
     imports = [
-      modules.default
+      sources.modules.default
     ];
     networking.firewall.enable = false;
     services.postgresql.enable = true;

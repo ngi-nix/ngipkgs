@@ -1,6 +1,5 @@
 {
-  configurations,
-  modules,
+  sources,
   lib,
   ...
 }: let
@@ -18,10 +17,10 @@ in {
       ...
     }: {
       imports = [
-        modules.default
-        modules.kbin
-        modules.unbootable
-        configurations.kbin
+        sources.modules.default
+        sources.modules."Kbin/service"
+        sources.modules.unbootable
+        sources.configurations."Kbin/base"
       ];
 
       unbootable = mkForce false;

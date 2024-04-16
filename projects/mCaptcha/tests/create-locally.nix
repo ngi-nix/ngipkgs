@@ -1,4 +1,4 @@
-{modules, ...}: let
+{sources, ...}: let
   port = 7000;
   urlRoot = "http://localhost:${builtins.toString port}";
 in {
@@ -6,8 +6,8 @@ in {
 
   nodes.mcaptcha = {pkgs, ...}: {
     imports = [
-      modules.default
-      modules.mcaptcha
+      sources.modules.default
+      sources.modules."mCaptcha/service"
     ];
 
     services.mcaptcha.enable = true;

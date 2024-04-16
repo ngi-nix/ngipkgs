@@ -7,6 +7,7 @@
     ngi-pretalx.database = {
       backend = "mysql";
       host = "/var/run/mysqld/mysqld.sock";
+      user = "pretalx";
     };
 
     mysql = {

@@ -1,7 +1,6 @@
 {
   rustPlatform,
   fetchFromGitHub,
-  lib,
 }: let
   src = fetchFromGitHub {
     owner = "mCaptcha";
@@ -13,7 +12,7 @@
     sha256 = "sha256-whRLgYkoBoVQiZwrmwBwqgHzPqqXC6g3na3YrH4/xVo=";
   };
 in
-  rustPlatform.buildRustPackage rec {
+  rustPlatform.buildRustPackage {
     inherit src;
     pname = "cache";
     version = "unstable-2023-03-08";

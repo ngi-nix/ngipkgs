@@ -25,18 +25,18 @@
 
   packageDirectories = concatMapAttrs names (readDir baseDirectory);
 
-  callModule = moduleDir: let
+  callModule = module: let
     evaluated = lib.evalModules {
       specialArgs = {
         inherit dream2nix;
         packageSets.nixpkgs = pkgs;
       };
       modules = [
-        moduleDir
+        module
         {
           paths.projectRoot = ../..;
           paths.projectRootFile = "flake.nix";
-          paths.package = moduleDir;
+          paths.package = module;
           paths.lockFile = "lock.json";
         }
       ];
