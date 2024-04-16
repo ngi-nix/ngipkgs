@@ -14,7 +14,7 @@ In NGIpkgs, these packages are all contained in the `pkgs` directory.
 For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspired by [Nix RFC 140][rfc-140].
 Otherwise, packages are added in `pkgs/<pname>/default.nix` imported in `pkgs/default.nix`.
 
-Corresponding to [funded projects](https://nlnet.nl/project/) there are per-project subdirectories within the `projects` directory.
+Corresponding to [projects funded by NGI trough NLnet](https://nlnet.nl/project/) there are per-project subdirectories within the [`projects`](./projects) directory.
 These per-project directories contain a `default.nix` which
 (a) picks packages associated with the project from those defined in `pkgs` and Nixpkgs,
 (b) exposes NixOS modules, tests and configurations which are also contained in the per-project directory,
@@ -24,7 +24,7 @@ NixOS modules are components that can be easily integrated into NixOS.
 Usually they enrich Nix packages with configuration parameters.
 Many of them represent services that map to one or more systemd service(s) that are designed to, run persistently on NixOS.
 These modules are ready to be deployed to a new NixOS system (such as a container, VM, or physical machine).
-Templates configurations found in the corresponding per-project directory are a good starting point for anyone interested in using modules, and they are also used for testing.
+Template configurations found in the corresponding per-project directory are a good starting point for anyone interested in using modules, and they are also used for testing.
 
 ```
 .
@@ -35,7 +35,7 @@ Templates configurations found in the corresponding per-project directory are a 
 │   ├── default.nix      # imports all packages that are not in `by-name`
 │   └── …                # directories for packages
 ├── projects
-│   ├── <project-name>   # names match with those at https://nlnet.nl/project
+│   ├── <project-name>   # names matching those at https://nlnet.nl/project
 │   │   ├── default.nix  # project definition
 │   │   └── …            # files of the project (e.g. NixOS module, configuration, tests, etc.)
 │   └── …
@@ -46,7 +46,7 @@ Templates configurations found in the corresponding per-project directory are a 
 ## Continuous Builds of Packages with Hydra
 
 All packages in the main branch of NGIpkgs are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
-The results of these builds can be seen at <https://hydra.ngi0.nixos.org/jobset/NGIpkgs/main#tabs-jobs>
+The results of these builds can be found at <https://hydra.ngi0.nixos.org/jobset/NGIpkgs/main#tabs-jobs>
 
 ## Reasoning for Creation of the NGIpkgs Monorepo
 
