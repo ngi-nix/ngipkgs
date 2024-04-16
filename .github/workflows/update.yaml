@@ -2,7 +2,10 @@ name: nix flake update
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * MON' # https://crontab.guru/#0_0_*_*_MON
+    # Run at an odd time to avoid spikes at, e.g. midnight.
+    # We don't really care too much about the particular time.
+    # https://crontab.guru/#17_1_*_*_Mon
+    - cron: '17 1 * * Mon' 
 
 jobs:
   lockfile:
