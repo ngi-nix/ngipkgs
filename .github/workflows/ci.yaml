@@ -1,9 +1,7 @@
 name: ci
 
 on:
-  push:
-    branches:
-      - main
+  push: { branches: [ 'main' ] }
   pull_request:
   workflow_dispatch:
 
@@ -13,26 +11,64 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            experimental-features = no-url-literals
+        with: { extra-conf: 'experimental-features = no-url-literals' }
       - run: nix ${{ runner.debug && '--debug' }} flake check --impure --no-build --show-trace
-        env:
-          NIX_ABORT_ON_WARN: true
+        env: { NIX_ABORT_ON_WARN: true }
 
-  check:
+  matrix:
     runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            experimental-features = no-url-literals
+        with: { extra-conf: 'experimental-features = no-url-literals' }
+
+      # Evaluate job matrix using Nix, which is not informed by state of cache.
+      - name: 'Evaluate matrix'
+        run: |
+          mkdir matrix
+          nix eval --json .#matrix > matrix/matrix.json
+
+      # Query Cachix to find out which paths are missing from the cache.
+      - name: 'Query Cachix'
+        run : |
+          curl --parallel --head --output-dir matrix --remote-name-all --config \
+            <(jq --raw-output '.include[].digest | "url = \"https://ngi.cachix.org/\(.).narinfo\""' matrix/matrix.json)
+
+      # Translate curl output into a simple JSON file that only contains an array of missing digests.
+      # Recompute the job matrix, by removing all jobs that are already cached.
+      - id: matrix
+        name: 'Minimize matrix'
+        run: |
+          grep --files-without-match --fixed-strings 'HTTP/2 200' matrix/*.narinfo \
+            | jq --slurp --raw-input --arg prefix 'matrix/' --compact-output \
+              '($prefix | length) as $start | rtrimstr("\n") | split("\n") | map(.[$start:$start + 32])' \
+            > matrix/missed.json
+
+          jq --argjson missed "$(< matrix/missed.json)" --compact-output \
+            '{ include: [.include[] | select(IN(.digest; $missed[]))] }' \
+            matrix/matrix.json \
+            > matrix/matrix-missed.json
+
+          echo "matrix=$(< matrix/matrix-missed.json)" >> "$GITHUB_OUTPUT"
+
+      - { uses: 'actions/upload-artifact@v4', with: { name: 'matrix', path: 'matrix' } }
+
+  build:
+    needs: matrix
+    runs-on: ${{ matrix.platform }}
+    name: build ${{ matrix.name }}
+    strategy: { matrix: '${{fromJSON(needs.matrix.outputs.matrix)}}' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with: { extra-conf: 'experimental-features = no-url-literals' }
 
       - id: trusted
         name: Cachix using trusted cache
         uses: cachix/cachix-action@v14
-        if: github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork
+        if: (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork)
         with:
           name: ngi
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -46,25 +82,21 @@ jobs:
           name: ngi-untrusted
           extraPullNames: ngi
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
-      - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
-      - run: nix ${{ runner.debug && '--debug --print-build-logs' }} build .#overview
-        if: github.event_name != 'pull_request'
+      - run: nix ${{ runner.debug && '--debug' }} build --print-build-logs '${{ matrix.attribute }}'
+
+      # Only if this job built the overview, upload it as artifact for GitHub Pages.
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && endsWith(matrix.attribute, '"overview"')
         with:
           path: result
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: check
+    needs: build
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+    environment: { name: 'github-pages', url: '${{ steps.deployment.outputs.page_url }}' }
+    steps: [ { id: 'deployment', uses: 'actions/deploy-pages@v4' } ]
