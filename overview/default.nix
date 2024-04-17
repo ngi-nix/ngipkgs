@@ -25,15 +25,14 @@
     concatLines
     flattenAttrsDot
     flip
+    hasPrefix
     mapAttrsToList
     optionalString
     ;
 
   empty = xs: assert isList xs; xs == [];
   heading = i: text: "<h${toString i}>${text}</h${toString i}>";
-  isPrefix = prefix: candidate: prefix == substring 0 (stringLength prefix) candidate;
-  concatStringsDot = concatStringsSep ".";
-  dottedLoc = option: concatStringsDot option.loc;
+  dottedLoc = option: concatStringsSep "." option.loc;
 
   lastModified = let
     sub = start: len: substring start len self.lastModifiedDate;
@@ -49,7 +48,7 @@
       spec = attrNames (flattenAttrsDot (project.nixos.modules or {}));
     in
       filter
-      (option: any ((flip isPrefix) (dottedLoc option)) spec)
+      (option: any ((flip hasPrefix) (dottedLoc option)) spec)
       (attrValues options);
     configurations = project: attrValues (project.nixos.configurations or {});
     packages = project: attrValues (project.packages or {});
