@@ -40,6 +40,6 @@ in
       };
     in
       if isMarkedBroken project
-      then trace "Project '${name}' marked as broken (for system '${pkgs.system or "undefined"}'). Skipping." {}
+      then trace "Skipping project '${name}' which is marked as broken for system '${pkgs.system or "undefined"}'." {}
       else hydrate project
   ) (filterAttrs filter (readDir baseDirectory))
