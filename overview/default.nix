@@ -1,4 +1,5 @@
 {
+  lib,
   options,
   pkgs,
   projects,
@@ -7,28 +8,31 @@
   inherit
     (builtins)
     any
+    attrNames
     attrValues
     concatStringsSep
     filter
     isList
-    mapAttrs
-    match
     readFile
+    stringLength
     substring
     toJSON
     toString
     ;
 
   inherit
-    (pkgs.lib)
+    (lib)
     concatLines
+    flattenAttrsDot
+    flip
+    hasPrefix
     mapAttrsToList
     optionalString
-    unique
     ;
 
   empty = xs: assert isList xs; xs == [];
   heading = i: text: "<h${toString i}>${text}</h${toString i}>";
+  dottedLoc = option: concatStringsSep "." option.loc;
 
   lastModified = let
     sub = start: len: substring start len self.lastModifiedDate;
@@ -41,10 +45,10 @@
 
   pick = {
     options = project: let
-      spec = unique (attrValues (mapAttrs (_: v: v.options or null) (project.nixos.modules or {})));
+      spec = attrNames (flattenAttrsDot (project.nixos.modules or {}));
     in
       filter
-      (option: any (x: null != match x (concatStringsSep "." option.loc)) spec)
+      (option: any ((flip hasPrefix) (dottedLoc option)) spec)
       (attrValues options);
     configurations = project: attrValues (project.nixos.configurations or {});
     packages = project: attrValues (project.packages or {});
@@ -53,10 +57,9 @@
   render = {
     options = rec {
       one = value: let
-        dottedName = concatStringsSep "." value.loc;
         maybeDefault = optionalString (value ? default.text) "`${value.default.text}`";
       in ''
-        <dt>`${dottedName}`</dt>
+        <dt>`${dottedLoc value}`</dt>
         <dd>
           <table>
             <tr>

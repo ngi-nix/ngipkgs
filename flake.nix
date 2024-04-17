@@ -35,6 +35,7 @@
       (builtins)
       mapAttrs
       attrValues
+      isPath
       ;
 
     inherit
@@ -48,6 +49,7 @@
       filterAttrs
       attrByPath
       mapAttrByPath
+      flattenAttrsDot
       flattenAttrsSlash
       ;
 
@@ -64,15 +66,14 @@
     pick = rec {
       packages = mapAttrByPath ["packages"] {};
       modulePaths = x:
-        mapAttrs (_: v:
-          concatMapAttrs (n: v:
-            if v ? path
-            then {${n} = v.path;}
-            else {})
-          v) (modules x);
-      modules = mapAttrByPath ["nixos" "modules"] {};
+        concatMapAttrs (n: v:
+          if isPath v
+          then {${n} = v;}
+          else {})
+        (modules x);
+      modules = projects: flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (mapAttrByPath ["nixos" "modules"] {} projects)));
       tests = mapAttrByPath ["nixos" "tests"] {};
-      configurations = x: mapAttrs (_: v: mapAttrs (_: v: v.path) v) (mapAttrByPath ["nixos" "configurations"] {} x);
+      configurations = projects: mapAttrs (_: v: mapAttrs (_: v: v.path) v) (mapAttrByPath ["nixos" "configurations"] {} projects);
     };
 
     importPackages = pkgs: let
@@ -152,7 +153,7 @@
         importPack
         // {
           overview = import ./overview {
-            inherit self pkgs;
+            inherit lib pkgs self;
             projects = importedProjects;
             options = optionsDoc.optionsNix;
           };
@@ -222,7 +223,7 @@
           # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
           default.nixpkgs.overlays = [self.overlays.default];
         }
-        // (flattenAttrsSlash (pick.modulePaths (importProjects {})));
+        // (filterAttrs (_: v: v != null) (pick.modules (importProjects {})));
 
       # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
       overlays.default = final: prev: importPackages prev;

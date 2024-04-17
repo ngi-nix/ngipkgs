@@ -8,15 +8,8 @@
   };
 
   nixos = {
-    modules = {
-      service = {
-        path = ./service.nix;
-        options = "services\\.ngi-pretalx\\..*";
-      };
-    };
-    tests = {
-      pretalx = import ./test args;
-    };
+    modules.services.ngi-pretalx = ./service.nix;
+    tests.pretalx = import ./test args;
     configurations = {
       base = {
         path = ./config/base.nix;

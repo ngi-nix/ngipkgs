@@ -7,7 +7,7 @@ in {
   nodes.mcaptcha = {pkgs, ...}: {
     imports = [
       sources.modules.default
-      sources.modules."mCaptcha/service"
+      sources.modules."services.mcaptcha"
     ];
 
     services.mcaptcha.enable = true;

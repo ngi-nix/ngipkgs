@@ -20,7 +20,7 @@ in {
         sources.configurations."Pretalx/base"
         sources.configurations."Pretalx/postgresql"
         sources.modules.default
-        sources.modules."Pretalx/service"
+        sources.modules."services.ngi-pretalx"
         sources.modules.sops-nix
         sources.modules.unbootable
       ];

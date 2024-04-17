@@ -45,6 +45,7 @@ in rec {
       f initPath;
 
   flattenAttrsSlash = flattenAttrs "/" [];
+  flattenAttrsDot = flattenAttrs "." [];
 
   mapAttrByPath = attrPath: default: mapAttrs (_: attrByPath attrPath default);
 }

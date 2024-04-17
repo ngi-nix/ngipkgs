@@ -18,7 +18,7 @@ in {
     }: {
       imports = [
         sources.modules.default
-        sources.modules."Kbin/service"
+        sources.modules."services.kbin"
         sources.modules.unbootable
         sources.configurations."Kbin/base"
       ];
