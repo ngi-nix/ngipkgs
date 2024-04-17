@@ -139,6 +139,8 @@
                     domain = "invalid";
                     hostName = "options";
                   };
+
+                  system.stateVersion = "23.05";
                 }
               ]
               ++ attrValues self.nixosModules;
