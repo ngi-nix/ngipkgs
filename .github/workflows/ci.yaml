@@ -1,4 +1,4 @@
-name: nix flake
+name: ci
 
 on:
   push:
@@ -11,11 +11,12 @@ jobs:
   eval:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
             experimental-features = no-url-literals
+
       - run: nix ${{ runner.debug && '--debug' }} flake check --impure --no-build --show-trace
         env:
           NIX_ABORT_ON_WARN: true
@@ -23,7 +24,7 @@ jobs:
   check:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
@@ -50,3 +51,38 @@ jobs:
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
 
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
+  
+  overview:
+    if: github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = no-url-literals
+
+      - uses: cachix/cachix-action@v14
+        with:
+          name: ngi
+          skipPush: true
+      - run: nix ${{ runner.debug && '--debug --print-build-logs' }} build .#overview
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: result
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: overview
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
