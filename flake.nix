@@ -184,6 +184,7 @@
         # `nix flake check` only evaluates packages and does not build them.
         (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
         // {
+          inherit (self.packages.${system}) overview;
           formatting = treefmtEval.config.build.check self;
         };
 
