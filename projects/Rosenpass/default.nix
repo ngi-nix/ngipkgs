@@ -5,7 +5,7 @@
 } @ args: {
   packages = {inherit (pkgs) rosenpass rosenpass-tools;};
   nixos = {
-    modules.service.options = "services\\.rosenpass\\..*";
+    modules.services.rosenpass = null;
     tests.rosenpass = import ./tests args;
   };
 }

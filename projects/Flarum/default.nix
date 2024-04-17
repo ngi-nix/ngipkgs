@@ -1,7 +1,4 @@
 {pkgs, ...}: {
   packages = {inherit (pkgs) flarum;};
-  nixos.modules.service = {
-    path = ./service.nix;
-    options = "services\\.flarum\\..*";
-  };
+  nixos.modules.services.flarum = ./service.nix;
 }
