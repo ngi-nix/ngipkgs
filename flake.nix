@@ -187,7 +187,6 @@
         # `nix flake check` only evaluates packages and does not build them.
         (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
         // {
-          inherit (self.packages.${system}) overview;
           formatting = treefmtEval.config.build.check self;
         };
 
@@ -227,6 +226,8 @@
 
       # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
       overlays.default = final: prev: importPackages prev;
+
+      matrix = import ./matrix.nix {inherit lib self;};
     };
   in
     foldr recursiveUpdate {} [
