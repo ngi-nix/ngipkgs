@@ -47,6 +47,14 @@ jobs:
           extraPullNames: ngi
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
+      - run: |
+          nix ${{ runner.debug && '--debug' }} path-info --json --closure-size \
+            $(nix flake show --json | jq -r '.checks."x86_64-linux" | keys | map(".#checks.x86_64-linux.\"\(.)\"") | join(" ")') \
+            > path-info.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: path-info
+          path: path-info.json
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} build .#overview
         if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3
