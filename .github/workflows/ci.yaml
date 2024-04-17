@@ -16,7 +16,6 @@ jobs:
         with:
           extra-conf: |
             experimental-features = no-url-literals
-
       - run: nix ${{ runner.debug && '--debug' }} flake check --impure --no-build --show-trace
         env:
           NIX_ABORT_ON_WARN: true
@@ -37,11 +36,9 @@ jobs:
         with:
           name: ngi
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
       - id: env
         run: echo "CACHIX_AUTH_TOKEN=$(tr 'A-Za-z' 'N-ZA-Mn-za-m' < .github/workflows/cachix)" >> $GITHUB_ENV
         if: steps.trusted.outcome == 'skipped'
-
       - name: Cachix using untrusted cache for PRs from forks
         uses: cachix/cachix-action@v14
         if: steps.env.outcome == 'success'
@@ -49,32 +46,17 @@ jobs:
           name: ngi-untrusted
           extraPullNames: ngi
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
-
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} flake check
-  
-  overview:
-    if: github.event_name != 'pull_request'
-    needs: check
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            experimental-features = no-url-literals
-
-      - uses: cachix/cachix-action@v14
-        with:
-          name: ngi
-          skipPush: true
       - run: nix ${{ runner.debug && '--debug --print-build-logs' }} build .#overview
+        if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: result
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: overview
+    needs: check
     runs-on: ubuntu-22.04
     permissions:
       contents: read
