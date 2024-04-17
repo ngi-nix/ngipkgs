@@ -33,7 +33,7 @@
   services = {
     ngi-pretalx = {
       enable = true;
-      package = pkgs.pretalx-full;
+      package = pkgs.pretalxFull;
       nginx = {
         # For a production configuration use this attribute set to configure the virtual host for pretalx.
       };

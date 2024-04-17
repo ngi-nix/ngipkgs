@@ -12,25 +12,6 @@
     # Refer to <https://github.com/ngi-nix/ngipkgs/issues/40>.
     #liberaforms = callPackage ./pkgs/liberaforms {};
     #liberaforms-env = callPackage ./pkgs/liberaforms/env.nix {};
-
-    pretalx-full = callPackage ./pretalx {
-      withPlugins = [
-        pretalx-downstream
-        pretalx-media-ccc-de
-        pretalx-pages
-        pretalx-venueless
-        pretalx-public-voting
-      ];
-    };
-
-    inherit
-      (recurseIntoAttrs (callPackage ./pretalx/plugins.nix {}))
-      pretalx-downstream
-      pretalx-media-ccc-de
-      pretalx-pages
-      pretalx-venueless
-      pretalx-public-voting
-      ;
   };
 in
   self
