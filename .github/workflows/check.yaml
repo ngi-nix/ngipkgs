@@ -1,4 +1,4 @@
-name: nix flake check
+name: nix flake
 
 on:
   push:
@@ -8,6 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  eval:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = no-url-literals
+      - run: nix ${{ runner.debug && '--debug' }} flake check --impure --no-build --show-trace
+        env:
+          NIX_ABORT_ON_WARN: true
+
   check:
     runs-on: ubuntu-22.04
     steps:
