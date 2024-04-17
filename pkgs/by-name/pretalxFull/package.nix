@@ -1,6 +1,21 @@
 {
   pretalx,
-  withPlugins ? [],
+  pretalx-downstream,
+  pretalx-media-ccc-de,
+  pretalx-pages,
+  pretalx-public-voting,
+  pretalx-venueless,
+  pretalx-vimeo,
+  pretalx-youtube,
+  withPlugins ? [
+    pretalx-downstream
+    pretalx-media-ccc-de
+    pretalx-pages
+    pretalx-public-voting
+    pretalx-venueless
+    pretalx-vimeo
+    pretalx-youtube
+  ],
   nixosTests,
 }:
 pretalx.overrideAttrs (

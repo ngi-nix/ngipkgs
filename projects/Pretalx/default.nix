@@ -4,7 +4,7 @@
   sources,
 } @ args: {
   packages = {
-    inherit (pkgs) pretalx-full;
+    inherit (pkgs) pretalxFull;
   };
 
   nixos = {
