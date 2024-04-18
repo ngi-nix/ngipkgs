@@ -188,6 +188,10 @@
         (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
         // {
           formatting = treefmtEval.config.build.check self;
+          actionlint = pkgs.runCommand "actionlint" {
+            src = ./.github/workflows;
+            nativeBuildInputs = [pkgs.actionlint];
+          } "actionlint $src/*.yaml && touch $out";
         };
 
       # To generate a Hydra jobset for CI builds of all packages and tests.

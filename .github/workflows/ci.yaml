@@ -95,7 +95,7 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - id: env
         name: Decode Cachix authentication token
-        run: echo "CACHIX_AUTH_TOKEN=$(tr 'A-Za-z' 'N-ZA-Mn-za-m' < .github/workflows/cachix)" >> $GITHUB_ENV
+        run: echo "CACHIX_AUTH_TOKEN=$(tr 'A-Za-z' 'N-ZA-Mn-za-m' < .github/workflows/cachix)" >> "$GITHUB_ENV"
         if: steps.trusted.outcome == 'skipped'
       - name: Set up Cachix to use untrusted cache for PRs from forks
         uses: cachix/cachix-action@v14
