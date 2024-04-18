@@ -22,6 +22,11 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - { uses: 'actions/checkout@v4', name: 'Checkout' }
+      - name: 'Pin nixpkgs to locked revision'
+        run: |
+          sudo mkdir /etc/nix
+          jq '{ flakes: [ { exact: true, from: { id: "nixpkgs", type: "indirect" }, to: .nodes.nixpkgs.locked } ] }' flake.lock > registry.json
+          sudo mv registry.json /etc/nix/
       - uses: 'DeterminateSystems/nix-installer-action@main'
         name: 'Install Nix'
         with: { extra-conf: 'experimental-features = no-url-literals' }
