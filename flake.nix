@@ -246,8 +246,6 @@
 
       # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
       overlays.default = final: prev: importPackages prev;
-
-      matrix = import ./matrix.nix {inherit lib self;};
     };
   in
     foldr recursiveUpdate {} [

@@ -26,59 +26,52 @@ jobs:
         name: 'Install Nix'
         with: { extra-conf: 'experimental-features = no-url-literals' }
 
-      # Evaluate job matrix using Nix, which is not informed by state of cache.
-      - name: 'Evaluate matrix'
-        run: |
-          mkdir matrix
-          nix eval --json .#matrix > matrix/matrix.json
-          cp matrix/{matrix,matrix-initial}.json
-          echo "Number of build jobs: $(jq '.include | length' matrix/matrix.json)"
+      - run: nix registry list
 
-      # Query caches to find out which paths are missing.
-      # Translate curl output into a simple JSON file that only contains an array of missing digests.
-      # Recompute the job matrix, by removing all jobs that are already cached.
-      - name: 'Query caches'
-        run : |
-          for CACHE in ngi.cachix.org cache.nixos.org
-          do
-
-          if jq --exit-status '0 == (.include | length)' matrix/matrix.json > /dev/null
-          then
-            break
-          fi
-
-          echo "Querying ${CACHE}"
-          WORK="matrix/$CACHE"
-          MISSED="${WORK}/missed.json"
-          mkdir "$WORK"
-
-          curl --parallel --head --output-dir "$WORK" --remote-name-all --config \
-            <(jq --arg cache "$CACHE" --raw-output '.include[].digest | "url = \"https://\($cache)/\(.).narinfo\""' matrix/matrix.json)
-
-          grep --files-without-match --fixed-strings 'HTTP/2 200' "$WORK"/*.narinfo \
-            | jq --slurp --raw-input --arg prefix "${WORK}/" --compact-output \
-              '($prefix | length) as $start | rtrimstr("\n") | split("\n") | map(.[$start:$start + 32])' \
-            > "$MISSED"
-
-          jq --argjson missed "$(< $MISSED)" --compact-output \
-            '{ include: [.include[] | select(IN(.digest; $missed[]))] }' \
-            matrix/matrix.json \
-            > matrix/tmp.json
-          mv matrix/{tmp,matrix}.json
-          echo "Number of build jobs: $(jq '.include | length' matrix/matrix.json)"
-
-          done
+      - id: trusted
+        name: Set up Cachix to use trusted cache
+        uses: cachix/cachix-action@v14
+        if: (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork)
+        with:
+          name: ngi
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - id: env
+        name: Decode Cachix authentication token
+        run: echo "CACHIX_AUTH_TOKEN=$(tr 'A-Za-z' 'N-ZA-Mn-za-m' < .github/workflows/cachix)" >> "$GITHUB_ENV"
+        if: steps.trusted.outcome == 'skipped'
+      - name: Set up Cachix to use untrusted cache for PRs from forks
+        uses: cachix/cachix-action@v14
+        if: steps.env.outcome == 'success'
+        with:
+          name: ngi-untrusted
+          extraPullNames: ngi
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
 
       - id: matrix
-        name: 'Export job matrix'
-        run: echo "matrix=$(< matrix/matrix.json)" >> "$GITHUB_OUTPUT"
+        name: 'Evaluate matrix'
+        run: |
+          ATTR=".#checks"
+          (
+          echo -n "matrix="
+          nix run github:nix-community/nix-eval-jobs/v2.19.4 -- \
+            --check-cache-status --gc-roots-dir "$(pwd)/gcroot" --force-recurse --workers "$(nproc)" --flake "$ATTR" \
+            | tee eval.jsonl \
+            | nix run .#build-matrix -- "$ATTR" \
+            | tee matrix.json
+          ) >> "$GITHUB_OUTPUT"
 
-      - { uses: 'actions/upload-artifact@v4', name: 'Upload artifact containing job matrix', with: { name: 'matrix', path: 'matrix' } }
+      - uses: 'actions/upload-artifact@v4'
+        name: 'Upload artifact containing evaluation results and job matrix'
+        with:
+          name: matrix
+          path: |
+            eval.jsonl
+            matrix.json
 
   build:
     needs: matrix
     runs-on: ${{ matrix.platform }}
-    name: build ${{ matrix.name }}
+    name: build ${{ join(matrix.names, ', ') }}
     strategy: { matrix: '${{fromJSON(needs.matrix.outputs.matrix)}}' }
     steps:
       - { uses: 'actions/checkout@v4', name: 'Checkout' }
@@ -104,12 +97,12 @@ jobs:
           name: ngi-untrusted
           extraPullNames: ngi
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
-      - run: nix ${{ runner.debug && '--debug' }} build --print-build-logs '${{ matrix.attribute }}'
+      - run: nix ${{ runner.debug && '--debug' }} build --print-build-logs ${{ join(matrix.attributes, ' ') }}
 
       # Only if this job built the overview, upload it as artifact for GitHub Pages.
       - name: 'Upload artifact for GitHub Pages'
         uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request' && matrix.attribute == '.#checks.x86_64-linux."overview"'
+        if: github.event_name != 'pull_request' && contains(matrix.attributes, '.#checks."x86_64-linux"."overview"')
         with: { path: 'result' }
 
   deploy:
