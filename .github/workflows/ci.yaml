@@ -9,8 +9,9 @@ jobs:
   eval:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - { uses: 'actions/checkout@v4', name: 'Checkout' }
+      - uses: 'DeterminateSystems/nix-installer-action@main'
+        name: 'Install Nix'
         with: { extra-conf: 'experimental-features = no-url-literals' }
       - run: nix ${{ runner.debug && '--debug' }} flake check --impure --no-build --show-trace
         env: { NIX_ABORT_ON_WARN: true }
@@ -20,8 +21,9 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - { uses: 'actions/checkout@v4', name: 'Checkout' }
+      - uses: 'DeterminateSystems/nix-installer-action@main'
+        name: 'Install Nix'
         with: { extra-conf: 'experimental-features = no-url-literals' }
 
       # Evaluate job matrix using Nix, which is not informed by state of cache.
@@ -68,9 +70,10 @@ jobs:
           done
 
       - id: matrix
+        name: 'Export job matrix'
         run: echo "matrix=$(< matrix/matrix.json)" >> "$GITHUB_OUTPUT"
 
-      - { uses: 'actions/upload-artifact@v4', with: { name: 'matrix', path: 'matrix' } }
+      - { uses: 'actions/upload-artifact@v4', name: 'Upload artifact containing job matrix', with: { name: 'matrix', path: 'matrix' } }
 
   build:
     needs: matrix
@@ -78,21 +81,23 @@ jobs:
     name: build ${{ matrix.name }}
     strategy: { matrix: '${{fromJSON(needs.matrix.outputs.matrix)}}' }
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - { uses: 'actions/checkout@v4', name: 'Checkout' }
+      - uses: 'DeterminateSystems/nix-installer-action@main'
+        name: 'Install Nix'
         with: { extra-conf: 'experimental-features = no-url-literals' }
 
       - id: trusted
-        name: Cachix using trusted cache
+        name: Set up Cachix to use trusted cache
         uses: cachix/cachix-action@v14
         if: (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork)
         with:
           name: ngi
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - id: env
+        name: Decode Cachix authentication token
         run: echo "CACHIX_AUTH_TOKEN=$(tr 'A-Za-z' 'N-ZA-Mn-za-m' < .github/workflows/cachix)" >> $GITHUB_ENV
         if: steps.trusted.outcome == 'skipped'
-      - name: Cachix using untrusted cache for PRs from forks
+      - name: Set up Cachix to use untrusted cache for PRs from forks
         uses: cachix/cachix-action@v14
         if: steps.env.outcome == 'success'
         with:
@@ -102,7 +107,8 @@ jobs:
       - run: nix ${{ runner.debug && '--debug' }} build --print-build-logs '${{ matrix.attribute }}'
 
       # Only if this job built the overview, upload it as artifact for GitHub Pages.
-      - uses: actions/upload-pages-artifact@v3
+      - name: 'Upload artifact for GitHub Pages'
+        uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request' && matrix.attribute == '.#checks.x86_64-linux."overview"'
         with: { path: 'result' }
 
