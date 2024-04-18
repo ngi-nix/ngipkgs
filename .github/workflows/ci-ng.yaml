@@ -30,8 +30,8 @@ jobs:
       - uses: 'DeterminateSystems/nix-installer-action@main'
         name: 'Install Nix'
         with: { extra-conf: 'experimental-features = no-url-literals' }
-      - uses: actions/setup-python@v5
-        with: { cache: 'pip' }
+
+      - run: nix registry list
 
       - id: trusted
         name: Set up Cachix to use trusted cache
@@ -55,22 +55,28 @@ jobs:
       - id: matrix
         name: 'Evaluate matrix'
         run: |
-          pip install networkx
-          mkdir matrix
+          ATTR=".#checks"
+          (
+          echo -n "matrix="
           nix run github:nix-community/nix-eval-jobs/v2.19.4 -- \
-            --check-cache-status --gc-roots-dir "$(pwd)/gcroot" --force-recurse --workers "$(nproc)" --flake '.#checks' \
-            > matrix/eval.jsonl
-          python3 matrix.py \
-            < matrix/eval.jsonl \
-            > matrix/matrix.json
-          jq '.' matrix/matrix.json
-          echo "matrix=$(< matrix/matrix.json)" >> "$GITHUB_OUTPUT"
-      - { uses: 'actions/upload-artifact@v4', name: 'Upload artifact containing job matrix', with: { name: 'matrix', path: 'matrix' } }
+            --check-cache-status --gc-roots-dir "$(pwd)/gcroot" --force-recurse --workers "$(nproc)" --flake "$ATTR" \
+            | tee eval.jsonl \
+            | nix run .#build-matrix -- "$ATTR" \
+            | tee matrix.json
+          ) >> "$GITHUB_OUTPUT"
+
+      - uses: 'actions/upload-artifact@v4'
+        name: 'Upload artifact containing evaluation results and job matrix'
+        with:
+          name: matrix
+          path: |
+            eval.jsonl
+            matrix.json
 
   build:
     needs: matrix
     runs-on: ${{ matrix.platform }}
-    name: build ${{ matrix.name }}
+    name: build ${{ join(matrix.names, ', ') }}
     strategy: { matrix: '${{fromJSON(needs.matrix.outputs.matrix)}}' }
     steps:
       - { uses: 'actions/checkout@v4', name: 'Checkout' }
@@ -101,7 +107,7 @@ jobs:
       # Only if this job built the overview, upload it as artifact for GitHub Pages.
       - name: 'Upload artifact for GitHub Pages'
         uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request' && contains(matrix.attributes, '.#checks.x86_64-linux."overview"')
+        if: github.event_name != 'pull_request' && contains(matrix.attributes, '.#checks."x86_64-linux"."overview"')
         with: { path: 'result' }
 
   deploy:
