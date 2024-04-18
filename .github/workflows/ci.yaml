@@ -29,29 +29,46 @@ jobs:
         run: |
           mkdir matrix
           nix eval --json .#matrix > matrix/matrix.json
+          cp matrix/{matrix,matrix-initial}.json
+          echo "Number of build jobs: $(jq '.include | length' matrix/matrix.json)"
 
-      # Query Cachix to find out which paths are missing from the cache.
-      - name: 'Query Cachix'
-        run : |
-          curl --parallel --head --output-dir matrix --remote-name-all --config \
-            <(jq --raw-output '.include[].digest | "url = \"https://ngi.cachix.org/\(.).narinfo\""' matrix/matrix.json)
-
+      # Query caches to find out which paths are missing.
       # Translate curl output into a simple JSON file that only contains an array of missing digests.
       # Recompute the job matrix, by removing all jobs that are already cached.
-      - id: matrix
-        name: 'Minimize matrix'
-        run: |
-          grep --files-without-match --fixed-strings 'HTTP/2 200' matrix/*.narinfo \
-            | jq --slurp --raw-input --arg prefix 'matrix/' --compact-output \
-              '($prefix | length) as $start | rtrimstr("\n") | split("\n") | map(.[$start:$start + 32])' \
-            > matrix/missed.json
+      - name: 'Query caches'
+        run : |
+          for CACHE in ngi.cachix.org cache.nixos.org
+          do
 
-          jq --argjson missed "$(< matrix/missed.json)" --compact-output \
+          if jq --exit-status '0 == (.include | length)' matrix/matrix.json > /dev/null
+          then
+            break
+          fi
+
+          echo "Querying ${CACHE}"
+          WORK="matrix/$CACHE"
+          MISSED="${WORK}/missed.json"
+          mkdir "$WORK"
+
+          curl --parallel --head --output-dir "$WORK" --remote-name-all --config \
+            <(jq --arg cache "$CACHE" --raw-output '.include[].digest | "url = \"https://\($cache)/\(.).narinfo\""' matrix/matrix.json)
+
+          grep --files-without-match --fixed-strings 'HTTP/2 200' "$WORK"/*.narinfo \
+            | jq --slurp --raw-input --arg prefix "${WORK}/" --compact-output \
+              '($prefix | length) as $start | rtrimstr("\n") | split("\n") | map(.[$start:$start + 32])' \
+            > "$MISSED"
+
+          jq --argjson missed "$(< $MISSED)" --compact-output \
             '{ include: [.include[] | select(IN(.digest; $missed[]))] }' \
             matrix/matrix.json \
-            > matrix/matrix-missed.json
+            > matrix/tmp.json
+          mv matrix/{tmp,matrix}.json
+          echo "Number of build jobs: $(jq '.include | length' matrix/matrix.json)"
 
-          echo "matrix=$(< matrix/matrix-missed.json)" >> "$GITHUB_OUTPUT"
+          done
+
+      - id: matrix
+        run: echo "matrix=$(< matrix/matrix.json)" >> "$GITHUB_OUTPUT"
 
       - { uses: 'actions/upload-artifact@v4', with: { name: 'matrix', path: 'matrix' } }
 
@@ -86,9 +103,8 @@ jobs:
 
       # Only if this job built the overview, upload it as artifact for GitHub Pages.
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request' && endsWith(matrix.attribute, '"overview"')
-        with:
-          path: result
+        if: github.event_name != 'pull_request' && matrix.attribute == '.#checks.x86_64-linux."overview"'
+        with: { path: 'result' }
 
   deploy:
     if: github.event_name != 'pull_request'
