@@ -1,30 +1,28 @@
 # Contributing to NGIpkgs
 
-This document is for people wanting to contribute to the implementation of NGIpkgs.
-This involves interacting with implementation changes that are proposed using [GitHub](https://github.com/) [pull requests](https://docs.github.com/pull-requests) to the [NGIpkgs](https://github.com/ngi-nix/ngipkgs/) repository (which you're in right now).
+This document is for people who want to contribute to NGIpkgs.
+This involves interacting with changes proposed as [pull requests](https://docs.github.com/pull-requests) on [GitHub](https://github.com/) to the [NGIpkgs](https://github.com/ngi-nix/ngipkgs/) repository (which you're in right now).
 
 This document assumes that you already know:
 
-- How to [create a Nix package](https://nix.dev/tutorials/packaging-existing-software#).
-- How to [use GitHub and Git](https://docs.github.com/en/get-started/quickstart/hello-world).
+- [How to create a Nix package](https://nix.dev/tutorials/packaging-existing-software#).
+- [How to use GitHub and Git](https://docs.github.com/en/get-started/quickstart/hello-world).
 
-In addition, a GitHub account is required, which you can sign up for [here](https://github.com/signup).
+In addition, a GitHub account is required, which you can create on the [GitHub sign-up page](https://github.com/signup).
 
-## How to create pull requests
+## When to create pull requests to NGIpkgs
 
-Packagers are encouraged to contribute NGI projects to Nixpkgs, instead of to this repository.
-However, there are many reasons for not being able to do so, including:
+Packagers are encouraged to contribute Nix packages of NGI projects to Nixpkgs, instead of to this repository.
+However, there may be reasons speaking against that, including:
 
-- Expediting the public availability of a package prior to its acceptance into Nixpkgs and landing in a channel.
-- Package is not a [good candidate for Nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#quick-start-to-adding-a-package).
-- Package is a good candidate for Nixpkgs, but no one is willing to be a maintainer :cry:.
+- Making the package available more quickly.
+- The package is not a [good candidate for Nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#quick-start-to-adding-a-package).
+- The package is a good candidate for Nixpkgs, but no one is willing to be a maintainer :cry:.
 
-In any case, it is encouraged to create a pull request to Nixpkgs, then to this repository, with a comment linking to the pull request to Nixpkgs in the description and the Nix expressions.
+In any case, it is encouraged to create a pull request to Nixpkgs, then to this repository, with a comment linking to the Nixpkgs pull request in the description and the Nix expressions.
 
----
 
-Now that this is out of the way.
-To create pull requests to NGIpkgs:
+## How to create pull requests to NGIpkgs
 
 1. Set up a local version of NGIpkgs.
    If you don't have write access to NGIpkgs, create a [fork](https://github.com/ngi-nix/ngipkgs/fork) of the repository and clone it.
@@ -62,29 +60,29 @@ To create pull requests to NGIpkgs:
      nix fmt pkgs/by-name/some-package
      ```
 
-   To see how it’s done, an existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
+   An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
 
-1. To add a module, start by creating a `default.nix` file in the module directory `projects/someModule`.
+1. To add a NixOS service module, start by creating a `default.nix` file in the directory `projects/some-project` where `some-project` is the project name corresponding to the last URL component in the [NLnet project listing](https://nlnet.nl/project/).
 
    ```shellSession
-   mkdir -p projects/someModule
-   $EDITOR projects/someModule/default.nix
+   mkdir -p projects/some-project
+   $EDITOR projects/some-project/default.nix
    ```
 
    Make sure to:
 
-   - Add the module options in `service.nix`, and reference the file in `default.nix`.
+   - Add the module options in `service.nix`, and reference that file in `default.nix`.
      For example:
 
      ```nix
      nixos.modules = {
-       services.some-module = ./service.nix;
+       services.some-project = ./service.nix;
      };
      ```
 
-     The module will then be accessible from `nixosModules.services.some-module`.
+     The module will then be accessible from `nixosModules.services.some-project`.
 
-   - Add the module tests in `test.nix`, or under a test directory, and reference the file in `default.nix`.
+   - Add the module tests in `test.nix`, or under a test directory, and reference that file in `default.nix`.
      For example:
 
      ```nix
@@ -95,7 +93,7 @@ To create pull requests to NGIpkgs:
      For example, in `pkgs/by-name/some-package/package.nix`:
 
      ```nix
-     passthru.tests.some-test = nixosTests.someModule.some-test;
+     passthru.tests = nixosTests.some-project;
      ```
 
      The module tests will then be accessible from `some-package.passthru.tests`.
@@ -103,7 +101,7 @@ To create pull requests to NGIpkgs:
    - Test the module on `x86_64-linux`.
 
      ```shellSession
-     git add pkgs/by-name/some-package projects/someModule
+     git add pkgs/by-name/some-package projects/some-project
      nix build .#some-package.passthru.tests.some-test.driverInteractive
      ./result/bin/nixos-test-driver # Start a shell
      # Once in the spawned shell, start a VM that will execute the tests
@@ -113,10 +111,10 @@ To create pull requests to NGIpkgs:
    - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
 
      ```ShellSession
-     nix fmt projects/someModule
+     nix fmt projects/some-project
      ```
 
-   To see how it's done, an existing example is [Kbin](https://github.com/ngi-nix/ngipkgs/tree/main/projects/Kbin).
+   An existing example is [Kbin](https://github.com/ngi-nix/ngipkgs/tree/main/projects/Kbin).
 
 1. Commit the changes and push the commits.
 
@@ -125,8 +123,8 @@ To create pull requests to NGIpkgs:
    git push --set-upstream origin some-branch
    ```
 
-1. Create a pull request [to NGIpkgs](https://github.com/ngi-nix/ngipkgs/pulls).
-   Respond to review comments, potential CI failures and potential merge conflicts by updating the pull request.
+1. Create a [pull request to NGIpkgs](https://github.com/ngi-nix/ngipkgs/pulls).
+   Respond to review comments, potential CI failures, and potential merge conflicts by updating the pull request.
    Always keep the pull request in a mergeable state.
 
 <!-- TODO: Add details about how to do more production-like deployments that require non-default config options. -->
