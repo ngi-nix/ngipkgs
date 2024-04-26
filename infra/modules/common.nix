@@ -9,8 +9,6 @@ with lib; {
 
   users.mutableUsers = false;
 
-  users.extraUsers.root.openssh.authorizedKeys.keys = with import ../ssh-keys.nix; infra-core;
-
   nix.settings = {
     sandbox = true;
     cores = 0;

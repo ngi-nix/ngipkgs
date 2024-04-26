@@ -124,8 +124,7 @@
           boot.loader.grub.devices = ["/dev/nvme0n1" "/dev/nvme1n1"];
           boot.loader.grub.copyKernels = true;
 
-          users.extraUsers.root.openssh.authorizedKeys.keys =
-            (import ../ssh-keys.nix).ngi-admins;
+          users.extraUsers.root.openssh.authorizedKeys.keys = import ../ssh-keys.nix;
         })
       ];
     };
