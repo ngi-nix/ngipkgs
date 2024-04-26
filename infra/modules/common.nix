@@ -1,10 +1,7 @@
 {
-  config,
   pkgs,
-  lib,
   ...
-}:
-with lib; {
+}: {
   time.timeZone = "Europe/Amsterdam";
 
   users.mutableUsers = false;
@@ -15,13 +12,11 @@ with lib; {
     experimental-features = ["nix-command" "flakes"];
   };
 
-  environment.systemPackages = [
-    pkgs.emacs
-    pkgs.git
-    pkgs.gdb
-
-    # jq is required by numtide/terraform-deploy-nixos-flakes.
-    pkgs.jq
+  environment.systemPackages = with pkgs; [
+    emacs
+    gdb
+    git
+    jq # required by numtide/terraform-deploy-nixos-flakes.
   ];
 
   services.sshd.enable = true;
