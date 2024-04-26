@@ -1,24 +1,30 @@
 {
   description = "NGIpkgs";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.dream2nix.url = "github:nix-community/dream2nix";
+  inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs.hydra-nix.follows = "hydra/nix";
+  inputs.hydra-nixpkgs.follows = "hydra/nixpkgs";
+  inputs.hydra.url = "github:nixos/hydra/nix-next";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
+  inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.sops-nix.url = "github:Mic92/sops-nix";
+  inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
   # Set default system to `x86_64-linux`,
   # as we currently only support Linux.
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/x86_64-linux";
-  inputs.flake-utils.inputs.systems.follows = "systems";
-  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
-  inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.sops-nix.url = "github:Mic92/sops-nix";
-  inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
-  inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
-  inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.dream2nix.url = "github:nix-community/dream2nix";
-  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = {
+    hydra,
+    hydra-nix,
+    hydra-nixpkgs,
     self,
     nixpkgs,
     flake-utils,
@@ -214,7 +220,30 @@
     };
 
     systemAgnosticOutputs = {
-      inherit nixosConfigurations;
+      nixosConfigurations =
+        nixosConfigurations
+        // {
+          makemake = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+
+            modules = [
+              hydra.nixosModules.hydra
+
+              ./infra/makemake/configuration.nix
+
+              {
+                nixpkgs.overlays = [
+                  hydra-nix.overlays.default
+                ];
+              }
+
+              {
+                #nix.registry.nixpkgs.flake = hydra-nixpkgs;
+                nix.nixPath = ["nixpkgs=${hydra-nixpkgs}"];
+              }
+            ];
+          };
+        };
 
       nixosModules =
         {
