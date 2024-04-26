@@ -1,29 +1,30 @@
-{ config, pkgs, lib, ... }:
-
-with lib;
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; {
   time.timeZone = "Europe/Amsterdam";
 
   users.mutableUsers = false;
 
-  users.extraUsers.root.openssh.authorizedKeys.keys =
-    with import ../ssh-keys.nix; infra-core;
+  users.extraUsers.root.openssh.authorizedKeys.keys = with import ../ssh-keys.nix; infra-core;
 
   nix.settings = {
     sandbox = true;
     cores = 0;
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = ["nix-command" "flakes"];
   };
 
-  environment.systemPackages =
-    [ pkgs.emacs
-      pkgs.git
-      pkgs.gdb
+  environment.systemPackages = [
+    pkgs.emacs
+    pkgs.git
+    pkgs.gdb
 
-      # jq is required by numtide/terraform-deploy-nixos-flakes.
-      pkgs.jq
-    ];
+    # jq is required by numtide/terraform-deploy-nixos-flakes.
+    pkgs.jq
+  ];
 
   services.sshd.enable = true;
 }

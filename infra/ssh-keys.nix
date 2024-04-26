@@ -1,5 +1,4 @@
 rec {
-
   eelco = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAnI5L6oCgFyvEesL04LnbnH1TBhegq1Yery6TNlIRAA edolstra@gmail.com";
 
   provisioner = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKDSfHu0xHu2qtWjmCC92rTMZfwZNKXrsJvPCLSoWtzR eelco.dolstra@deploy";
@@ -54,9 +53,11 @@ rec {
     hexa-helix
   ];
 
-  infra = infra-core ++ [
-    julienmalka
-  ];
+  infra =
+    infra-core
+    ++ [
+      julienmalka
+    ];
 
-  ngi-admins = infra-core ++ [ regnat cleeyv lorenz-leutgeb tomberek john-ericson ];
+  ngi-admins = infra-core ++ [regnat cleeyv lorenz-leutgeb tomberek john-ericson];
 }

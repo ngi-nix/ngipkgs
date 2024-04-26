@@ -1,6 +1,4 @@
-{ lib, ... }:
-
-{
+{lib, ...}: {
   system.stateVersion = lib.mkDefault "23.05";
 
   networking = {
@@ -8,13 +6,22 @@
       address = "116.202.113.193";
       interface = "eth0";
     };
-    defaultGateway6 = { address = "fe80::1"; interface = "eth0"; };
+    defaultGateway6 = {
+      address = "fe80::1";
+      interface = "eth0";
+    };
     interfaces.eth0 = {
       ipv4.addresses = [
-        { address = "116.202.113.248"; prefixLength = 26; }
+        {
+          address = "116.202.113.248";
+          prefixLength = 26;
+        }
       ];
       ipv6.addresses = [
-        { address = "2a01:4f8:231:4187::"; prefixLength = 64; }
+        {
+          address = "2a01:4f8:231:4187::";
+          prefixLength = 64;
+        }
       ];
     };
     nameservers = [
@@ -31,8 +38,8 @@
     ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="70:85:c2:f4:7d:27", NAME="eth0"
   '';
 
-  boot.initrd.availableKernelModules = [ "ahci" "nvme" ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.initrd.availableKernelModules = ["ahci" "nvme"];
+  boot.kernelModules = ["kvm-amd"];
 
   nix.settings.max-jobs = lib.mkDefault 16;
 }
