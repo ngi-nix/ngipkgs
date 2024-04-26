@@ -8,18 +8,21 @@
   inputs.hydra-nix.follows = "hydra/nix";
   inputs.hydra-nixpkgs.follows = "hydra/nixpkgs";
   inputs.hydra.url = "github:nixos/hydra/nix-next";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
+  inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
+  inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
   inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
   inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
-  inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
-  # Set default system to `x86_64-linux`,
-  # as we currently only support Linux.
+
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
-  inputs.systems.url = "github:nix-systems/x86_64-linux";
+  inputs.systems.url = "github:nix-systems/default-linux";
 
   outputs = {
     hydra,
@@ -28,9 +31,9 @@
     self,
     nixpkgs,
     flake-utils,
-    treefmt-nix,
     sops-nix,
     rust-overlay,
+    pre-commit-hooks,
     dream2nix,
     ...
   }: let
@@ -108,8 +111,6 @@
 
     rawNixosConfigs = flattenAttrsSlash (pick.configurations (importProjects {}));
 
-    loadTreefmt = pkgs: treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
-
     # Attribute set containing all modules obtained via `inputs` and defined
     # in this flake towards definition of `nixosConfigurations` and `nixosTests`.
     extendedModules =
@@ -130,7 +131,6 @@
         pkgs = pkgs // importPack;
       };
 
-      treefmtEval = loadTreefmt pkgs;
       toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
 
       importPack = importPackages pkgs;
@@ -173,14 +173,12 @@
             '';
         };
 
-      formatter = treefmtEval.config.build.wrapper;
       checks = mapAttrs' toplevel nixosConfigurations;
     });
 
     x86_64-linuxOutputs = let
       system = flake-utils.lib.system.x86_64-linux;
       pkgs = importNixpkgs system [self.overlays.default];
-      treefmtEval = loadTreefmt pkgs;
       # Dream2nix is failing to pass through the meta attribute set.
       # As a workaround, consider packages with empty meta as non-broken.
       nonBrokenPkgs = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) self.packages.${system};
@@ -194,8 +192,31 @@
         (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
         // {
           inherit (self.packages.${system}) overview;
-          formatting = treefmtEval.config.build.check self;
+          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              alejandra.enable = true;
+            };
+          };
         };
+
+      devShell.${system} = pkgs.mkShell {
+        inherit (self.checks.${system}.pre-commit-check) shellHook;
+        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+      };
+
+      formatter.${system} = pkgs.writeShellApplication {
+        name = "formatter";
+        text = ''
+          # shellcheck disable=all
+          shell-hook () {
+            ${self.checks.${system}.pre-commit-check.shellHook}
+          }
+
+          shell-hook
+          pre-commit run --all-files
+        '';
+      };
 
       # To generate a Hydra jobset for CI builds of all packages and tests.
       # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
