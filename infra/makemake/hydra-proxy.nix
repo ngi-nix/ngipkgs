@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
+let
   hydraProxyConfig = ''
     TimeOut 900
 
@@ -61,6 +56,8 @@ in {
     };
   };
 
-  security.acme.acceptTerms = true;
-  security.acme.defaults.email = "webmaster@nixos.org";
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "webmaster@nixos.org";
+  };
 }
