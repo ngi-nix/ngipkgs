@@ -1,0 +1,22 @@
+gradle.projectsLoaded {
+  rootProject.allprojects {
+    buildscript {
+      repositories {
+        clear()
+        maven { url '__DEPS_PATH__/'; metadataSources {mavenPom(); artifact()} }
+      }
+    }
+    repositories {
+      clear()
+      maven { url '__DEPS_PATH__/'; metadataSources {mavenPom(); artifact()} }
+    }
+  }
+}
+
+settingsEvaluated { settings ->
+  settings.pluginManagement {
+    repositories {
+      maven { url '__DEPS_PATH__/'; metadataSources {mavenPom(); artifact()} }
+    }
+  }
+}

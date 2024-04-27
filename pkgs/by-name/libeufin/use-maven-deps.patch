@@ -1,0 +1,108 @@
+diff --git a/bank/build.gradle b/bank/build.gradle
+index 0f0bb006..7c88969f 100644
+--- a/bank/build.gradle
++++ b/bank/build.gradle
+@@ -26,21 +26,21 @@ dependencies {
+ 
+     implementation("org.postgresql:postgresql:$postgres_version")
+     implementation("com.zaxxer:HikariCP:5.0.1")
+-    implementation("com.github.ajalt.clikt:clikt:$clikt_version")
++    implementation("com.github.ajalt.clikt:clikt-jvm:$clikt_version")
+ 
+-    implementation("io.ktor:ktor-server-core:$ktor_version")
+-    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+-    implementation("io.ktor:ktor-server-cors:$ktor_version")
+-    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+-    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+-    implementation("io.ktor:ktor-server-netty:$ktor_version")
+-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
++    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
++    implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
++    implementation("io.ktor:ktor-server-cors-jvm:$ktor_version")
++    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
++    implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
++    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
++    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+ 
+     // UNIX domain sockets support (used to connect to PostgreSQL)
+     implementation("com.kohlschutter.junixsocket:junixsocket-core:$junixsocket_version")
+ 
+     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+-    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
++    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
+ 
+     testImplementation(project(":util"))
+ }
+diff --git a/integration/build.gradle b/integration/build.gradle
+index ee9f7da6..e2a10adc 100644
+--- a/integration/build.gradle
++++ b/integration/build.gradle
+@@ -19,9 +19,9 @@ dependencies {
+     testImplementation(project(":bank"))
+     testImplementation(project(":nexus"))
+ 
+-    testImplementation("com.github.ajalt.clikt:clikt:$clikt_version")
++    testImplementation("com.github.ajalt.clikt:clikt-jvm:$clikt_version")
+ 
+-    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+-    testImplementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
++    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
++    testImplementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
++    testImplementation("org.jetbrains.kotlin:kotlin-test-jvm:$kotlin_version")
+ }
+\ No newline at end of file
+diff --git a/nexus/build.gradle b/nexus/build.gradle
+index 224f6b60..ad369559 100644
+--- a/nexus/build.gradle
++++ b/nexus/build.gradle
+@@ -33,14 +33,14 @@ dependencies {
+     implementation("org.apache.commons:commons-compress:1.21")
+ 
+     // Command line parsing
+-    implementation("com.github.ajalt.clikt:clikt:$clikt_version")
++    implementation("com.github.ajalt.clikt:clikt-jvm:$clikt_version")
+     implementation("org.postgresql:postgresql:$postgres_version")
+     implementation("com.zaxxer:HikariCP:5.0.1")
+     // Ktor client library
+-    implementation("io.ktor:ktor-client-apache:$ktor_version")
++    implementation("io.ktor:ktor-client-apache-jvm:$ktor_version")
+ 
+     // Brings the call-logging library too.
+-    implementation("io.ktor:ktor-server-test-host:$ktor_version")
++    implementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
+ 
+     // PDF generation
+     implementation("com.itextpdf:itext7-core:7.1.16")
+@@ -49,12 +49,12 @@ dependencies {
+     implementation("com.kohlschutter.junixsocket:junixsocket-core:$junixsocket_version")
+ 
+     // Serialization
+-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
++    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+ 
+     // Unit testing
+     testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+-    testImplementation("io.ktor:ktor-client-mock:$ktor_version")
++    testImplementation("io.ktor:ktor-client-mock-jvm:$ktor_version")
+ }
+ 
+ test {
+diff --git a/util/build.gradle b/util/build.gradle
+index 0bd9b551..d8e720a6 100644
+--- a/util/build.gradle
++++ b/util/build.gradle
+@@ -28,8 +28,8 @@ dependencies {
+     // Database helper
+     implementation("org.postgresql:postgresql:$postgres_version")
+     
+-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+-    implementation("io.ktor:ktor-server-test-host:$ktor_version")
++    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
++    implementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
+     implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+-    implementation("com.github.ajalt.clikt:clikt:$clikt_version")
++    implementation("com.github.ajalt.clikt:clikt-jvm:$clikt_version")
+ }
+\ No newline at end of file
