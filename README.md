@@ -14,9 +14,8 @@ The software in NGIpkgs can be divided into two broad categories: Nix packages, 
 .
 ├── flake.nix
 ├── pkgs
-│   ├── by-name
-│   │   └── …            # directories of packages that are added `by-name`
-│   └── default.nix      # imports all packages that are not in `by-name`
+│   └── by-name
+│       └── …            # directories of packages
 ├── projects
 │   ├── <project-name>   # names matching those at https://nlnet.nl/project
 │   │   ├── default.nix  # project definition
