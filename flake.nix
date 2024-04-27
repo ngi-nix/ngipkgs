@@ -4,10 +4,10 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  # Set default system to `x86_64-linux`,
+  # Set default system to `default-linux`,
   # as we currently only support Linux.
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
-  inputs.systems.url = "github:nix-systems/x86_64-linux";
+  inputs.systems.url = "github:nix-systems/default-linux";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -142,7 +142,7 @@
           })
           .options;
       };
-    in {
+    in rec {
       packages =
         importPack
         // {
@@ -161,7 +161,34 @@
             '';
         };
 
-      checks = mapAttrs' toplevel nixosConfigurations;
+      checks =
+        mapAttrs' toplevel nixosConfigurations
+        // {
+          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              alejandra.enable = true;
+            };
+          };
+        };
+
+      devShell = pkgs.mkShell {
+        inherit (checks.pre-commit-check) shellHook;
+        buildInputs = checks.pre-commit-check.enabledPackages;
+      };
+
+      formatter = pkgs.writeShellApplication {
+        name = "formatter";
+        text = ''
+          # shellcheck disable=all
+          shell-hook () {
+            ${checks.pre-commit-check.shellHook}
+          }
+
+          shell-hook
+          pre-commit run --all-files
+        '';
+      };
     });
 
     x86_64-linuxOutputs = let
@@ -180,31 +207,7 @@
         (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
         // {
           inherit (self.packages.${system}) overview;
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              alejandra.enable = true;
-            };
-          };
         };
-
-      devShell.${system} = pkgs.mkShell {
-        inherit (self.checks.${system}.pre-commit-check) shellHook;
-        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-      };
-
-      formatter.${system} = pkgs.writeShellApplication {
-        name = "formatter";
-        text = ''
-          # shellcheck disable=all
-          shell-hook () {
-            ${self.checks.${system}.pre-commit-check.shellHook}
-          }
-
-          shell-hook
-          pre-commit run --all-files
-        '';
-      };
 
       # To generate a Hydra jobset for CI builds of all packages and tests.
       # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
