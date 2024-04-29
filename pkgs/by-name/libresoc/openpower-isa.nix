@@ -1,4 +1,5 @@
 {
+  lib,
   python39,
   fetchFromLibresoc,
   pkgsCross,
@@ -15,12 +16,13 @@
 in
   pythonPackages.buildPythonPackage rec {
     name = "libresoc-openpower-isa";
+    pname = "openpower-isa";
     version = "unstable-2024-03-31";
 
     src = fetchFromLibresoc {
       inherit pname;
       rev = "3cb597b99d414dbdb35336eb3734b5d46edd597f"; # HEAD @ version date
-      sha256 = "sha256-OKUb3BmVEZD2iRV8sbNEEA7ANJImWX8FEj06o5+HQwU=";
+      hash = "sha256-OKUb3BmVEZD2iRV8sbNEEA7ANJImWX8FEj06o5+HQwU=";
     };
 
     # TODO: potential upstream patches
@@ -138,4 +140,10 @@ in
       "openpower.decoder.power_decoder2"
       "openpower"
     ];
+
+    meta = {
+      description = "OpenPOWER ISA resources including a python-based simulator";
+      homepage = "https://git.libre-soc.org/?p=openpower-isa.git;a=summary";
+      license = lib.licenses.gpl3Plus;
+    };
   }
