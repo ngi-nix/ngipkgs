@@ -14,12 +14,12 @@
 }:
 stdenv.mkDerivation rec {
   pname = "gnunet-messenger-cli";
-  version = "0.1.1";
+  version = "0.2.0";
 
   src = fetchgit {
     url = "https://git.gnunet.org/messenger-cli";
     rev = "v${version}";
-    hash = "sha256-p2HukucR1pE5+PJu64MHqkrOhgxnu/bdnr0vrccU44s=";
+    hash = "sha256-dWDig3Z9RalMvTKqpzGRwQgVzOpXbAOZmNufQWf0DNE=";
   };
 
   INSTALL_DIR = (placeholder "out") + "/";
