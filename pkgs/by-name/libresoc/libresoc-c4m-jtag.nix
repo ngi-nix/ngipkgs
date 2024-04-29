@@ -7,6 +7,7 @@
   nmigen,
 }:
 python39Packages.buildPythonPackage rec {
+  name = "c4m-jtag";
   pname = "c4m-jtag";
   version = "unstable-2024-03-31";
   realVersion = "0.3.dev243+g${lib.substring 0 7 src.rev}";
@@ -28,4 +29,9 @@ python39Packages.buildPythonPackage rec {
   checkPhase = "nosetests";
 
   pythonImportsCheck = ["c4m.nmigen.jtag.tap"];
+
+  meta = {
+    description = "Chip4Makers nmigen JTAG implementation";
+    homepage = "https://git.libre-soc.org/?p=c4m-jtag.git;a=summary";
+  };
 }

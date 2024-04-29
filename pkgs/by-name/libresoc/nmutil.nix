@@ -7,31 +7,43 @@
   nmigen,
   pytest-output-to-files,
 }:
-with python39Packages;
-  buildPythonPackage {
-    pname = "libresoc-nmutil";
-    version = "unstable-2024-03-31";
+python39Packages.buildPythonPackage rec {
+  name = "libresoc-nmutil";
+  pname = "nmutil";
+  version = "unstable-2024-03-31";
 
-    src = fetchFromLibresoc {
-      inherit pname;
-      rev = "4bf2f20bddc057df1597d14e0b990c0b9bdeb10e"; # HEAD @ version date
-      hash = "sha256-8jXQGO4IeB6WjGtjuHO8UBh9n3ei7LukmRoXSbNJ1vM=";
-    };
+  src = fetchFromLibresoc {
+    inherit pname;
+    rev = "4bf2f20bddc057df1597d14e0b990c0b9bdeb10e"; # HEAD @ version date
+    hash = "sha256-8jXQGO4IeB6WjGtjuHO8UBh9n3ei7LukmRoXSbNJ1vM=";
+  };
 
-    propagatedNativeBuildInputs = [
-      pyvcd
+  propagatedNativeBuildInputs =
+    [
       symbiyosys
       yices
-    ];
+    ]
+    ++ (with python39Packages; [
+      pyvcd
+    ]);
 
-    nativeCheckInputs = [
+  nativeCheckInputs =
+    [
       nmigen
       symbiyosys
       yices
+    ]
+    ++ (with python39Packages; [
       pytestCheckHook
       pytest-xdist
       pytest-output-to-files
-    ];
+    ]);
 
-    pythonImportsCheck = ["nmutil"];
-  }
+  pythonImportsCheck = ["nmutil"];
+
+  meta = {
+    description = "A nmigen utility library";
+    homepage = "https://git.libre-soc.org/?p=nmutil.git;a=summary";
+    license = lib.licenses.lgpl3Plus;
+  };
+}
