@@ -62,7 +62,7 @@ in
     meta = with lib; {
       description = "Automatic local network encryption";
       homepage = "https://vula.link/";
-      license = licenses.gpl3;
+      license = licenses.gpl3Only;
       maintainers = with maintainers; [lorenzleutgeb];
       mainProgram = "vula";
     };

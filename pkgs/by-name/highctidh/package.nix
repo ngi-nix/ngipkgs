@@ -34,7 +34,7 @@ in
     meta = with lib; {
       description = "Fork of high-ctidh as as a portable shared library with Python bindings.";
       homepage = "https://codeberg.org/vula/highctidh";
-      license = licenses.gpl3;
+      license = licenses.publicDomain;
       maintainers = with maintainers; [lorenzleutgeb];
     };
   }
