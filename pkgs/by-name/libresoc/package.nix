@@ -52,6 +52,7 @@
   # SoC target circuit synthesized to nmigen(-soc)
   soc = callPackage ./soc.nix {
     inherit
+      fetchFromLibresoc
       libresoc-c4m-jtag
       libresoc-ieee754fpu
       libresoc-openpower-isa
