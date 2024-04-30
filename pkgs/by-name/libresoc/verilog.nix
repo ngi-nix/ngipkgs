@@ -1,20 +1,21 @@
-{ version }:
+{
+  runCommand,
+  pinmux,
+  soc,
+}:
+runCommand "libresoc.v" {
+  version = "unstable-2024-03-31";
 
-{ runCommand, python3Packages, libresoc-pinmux }:
-
-let script = ''
+  nativeBuildInputs = [
+    soc
+    pinmux
+  ];
+} ''
   mkdir pinmux
-  ln -s ${libresoc-pinmux} pinmux/ls180
+  ln -s ${pinmux} pinmux/ls180
   export PINMUX="$(realpath ./pinmux)"
-  python3 -m soc.simple.issuer_verilog \
+  python3.9 -m soc.simple.issuer_verilog \
     --debug=jtag --enable-core --enable-pll \
     --enable-xics --enable-sram4x4kblock --disable-svp64 \
     $out
-''; in
-runCommand "libresoc.v" {
-  inherit version;
-
-  nativeBuildInputs = (with python3Packages; [
-    libresoc-soc
-  ]) ++ [ libresoc-pinmux ];
-} script
+''
