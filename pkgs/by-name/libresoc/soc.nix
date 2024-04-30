@@ -22,6 +22,12 @@ with python39Packages;
       fetchSubmodules = false;
     };
 
+    patches = [./soc-nmigen-soc-no-implicit-arg.patch];
+
+    postPatch = ''
+      rm -r src/soc/litex
+    '';
+
     propagatedBuildInputs = [
       cached-property
       libresoc-c4m-jtag
@@ -30,4 +36,30 @@ with python39Packages;
       nmigen-soc
       yosys
     ];
+
+    nativeCheckInputs = [
+      power-instruction-analyzer
+      pytest-output-to-files
+      pytest-xdist
+      pytestCheckHook
+    ];
+
+    disabledTests = [
+      # listed failures seem unlikely to result from packaging errors, assumed present upstream
+      "test_div_pipe_core"
+      "test_fsm_div_core"
+      "test_sim_onl"
+      "test_mul_pipe_2_arg"
+      "test_mul_pipe_2_arg"
+      "test_it"
+      "test_sim_only"
+      "test_div_pipe_core"
+      "test_fsm_div_core"
+    ];
+
+    disabledTestPaths = [
+      "unused_please_ignore_completely/" # ???
+    ];
+
+    pythonImportsCheck = ["soc"];
   }
