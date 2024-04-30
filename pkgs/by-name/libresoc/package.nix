@@ -45,7 +45,7 @@
   # library for running pin multiplexers
   pinmux = callPackage ./pinmux.nix {inherit fetchFromLibresoc;};
   # libresoc's PowerPC emulator
-  power-instruction-analyzer = callPackage ./power-instruction-analyzer.nix {};
+  power-instruction-analyzer = callPackage ./power-instruction-analyzer.nix {inherit fetchFromLibresoc;};
   # libresoc's test harness
   pytest-output-to-files = callPackage ./pytest-output-to-files.nix {};
   # SoC target circuit synthesized to nmigen(-soc)
