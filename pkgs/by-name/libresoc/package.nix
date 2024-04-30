@@ -47,7 +47,7 @@
   # libresoc's PowerPC emulator
   power-instruction-analyzer = callPackage ./power-instruction-analyzer.nix {inherit fetchFromLibresoc;};
   # libresoc's test harness
-  pytest-output-to-files = callPackage ./pytest-output-to-files.nix {};
+  pytest-output-to-files = callPackage ./pytest-output-to-files.nix {inherit fetchFromLibresoc;};
   # SoC target circuit synthesized to nmigen(-soc)
   soc = callPackage ./soc.nix {
     inherit
