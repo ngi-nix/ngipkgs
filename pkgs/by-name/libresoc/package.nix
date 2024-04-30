@@ -41,8 +41,13 @@
   # libresoc's nmigen-soc fork has been renamed to https://github.com/amaranth-lang/amaranth-soc.
   # suffers from the same rename issue as the previous commit with renaming issue as nmigen/amaranth
   nmigen-soc = callPackage ./nmigen-soc.nix {inherit nmigen;};
+<<<<<<< HEAD
   # libresoc's nmutil fork, used for differential testing
   nmutil = callPackage ./nmutil.nix {inherit fetchFromLibresoc nmigen pytest-output-to-files;};
+=======
+  # libresoc's nmutil fork, used for differential testing 
+  nmutil = callPackage ./nmutil.nix {inherit nmigen pytest-output-to-files;};
+>>>>>>> 439fb1c3 (libresoc: expose package.nix)
   # library for running pin multiplexers
   pinmux = callPackage ./pinmux.nix {inherit fetchFromLibresoc;};
   # libresoc's PowerPC emulator
