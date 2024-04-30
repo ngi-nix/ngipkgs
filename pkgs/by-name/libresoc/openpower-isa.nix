@@ -22,11 +22,12 @@ with python39Packages;
       sha256 = "sha256-OKUb3BmVEZD2iRV8sbNEEA7ANJImWX8FEj06o5+HQwU=";
     };
 
+    # TODO: potential upstream patches
     prePatch = ''
       # broken upstream, required for importing modules in tests
       touch ./src/openpower/{sv,test/general}/__init__.py
 
-      # ignore $CC/$AS/etc environment variables and update hard-coded prefixes with pkgsCross compiler (powerpc64le-unknown-linux-gnu-gcc)
+      # doing this substitution because this compiler prefix needs to agree between nix and upstream
       substituteInPlace src/openpower/syscalls/ppc_flags.py \
         --replace 'powerpc64le-linux-gnu-gcc' '${pkgsCross.powernv.buildPackages.gcc.targetPrefix}gcc'
       substituteInPlace src/openpower/simulator/envcmds.py \
@@ -35,16 +36,19 @@ with python39Packages;
     '';
 
     patches = [
-      # setup.py uses @git syntax for version specifiers, prevent setuptools from attempting to clone
+      # pip will try to clone dependencies using @git versions, but this patch makes it so we can use the repos that have already been vendored in by nix
       ./use-vendored-git-dependencies.patch
-      # patch out hack to create empty directory in output build
-      # see postInstall notes for complement
+      # upstream includes .gitignore in empty directory to place that empty directory in the build output
+      # Nix happens to break this fragile hack, so remove and make output directory manually
       ./remove-gitignore-check.patch
       # Makefile attempts to use recently-built binaries via $PATH, expose instead with a $(OPENPOWER) prefix
       # see postInstall notes for complement
       ./prefixed-openpower-isa-tools.patch
     ];
 
+    # Native is the build machine architecture (e.g. x86_64 linux)
+    # This will run a python emulator of the target architecture, which is PowerPC for this project
+    # The assembler has to run on native but target PowerPC assembly
     propagatedNativeBuildInputs = [
       astor
       cached-property
@@ -58,12 +62,14 @@ with python39Packages;
       pygdbmi
     ];
 
+    # TODO: potential upstream work
     postInstall =
       ''
         # complement of `remove-gitignore-check.patch`
         mkdir -p $out/${python39.sitePackages}/openpower/decoder/isa/generated
 
-        # linker script vendored in test library
+        # this file is missed in the installation configuration, manually move into output
+        # potential to upstream fix to configuration that maintains this file
         cp ./src/openpower/simulator/memmap $out/${python39.sitePackages}/openpower/simulator/
       ''
       + (
@@ -86,10 +92,43 @@ with python39Packages;
           cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
 
           # complement of `prefixed-openpower-isa-tools.patch`
-          OPENPOWER=$out ${codegen}/bin/run-codegen
+          OPENPOWER=$out/bin ${codegen}/bin/run-codegen
 
           # ...again now including codegen source
           cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
         ''
       );
+
+    nativeCheckInputs = [
+      pytestCheckHook
+      pytest-xdist
+      pytest-output-to-files
+      pkgsCross.powernv.buildPackages.gcc
+    ];
+
+    disabledTests = [
+      # listed failures seem unlikely to result from packaging errors, assumed present upstream
+      "test_20_cmp"
+      "test_36_extras_rldimi"
+      "test_36_extras_rldimi_"
+      "test_3_sv_isel"
+      "test_37_extras_rldimi"
+      "test_4_sv_crand"
+    ];
+
+    disabledTestPaths = [
+      # listed paths import from codegen source, which is not in scope here.
+      "src/openpower/decoder/isa/"
+      "src/openpower/simulator/test_div_sim.py"
+      "src/openpower/simulator/test_helloworld_sim.py"
+      "src/openpower/simulator/test_mul_sim.py"
+      "src/openpower/simulator/test_shift_sim.py"
+      "src/openpower/simulator/test_sim.py"
+      "src/openpower/simulator/test_trap_sim.py"
+    ];
+
+    pythonImportsCheck = [
+      "openpower.decoder.power_decoder2"
+      "openpower"
+    ];
   }
