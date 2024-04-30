@@ -1,38 +1,33 @@
-{ version }:
+{
+  python39Packages,
+  fetchFromLibresoc,
+  yosys,
+  libresoc-c4m-jtag,
+  libresoc-ieee754fpu,
+  libresoc-openpower-isa,
+  nmigen-soc,
+  power-instruction-analyzer,
+  pytest-output-to-files,
+}:
+with python39Packages;
+  buildPythonPackage rec {
+    name = "soc";
+    pname = name;
+    version = "unstable-2024-03-31";
 
-{ lib, buildPythonPackage, yosys, runCommand, c4m-jtag, nmigen-soc
-, libresoc-ieee754fpu, libresoc-openpower-isa, python }:
+    src = fetchFromLibresoc {
+      inherit pname;
+      rev = "2a66fe18cd77dd5533c65930d1b241cf6faac455"; # HEAD @ version date
+      hash = "sha256-yJshQYf8V0CB2vPCmWLlnxXMhi/sPXiLKzOn6cqgmxw=";
+      fetchSubmodules = false;
+    };
 
-let
-  # If we use ../. as source, then any change to
-  # any unrelated Nix file would cause a rebuild,
-  # since the build would have access to it.
-  src = runCommand "libresoc-soc-source" {} ''
-    mkdir $out
-    cp -r ${../src} -T $out/src
-    cp -r ${../setup.py} -T $out/setup.py
-    cp -r ${../README.md} -T $out/README.md
-    cp -r ${../NEWS.txt} -T $out/NEWS.txt
-  '';
-in
-buildPythonPackage {
-  pname = "libresoc-soc";
-  inherit version src;
-
-  propagatedBuildInputs = [
-    c4m-jtag nmigen-soc python libresoc-ieee754fpu libresoc-openpower-isa yosys
-  ];
-
-  doCheck = false;
-
-  prePatch = ''
-    rm -r src/soc/litex
-  '';
-
-  pythonImportsCheck = [ "soc" ];
-
-  meta = with lib; {
-    homepage = "https://libre-soc.org/";
-    license = licenses.lgpl3Plus;
-  };
-}
+    propagatedBuildInputs = [
+      cached-property
+      libresoc-c4m-jtag
+      libresoc-ieee754fpu
+      libresoc-openpower-isa
+      nmigen-soc
+      yosys
+    ];
+  }
