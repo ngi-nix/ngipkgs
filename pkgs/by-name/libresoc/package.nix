@@ -43,7 +43,7 @@
   # libresoc's nmutil fork, used for differential testing
   nmutil = callPackage ./nmutil.nix {inherit nmigen pytest-output-to-files;};
   # library for running pin multiplexers
-  pinmux = callPackage ./pinmux.nix {};
+  pinmux = callPackage ./pinmux.nix {inherit fetchFromLibresoc;};
   # libresoc's PowerPC emulator
   power-instruction-analyzer = callPackage ./power-instruction-analyzer.nix {};
   # libresoc's test harness
