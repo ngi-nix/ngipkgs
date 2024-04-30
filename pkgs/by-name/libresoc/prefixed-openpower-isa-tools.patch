@@ -1,0 +1,23 @@
+diff --git a/Makefile b/Makefile
+index ccc0a0ba..c31dd2ee 100644
+--- a/Makefile
++++ b/Makefile
+@@ -11,15 +11,15 @@ gitupdate:
+ 
+ # now installed as a command (/usr/local/bin/svanalysis) by setup.py
+ svanalysis:
+-	sv_analysis
++	$(OPENPOWER)/sv_analysis
+ 
+ # now installed as a command (/usr/local/bin/pywriter) by setup.py
+ pywriter: | svanalysis
+-	pywriter
++	$(OPENPOWER)/pywriter
+ 
+ # likewise
+ pyfnwriter: | pywriter
+-	pyfnwriter
++	$(OPENPOWER)/pyfnwriter
+ 
+ develop:
+ 	python3 setup.py develop # yes, develop, not install
