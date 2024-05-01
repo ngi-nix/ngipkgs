@@ -31,6 +31,8 @@ let
 
   delroth = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII3tjB4KYDok3KlWxdBp/yEmqhhmybd+w0VO4xUwLKKV";
 
+  erethon = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIPb9z1U7Sti2lls0mlcmyPwmwD91amKwVlLZHYclSoULAAAABHNzaDo=";
+
   infra = [
     amine
     delroth
@@ -51,4 +53,5 @@ in
     lorenz-leutgeb
     regnat
     tomberek
+    erethon
   ]
