@@ -92,17 +92,10 @@
         allPackages // {inherit callPackage nixosTests;}
       );
 
-      pkgsByName = import ./pkgs/by-name {
+      allPackages = import ./pkgs/by-name {
         inherit (pkgs) lib;
         inherit callPackage dream2nix pkgs;
       };
-
-      explicitPkgs = import ./pkgs {
-        inherit (pkgs) lib;
-        inherit callPackage;
-      };
-
-      allPackages = pkgsByName // explicitPkgs;
     in
       allPackages;
 

@@ -92,7 +92,7 @@ in {
       environment.etc."rosenpass/pqpk".source = peer.rp.public;
 
       sops = {
-        age.keyFile = ./keys.txt;
+        age.keyFile = "/run/keys.txt";
         secrets = {
           "wireguard/wgsk" =
             peer.wg.secret
@@ -103,6 +103,12 @@ in {
           "rosenpass/pqsk" = peer.rp.secret;
         };
       };
+
+      # must run before sops sets up keys
+      boot.initrd.postDeviceCommands = ''
+        cp -r ${./keys.txt} /run/keys.txt
+        chmod -R 700 /run/keys.txt
+      '';
     };
   in {
     server = {config, ...}: {

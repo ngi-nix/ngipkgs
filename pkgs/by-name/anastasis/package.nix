@@ -20,11 +20,11 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis";
-  version = "0.4.0";
+  version = "0.4.1";
 
   src = fetchzip {
-    url = "mirror://gnu/anastasis/${finalAttrs.pname}-${finalAttrs.version}.tar.gz";
-    sha256 = "sha256-PMBHfJsrL/7w2s03J9hmeuZZJDt1p9wJ8iA4HykU3E8=";
+    url = "mirror://gnu/anastasis/anastasis-${finalAttrs.version}.tar.gz";
+    hash = "sha256-nuNRZTzp/hlV3Eo2nQH4G3sGsws5Qy2nk3m99aY0L84=";
   };
 
   postPatch = ''

@@ -3,7 +3,7 @@
   stdenv,
   fetchgit,
   autoreconfHook,
-  curl,
+  curlWithGnuTls,
   gnunet,
   jansson,
   libgcrypt,
@@ -13,9 +13,8 @@
   postgresql,
   taler-exchange,
   taler-merchant,
-  callPackage,
 }: let
-  version = "0.9.3";
+  version = "0.10.1";
 in
   stdenv.mkDerivation {
     pname = "sync";
@@ -24,12 +23,11 @@ in
     src = fetchgit {
       url = "https://git.taler.net/sync.git";
       rev = "v${version}";
-      hash = "sha256-u4oR9zCBpBSqKFIhm+pLTH83tPLvYULt8FhDyTsP7m4=";
+      hash = "sha256-7EBm4Zp1sjZw7pXxQySY+1It3C/KLG2SHhqUPhDATbg=";
     };
 
     nativeBuildInputs = [
       autoreconfHook
-      curl
       taler-exchange
       taler-merchant
       gnunet
@@ -39,6 +37,10 @@ in
       libsodium
       pkg-config
       postgresql
+    ];
+
+    buildInputs = [
+      curlWithGnuTls
     ];
 
     # Tests run with `make check`.

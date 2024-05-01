@@ -11,7 +11,7 @@
   pkg-config,
   stdenv,
 }: let
-  version = "0.9.3";
+  version = "0.9.4";
 in
   stdenv.mkDerivation {
     inherit version;
@@ -20,7 +20,7 @@ in
     src = fetchgit {
       url = "https://git.taler.net/twister.git";
       rev = "v${version}";
-      hash = "sha256-3Zp/x46xuL01J3/SR3ab5REcJMC3eQPnSkpOzeK3MKk=";
+      hash = "sha256-QxyK0FIWlGnM9GMH7rXpM4nIDozlXyAgMbUuwNqMymo=";
     };
 
     nativeBuildInputs = [

@@ -15,7 +15,7 @@
   taler-merchant,
   qrencode,
 }: let
-  version = "0.9.3";
+  version = "0.10.0";
 in
   stdenv.mkDerivation {
     inherit version;
@@ -24,7 +24,7 @@ in
     src = fetchgit {
       url = "https://git.taler.net/taler-mdb.git";
       rev = "v${version}";
-      hash = "sha256-tzJsWAT0k4TldPiI4/yDvbfIBmuBdTrz6o5EHNyfWhs=";
+      hash = "sha256-vHD20Z/hO6Cwba2MfeEaNm1867Anu9l01/4oroWafJA=";
     };
 
     nativeBuildInputs = [
