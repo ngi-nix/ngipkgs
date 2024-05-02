@@ -186,6 +186,10 @@
               alejandra.enable = true;
             };
           };
+          actionlint = pkgs.runCommand "actionlint" {
+            src = ./.github/workflows;
+            nativeBuildInputs = [pkgs.actionlint];
+          } "actionlint $src/*.yaml && touch $out";
         };
 
       devShell.${system} = pkgs.mkShell {

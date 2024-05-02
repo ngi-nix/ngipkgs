@@ -1,0 +1,7 @@
+[project]
+name = "build-matrix"
+version = "0"
+dependencies = [ "networkx" ]
+
+[project.scripts]
+build-matrix = "build_matrix:main"
