@@ -1,0 +1,3 @@
+- Get a list of all the project from NLNET
+- put a list of NLnet packages
+- packages that are packaged upstream (

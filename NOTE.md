@@ -1,2 +1,0 @@
-- put a list of NLnet packages
-- packages that are packaged upstream (
