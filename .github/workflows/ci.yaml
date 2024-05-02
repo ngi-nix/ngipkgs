@@ -102,7 +102,7 @@ jobs:
       # Only if this job built the overview, upload it as artifact for GitHub Pages.
       - name: 'Upload artifact for GitHub Pages'
         uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request' && contains(matrix.attributes, '.#checks."x86_64-linux"."overview"')
+        if: github.event_name != 'pull_request' && contains(matrix.attributes, '.#checks."x86_64-linux"."packages/overview"')
         with: { path: 'result' }
 
   deploy:
