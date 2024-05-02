@@ -1,0 +1,1033 @@
+#Seppo!
+/kbin
+0cpm
+0KNOW
+802.11n feature of openwifi
+A Distributed Software Stack For Co-operation
+A proof of concept of identity-based encryption
+A Secret Key Store for Sequoia PGP
+A-A-P
+AALT (Accelerated Analog Layout Tool)
+AbiCollab
+AbiMacOS
+AbiRDF
+AbiRDF2
+Accessible security
+ActivityPods
+ActivityPub Quote Posts
+Adding TPM Support to Sequoia PGP
+Adding Web-of-Trust Support to PGPainless
+Adera
+Adopting the Noise Key Exchange in Tox
+AEAP
+Aerogramme
+AGFL
+Agorakit
+AHA!
+AI Horde
+AI-VPN
+Alder Lake Desktop
+AlekSIS
+ALIAS
+Alive2
+Ambulant
+Analog/Mixed-Signal Library
+Anchorboot
+Anomos
+Anonymisation for Data Donations
+Apicula
+Apicula IO primitives
+Arcan-A12
+AREXERA Crawler
+Ari
+Armbian
+ARMify
+ARPA2
+ARPA2 LDAP Middleware
+ARPA2 resource ACL and HTTP SASL modules for NGINX
+ARPA2 Steamworks
+ARPA2 Steamworks
+ArtistHub
+Assessing Cyber Security
+Atom-Based Routing
+Atomic Data
+Atomic Tables
+Audio/Video Calls in Libervia
+Authenticated DNSSEC bootstrapping
+Autocrypt for Thunderbird
+Automated clearing of source code files
+Automating mobile app interception with Frida
+Automerge
+AVantGaRDe
+Babelia
+Back to source: trust but verify all the packages
+Balthazar
+Balthazar - One laptop for the new internet age.
+Balthazar Casing
+Bana
+BB3-CM4
+BBBsecureChat
+bcachefs
+Bertie
+betrusted
+Betrusted OS
+Betrusted software
+Betrusted Storage
+binary-analysis-ng improvements
+BIND DLZ
+Bitmask
+Bits of Freedom
+BlenderWeb
+Blink for Windows
+Blink Qt Messaging
+Blink RELOAD
+BlockNote
+Bonfire federated groups
+Bonfire Framework
+Bonfire Search & Discovery
+BrailleRAP
+Briar
+Briar Desktop
+Bricophone
+Build Transparency (Trustix)
+Cable
+cables.gl
+CAcert
+CAIEC
+CAKE-MAINT
+Calligra-SVG
+Calligra-Windows
+Canaille
+Canarytail
+Caster
+Castopod
+Castopod Mobile
+Castopod Plugins
+Catalogs in MariaDB
+Cell broadcast support for the Linux Mobile Stack
+CeroWRT
+CeroWRT II
+Certbot ECDSA support
+Charon
+Chips4Makers ASICs
+Choreographic Programming: From Theory To Practice
+Cloud hosting service portability
+CNSPRCY
+CodeYard
+Coko Docs
+CokoDocs
+Collabora Online and LibreOffice
+Collabora Online/LibreOffice Accessibility
+Coloquinte
+Commune
+Condensation Data System
+Conferences
+Connect by Name
+Converged Security Suite +AMD
+Converged Security Suite Improvements
+Conversations
+Conversations 3.0
+Conzept encyclopedia
+Corteza Discovery
+CP2PC
+CPAN6
+Cpdf Accessibility
+CRAVEX
+Cryptech.is
+CryptoLyzer
+CryptPad
+CryptPad Auth
+CryptPad Blueprints
+CryptPad for communities
+CryptPad: Project Dialogue
+CUGAR
+CuteHIP
+DANCE4All
+Dat Private Network
+Data packages
+DATALISP
+DAVx⁵
+DCnets
+Debug Adapter with Nix
+Decibel
+Deep Firmware
+Delta Tauri
+DeltaBot
+DeltaChat/WebXDC
+DeltaTouch
+Democratic SendComm
+DeviceCode
+dhcpcanon
+DIFR-TSPM
+DIME
+Dino
+Discourse ActivityPub
+Discover and move your coins by yourself
+Distributed GNU Shepherd
+Distributed Mechanism Learning
+Distributed Private Trust
+Distributed Trust for Web Servers
+django-allauth
+DMT
+DNSCCM
+DNSSEC Key Signing Suite
+DNSSEC-mail
+DNSvizor
+Dokieli
+Dolphin authorisation
+Donations
+Dowse
+dream2nix
+DRTM implementation for AMD processors
+Dual-level Specification Inference
+DUT Control
+dweb-search
+Dynamic indexing for real time graph database
+e-Passports
+Earthstar
+Earthstar (Encryption, Safety, and Local Sync)
+Edalize ASIC backend
+EDeA
+EDeA
+eduVPN
+eduVPN app
+eduVPN multi-protocol
+eduVPN on Apple
+eduVPN on Apple part II
+EEZ DIB
+EEZ flow for EEZ Studio IV
+EEZ Studio
+EGIL SCIM client
+ELF Linking
+ELF tools in Rust
+Elliptic curve encryption speed-up using SIMD
+Elm Matrix SDK
+elRepo.io - Resilient, distributed content sharing
+Email <=> XMPP gateway
+Email for expert news
+Encoding for Robust Immutable Storage (ERIS)
+End-To-End Encryption for Jitsi Meet
+Enhancing vula with IPv6 and REUNION rendezvous
+Etebase - protocol and encryption enhancements
+EteSync - iOS application
+Ethersync
+Event Federation Plugin for WordPress
+EventFahrplan
+Explain
+Explain Direct
+Extend EFI support in BSDs
+Extending PeerTube
+Exter
+f8
+FABulous Demo SoC
+Faircamp 1.0
+FairSync
+Fairwaves
+Fashion Freedom
+Fast RSA + PQ Blind Signatures
+Faster and configurable datapath/Linux xfrm
+FastWave
+Feather UI
+Federated software forges with Forgejo
+Federated software forges with Gitea
+Federated Task-Tracking with Live Data
+Federated Timesheets
+FediMod
+Fediverse Test Framework
+Fediverse Test Suite
+fediverse.space
+FemtoStar Project
+FFII
+FIDO 2.2
+Fidus Writer
+FileSender
+Finish porting Replicant to newer Android version
+First Classify Documents
+Fix the Pitch Black Attack in Freenet routing
+Flarum
+Fleetbase on Solid: A production-ready supply chain solution
+FLOSS
+FLOSS-manuals
+Fobnail
+Folksonomy engine for the food ecosystem
+ForgeFed
+ForgeFed
+ForgeFlux
+Forgejo
+FOSS Code Supply Chain Assurance
+FOSS Code Supply Chain Assurance II
+FPGA Fault Injection Testing
+Fractal
+Free Software Vulnerability Database
+Free Software Vulnerability Database
+FreeBSD-3G
+Friendly Forge Format (F3)
+FSF
+FSF Europe
+FSF Priority
+FTEproxy
+Full-source GNU Mes on ARM and RISC-V
+Funkwhale
+Funkwhale
+fwupd
+Garage
+Gash
+GDPR Compliance
+Genealogos
+Genodepkgs
+Geographic tagging of Routing and Forwarding
+Geolexica reverse
+GetDNS
+GISS
+Global Directories
+Globule
+GNS Migration and Zone Management
+GNU Guix
+GNU Guix - Cuirass
+GNU Mes
+GNU Mes on ARM
+GNU Mes RISC-V
+GNU Mes Tower
+GNU Mes: Full Source bootstrap
+GNU Name System
+GNU social
+GNU Taler
+GNU Taler KYC
+GNU Taler wallet app for iOS
+GNUnet
+GNUnet CONG
+GNUnet Messenger API
+GnuTLS
+GO-FOSS
+GoatCounter
+GoogleSharing
+Gorgon CI
+Gosling
+GoToSocial
+GoToSocial
+GPG Lacre project
+GPGPU Playground
+GPLv3
+GPRS/EGPRS support in Osmocom CNI for Ericsson RBS
+Graphics acceleration on Replicant
+Great Black Swamp
+Great OCR for SANE
+Great scanning and OCR for mobile devices
+GSM-Sec
+Guix Peer-to-Peer substitutes
+Guix-Daemon
+GUN P2P Encryption
+Hackathons
+Haketilo/Hydrilla
+Handling Data from IPv6 Scanning
+Haphaestus
+Hardening OpenPGP CA deployments
+Hardware accelerated 2D graphics
+Heads-OpenPGP
+Himalaya
+Holo Routing
+How AdTech works
+HTTPS-Obs
+Hubzilla
+HWIOS
+Hyper Hyper Space
+Hypermachines: Realtime and Collaborative P2P Search
+IC workspace
+Icebreaker
+Icestudio
+Icosa Gallery
+IIDS
+imap-codec library
+Implement sound support in the Hurd
+Improve Email Encryption in KMail
+Improve Krill (RPKI) BGP integration
+Improve Okular digital signature support
+Improvements for the next generation firewalling tool in Linux
+Improving and extending Kaitai Struct
+Improving Matrix E2E encryption UX
+Improving OpenSSH's Authentication and PKI
+Improving the deployability of Multipath TCP
+Improving WebKit on Windows
+IMSI Pseudonymization
+IN COMMON
+In-document search
+Independent captions and transcript augmentation
+IndieHosters
+Indigenous
+Inko
+Inochi2D
+Internet of Coins
+Interoperable Certificate Store for OpenPGP
+Interpeer
+Interpeer SDKs
+Inventaire
+Inventaire recommender
+Inventaire Self-hosted
+IotECC
+IPDL
+IPDL II
+ipfs-search.com
+IPv6-monostack - upstream Linux SIIT/NAT64
+Irdest
+Irdest - OpenWRT Image and Bluetooth LE
+Irdest spec, db, route scoring
+IRMA made easy
+IronCalc
+ISC BIND 9
+it
+iuh-openbsc
+Jabber/XMMP
+jaq
+JavaScript Restrictor
+JellyfishOPP
+JigLibJS
+Jingle Nodes
+Jitsi
+Jitsi (SIP Comm Phone)
+Jitsi (SIP-Communicator) Desktop
+Jitsi-DNSSEC
+Jitsi-FMJ
+JShelter
+JShelter Manifest V3
+json-joy
+JSON-Joy Peritext
+K-Gen
+Kaidan
+Kaidan
+Kaidan A/V
+Kaidan Auth + portability
+Kami
+Karrot
+Karrot
+Katzen
+Katzen Metadata Minimizing Messsenger
+Katzenpost
+Kazarma
+Kazarma Release
+Kbin
+KDE Connect
+KDE Plasma Wayland
+Key Management
+Keyoxide
+Keyoxide Mobile
+Keyoxide v2
+KiCad
+KiCad
+KiKit
+Kintex-nextpnr
+Kiwi IRC
+Klusterlab Wireguard
+Kolab-Sync
+Koruza
+Ksplice
+Ksplice2
+KWin and Wayland input
+Langsec in Pectore
+Lantern
+Layer-2-Overlay
+LCC
+LEAP/Torbirdy
+lemmur
+Lemmy
+Lemmy Federation
+Lemmy private communities
+Lemmy Scale
+Let's Connect! Client-Server to P2P
+Letswifi/Geteduroam
+lib25519 for ARM
+lib25519: Secure and efficient computation of X25519 and Ed25519
+LiberaForms
+Liberaforms
+libnix
+librarian
+Libre Car Control
+Libre Silicon compiler
+Libre-SOC
+Libre-SOC Cavatools: Power ISA Simulator
+Libre-SOC Formal Correctness Proofs
+Libre-SOC Formal Standards Development
+Libre-SOC HPC
+Libre-SOC OpenPOWER ISA WG
+Libre-SOC Video Acceleration
+Libre-SOC, Coriolis2 ASIC Layout Collaboration
+Libre/OpenCores FuseSoc backend
+Librecast
+Librecast Live
+LibreCellular
+LibreCellular
+LibrEDA
+LibreDocs
+LibreOffice CRDT
+LibreOffice P2P
+LibreOffice/Collabora Online typography
+LibrePCB
+LibreQoS
+LibreSilicon
+libresilient
+libspng
+libspng APNG
+Lightmeter
+Liminix
+LinkedDataHub
+LIP6 VLSI Tools
+LiteX
+Lizard
+LOAP
+Local Production of Antennas for LibreRouter (LoPaLiR)
+LogReport
+Lokalize
+lpnTPM
+LTE support in OsmoCBC (Cell Broadcast Centre)
+LTSP Deskop
+LumoSQL
+LumoSQL at-rest data security
+Luna PnR
+LunaPnR Phase 2
+Machdyne
+MaDada
+Maemo Leste
+Maemo Leste Telepathy
+Magic Wormhole/SPAKE2
+Mail::Box
+Mailman-SSLS
+Mailpile 2 (moggie)
+Mailpile Search Integration
+Mainstreaming Anonymity for Developers (MAD)
+Makatea
+Manas
+Mangaki
+Manyfold
+Manyverse
+Manyverse Private Groups
+MapComplete
+MAPS
+Marginalia Search
+Mastodon - groups, filtering, moderation
+mCaptcha
+Meemoo
+MEGA65 Phone
+MeiliSearch
+Mellium
+Mepo
+Meshtool
+Meta-Press.es
+Meta-Press.es
+mikroPhone
+Minedive
+MinetestEdu
+MirageVPN
+Misskey
+mitmproxy
+MLS for XMPP
+MNT Reform
+MNT Reform Next
+Mobile Test Farm
+mobile-nixos
+MobileAtlas
+MobileAtlas
+Mobilizon
+Mobilizon UX
+MoboSearch
+Mobroute
+Modular CA
+Modular Meta-Press.es
+Monal IM
+Monal IM UI
+Morphle
+Mosaic
+Movim
+Mox
+MPTCP
+MU-Jingle
+Mynij
+Naja
+Naja
+Namecoin
+Namecoin: Core Infrastructure
+Namecoin: Electrum-NMC
+Namecoin: TLS
+Namecoin: ZeroNet and Packaging
+nat64
+Native IFC for FreeCAD
+NaxRiscv core improvements
+NEFUSI
+NeoChat
+NetAidKit
+NetEventKit
+neuropil
+neuropil
+Nextcloud
+NextGraph
+nextpnr_large
+nftables
+NILO
+Nitrokey
+Nitrokey 3
+Nitter
+Nixcloud
+Nixcloud Mail
+Nixcloud Webservices
+NixOS/Clevis
+NLnet Labs
+node-Tor
+NodeBB
+Nodewatcher
+Noise Explorer-VerifPal
+NOMA
+Nominatim
+Nominatim as a library
+NoScript Contextual Policies & LAN protection
+NoScript-Andr
+NoScript-Mob
+NoScript-Mob2
+NoScriptABE
+Nym Credentials
+Nyxt
+Nyxt
+Nyxt Webextensions
+O-ESD: Open-hardware for ElectroStatic Discharge testing
+OCaml-QUIC
+OCap layer for Haskell actor library
+OCCRP Aleph disambiguation
+OCS-Asterisk
+ODF Autotests
+ODF-AbiChanges
+ODF-AbiChanges2
+ODF-AbiWord
+ODF-changes
+ODF-changes2
+ODF-compare
+ODF-DocMod
+ODF-KOffice
+ODF-KOffice2
+ODF-KOffice3
+ODF-KOffice4
+ODF-Numbertext
+ODF-Recipes
+ODF-Symbian
+ODF-Valid
+ODF-XLIFF
+OdfKit
+odfsvn
+Off-the-Record messaging version 4
+Offen
+offen
+OfficeShots
+Oil Shell
+Oil Shell
+Oils for Unix
+Oku
+Omnom
+Omnom
+OnBaSca
+Online Self-defence in Ten Minutes
+Opaque Sphinx
+Opaque Sphinx Server and Clients
+Open Cloud Mesh
+Open Energy Profiler Toolset
+Open Hardware Manuals
+Open Hospitality Network
+Open Know-How Search
+Open MLS Infrastructure
+Open source ePDG for VoWiFi
+Open source ESP32 802.11 MAC
+Open Web Calendar Stack
+OpenBTS-HW
+openCologne
+OpenCryptoHW
+OpenCryptoLinux
+OpenCryptoTester
+OpenDoc-Soc
+openEngiadina
+Openki.net
+openMSRP
+openMSRP(2)
+openMSRP(3)
+OpenPGP Certificate Authority
+OpenQRNG
+OpenStreetMap Speed Limits
+OpenStreetMapNL
+openXC7
+oqsprovider
+Ordie
+Organic Maps
+OSF Crawler Cooperation
+OSLD
+OSN-PPCP
+OV-Chipkaart
+Overte
+OVT 13
+owi
+Owncast
+p2panda
+p2panda: group encryption and capabilities
+P2Pcollab
+p3pch4t
+p4-nix
+Packet classification extensions for Netfilter
+Padding Machines for Tor
+Palea
+Parrot
+Parselov
+Passthrough Authentication
+pcb-rnd
+pcb-rnd, sch-rnd
+Peer-to-Peer Access to Our Software Heritage
+PeerDB Search
+peermaps
+PeerTube
+PeerTube - Remote Transcoding
+Peertube plugin livechat
+Peertube-Desktop
+Peppol for the masses
+Personal Food Facts
+Perspectives: Making Models
+PGP4civiCRM
+Pijul ecosystem
+Pimalaya
+Pion
+Pitchfork
+Pitchfork PKCS#11
+PixelDroid
+PixelDroid/Media editor
+Pixelfed
+Pixelfed
+Pixelfed Live
+PKCS#11 v3
+Plaudit
+Pleroma
+Poliscoops
+Popularizing PeerTube
+Port of AMDVLK/RADV 3D Driver to the Libre-SOC
+Porting Guix to Riscv64
+Post-Quantum Crypto in DNSSEC
+postmarketOS
+postmarketOS/phosh-mobile-settings integration
+postmarketOS: v23.12 and v24.06 Releases
+Practical Decentralised Search and Discovery
+Practical Tools to Build the Context Web
+Pre-Scheme
+PRESC Classifier Copies Package
+pretalx
+Pretty Easy Privacy
+Privacy Enhancements for PowerDNS and DNSdist
+Privacy Infrastructure for Corteza Federations
+Privacy Preserving Disease Tracking
+Private Key Operations for Keyoxide
+Private Searx
+PrivateRecSys
+Probabilistic NAT Traversal
+Proper Webcam support in Qemu
+Prosody IM
+Protomaps
+ProveThis
+Proxy App
+PSYC2
+PTP gateware with openXC7
+PulseAudio
+purl2all
+purl2sym
+Py2HWSW
+PyCM
+Python bindings to the rattler library
+Python supply-chain with dream2nix
+Pythonic Slint
+Quantum-Proof Zenroom
+Qubes
+Qubes OS
+R5N-DHT
+RA-Sentinel
+Radio-Meshnet
+RADIUSdesk
+RADIUSdesk Multi WAN
+RAIJIN
+Raptor Lake Desktop
+RaptorJIT
+rasn
+Re-isearch
+Real time graph database search engine
+realXtend
+Record Federation for Corteza Clouds
+Redash
+Redox Flow Battery
+Redwax
+Reinstatement of crypto.signText()
+Remote PKCS#11
+Renderling
+Reowolf
+ReOxide
+Replicant on Guix
+Replicant on Pinephone 1.2
+Reproducible Builds
+Reproducible F-Droid
+Reproducible-openSUSE
+RETETRA
+RETETRA3
+Reverse Engineering Toolkit
+ReX
+RFID Guardian
+RFID Guardian(2)
+Ricochet Refresh
+Ripple
+RISC-V bootstrapping effort via GNU Mes
+RISC-V Phone
+RNP Confium
+Robotnix
+Robur private DNS resolver and DHCP server
+Rocket CWMP
+Rosenpass
+Rotonda Secure Extensions
+RPKI-RTRlib
+Rust Threadpool
+S-SATA for openXC7
+Sabayon
+Samizdat
+SANE
+SASL Works for the InternetWide Architecture
+SASL XMSS
+SCE, DelTiC and Antler
+SchoolLan
+SCION-enabled IPFS and libp2p
+SCION-Pathdiscovery
+SCION-RAINS
+SCTP-Linux
+SDCC
+SDR PHY
+Seahorse SmartCard
+Search and Displace
+Searsia
+searx
+searx
+Searx
+SEARXR
+SecSync
+Secure User Interfaces (Spritely)
+Securing Decentralised Live Information with m-ld
+Securing Internet protocols with DIDs
+Securing NixOS services with systemd
+Securing PLCs via embedded protocol adapters
+SecuShare
+Secushare Box
+SeedVault
+SeedVault Integrity
+SelfPrivacy
+SensifAI
+Sequoia GPG Chameleon
+Sequoia PGP
+Serialization in Kaitai Struct for Java and Python
+Serval
+Serval-LR
+Servo
+Servo CSS
+Servo Webview for Tauri
+SES - SimplyEdit Spaces
+Sesame
+Shadow Internet
+SiCl4
+Signature PDF
+SignRoom
+Silicon verification
+Simmel
+SIP RELOAD
+SIP-GUI
+SIPcollab
+SIPproxy64/6bed4
+SIRS
+Slint port for Android
+smoltcp RPL
+SnabbWall
+SocketHUB
+Software Heritage
+Software Heritage listers + tooling
+Software metadata
+Software vulnerability discovery
+Solid Application Interoperability
+Solid Application Interoperability
+Solid Application Interoperability
+Solid Compound
+Solid Control
+Solid Data Modules
+SOLID Data Workers
+Solid NC 2024
+Solid Usable App Tools Project
+Solid Wallet
+Solid-NextCloud app
+Solid-Search
+Sonar: a modular peer-to-peer search engine
+sourcehut
+Space Tube
+SPEAR
+Spectrum
+Spectrum Applications
+SpinalHDL, VexRiscv, SaxonSoc
+Spritely
+Spritely (and OCapN)
+Squishy
+Stalwart Mail Server
+Standard Cell Library
+Standardizing KEMTLS
+Standards Grammar Catalog/Toolchain
+Statime
+Statime PTP Master
+Stencila v2 for ERA and EPP
+Storing Efficiently Our Software Heritage
+Stract
+Stratosphere IPS
+StreetComplete
+StreetComplete
+StreetComplete UX
+StreetComplete/AllThePlaces
+Strengthening NTP and NTS in ntpd-rs
+Structured Email for Roundcube
+Structuring the System Layer with Dataspaces
+Stubby
+Subliminal Messaging
+Suhosin-NG
+Supersizing the Gun
+Sustainable web apps with m-ld
+SWH package manager Data Ingestion
+Swirl
+Sylk chat
+Sylk Client
+Sylk Mobile
+SylkRTC
+Taler for local currencies.
+Tantum Search
+Tasteweb
+Tau
+Tauri Apps
+TCP-multipath
+Telecommunication in HF using the Internet Protocol (IPoHF)
+TerosHDL
+TerosHDL: OSS, GHDL, NVC
+The Commons Conservancy
+The Libre-SOC Gigabit Router
+The MacBook Liberation Project
+The Open Green Web
+The PeARS app
+The search for ethical Apps
+The third mainport
+ThinkQuest
+Threat intelligence sharing
+Threshold OPRFs
+Thunderbird - native EteSync integration
+Timesheets
+TimeWalker
+Timing-Driven Place-and-Route (TDPR) 
+TISG trustable image sensor gateware
+TLS-KDH
+TLS-KDH mbed
+Tooling to improve security and trust in GNU Guix
+Topola
+Tor hidden services
+Tor low-bandwidth
+TOS;DR
+TOS;DR OTA backend
+TPM 2.0 for HEADS
+Tracking Exposed
+Tracking the Trackers
+Tracking weasel
+Transparency Toolkit
+Trenchboot as Anti Evil Maid
+TrenchBoot for AMD platform in Linux kernel
+Trussed
+Trust semantic learning and monitoring
+Trusted Boot Module
+TrustING
+Trustix
+TSCH-rs
+Turtle
+Tvix
+Tvix-{Store/Build}
+TwinSite-2000
+TwPM
+Type Inference for Nix
+TypeCell
+UberDDR3
+Uberflow
+UEFI Capsule Update for coreboot with EDK II
+UEFI isolation in VM from non UEFI firmware
+UEFI Secure Boot support for NixOS
+uFork
+uFork/FPGA
+ULX4M
+uMap
+UmTRX
+Unhosted
+Unhosted
+Universal DID Resolver and Registrar
+URL Frontier
+URL Frontier 2.0
+Usability of Linux firewall userspace tools
+ValOS Cryptographic Content Security project
+variation graph (vgteam)
+VDD
+vdirsyncer
+Verified Differential Privacy for Julia
+Verified Reowolf
+Verifpal
+Verilog-AMS in Gnucap
+Verilog-AMS in Gnucap (cont'd)
+VFRAME: Visual Defense Tools
+video box
+Video chat privacy
+ViewerJS
+VirtNet
+Virtualizing device firmware
+Vita
+Vita
+vm-builder
+Vouivre
+Vula
+Waasabi Framework
+Web Annotation
+Web Shell
+WebODF
+WebODF-Dissem
+Webxdc evolve
+webxdc PUSH
+WebXDC XMPP
+WebXray Discovery
+Whippet
+Whisperfish
+WikiRate Insights
+WikiRate Insights 2
+WikiRate: More Sites, More Cites
+Willow Sync
+Winden/Magic Wormhole dilation
+WireGuard
+WireGuard
+Wireguard
+WireGuard on FPGA
+Wireguard Rust Implementation
+Wireguard Windows client
+Wishbone Streaming
+Wisper
+Wispwot
+Wolvic
+Wolvic User Interface
+WordPress ActivityPub
+Wormhole
+WPE Android
+WPIA CA Infrastructure
+WWW SCION
+x86-64 VM Monitor for seL4 verified microkernel
+XMPP Interoperability and Protocol Standard Conformance Testing
+XMPP-ActivityPub gateway
+xqerl
+XR Fragments
+xrsh
+XSSer
+XWiki
+XWiki ActivityPub
+YaCy Grid SaaS
+Yrs
+Yrs Undo
+Yrs weak links
+YunoHost and the Internet Cube
+Zero-allocation web servers in roc
+Zerocat Chipflasher Flashrom Interface
+Zilch
+ZIP file format description
+ZSipOs
+Σ-protocols
