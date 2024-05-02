@@ -28,9 +28,15 @@ in {
       unbootable = mkForce false;
 
       sops = mkForce {
-        age.keyFile = ./sops/keys.txt;
+        age.keyFile = "/run/keys.txt";
         defaultSopsFile = ./sops/pretalx.yaml;
       };
+
+      # must run before sops sets up keys
+      boot.initrd.postDeviceCommands = ''
+        cp -r ${./sops/keys.txt} /run/keys.txt
+        chmod -R 700 /run/keys.txt
+      '';
 
       services.ngi-pretalx.site.url = mkForce "http://localhost:8000";
 

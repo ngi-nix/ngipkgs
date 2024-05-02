@@ -170,9 +170,13 @@
               alejandra.enable = true;
             };
           };
+          actionlint = pkgs.runCommand "actionlint" {
+            src = ./.github/workflows;
+            nativeBuildInputs = [pkgs.actionlint];
+          } "actionlint $src/*.yaml && touch $out";
         };
 
-      devShell = pkgs.mkShell {
+      devShells.default = pkgs.mkShell {
         inherit (checks.pre-commit-check) shellHook;
         buildInputs = checks.pre-commit-check.enabledPackages;
       };
@@ -204,10 +208,7 @@
       checks.${system} =
         # For `nix flake check` to *build* all packages, because by default
         # `nix flake check` only evaluates packages and does not build them.
-        (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
-        // {
-          inherit (self.packages.${system}) overview;
-        };
+        mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs;
 
       # To generate a Hydra jobset for CI builds of all packages and tests.
       # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
