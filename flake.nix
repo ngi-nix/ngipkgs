@@ -164,21 +164,18 @@
       checks =
         mapAttrs' toplevel nixosConfigurations
         // {
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+          pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
+              actionlint.enable = true;
               alejandra.enable = true;
             };
           };
-          actionlint = pkgs.runCommand "actionlint" {
-            src = ./.github/workflows;
-            nativeBuildInputs = [pkgs.actionlint];
-          } "actionlint $src/*.yaml && touch $out";
         };
 
       devShells.default = pkgs.mkShell {
-        inherit (checks.pre-commit-check) shellHook;
-        buildInputs = checks.pre-commit-check.enabledPackages;
+        inherit (checks.pre-commit) shellHook;
+        buildInputs = checks.pre-commit.enabledPackages;
       };
 
       formatter = pkgs.writeShellApplication {
@@ -186,7 +183,7 @@
         text = ''
           # shellcheck disable=all
           shell-hook () {
-            ${checks.pre-commit-check.shellHook}
+            ${checks.pre-commit.shellHook}
           }
 
           shell-hook
