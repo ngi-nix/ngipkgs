@@ -1,3 +1,6 @@
 - Get a list of all the project from NLNET
-- put a list of NLnet packages
-- packages that are packaged upstream (
+- packages that are packaged upstream
+    1. check nixpkgs
+    2. check ngipkgs
+    3. check source code
+
