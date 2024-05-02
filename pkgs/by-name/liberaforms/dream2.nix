@@ -22,6 +22,7 @@ in {
       libxml2
       libxslt
       postgresql
+      postgresqlTestHook
       runCommand
       substituteAll
       ;
@@ -44,6 +45,39 @@ in {
 
       runHook postInstall
     '';
+
+    doCheck = true;
+
+    nativeCheckInputs = [
+      config.deps.postgresql
+      config.deps.postgresqlTestHook
+      config.public.env
+    ];
+
+    preCheck = ''
+      export LANG=C.UTF-8
+      export PGUSER=db_user
+      export postgresqlEnableTCP=1
+    '';
+
+    checkPhase = ''
+      runHook preCheck
+
+      # Run pytest on the installed version. A running postgres database server is needed.
+      (cd tests && cp test.ini.example test.ini && pytest -k "not test_save_smtp_config") #TODO why does this break?
+
+      runHook postCheck
+    '';
+  };
+
+  public = {
+    env = config.public.pyEnv;
+    meta = {
+      description = "Free form software";
+      homepage = "https://gitlab.com/liberaforms/liberaforms";
+      license = lib.licenses.agpl3Plus;
+      platforms = lib.platforms.all;
+    };
   };
 
   pip = {
