@@ -6,20 +6,19 @@
 }:
 buildGoModule {
   pname = "taldir";
-  version = "0-unstable-2022-07-19";
+  version = "0-unstable-2024-02-18";
 
   src = fetchgit {
     url = "https://git.taler.net/taldir.git";
-    rev = "4a63cc4b6c6846f6c1e3188124a691d564a80664";
-    hash = "sha256-M1+JsqX5sUKKi9fOd3Lh4G2G7Z1mCVqZS8Nro6nmfUY=";
+    rev = "9c5230f64d16d46c000c6d4f5842170c51b697ce";
+    hash = "sha256-Ri0R7kxP/FitBRKtrM48Cbks63mqpXsRc3r98M0sMus=";
   };
 
   postPatch = ''
-    cp ${./go.mod} go.mod
     cp ${./go.sum} go.sum
   '';
 
-  vendorHash = "sha256-+SJtKjAvDtWzRy6ituwFnyRUCbSsUs0uOEnUOMi51vQ=";
+  vendorHash = "sha256-yN8CiRK7cS4bHndOcu+/HI50PDOG+5x/t2kxlIt+5Mk=";
 
   nativeBuildInputs = [
     recutils
@@ -35,6 +34,11 @@ buildGoModule {
 
     cp third_party/gana/gnu-taler-error-codes/taler_error_codes.go internal/gana/
   '';
+
+  subPackages = [
+    "cmd/taldir-cli"
+    "cmd/taldir-server"
+  ];
 
   # dial error (dial tcp [::1]:5432: connect: connection refused)
   doCheck = false;
