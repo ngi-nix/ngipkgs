@@ -50,7 +50,7 @@ jobs:
       - id: matrix
         name: 'Evaluate matrix'
         run: |
-          ATTR=".#checks"
+          ATTR='.#checks."x86_64-linux"'
           (
           echo -n "matrix="
           nix run github:nix-community/nix-eval-jobs/v2.19.4 -- \
