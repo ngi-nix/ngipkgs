@@ -172,6 +172,7 @@
               alejandra.enable = true;
             };
           };
+          makemake = self.nixosConfigurations.makemake.config.system.build.toplevel;
         };
 
       devShells.default = pkgs.mkShell {
