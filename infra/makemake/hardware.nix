@@ -38,8 +38,8 @@
     ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="70:85:c2:f4:7d:27", NAME="eth0"
   '';
 
-  boot.initrd.availableKernelModules = ["ahci" "nvme"];
-  boot.kernelModules = ["kvm-amd"];
-
-  nix.settings.max-jobs = lib.mkDefault 16;
+  boot = {
+    initrd.availableKernelModules = ["ahci" "nvme"];
+    kernelModules = ["kvm-amd"];
+  };
 }
