@@ -45,8 +45,12 @@ in {
     '';
   };
 
-  systemd.tmpfiles.rules = [
-    "d /var/cache/hydra 0755 hydra hydra -  -"
-    "d ${narCache}      0775 hydra hydra 1d -"
-  ];
+  systemd = {
+    services.hydra-queue-runner.wants = ["network-online.target"];
+
+    tmpfiles.rules = [
+      "d /var/cache/hydra 0755 hydra hydra -  -"
+      "d ${narCache}      0775 hydra hydra 1d -"
+    ];
+  };
 }
