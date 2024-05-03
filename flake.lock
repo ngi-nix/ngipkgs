@@ -98,19 +98,18 @@
     "hydra": {
       "inputs": {
         "nix": "nix",
-        "nixpkgs": "nixpkgs",
-        "nixpkgs-for-fileset": "nixpkgs-for-fileset"
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1706641778,
-        "narHash": "sha256-v9RYERqlVowkU/ePAEMEg1WfzeiTRHInHCCeMHSZEZs=",
-        "owner": "nixos",
+        "lastModified": 1714754691,
+        "narHash": "sha256-VWVGe8dp1/Dm/TqejANRqqq2rEYEN5njyJW/Fze7ko8=",
+        "owner": "NixOS",
         "repo": "hydra",
-        "rev": "878c0f240e950c4d7bf8ebc60299bc0db80e6686",
+        "rev": "2926aa1d645e74c5c9987ce0bc6b10a9aa79bcc3",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
+        "owner": "NixOS",
         "ref": "nix-next",
         "repo": "hydra",
         "type": "github"
@@ -168,22 +167,6 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixos-23.11-small",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-for-fileset": {
-      "locked": {
-        "lastModified": 1706098335,
-        "narHash": "sha256-r3dWjT8P9/Ah5m5ul4WqIWD8muj5F+/gbCdjiNVBKmU=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "a77ab169a83a4175169d78684ddd2e54486ac651",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-23.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -307,14 +290,6 @@
         "dream2nix": "dream2nix",
         "flake-utils": "flake-utils",
         "hydra": "hydra",
-        "hydra-nix": [
-          "hydra",
-          "nix"
-        ],
-        "hydra-nixpkgs": [
-          "hydra",
-          "nixpkgs"
-        ],
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-stable": "nixpkgs-stable",
         "pre-commit-hooks": "pre-commit-hooks",

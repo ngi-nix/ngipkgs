@@ -5,9 +5,7 @@
   inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.hydra-nix.follows = "hydra/nix";
-  inputs.hydra-nixpkgs.follows = "hydra/nixpkgs";
-  inputs.hydra.url = "github:nixos/hydra/nix-next";
+  inputs.hydra.url = "github:NixOS/hydra/nix-next";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
@@ -26,8 +24,6 @@
 
   outputs = {
     hydra,
-    hydra-nix,
-    hydra-nixpkgs,
     self,
     nixpkgs,
     flake-utils,
@@ -242,19 +238,24 @@
             system = "x86_64-linux";
 
             modules = [
+              # Use NixOS module for pinned Hydra, but note that this doesn't
+              # set the package to be from that repo.  It juse uses the stock
+              # `pkgs.hydra_unstable` by default.
               hydra.nixosModules.hydra
+
+              {
+                # Here, set the Hydra package to use the (complete
+                # self-contained, pinning nix, nixpkgs, etc.) default Hydra
+                # build. Other than this one package, those pins versions are
+                # not used.
+                services.hydra.package = hydra.packages.x86_64-linux.default;
+              }
 
               ./infra/makemake/configuration.nix
 
               {
-                nixpkgs.overlays = [
-                  hydra-nix.overlays.default
-                ];
-              }
-
-              {
-                #nix.registry.nixpkgs.flake = hydra-nixpkgs;
-                nix.nixPath = ["nixpkgs=${hydra-nixpkgs}"];
+                #nix.registry.nixpkgs.flake = nixpkgs;
+                nix.nixPath = ["nixpkgs=${nixpkgs}"];
               }
             ];
           };
