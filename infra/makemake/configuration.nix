@@ -5,7 +5,6 @@
 }: {
   imports = [
     ./hydra.nix
-    ./hydra-proxy.nix
     ./hardware.nix
   ];
 
@@ -50,7 +49,13 @@
     jq # required by numtide/terraform-deploy-nixos-flakes.
   ];
 
-  services.openssh.enable = true;
+  services = {
+    caddy = {
+      enable = true;
+      email = "ngi@nixos.org";
+    };
+    openssh.enable = true;
+  };
 
   fileSystems = {
     "/" = {
