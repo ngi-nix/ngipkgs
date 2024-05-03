@@ -9,9 +9,7 @@ let
 
     ProxyRequests     Off
     ProxyPreserveHost On
-    ProxyPass         /apache-errors !
     ProxyPass         /.well-known !
-    ErrorDocument 503 /apache-errors/503.html
     ProxyPass         /       http://127.0.0.1:3000/ retry=5 disablereuse=on
     ProxyPassReverse  /       http://127.0.0.1:3000/
 
@@ -47,12 +45,6 @@ in {
         RequestHeader set X-Forwarded-Port 443
         Header always set Strict-Transport-Security "max-age=15552000"
       '';
-      servedDirs = [
-        {
-          urlPath = "/apache-errors";
-          dir = ../delft/apache-errors;
-        }
-      ];
     };
   };
 
