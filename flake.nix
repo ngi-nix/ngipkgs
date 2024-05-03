@@ -147,7 +147,7 @@
           })
           .options;
       };
-    in {
+    in rec {
       packages =
         importPack
         // {
@@ -166,7 +166,35 @@
             '';
         };
 
-      checks = mapAttrs' toplevel nixosConfigurations;
+      checks =
+        mapAttrs' toplevel nixosConfigurations
+        // {
+          pre-commit = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              actionlint.enable = true;
+              alejandra.enable = true;
+            };
+          };
+        };
+
+      devShells.default = pkgs.mkShell {
+        inherit (checks.pre-commit) shellHook;
+        buildInputs = checks.pre-commit.enabledPackages;
+      };
+
+      formatter = pkgs.writeShellApplication {
+        name = "formatter";
+        text = ''
+          # shellcheck disable=all
+          shell-hook () {
+            ${checks.pre-commit.shellHook}
+          }
+
+          shell-hook
+          pre-commit run --all-files
+        '';
+      };
     });
 
     x86_64-linuxOutputs = let
@@ -182,34 +210,7 @@
       checks.${system} =
         # For `nix flake check` to *build* all packages, because by default
         # `nix flake check` only evaluates packages and does not build them.
-        (mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs)
-        // {
-          inherit (self.packages.${system}) overview;
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              alejandra.enable = true;
-            };
-          };
-        };
-
-      devShell.${system} = pkgs.mkShell {
-        inherit (self.checks.${system}.pre-commit-check) shellHook;
-        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-      };
-
-      formatter.${system} = pkgs.writeShellApplication {
-        name = "formatter";
-        text = ''
-          # shellcheck disable=all
-          shell-hook () {
-            ${self.checks.${system}.pre-commit-check.shellHook}
-          }
-
-          shell-hook
-          pre-commit run --all-files
-        '';
-      };
+        mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs;
 
       # To generate a Hydra jobset for CI builds of all packages and tests.
       # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
