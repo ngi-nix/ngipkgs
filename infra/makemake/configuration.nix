@@ -60,7 +60,10 @@
       enable = true;
       email = "ngi@nixos.org";
     };
-    openssh.enable = true;
+    openssh = {
+      enable = true;
+      settings.PasswordAuthentication = false;
+    };
   };
 
   fileSystems = {
