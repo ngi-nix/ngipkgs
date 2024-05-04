@@ -32,6 +32,7 @@
       options = "--delete-older-than 7d";
     };
     settings = {
+      min-free = let GiB = 1024 * 1024 * 1024; in 4 * GiB;
       max-jobs = lib.mkDefault 16;
       allowed-uris = "https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:";
       cores = 0;
