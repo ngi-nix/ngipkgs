@@ -21,6 +21,7 @@
 pretalx.overrideAttrs (
   finalAttrs: previousAttrs: {
     propagatedBuildInputs = previousAttrs.propagatedBuildInputs ++ withPlugins;
+    pythonRelaxDeps = true;
     passthru =
       previousAttrs.passthru
       // {
