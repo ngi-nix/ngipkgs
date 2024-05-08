@@ -21,10 +21,11 @@
 pretalx.overrideAttrs (
   finalAttrs: previousAttrs: {
     propagatedBuildInputs = previousAttrs.propagatedBuildInputs ++ withPlugins;
+    pythonRelaxDeps = true;
     passthru =
       previousAttrs.passthru
       // {
-        PYTHONPATH = "${pretalx.python.pkgs.makePythonPath finalAttrs.propagatedBuildInputs}:${pretalx.outPath}/${pretalx.python.sitePackages}";
+        PYTHONPATH = "${pretalx.python.pkgs.makePythonPath finalAttrs.propagatedBuildInputs}:${finalAttrs.finalPackage.outPath}/${pretalx.python.sitePackages}";
         tests =
           previousAttrs.passthru.tests
           // {

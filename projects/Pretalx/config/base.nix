@@ -18,8 +18,8 @@
 
     secrets = let
       pretalxSecret = {
-        owner = config.services.pretalx.user;
-        group = config.services.pretalx.group;
+        owner = config.services.ngi-pretalx.user;
+        group = config.services.ngi-pretalx.group;
       };
     in {
       "pretalx/database/password" = pretalxSecret;
@@ -65,7 +65,7 @@
 
     redis.servers."pretalx" = {
       enable = true;
-      user = config.services.pretalx.user;
+      user = config.services.ngi-pretalx.user;
     };
 
     nginx = {

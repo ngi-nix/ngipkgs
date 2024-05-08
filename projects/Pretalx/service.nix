@@ -64,7 +64,7 @@ in {
   options.services.ngi-pretalx = with types; {
     enable = mkEnableOption "Enable pretalx server.";
 
-    package = mkPackageOption pkgs "pretalx" {};
+    package = mkPackageOption pkgs "pretalxFull" {};
 
     user = mkOption {
       type = str;
