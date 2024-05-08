@@ -1,28 +1,29 @@
 {
   description = "NGIpkgs";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-  # Set default system to `default-linux`,
-  # as we currently only support Linux.
-  # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
-  inputs.systems.url = "github:nix-systems/default-linux";
+  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
-  inputs.sops-nix.url = "github:Mic92/sops-nix";
-  inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
-  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs.hydra.url = "github:NixOS/hydra/nix-next";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
+  inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
+  inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
   inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-  inputs.pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
-  inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
-  inputs.dream2nix.url = "github:nix-community/dream2nix";
-  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
+  inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.sops-nix.url = "github:Mic92/sops-nix";
+
+  # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
+  inputs.systems.url = "github:nix-systems/default-linux";
 
   outputs = {
+    hydra,
     self,
     nixpkgs,
     flake-utils,
@@ -171,6 +172,7 @@
               alejandra.enable = true;
             };
           };
+          makemake = self.nixosConfigurations.makemake.config.system.build.toplevel;
         };
 
       devShells.default = pkgs.mkShell {
@@ -230,7 +232,35 @@
     };
 
     systemAgnosticOutputs = {
-      inherit nixosConfigurations;
+      nixosConfigurations =
+        nixosConfigurations
+        // {
+          makemake = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+
+            modules = [
+              # Use NixOS module for pinned Hydra, but note that this doesn't
+              # set the package to be from that repo.  It juse uses the stock
+              # `pkgs.hydra_unstable` by default.
+              hydra.nixosModules.hydra
+
+              {
+                # Here, set the Hydra package to use the (complete
+                # self-contained, pinning nix, nixpkgs, etc.) default Hydra
+                # build. Other than this one package, those pins versions are
+                # not used.
+                services.hydra.package = hydra.packages.x86_64-linux.default;
+              }
+
+              ./infra/makemake/configuration.nix
+
+              {
+                #nix.registry.nixpkgs.flake = nixpkgs;
+                nix.nixPath = ["nixpkgs=${nixpkgs}"];
+              }
+            ];
+          };
+        };
 
       nixosModules =
         {
