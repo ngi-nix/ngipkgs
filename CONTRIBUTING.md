@@ -89,14 +89,7 @@ In any case, it is encouraged to create a pull request to Nixpkgs, then to this 
      nixos.tests.some-test = import ./test.nix args;
      ```
 
-     Then, pass the module tests through a package.
-     For example, in `pkgs/by-name/some-package/package.nix`:
-
-     ```nix
-     passthru.tests = nixosTests.some-project;
-     ```
-
-     The module tests will then be accessible from `some-package.passthru.tests`.
+     The module tests will then be accessible from `nixosTests.some-project`.
 
    - Test the module on `x86_64-linux`.
 

@@ -16,7 +16,6 @@
     pretalx-vimeo
     pretalx-youtube
   ],
-  nixosTests,
 }:
 pretalx.overrideAttrs (
   finalAttrs: previousAttrs: {
@@ -26,11 +25,6 @@ pretalx.overrideAttrs (
       previousAttrs.passthru
       // {
         PYTHONPATH = "${pretalx.python.pkgs.makePythonPath finalAttrs.propagatedBuildInputs}:${finalAttrs.finalPackage.outPath}/${pretalx.python.sitePackages}";
-        tests =
-          previousAttrs.passthru.tests
-          // {
-            inherit (nixosTests.Pretalx) pretalx;
-          };
       };
   }
 )
