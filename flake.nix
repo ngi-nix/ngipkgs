@@ -40,7 +40,6 @@
       (builtins)
       mapAttrs
       attrValues
-      isPath
       ;
 
     inherit
@@ -56,73 +55,76 @@
       mapAttrByPath
       flattenAttrsDot
       flattenAttrsSlash
+      optionalAttrs
       ;
-
-    importProjects = {
-      pkgs ? {},
-      sources ? {
-        configurations = rawNixosConfigs;
-        modules = extendedModules;
-      },
-    }:
-      import ./projects {inherit lib pkgs sources;};
-
-    # Functions to ease access of imported projects, by "picking" certain paths.
-    pick = rec {
-      packages = mapAttrByPath ["packages"] {};
-      modulePaths = x:
-        concatMapAttrs (n: v:
-          if isPath v
-          then {${n} = v;}
-          else {})
-        (modules x);
-      modules = projects: flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (mapAttrByPath ["nixos" "modules"] {} projects)));
-      tests = mapAttrByPath ["nixos" "tests"] {};
-      configurations = projects: mapAttrs (_: v: mapAttrs (_: v: v.path) v) (mapAttrByPath ["nixos" "configurations"] {} projects);
-    };
-
-    importPackages = pkgs: let
-      nixosTests = pick.tests (importProjects {pkgs = pkgs // allPackages;});
-
-      callPackage = pkgs.newScope (
-        allPackages // {inherit callPackage nixosTests;}
-      );
-
-      allPackages = import ./pkgs/by-name {
-        inherit (pkgs) lib;
-        inherit callPackage dream2nix pkgs;
-      };
-    in
-      allPackages;
 
     importNixpkgs = system: overlays:
       import nixpkgs {inherit system overlays;};
 
-    rawNixosConfigs = flattenAttrsSlash (pick.configurations (importProjects {}));
+    # NGI packages are imported from ./pkgs/by-name/default.nix.
+    importNgiPackages = pkgs: let
+      ngiProjects = importNgiProjects {
+        pkgs = pkgs // ngiPackages;
+      };
 
-    # Attribute set containing all modules obtained via `inputs` and defined
-    # in this flake towards definition of `nixosConfigurations` and `nixosTests`.
-    extendedModules =
+      nixosTests = mapAttrByPath ["nixos" "tests"] {} ngiProjects;
+
+      callPackage = pkgs.newScope (
+        ngiPackages // {inherit callPackage nixosTests;}
+      );
+
+      ngiPackages = import ./pkgs/by-name {
+        inherit (pkgs) lib;
+        inherit callPackage dream2nix pkgs;
+      };
+    in
+      ngiPackages;
+
+    # NGI projects are imported from ./projects/default.nix.
+    # Each project includes packages, and optionally, modules, configurations and tests.
+    importNgiProjects = {
+      pkgs ? {},
+      sources ? {
+        configurations = rawNixosConfigurations;
+        modules = extendedNixosModules;
+      },
+    }:
+      import ./projects {inherit lib pkgs sources;};
+
+    # The above definition reimports `rawNixosConfigurations` and `extendedNixosModules` into `sources`.
+    # As configurations and modules are system-agnostic, they are defined by passing `{}` to `importNgiProjects`.
+    rawNgiProjects = importNgiProjects {};
+
+    rawNixosConfigurations = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
+      mapAttrByPath ["nixos" "configurations"] {} rawNgiProjects
+    ));
+
+    rawNixosModules = flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (
+      mapAttrByPath ["nixos" "modules"] {} rawNgiProjects
+    )));
+
+    extendedNixosModules =
       self.nixosModules
       // {
         sops-nix = sops-nix.nixosModules.default;
       };
 
-    nixosConfigurations =
+    extendedNixosConfigurations =
       mapAttrs
-      (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedModules;})
-      rawNixosConfigs;
+      (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;})
+      rawNixosConfigurations;
 
+    # Then, define the system-specific outputs.
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = importNixpkgs system [rust-overlay.overlays.default];
 
-      importedProjects = importProjects {
-        pkgs = pkgs // importPack;
+      ngiPackages = importNgiPackages pkgs;
+
+      ngiProjects = importNgiProjects {
+        pkgs = pkgs // ngiPackages;
       };
 
       toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
-
-      importPack = importPackages pkgs;
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
@@ -145,11 +147,11 @@
       };
     in rec {
       packages =
-        importPack
+        ngiPackages
         // {
           overview = import ./overview {
             inherit lib pkgs self;
-            projects = importedProjects;
+            projects = ngiProjects;
             options = optionsDoc.optionsNix;
           };
 
@@ -163,7 +165,7 @@
         };
 
       checks =
-        mapAttrs' toplevel nixosConfigurations
+        mapAttrs' toplevel extendedNixosConfigurations
         // {
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
@@ -196,10 +198,19 @@
 
     x86_64-linuxOutputs = let
       system = flake-utils.lib.system.x86_64-linux;
+
       pkgs = importNixpkgs system [self.overlays.default];
+
+      # Include all packages (with overview and options)
+      ngiPackages = self.packages.${system};
+
       # Dream2nix is failing to pass through the meta attribute set.
       # As a workaround, consider packages with empty meta as non-broken.
-      nonBrokenPkgs = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) self.packages.${system};
+      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
+
+      nonBrokenNgiProjects = importNgiProjects {
+        pkgs = pkgs // nonBrokenNgiPackages;
+      };
     in {
       # Github Actions executes `nix flake check` therefore this output
       # should only contain derivations that can built within CI.
@@ -207,33 +218,31 @@
       checks.${system} =
         # For `nix flake check` to *build* all packages, because by default
         # `nix flake check` only evaluates packages and does not build them.
-        mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenPkgs;
+        mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenNgiPackages;
 
       # To generate a Hydra jobset for CI builds of all packages and tests.
       # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
       hydraJobs = let
         passthruTests = concatMapAttrs (name: value:
-          if value ? passthru.tests
-          then {${name} = value.passthru.tests;}
-          else {})
-        nonBrokenPkgs;
+          optionalAttrs (value ? passthru.tests) {${name} = value.passthru.tests;})
+        nonBrokenNgiPackages;
       in {
-        packages.${system} = nonBrokenPkgs;
+        packages.${system} = nonBrokenNgiPackages;
         tests.${system} = {
           passthru = passthruTests;
-          nixos = pick.tests (importProjects {pkgs = pkgs // nonBrokenPkgs;});
+          nixos = mapAttrByPath ["nixos" "tests"] {} nonBrokenNgiProjects;
         };
 
         nixosConfigurations.${system} =
           mapAttrs
           (name: config: config.config.system.build.toplevel)
-          nixosConfigurations;
+          extendedNixosConfigurations;
       };
     };
 
     systemAgnosticOutputs = {
       nixosConfigurations =
-        nixosConfigurations
+        extendedNixosConfigurations
         // {
           makemake = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
@@ -269,10 +278,10 @@
           # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
           default.nixpkgs.overlays = [self.overlays.default];
         }
-        // (filterAttrs (_: v: v != null) (pick.modules (importProjects {})));
+        // (filterAttrs (_: v: v != null) rawNixosModules);
 
       # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
-      overlays.default = final: prev: importPackages prev;
+      overlays.default = final: prev: importNgiPackages prev;
     };
   in
     foldr recursiveUpdate {} [
