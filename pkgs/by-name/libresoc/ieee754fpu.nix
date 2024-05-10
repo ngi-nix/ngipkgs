@@ -25,12 +25,52 @@ with python39Packages;
 
     propagatedBuildInputs = [nmutil];
 
-    nativeCheckInputs = [pytestCheckHook pytest-xdist pytest-output-to-files nmigen symbiyosys];
+    nativeCheckInputs = [pytestCheckHook pytest-xdist pytest-output-to-files nmigen symbiyosys sfpy bigfloat];
 
-    # TODO(jleightcap): all tests pass except formal methods,
-    # > ERROR: Module `\U$$0' referenced in module `\top' in cell `$15' is a blackbox/whitebox module.
-    # might be an issue with symbiyosys version?
-    doCheck = false;
+    disabledTests = [
+      "test_fadd_f16_rna_formal"
+      "test_fadd_f16_rne_formal"
+      "test_fadd_f16_rtn_formal"
+      "test_fadd_f16_rton_formal"
+      "test_fadd_f16_rtop_formal"
+      "test_fadd_f16_rtp_formal"
+      "test_fadd_f16_rtz_formal"
+      "test_fmadd_f8_rna_formal"
+      "test_fmadd_f8_rne_formal"
+      "test_fmadd_f8_rtn_formal"
+      "test_fmadd_f8_rton_formal"
+      "test_fmadd_f8_rtop_formal"
+      "test_fmadd_f8_rtp_formal"
+      "test_fmadd_f8_rtz_formal"
+      "test_fmsub_f8_rna_formal"
+      "test_fmsub_f8_rne_formal"
+      "test_fmsub_f8_rtn_formal"
+      "test_fmsub_f8_rton_formal"
+      "test_fmsub_f8_rtop_formal"
+      "test_fmsub_f8_rtp_formal"
+      "test_fmsub_f8_rtz_formal"
+      "test_fnmadd_f8_rna_formal"
+      "test_fnmadd_f8_rne_formal"
+      "test_fnmadd_f8_rtn_formal"
+      "test_fnmadd_f8_rton_formal"
+      "test_fnmadd_f8_rtop_formal"
+      "test_fnmadd_f8_rtp_formal"
+      "test_fnmadd_f8_rtz_formal"
+      "test_fnmsub_f8_rna_formal"
+      "test_fnmsub_f8_rne_formal"
+      "test_fnmsub_f8_rtn_formal"
+      "test_fnmsub_f8_rton_formal"
+      "test_fnmsub_f8_rtop_formal"
+      "test_fnmsub_f8_rtp_formal"
+      "test_fnmsub_f8_rtz_formal"
+      "test_fsub_f16_rna_formal"
+      "test_fsub_f16_rne_formal"
+      "test_fsub_f16_rtn_formal"
+      "test_fsub_f16_rton_formal"
+      "test_fsub_f16_rtop_formal"
+      "test_fsub_f16_rtp_formal"
+      "test_fsub_f16_rtz_formal"
+    ];
 
     pythonImportsCheck = ["ieee754.part"];
   }
