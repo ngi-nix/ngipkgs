@@ -42,8 +42,10 @@ with python39Packages;
       yosys
     ];
 
-    # nmigen wraps C/C++ compiler with setuptools.distutils.ccompiler
-    # requires manual patching for compatibiility with this version of setuptools
-    # https://github.com/NixOS/nixpkgs/pull/199974
+    # TODO: upstream nixpkgs Amaranth package uses a patch for Python >3.8 compatibility in setuptools:
+    # https://github.com/amaranth-lang/amaranth/commit/64771a065a280fa683c1e6692383bec4f59f20fa.patch
+    # without this upgraded version, the C/C++ compiler used in tests via setuptools.distutils.ccompiler breaks.
+    # Given the pre-fork nmigen release being used in Libre-SOC, this patch isn't directly portable to this package,
+    # so disabling the test suite for now.
     doCheck = false;
   }
