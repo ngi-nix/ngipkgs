@@ -1,6 +1,5 @@
 {
   python39,
-  python39Packages,
   fetchFromLibresoc,
   pkgsCross,
   writeShellApplication,
@@ -10,9 +9,11 @@
   nmigen,
   nmutil,
   mdis,
-}:
-with python39Packages;
-  buildPythonPackage rec {
+}: let
+  python = python39;
+  pythonPackages = python39.pkgs;
+in
+  pythonPackages.buildPythonPackage rec {
     name = "libresoc-openpower-isa";
     version = "unstable-2024-03-31";
 
@@ -49,28 +50,31 @@ with python39Packages;
     # Native is the build machine architecture (e.g. x86_64 linux)
     # This will run a python emulator of the target architecture, which is PowerPC for this project
     # The assembler has to run on native but target PowerPC assembly
-    propagatedNativeBuildInputs = [
-      astor
-      cached-property
-      cffi
-      libresoc-pyelftools
-      mdis
-      nmigen
-      nmutil
-      pkgsCross.powernv.buildPackages.gcc
-      ply
-      pygdbmi
-    ];
+    propagatedNativeBuildInputs =
+      [
+        libresoc-pyelftools
+        mdis
+        nmigen
+        nmutil
+        pkgsCross.powernv.buildPackages.gcc
+      ]
+      ++ (with pythonPackages; [
+        astor
+        cached-property
+        cffi
+        ply
+        pygdbmi
+      ]);
 
     # TODO: potential upstream work
     postInstall =
       ''
         # complement of `remove-gitignore-check.patch`
-        mkdir -p $out/${python39.sitePackages}/openpower/decoder/isa/generated
+        mkdir -p $out/${python.sitePackages}/openpower/decoder/isa/generated
 
         # this file is missed in the installation configuration, manually move into output
         # potential to upstream fix to configuration that maintains this file
-        cp ./src/openpower/simulator/memmap $out/${python39.sitePackages}/openpower/simulator/
+        cp ./src/openpower/simulator/memmap $out/${python.sitePackages}/openpower/simulator/
       ''
       + (
         # this project's build steps do not map cleanly onto Nix's build stages.
@@ -89,22 +93,25 @@ with python39Packages;
           };
         in ''
           # copy special-purpose python modules into path expected by codegen
-          cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
+          cp -rT ./openpower $out/${python.sitePackages}/../openpower/
 
           # complement of `prefixed-openpower-isa-tools.patch`
           OPENPOWER=$out/bin ${codegen}/bin/run-codegen
 
           # ...again now including codegen source
-          cp -rT ./openpower $out/${python39.sitePackages}/../openpower/
+          cp -rT ./openpower $out/${python.sitePackages}/../openpower/
         ''
       );
 
-    nativeCheckInputs = [
-      pytestCheckHook
-      pytest-xdist
-      pytest-output-to-files
-      pkgsCross.powernv.buildPackages.gcc
-    ];
+    nativeCheckInputs =
+      [
+        pytest-output-to-files
+        pkgsCross.powernv.buildPackages.gcc
+      ]
+      ++ (with pythonPackages; [
+        pytestCheckHook
+        pytest-xdist
+      ]);
 
     disabledTests = [
       # listed failures seem unlikely to result from packaging errors, assumed present upstream
