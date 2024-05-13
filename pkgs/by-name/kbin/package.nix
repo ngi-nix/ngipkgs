@@ -3,17 +3,10 @@
   runCommand,
   kbin-frontend,
   kbin-backend,
-  nixosTests,
 }:
 runCommand "kbin" {
   version = "0.0.1";
-  passthru =
-    kbin-backend.passthru
-    // {
-      tests = {
-        inherit (nixosTests.Kbin) kbin;
-      };
-    };
+  passthru = kbin-backend.passthru;
   meta = {
     license = lib.licenses.agpl3Only;
     homepage = "https://kbin.pub/";

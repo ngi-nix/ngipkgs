@@ -7,7 +7,6 @@
   openssl,
   pkg-config,
   perl,
-  nixosTests,
 }: let
   rootSrc = fetchFromGitHub {
     owner = "mCaptcha";
@@ -196,8 +195,6 @@
         license = lib.licenses.agpl3Plus;
         mainProgram = "mcaptcha";
       };
-
-      passthru.tests = {inherit (nixosTests.mCaptcha) create-locally bring-your-own-services;};
     };
 in
   mcaptcha

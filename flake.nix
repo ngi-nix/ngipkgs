@@ -63,14 +63,8 @@
 
     # NGI packages are imported from ./pkgs/by-name/default.nix.
     importNgiPackages = pkgs: let
-      ngiProjects = importNgiProjects {
-        pkgs = pkgs // ngiPackages;
-      };
-
-      nixosTests = mapAttrByPath ["nixos" "tests"] {} ngiProjects;
-
       callPackage = pkgs.newScope (
-        ngiPackages // {inherit callPackage nixosTests;}
+        ngiPackages // {inherit callPackage;}
       );
 
       ngiPackages = import ./pkgs/by-name {
@@ -146,6 +140,10 @@
           .options;
       };
     in rec {
+      legacyPackages = {
+        nixosTests = mapAttrByPath ["nixos" "tests"] {} ngiProjects;
+      };
+
       packages =
         ngiPackages
         // {

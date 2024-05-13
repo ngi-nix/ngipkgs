@@ -3,7 +3,6 @@
   python3,
   fetchgit,
   highctidh,
-  nixosTests,
   coreutils,
 }:
 with builtins; let
@@ -56,8 +55,6 @@ in
     '';
 
     doCheck = true;
-
-    passthru.tests.vula = nixosTests.Vula.vula;
 
     meta = with lib; {
       description = "Automatic local network encryption";
