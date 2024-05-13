@@ -8,8 +8,7 @@
   yosys,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "nmigen";
-  pname = name;
+  pname = "nmigen";
   version = "unstable-2024-03-31";
   realVersion = "0.3.dev243+g${lib.substring 0 7 src.rev}";
 

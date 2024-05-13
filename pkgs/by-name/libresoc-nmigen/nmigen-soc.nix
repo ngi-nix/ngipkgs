@@ -5,8 +5,7 @@
   nmigen,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "nmigen-soc";
-  pname = name;
+  pname = "nmigen-soc";
   version = "unstable-2024-03-31";
   # python setup.py --version
   realVersion = "0.1.dev243+g${lib.substring 0 7 src.rev}";

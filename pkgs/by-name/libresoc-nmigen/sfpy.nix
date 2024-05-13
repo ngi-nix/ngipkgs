@@ -4,8 +4,7 @@
   fetchPypi,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "sfpy";
-  pname = name;
+  pname = "sfpy";
   version = "0.6.0";
 
   src = fetchPypi {

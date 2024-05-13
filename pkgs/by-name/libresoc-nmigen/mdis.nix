@@ -4,8 +4,7 @@
   fetchPypi,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "mdis";
-  pname = name;
+  pname = "mdis";
   version = "0.5.1";
 
   src = fetchPypi {

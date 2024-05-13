@@ -8,12 +8,11 @@
   pytest-output-to-files,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "libresoc-nmutil";
-  pname = "nmutil";
+  pname = "libresoc-nmutil"; # Libre-SOC's bespoke fork
   version = "unstable-2024-03-31";
 
   src = fetchFromLibresoc {
-    inherit pname;
+    pname = "nmutil";
     rev = "4bf2f20bddc057df1597d14e0b990c0b9bdeb10e"; # HEAD @ version date
     hash = "sha256-8jXQGO4IeB6WjGtjuHO8UBh9n3ei7LukmRoXSbNJ1vM=";
   };

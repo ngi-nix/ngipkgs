@@ -4,8 +4,7 @@
   python39Packages,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "pytest-output-to-files";
-  pname = name;
+  pname = "pytest-output-to-files";
   version = "unstable-2024-03-31";
 
   src = fetchFromLibresoc {
