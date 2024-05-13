@@ -1,4 +1,7 @@
 {fetchgit}: {
+  # given recent poor availability of upstream https://git.libre-soc.org/,
+  # define a dedicated fetcher for current mirror source
+  # (currently github.com/Libre-SOC-mirrors, cc @jleightcap @albertchae)
   fetchFromLibresoc = {
     pname,
     hash,

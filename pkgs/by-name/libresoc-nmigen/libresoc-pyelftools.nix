@@ -4,7 +4,7 @@
   fetchFromGitHub,
 }:
 python39Packages.pyelftools.overrideAttrs (_: rec {
-  name = "libresoc-pyelftools";
+  name = "pyelftools";
   version = "unstable-2024-03-31";
 
   # upstream Libre-SOC uses a mirror,
