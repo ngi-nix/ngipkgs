@@ -10,7 +10,6 @@
   pytest-output-to-files,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "libresoc-ieee754fpu";
   pname = "ieee754fpu";
   version = "unstable-2024-03-31";
 

@@ -5,8 +5,7 @@
   fetchFromLibresoc,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "power-instruction-analyzer";
-  pname = name;
+  pname = "power-instruction-analyzer";
   version = "0.2.0";
   format = "pyproject";
 

@@ -5,8 +5,7 @@
   mpfr,
 }:
 python39Packages.buildPythonPackage rec {
-  name = "bigfloat";
-  pname = name;
+  pname = "bigfloat";
   version = "0.4.0";
 
   src = fetchPypi {

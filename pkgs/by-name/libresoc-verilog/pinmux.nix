@@ -5,11 +5,10 @@
 }:
 stdenv.mkDerivation rec {
   name = "libresoc-pinmux";
-  pname = "pinmux";
   version = "unstable-2024-03-31";
 
   src = fetchFromLibresoc {
-    inherit pname;
+    pname = "pinmux";
     rev = "ee6c6c5020f11e7debfd8262ffdb8abd6e1782c"; # HEAD @ version date
     hash = "sha256-Tux2RvcRmlpXMsHwve/+5rOyBRSThg9MVW2NGP3ZJxs=";
   };
