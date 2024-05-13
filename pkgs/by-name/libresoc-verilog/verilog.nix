@@ -1,13 +1,13 @@
 {
   runCommand,
   pinmux,
-  soc,
+  libresoc-nmigen,
 }:
 runCommand "libresoc.v" {
   version = "unstable-2024-03-31";
 
   nativeBuildInputs = [
-    soc
+    libresoc-nmigen
     pinmux
   ];
 } ''
