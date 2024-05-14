@@ -55,31 +55,4 @@ in {
         server.wait_for_unit("nginx.service")
         server.succeed("curl --fail --connect-timeout 10 http://localhost/u/admin")
   '';
-
-  # NOTE: Below configuration is for "interactive" (=developing/debugging) only.
-  interactive.nodes = let
-    tools = {pkgs, ...}: {
-      environment.systemPackages = with pkgs; [vim tmux jq];
-    };
-
-    # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
-    # to provide a slightly nicer console, and while we're at it,
-    # also use a nice font.
-    # With kmscon, we can for example zoom in/out using [Ctrl] + [+]
-    # and [Ctrl] + [-]
-    niceConsoleAndAutologin = {pkgs, ...}: {
-      services.kmscon = {
-        enable = true;
-        autologinUser = "root";
-        fonts = [
-          {
-            name = "Fira Code";
-            package = pkgs.fira-code;
-          }
-        ];
-      };
-    };
-  in {
-    server.imports = [niceConsoleAndAutologin tools];
-  };
 }
