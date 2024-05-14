@@ -68,6 +68,14 @@ in {
 
       runHook postCheck
     '';
+
+    # avoid writing in the migration process
+    postFixup = ''
+      cp $out/assets/brand/logo-default.png $out/assets/brand/logo.png
+      cp $out/assets/brand/favicon-default.ico $out/assets/brand/favicon.ico
+      sed -i "/shutil.copyfile/d" $out/liberaforms/models/site.py
+      sed -i "/brand_dir/d" $out/migrations/versions/6f0e2b9e9db3_.py
+    '';
   };
 
   public = {
