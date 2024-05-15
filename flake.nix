@@ -18,6 +18,7 @@
   inputs.sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
+  inputs.buildbot-nix.url = "github:Mic92/buildbot-nix";
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
@@ -31,6 +32,7 @@
     rust-overlay,
     pre-commit-hooks,
     dream2nix,
+    buildbot-nix,
     ...
   }: let
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
@@ -250,6 +252,10 @@
               # set the package to be from that repo.  It juse uses the stock
               # `pkgs.hydra_unstable` by default.
               hydra.nixosModules.hydra
+
+              # Setup both a master and a worker buildbot instance in this host
+              buildbot-nix.nixosModules.buildbot-master
+              buildbot-nix.nixosModules.buildbot-worker
 
               {
                 # Here, set the Hydra package to use the (complete
