@@ -52,6 +52,7 @@
     emacs
     gdb
     git
+    htop
     jq # required by numtide/terraform-deploy-nixos-flakes.
   ];
 
