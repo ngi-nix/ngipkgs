@@ -54,6 +54,7 @@
     git
     htop
     jq # required by numtide/terraform-deploy-nixos-flakes.
+    lsof
   ];
 
   services = {
