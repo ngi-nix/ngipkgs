@@ -3,11 +3,19 @@
 
   inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.dream2nix.url = "github:nix-community/dream2nix";
+  inputs.flake-compat.url = "github:nix-community/flake-compat";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.hydra.url = "github:NixOS/hydra/nix-next";
+  inputs.hydra.inputs.nix.follows = "nix";
+  inputs.hydra.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.nix.url = "github:NixOS/nix";
+  inputs.nix.inputs.flake-compat.follows = "flake-compat";
+  inputs.nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.nix.inputs.pre-commit-hooks.follows = "pre-commit-hooks";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.pre-commit-hooks.inputs.flake-compat.follows = "flake-compat";
   inputs.pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
   inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
