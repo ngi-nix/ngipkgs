@@ -17,6 +17,7 @@
   gnunet,
   makeWrapper,
   which,
+  callPackage,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis";
@@ -80,6 +81,8 @@ stdenv.mkDerivation (finalAttrs: {
     # Check that anastasis-config can find gnunet at runtime
     $out/bin/anastasis-config --help > /dev/null
   '';
+
+  passthru.tests.vmTest = callPackage ./test.nix {};
 
   meta = {
     description = ''
