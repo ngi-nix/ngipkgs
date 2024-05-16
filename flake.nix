@@ -18,6 +18,7 @@
   inputs.sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
+  inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.buildbot-nix.url = "github:Mic92/buildbot-nix";
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
