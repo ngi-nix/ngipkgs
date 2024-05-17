@@ -12,9 +12,6 @@
   inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-  inputs.rust-overlay.inputs.flake-utils.follows = "flake-utils";
-  inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
   inputs.sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
@@ -28,7 +25,6 @@
     nixpkgs,
     flake-utils,
     sops-nix,
-    rust-overlay,
     pre-commit-hooks,
     dream2nix,
     ...
@@ -57,9 +53,6 @@
       flattenAttrsSlash
       optionalAttrs
       ;
-
-    importNixpkgs = system: overlays:
-      import nixpkgs {inherit system overlays;};
 
     # NGI packages are imported from ./pkgs/by-name/default.nix.
     importNgiPackages = pkgs: let
@@ -110,7 +103,7 @@
 
     # Then, define the system-specific outputs.
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = importNixpkgs system [rust-overlay.overlays.default];
+      pkgs = import nixpkgs {inherit system;};
 
       ngiPackages = importNgiPackages pkgs;
 
@@ -197,7 +190,10 @@
     x86_64-linuxOutputs = let
       system = flake-utils.lib.system.x86_64-linux;
 
-      pkgs = importNixpkgs system [self.overlays.default];
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [self.overlays.default];
+      };
 
       # Include all packages (with overview and options)
       ngiPackages = self.packages.${system};
