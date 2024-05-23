@@ -1,10 +1,7 @@
 { lib, ... }: {
   services = {
     caddy.virtualHosts."buildbot.ngi.nixos.org".extraConfig = ''
-      reverse_proxy localhost:8010 {
-        header_up X-Forwarded-Proto https
-        header_up X-Forwarded-Port 443
-      }
+      reverse_proxy localhost:8010
 
       header {
         Strict-Transport-Security max-age=15552000;
@@ -18,11 +15,16 @@
     admins = [ "Erethon" "fricklerhandwerk" "Janik-Haag" "lorenzleutgeb" ];
     workersFile = /etc/buildbot/workers.json;
     github = {
-      user = "ngi-nix";
+      user = "ngi-nix-bot";
       tokenFile = /etc/buildbot/gh-token;
-      oauthId = "thisneedstobeastring";
+      oauthId = "Ov23linNGNKJg5zddrwX";
       oauthSecretFile = /etc/buildbot/gh-oauthsecret;
       webhookSecretFile = /etc/buildbot/gh-webhook;
+    };
+    useHTTPS = true;
+    cachix = {
+      name = "ngi";
+      authTokenFile = "/etc/buildbot/cachix-token";
     };
   };
 
