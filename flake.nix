@@ -266,6 +266,8 @@
                 services.hydra.package = hydra.packages.x86_64-linux.default;
               }
 
+              sops-nix.nixosModules.default
+
               ./infra/makemake/configuration.nix
 
               {
