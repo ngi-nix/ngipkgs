@@ -1,23 +1,12 @@
 {
   lib,
   fetchCrate,
-  stdenv,
-  makeRustPlatform,
-  rust-bin,
+  rustPlatform,
 }: let
   inherit
     (lib)
     licenses
-    maintainers
     ;
-
-  # Fixes: https://github.com/atomicdata-dev/atomic-server/issues/733
-  rust = rust-bin.stable.latest.default;
-
-  rustPlatform = makeRustPlatform {
-    rustc = rust;
-    cargo = rust;
-  };
 in
   rustPlatform.buildRustPackage rec {
     pname = "atomic-server";
@@ -36,6 +25,5 @@ in
       description = "A Rust library to serialize, parse, store, convert, validate, edit, fetch and store Atomic Data. Powers both atomic-cli and atomic-server.";
       homepage = "docs.atomicdata.dev";
       license = licenses.mit;
-      maintainers = with maintainers; [];
     };
   }
