@@ -1,4 +1,5 @@
-name: nix flake update
+name: update
+
 on:
   workflow_dispatch:
   schedule:
@@ -11,10 +12,11 @@ jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: DeterminateSystems/nix-installer-action@v1
-      - uses: DeterminateSystems/update-flake-lock@v20
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v11
+      - uses: DeterminateSystems/update-flake-lock@v21
         with:
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
           pr-title: "flake: Update flake.lock"
           pr-labels: |
             automated
