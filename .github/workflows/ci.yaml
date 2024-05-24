@@ -73,8 +73,6 @@ jobs:
     runs-on: ${{ matrix.platform }}
     name: build ${{ join(matrix.names, ', ') }}
     strategy: { matrix: '${{fromJSON(needs.matrix.outputs.matrix)}}' }
-    outputs:
-      deploy: ${{ steps.deploy.outputs.deploy }}
     steps:
       - { uses: 'actions/checkout@v4', name: 'Checkout' }
       - uses: 'DeterminateSystems/nix-installer-action@main'
@@ -100,26 +98,3 @@ jobs:
           extraPullNames: ngi
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
       - run: nix ${{ runner.debug && '--debug' }} build --print-build-logs ${{ join(matrix.attributes, ' ') }}
-
-      # Only if this job built the overview, upload it as artifact for GitHub Pages.
-      - id: overview
-        name: 'Upload artifact for GitHub Pages'
-        uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request' && contains(matrix.attributes, '.#checks."x86_64-linux"."packages/overview"')
-        with: { path: 'result' }
-
-      - id: deploy
-        name: 'Trigger deployment'
-        run: 'echo "deploy=true" >> "$GITHUB_OUTPUT"'
-        if: steps.overview.outcome == 'success'
-
-  deploy:
-    if: github.event_name != 'pull_request' && needs.build.outputs.deploy == 'true'
-    needs: build
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment: { name: 'github-pages', url: '${{ steps.deployment.outputs.page_url }}' }
-    steps: [ { id: 'deployment', uses: 'actions/deploy-pages@v4' } ]
