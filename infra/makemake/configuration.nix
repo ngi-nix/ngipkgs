@@ -4,8 +4,10 @@
   ...
 }: {
   imports = [
+    ./buildbot.nix
     ./hydra.nix
     ./hardware.nix
+    ./sops.nix
   ];
 
   networking.hostName = "makemake";

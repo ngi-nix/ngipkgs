@@ -1,5 +1,27 @@
 {
   "nodes": {
+    "buildbot-nix": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": "treefmt-nix"
+      },
+      "locked": {
+        "lastModified": 1716428566,
+        "narHash": "sha256-cd/PDCS3Afux3btB8JORmdYdLLv22DGVVpy0PiF9R2U=",
+        "owner": "Mic92",
+        "repo": "buildbot-nix",
+        "rev": "c2e9f0a5b11da03a7b746d74758405dbb62cf610",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "buildbot-nix",
+        "type": "github"
+      }
+    },
     "dream2nix": {
       "inputs": {
         "nixpkgs": [
@@ -55,6 +77,27 @@
       }
     },
     "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "buildbot-nix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1715865404,
+        "narHash": "sha256-/GJvTdTpuDjNn84j82cU6bXztE0MSkdnTWClUCRub78=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "8dc45382d5206bd292f9c2768b8058a8fd8311d9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_2": {
       "inputs": {
         "nixpkgs-lib": [
           "hydra",
@@ -171,7 +214,7 @@
     "nix": {
       "inputs": {
         "flake-compat": "flake-compat",
-        "flake-parts": "flake-parts",
+        "flake-parts": "flake-parts_2",
         "libgit2": "libgit2",
         "nixpkgs": [
           "hydra",
@@ -360,6 +403,7 @@
     },
     "root": {
       "inputs": {
+        "buildbot-nix": "buildbot-nix",
         "dream2nix": "dream2nix",
         "flake-utils": "flake-utils",
         "hydra": "hydra",
@@ -427,6 +471,27 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default-linux",
+        "type": "github"
+      }
+    },
+    "treefmt-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "buildbot-nix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1715940852,
+        "narHash": "sha256-wJqHMg/K6X3JGAE9YLM0LsuKrKb4XiBeVaoeMNlReZg=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "2fba33a182602b9d49f0b2440513e5ee091d838b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
         "type": "github"
       }
     }
