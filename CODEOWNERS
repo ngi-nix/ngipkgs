@@ -1,1 +1,2 @@
-/infra/ @Erethon @Ericson2314 @fricklerhandwerk @Janik-Haag @lorenzleutgeb
+/infra/ @ngi-nix/infra
+/.github/workflows/makemake.yaml @ngi-nix/infra

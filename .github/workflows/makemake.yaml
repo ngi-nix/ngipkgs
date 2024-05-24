@@ -1,0 +1,44 @@
+name: makemake
+
+on: { push: { branches: [ 'main' ] } }
+
+jobs:
+  deploy:
+    environment: makemake
+    runs-on: ubuntu-latest
+    env:
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      FLAKE_REF_SHORT: github:${{ github.repository }}/${{ github.sha }}#makemake
+      FLAKE_REF_TOPLEVEL: github:${{ github.repository }}/${{ github.sha }}#nixosConfigurations.makemake.config.system.build.toplevel
+      SSH_HOST: root@makemake.ngi.nixos.org
+    steps:
+      - uses: 'DeterminateSystems/nix-installer-action@main'
+        name: 'Install Nix'
+        with: { extra-conf: 'experimental-features = no-url-literals' }
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          printenv SSH_KEY > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "makemake.ngi.nixos.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4ejRuAQPx6AbuS1u+Q7UUi1TIwkY2S//kjgpBxYNfU" \
+            > ~/.ssh/known_hosts
+
+      - name: Build
+        run: |
+          nix run nixpkgs#nixos-rebuild -- build \
+            --flake "$FLAKE_REF_SHORT" \
+            --build-host "$SSH_HOST" \
+            --target-host "$SSH_HOST"
+
+      - name: Difference
+        run: |
+          ssh "$SSH_HOST" -- \
+            "nix build \"$FLAKE_REF_TOPLEVEL\" && nix run nixpkgs#nvd -- diff /run/current-system result"
+
+      - name: Deploy
+        run: |
+          nix run nixpkgs#nixos-rebuild -- switch \
+            --flake "$FLAKE_REF_SHORT" \
+            --build-host "$SSH_HOST" \
+            --target-host "$SSH_HOST"
