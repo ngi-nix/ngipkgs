@@ -20,6 +20,8 @@ let
 
   erethon = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIPb9z1U7Sti2lls0mlcmyPwmwD91amKwVlLZHYclSoULAAAABHNzaDo=";
 
+  deploy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0avMIgFAj/8xzr2+3aXn7a0odDKIpwj90n5inhoQ4S";
+
   infra = [
     delroth
     hexa-gaia
@@ -37,4 +39,4 @@ let
     erethon
   ];
 in
-  infra ++ ngi
+  infra ++ ngi ++ [deploy]
