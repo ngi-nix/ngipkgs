@@ -220,14 +220,15 @@
           checks.${system} =
             let
               nixosTests = mapAttrByPath [ "nixos" "tests" ] { } nonBrokenNgiProjects;
-              passthruTests = name: package: optionalAttrs (package ? passthru.tests) { "packages/passthru/${name}" = package.passthru.tests; };
-              buildPackage = name: package: { "packages/${name}" = package; };
+              passthruTests = name: package: optionalAttrs (package ? passthru.tests) { packages.${name}.passthru = package.passthru.tests; };
             in
             # Build all packages, run all passthru tests, and all NixOS VM tests
             (concatMapAttrs
-              (name: package: buildPackage name package // passthruTests name package)
+              (name: package:
+                { packages.${name} = package; } // passthruTests name package
+              )
               nonBrokenNgiPackages
-            ) // nixosTests;
+            ) // { projects = nixosTests; };
         };
 
       systemAgnosticOutputs = {
