@@ -155,7 +155,8 @@
           };
 
           options =
-            pkgs.runCommand "options.json" {
+            pkgs.runCommand "options.json"
+            {
               build = optionsDoc.optionsJSON;
             } ''
               mkdir $out
@@ -216,30 +217,32 @@
     in {
       # buildbot executes `nix flake check`, therefore this output
       # should only contain derivations that can built within CI.
-      # see ./infra/makemake/buildbot.nix
-      checks.${system} =
-        # For `nix flake check` to *build* all packages, because by default
-        # `nix flake check` only evaluates packages and does not build them.
-        mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenNgiPackages;
+      # See ./infra/makemake/buildbot.nix for how it's set up.
+      # NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
+      checks.${system} = let
+        vmTests = name: project:
+          optionalAttrs (project ? nixos.tests)
+          (concatMapAttrs (testname: test: {"projects/${name}/passthru/${testname}" = test;}) project.nixos.tests);
 
-      # To generate a Hydra jobset for CI builds of all packages and tests.
-      # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
-      hydraJobs = let
-        passthruTests = concatMapAttrs (name: value:
-          optionalAttrs (value ? passthru.tests) {${name} = value.passthru.tests;})
-        nonBrokenNgiPackages;
-      in {
-        packages.${system} = nonBrokenNgiPackages;
-        tests.${system} = {
-          passthru = passthruTests;
-          nixos = mapAttrByPath ["nixos" "tests"] {} nonBrokenNgiProjects;
-        };
+        projects = concatMapAttrs vmTests nonBrokenNgiProjects;
 
-        nixosConfigurations.${system} =
+        passthruTests = name: package:
+          optionalAttrs (package ? passthru.tests)
+          (concatMapAttrs (testname: test: {"pkgs/${name}/passthru/${testname}" = test;}) package.passthru.tests);
+
+        packages =
+          concatMapAttrs
+          (name: package:
+            {"pkgs/${name}" = package;} // passthruTests name package)
+          nonBrokenNgiPackages;
+
+        configurations =
           mapAttrs
           (name: config: config.config.system.build.toplevel)
           extendedNixosConfigurations;
-      };
+      in
+        # Build all packages, run all passthru tests, run all NixOS VM tests, build all example configurations
+        packages // projects // configurations;
     };
 
     systemAgnosticOutputs = {
