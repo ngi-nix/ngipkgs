@@ -10,7 +10,7 @@ let
   peerUser = "peertube";
   peerGroup = "peertube";
   localUser = "alice";
-  pluginPkgs = with pkgs; [ peertube-plugin-hello-world ];
+  pluginPkgs = with pkgs; [ peertube-plugin-hello-world peertube-theme-dark ];
 in
 {
   name = "peertube-plugins";

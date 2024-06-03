@@ -134,7 +134,7 @@ in
                   npm config set progress false
 
                   ${lib.concatMapStrings (plugin: ''
-                    npm config set cache ${plugin.npmDeps}
+                    npm config set cache ${plugin.npmDeps or "/no-npm-deps"}
                     echo "Running installer for ${plugin}/lib/node_modules/${plugin.pname}"
                     node ~/dist/scripts/plugin/install.js -p ${plugin}/lib/node_modules/${plugin.pname}
                   '') cfg.packages}
