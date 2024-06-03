@@ -25,8 +25,8 @@ The project must have comprehensive and clear documentation. This includes:
 - Proper use of version control.
 
 ### 4. Continuous Delivery
-The project must implement Continuous Delivery (CD) to ensure that it can be reliably released at any time. This involves:
-- **Automated Build and Deployment**: The project should have automated processes for building and deploying the software.
+While it is not Continuous Delivery itself that is directly a requirement for us as people who package software in Nix, the benefit of continuous delivery are desirable to us. Continuous delivery is the only way that we know of to guarantee these benefits.
+
 - **Frequent Releases**: The project should be set up to release new versions frequently and consistently.
 - **Automated Testing**: The CD pipeline should include automated tests to ensure that new changes do not introduce regressions or break existing functionality.
 - **Monitoring and Rollback**: There should be mechanisms in place for monitoring the deployment and rolling back changes if issues are detected.
