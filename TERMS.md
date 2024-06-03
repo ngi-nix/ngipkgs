@@ -15,13 +15,12 @@ This document outlines the criteria for accepting open-source projects into our 
 The project must be released under an open-source license that is [recognized by the Open Source Initiative (OSI)](https://opensource.org/licenses). Examples include MIT, Apache 2.0, GPL, and BSD licenses.
 
 ### 2. Active Maintenance
-The project should show evidence of active maintenance. This can be demonstrated through recent commits, regular updates, and timely issue resolution. Projects that are no longer maintained *may* not be accepted.
+Unless the project is finished it must show evidence of active development/maintenance. This can be demonstrated through recent commits, regular updates, and timely issue resolution.
 
 ### 3. Documentation
 The project must have comprehensive and clear documentation. This includes:
 - A README file that provides an overview of the project, installation instructions, and usage examples.
 - Documentation for the API, configuration options, and other relevant details.
-- Contribution guidelines for new developers.
 
 ### 4. Code Quality
 The project should adhere to best practices for code quality. This includes:
