@@ -24,13 +24,13 @@ The project must have comprehensive and clear documentation. This includes:
 
 - Proper use of version control.
 
-### 4. Continuous Delivery
-While it is not Continuous Delivery itself that is directly a requirement for us as people who package software in Nix, the benefit of continuous delivery are desirable to us. Continuous delivery is the only way that we know of to guarantee these benefits.
+### 4. Releases
+- **Versioning scheme**: Releases should follow a consistent versioning scheme.
 
-- **Frequent Releases**: The project should be set up to release new versions frequently and consistently.
-- **Automated Testing**: The CD pipeline should include automated tests to ensure that new changes do not introduce regressions or break existing functionality.
-- **Monitoring and Rollback**: There should be mechanisms in place for monitoring the deployment and rolling back changes if issues are detected.
+### 5. Automated Testing
+The upstream repository should include automated tests to ensure that new changes do not introduce regressions or break existing functionality.
 
+TODO: Keep reviewing
 ### 7. Community Engagement
 The project should have an active and engaged community. This can be demonstrated through:
 - Active discussion forums or mailing lists.
