@@ -1,13 +1,16 @@
-{ sources, pkgs, lib, ... }:
+{
+  sources,
+  pkgs,
+  lib,
+  ...
+}:
 let
   storageBase = "/var/peertube";
   storageDir = subdir: "${storageBase}/${subdir}/";
   peerUser = "peertube";
   peerGroup = "peertube";
   localUser = "alice";
-  pluginPkgs = with pkgs; [
-    peertube-plugin-hello-world
-  ];
+  pluginPkgs = with pkgs; [ peertube-plugin-hello-world ];
 in
 {
   name = "peertube-plugins";
@@ -111,19 +114,23 @@ in
           server.wait_for_console_text("Web server: http://localhost:9000")
 
       # Eventuall peertube-plugins-initial kicks in, sets up the initial state
-    '' + (lib.strings.concatMapStringsSep "\n" (plugin: ''
+    ''
+    + (lib.strings.concatMapStringsSep "\n" (plugin: ''
       with subtest("peertube plugin ${plugin.pname} installs"):
           server.wait_for_console_text("Successful installation of plugin ${plugin}")
-    '') pluginPkgs) + ''
+    '') pluginPkgs)
+    + ''
 
       # peertube-plugins-initial triggers a restart and causes regular peertube-plugins to fire instead
       #server.wait_for_unit("peertube-plugins.service")
 
       # Plugins should all still come up
-    '' + (lib.strings.concatMapStringsSep "\n" (plugin: ''
+    ''
+    + (lib.strings.concatMapStringsSep "\n" (plugin: ''
       with subtest("peertube plugin ${plugin.pname} registers"):
           server.wait_for_console_text("Registering plugin or theme ${plugin.pname}")
-    '') pluginPkgs) + ''
+    '') pluginPkgs)
+    + ''
 
       with subtest("peertube plugin ${pkgs.peertube-plugin-hello-world.pname} works"):
           # Now wait until we can get through to the instance

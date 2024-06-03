@@ -97,52 +97,66 @@ in
 
           environment = env;
 
-          path = with pkgs; [
-            iproute2
-            nodejs
-            yarn
-          ];
-
           script =
             let
               nixosPluginsJson = pkgs.writeText "nixos-plugins.json" (
                 builtins.toJSON (map (plugin: plugin.pname) cfg.packages)
               );
             in
-            ''
-              set -euo pipefail
+            lib.getExe (
+              pkgs.writeShellApplication {
+                name = "peertube-plugins${lib.optionalString (!configured) "-initial"}-script";
 
-              ${lib.optionalString (!configured) ''
-                # Ensure peertube is done configuring & running (HACK)
-                while ! ss -H -t -l -n sport = :${toString peerCfg.listenWeb} | grep -q "^LISTEN.*:${toString peerCfg.listenWeb}"; do
-                  sleep 1
-                done
-              ''}
+                runtimeInputs = with pkgs; [
+                  iproute2
+                  nodejs
+                ];
 
-              if [ -e "${peerCfg.settings.storage.plugins}/package.json" ]; then
-                packages_hash_pre="$(sha256sum ${peerCfg.settings.storage.plugins}/package.json)"
-              else
-                packages_hash_pre=""
-              fi
+                text = ''
+                  set -euo pipefail
 
-              ${lib.concatMapStrings (plugin: ''
-                node ~/dist/scripts/plugin/install.js -p ${plugin}/lib/node_modules/${plugin.pname}
-              '') cfg.packages}
+                  ${lib.optionalString (!configured) ''
+                    # Ensure peertube is done configuring & running (HACK)
+                    while ! ss -H -t -l -n sport = :${toString peerCfg.listenWeb} | grep -q "^LISTEN.*:${toString peerCfg.listenWeb}"; do
+                      sleep 1
+                    done
+                  ''}
 
-              if [ -e "${peerCfg.settings.storage.plugins}/nixos-plugins.json" ]; then
-                for plugin in "$(${pkgs.jq}/bin/jq --slurp --raw-output '.[0] - .[1] | .[]' ${peerCfg.settings.storage.plugins}/nixos-plugins.json ${nixosPluginsJson})"; do
-                  # ignore trailing newline
-                  [ -z "$plugin" ] && continue
-                  echo "Removing plugin $plugin (even on success, a (wrong) error message is returned)"
-                  node ~/dist/scripts/plugin/uninstall.js -n "$plugin"
-                done
-              fi
+                  if [ -e "${peerCfg.settings.storage.plugins}/package.json" ]; then
+                    packages_hash_pre="$(sha256sum ${peerCfg.settings.storage.plugins}/package.json)"
+                  else
+                    packages_hash_pre=""
+                  fi
 
-              ln -sf ${nixosPluginsJson} ${peerCfg.settings.storage.plugins}/nixos-plugins.json
+                  npmfun="$(mktemp -d)"
+                  export NPM_CONFIG_USERCONFIG="$npmfun"/.npmrc
+                  npm config set offline true
+                  npm config set progress false
 
-              packages_hash_post="$(sha256sum ${peerCfg.settings.storage.plugins}/package.json)"
-              [ "$packages_hash_pre" = "$packages_hash_post" ] || touch ${peerCfg.settings.storage.plugins}/.restart
-            '';
+                  ${lib.concatMapStrings (plugin: ''
+                    npm config set cache ${plugin.npmDeps}
+                    echo "Running installer for ${plugin}/lib/node_modules/${plugin.pname}"
+                    node ~/dist/scripts/plugin/install.js -p ${plugin}/lib/node_modules/${plugin.pname}
+                  '') cfg.packages}
+
+                  rm -r "$npmfun"
+
+                  if [ -e "${peerCfg.settings.storage.plugins}/nixos-plugins.json" ]; then
+                    for plugin in $(${pkgs.jq}/bin/jq --slurp --raw-output '.[0] - .[1] | .[]' ${peerCfg.settings.storage.plugins}/nixos-plugins.json ${nixosPluginsJson}); do
+                      # ignore trailing newline
+                      [ -z "$plugin" ] && continue
+                      echo "Removing plugin $plugin (even on success, a (wrong) error message is returned)"
+                      node ~/dist/scripts/plugin/uninstall.js -n "$plugin"
+                    done
+                  fi
+
+                  ln -sf ${nixosPluginsJson} ${peerCfg.settings.storage.plugins}/nixos-plugins.json
+
+                  packages_hash_post="$(sha256sum ${peerCfg.settings.storage.plugins}/package.json)"
+                  [ "$packages_hash_pre" = "$packages_hash_post" ] || touch ${peerCfg.settings.storage.plugins}/.restart
+                '';
+              }
+            );
 
           serviceConfig = {
             ExecCondition =
@@ -183,6 +197,15 @@ in
         );
     in
     lib.mkIf (peerCfg.enable && cfg.enable) {
+      services.peertube.package = (cfg.package or pkgs.peertube).overrideAttrs (oa: {
+        postPatch =
+          (oa.postPatch or "")
+          + ''
+            substituteInPlace server/core/lib/plugins/yarn.ts \
+              --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
+          '';
+      });
+
       systemd.services = {
         peertube-plugins-initial = mkPluginService false;
         peertube-plugins = mkPluginService true;
