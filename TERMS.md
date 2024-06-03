@@ -22,19 +22,9 @@ The project must have comprehensive and clear documentation. This includes:
 - A README file that provides an overview of the project, installation instructions, and usage examples.
 - Documentation for the API, configuration options, and other relevant details.
 
-### 4. Code Quality
-The project should adhere to best practices for code quality. This includes:
-- Consistent coding style.
 - Proper use of version control.
-- Automated testing with a significant portion of the codebase covered by tests.
 
-### 5. Security
-The project must follow best practices for security. This includes:
-- Regular security audits and updates.
-- Addressing reported vulnerabilities promptly.
-- Using secure coding practices.
-
-### 6. Continuous Delivery
+### 4. Continuous Delivery
 The project must implement Continuous Delivery (CD) to ensure that it can be reliably released at any time. This involves:
 - **Automated Build and Deployment**: The project should have automated processes for building and deploying the software.
 - **Frequent Releases**: The project should be set up to release new versions frequently and consistently.
