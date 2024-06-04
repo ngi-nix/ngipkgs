@@ -1,0 +1,31 @@
+Subject: [PATCH] Fix status test docs
+
+---
+ common/src/status.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/common/src/status.rs b/common/src/status.rs
+index bc7d2f3..f98cd4a 100644
+--- a/common/src/status.rs
++++ b/common/src/status.rs
+@@ -17,7 +17,7 @@
+ 
+ /// Debit transaction status
+ ///
+-///           -> Requested  API request
++/// ()        -> Requested  API request
+ /// Requested -> Sent       Announced to the bitcoin network
+ /// Sent      -> Requested  Conflicting transaction (reorg)
+ #[repr(u8)]
+@@ -43,7 +43,7 @@ impl TryFrom<u8> for DebitStatus {
+ 
+ /// Bounce transaction status
+ ///
+-///           -> Requested  Credit in wrong format
++/// ()        -> Requested  Credit in wrong format
+ /// Requested -> Ignored    Insufficient found
+ /// Requested -> Sent       Announced to the bitcoin network
+ /// Sent      -> Requested  Conflicting transaction (reorg)
+-- 
+2.44.0
+
