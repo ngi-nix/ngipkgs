@@ -69,17 +69,11 @@
         // args);
 
     # NGI packages are imported from ./pkgs/by-name/default.nix.
-    importNgiPackages = pkgs: let
-      callPackage = pkgs.newScope (
-        ngiPackages // {inherit callPackage;}
-      );
-
-      ngiPackages = import ./pkgs/by-name {
+    importNgiPackages = pkgs:
+      import ./pkgs/by-name {
         inherit (pkgs) lib;
-        inherit callPackage dream2nix pkgs;
+        inherit dream2nix pkgs;
       };
-    in
-      ngiPackages;
 
     # NGI projects are imported from ./projects/default.nix.
     # Each project includes packages, and optionally, modules, configurations and tests.
