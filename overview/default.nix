@@ -5,6 +5,8 @@
   projects,
   self,
 }: let
+  lib' = import ../lib.nix {inherit lib;};
+
   inherit
     (builtins)
     any
@@ -14,7 +16,6 @@
     filter
     isList
     readFile
-    stringLength
     substring
     toJSON
     toString
@@ -23,11 +24,15 @@
   inherit
     (lib)
     concatLines
-    flattenAttrsDot
     flip
     hasPrefix
     mapAttrsToList
     optionalString
+    ;
+
+  inherit
+    (lib')
+    flattenAttrsDot
     ;
 
   empty = xs: assert isList xs; xs == [];

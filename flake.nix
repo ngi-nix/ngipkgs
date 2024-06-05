@@ -32,7 +32,8 @@
     ...
   }: let
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
-    lib = nixpkgs.lib.recursiveUpdate nixpkgs.lib (import ./lib.nix {inherit (nixpkgs) lib;});
+    lib = import (nixpkgs + "/lib");
+    lib' = import ./lib.nix {inherit lib;};
 
     inherit
       (builtins)
@@ -47,14 +48,25 @@
       foldr
       recursiveUpdate
       nameValuePair
-      nixosSystem
       filterAttrs
       attrByPath
-      mapAttrByPath
-      flattenAttrsDot
-      flattenAttrsSlash
       optionalAttrs
       ;
+
+    inherit
+      (lib')
+      flattenAttrsDot
+      flattenAttrsSlash
+      mapAttrByPath
+      ;
+
+    # Imported from Nixpkgs
+    nixosSystem = args:
+      import (nixpkgs + "/nixos/lib/eval-config.nix") ({
+          inherit lib;
+          system = null;
+        }
+        // args);
 
     # NGI packages are imported from ./pkgs/by-name/default.nix.
     importNgiPackages = pkgs: let
