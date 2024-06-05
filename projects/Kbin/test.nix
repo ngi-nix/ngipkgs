@@ -20,7 +20,7 @@ in {
         sources.modules.default
         sources.modules."services.kbin"
         sources.modules.unbootable
-        sources.configurations."Kbin/base"
+        sources.examples."Kbin/base"
       ];
 
       unbootable = mkForce false;

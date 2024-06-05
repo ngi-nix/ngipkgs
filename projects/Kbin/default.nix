@@ -6,9 +6,9 @@
   packages = {inherit (pkgs) kbin kbin-frontend kbin-backend;};
   nixos = {
     modules.services.kbin = ./service.nix;
-    configurations = {
+    examples = {
       base = {
-        path = ./configuration.nix;
+        path = ./example.nix;
         description = "Basic configuration, mainly used for testing purposes.";
       };
     };

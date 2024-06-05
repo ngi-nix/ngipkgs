@@ -17,8 +17,8 @@ in {
       ...
     }: {
       imports = [
-        sources.configurations."Pretalx/base"
-        sources.configurations."Pretalx/postgresql"
+        sources.examples."Pretalx/base"
+        sources.examples."Pretalx/postgresql"
         sources.modules.default
         sources.modules."services.ngi-pretalx"
         sources.modules.sops-nix

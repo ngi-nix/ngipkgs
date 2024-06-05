@@ -74,7 +74,7 @@
     importNgiProjects = {
       pkgs ? {},
       sources ? {
-        configurations = rawNixosConfigurations;
+        examples = rawNixosConfigurations;
         modules = extendedNixosModules;
       },
     }:
@@ -85,7 +85,7 @@
     rawNgiProjects = importNgiProjects {};
 
     rawNixosConfigurations = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
-      mapAttrByPath ["nixos" "configurations"] {} rawNgiProjects
+      mapAttrByPath ["nixos" "examples"] {} rawNgiProjects
     ));
 
     rawNixosModules = flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (
