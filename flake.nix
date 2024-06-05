@@ -74,17 +74,17 @@
     importNgiProjects = {
       pkgs ? {},
       sources ? {
-        examples = rawNixosConfigurations;
+        examples = rawExamples;
         modules = extendedNixosModules;
       },
     }:
       import ./projects {inherit lib pkgs sources;};
 
-    # The above definition reimports `rawNixosConfigurations` and `extendedNixosModules` into `sources`.
+    # The above definition reimports `rawExamples` and `extendedNixosModules` into `sources`.
     # As configurations and modules are system-agnostic, they are defined by passing `{}` to `importNgiProjects`.
     rawNgiProjects = importNgiProjects {};
 
-    rawNixosConfigurations = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
+    rawExamples = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
       mapAttrByPath ["nixos" "examples"] {} rawNgiProjects
     ));
 
@@ -101,7 +101,7 @@
     extendedNixosConfigurations =
       mapAttrs
       (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;})
-      rawNixosConfigurations;
+      rawExamples;
 
     # Then, define the system-specific outputs.
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
