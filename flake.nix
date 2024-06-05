@@ -31,14 +31,14 @@
     buildbot-nix,
     ...
   }: let
-    # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
+    # Take Nixpkgs' lib and pass it to get the definitions in ./lib.nix
     lib = import (nixpkgs + "/lib");
     lib' = import ./lib.nix {inherit lib;};
+    helpers = import ./nix/helpers.nix {inherit nixpkgs dream2nix sops-nix;};
 
     inherit
       (builtins)
       mapAttrs
-      attrValues
       ;
 
     inherit
@@ -55,113 +55,28 @@
 
     inherit
       (lib')
-      flattenAttrsDot
-      flattenAttrsSlash
       mapAttrByPath
       ;
 
-    # Imported from Nixpkgs
-    nixosSystem = args:
-      import (nixpkgs + "/nixos/lib/eval-config.nix") ({
-          inherit lib;
-          system = null;
-        }
-        // args);
+    inherit
+      (helpers)
+      importNgiProjects
+      rawOutputs
+      extendedNixosConfigurations
+      ;
 
-    # NGI packages are imported from ./pkgs/by-name/default.nix.
-    importNgiPackages = pkgs:
-      import ./pkgs/by-name {
-        inherit (pkgs) lib;
-        inherit dream2nix pkgs;
-      };
-
-    # NGI projects are imported from ./projects/default.nix.
-    # Each project includes packages, and optionally, modules, configurations and tests.
-    importNgiProjects = {
-      pkgs ? {},
-      sources ? {
-        examples = rawExamples;
-        modules = extendedNixosModules;
-      },
-    }:
-      import ./projects {inherit lib pkgs sources;};
-
-    # The above definition reimports `rawExamples` and `extendedNixosModules` into `sources`.
-    # As configurations and modules are system-agnostic, they are defined by passing `{}` to `importNgiProjects`.
-    rawNgiProjects = importNgiProjects {};
-
-    rawExamples = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
-      mapAttrByPath ["nixos" "examples"] {} rawNgiProjects
-    ));
-
-    rawNixosModules = flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (
-      mapAttrByPath ["nixos" "modules"] {} rawNgiProjects
-    )));
-
-    extendedNixosModules =
-      self.nixosModules
-      // {
-        sops-nix = sops-nix.nixosModules.default;
-      };
-
-    extendedNixosConfigurations =
-      mapAttrs
-      (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;})
-      rawExamples;
-
-    # Then, define the system-specific outputs.
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
+      ngiLegacyPackages = import ./. {inherit system nixpkgs dream2nix sops-nix self;};
+
       pkgs = import nixpkgs {inherit system;};
 
-      ngiPackages = importNgiPackages pkgs;
-
-      ngiProjects = importNgiProjects {
-        pkgs = pkgs // ngiPackages;
-      };
-
       toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
-
-      optionsDoc = pkgs.nixosOptionsDoc {
-        options =
-          (import (nixpkgs + "/nixos/lib/eval-config.nix") {
-            inherit system;
-            modules =
-              [
-                {
-                  networking = {
-                    domain = "invalid";
-                    hostName = "options";
-                  };
-
-                  system.stateVersion = "23.05";
-                }
-              ]
-              ++ attrValues self.nixosModules;
-          })
-          .options;
-      };
     in rec {
       legacyPackages = {
-        nixosTests = mapAttrByPath ["nixos" "tests"] {} ngiProjects;
+        inherit (ngiLegacyPackages) nixosTests;
       };
 
-      packages =
-        ngiPackages
-        // {
-          overview = import ./overview {
-            inherit lib pkgs self;
-            projects = ngiProjects;
-            options = optionsDoc.optionsNix;
-          };
-
-          options =
-            pkgs.runCommand "options.json" {
-              build = optionsDoc.optionsJSON;
-            } ''
-              mkdir $out
-              cp $build/share/doc/nixos/options.json $out/
-            '';
-        };
+      packages = filterAttrs (n: _: n != "nixosTests") ngiLegacyPackages;
 
       checks =
         mapAttrs' toplevel extendedNixosConfigurations
@@ -210,9 +125,7 @@
       # As a workaround, consider packages with empty meta as non-broken.
       nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
 
-      nonBrokenNgiProjects = importNgiProjects {
-        pkgs = pkgs // nonBrokenNgiPackages;
-      };
+      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
     in {
       # buildbot executes `nix flake check`, therefore this output
       # should only contain derivations that can built within CI.
@@ -279,17 +192,7 @@
           };
         };
 
-      nixosModules =
-        {
-          unbootable = ./modules/unbootable.nix;
-          # The default module adds the default overlay on top of Nixpkgs.
-          # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-          default.nixpkgs.overlays = [self.overlays.default];
-        }
-        // (filterAttrs (_: v: v != null) rawNixosModules);
-
-      # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
-      overlays.default = final: prev: importNgiPackages prev;
+      inherit (rawOutputs) nixosModules overlays;
     };
   in
     foldr recursiveUpdate {} [
