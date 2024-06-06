@@ -3,7 +3,7 @@
   lib,
   sources,
 } @ args: {
-  packages = {inherit (pkgs) mcaptcha mcaptcha-cache;};
+  packages = ["mcaptcha" "mcaptcha-cache"];
   nixos = {
     modules.services.mcaptcha = ./service.nix;
     tests = {

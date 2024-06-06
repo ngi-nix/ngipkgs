@@ -3,9 +3,7 @@
   lib,
   sources,
 } @ args: {
-  packages = {
-    inherit (pkgs) liberaforms;
-  };
+  packages = ["liberaforms"];
   nixos = {
     modules.services.liberaforms = ./service.nix;
     tests.liberaforms = import ./test.nix args;

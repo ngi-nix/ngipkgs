@@ -3,9 +3,7 @@
   lib,
   sources,
 } @ args: {
-  packages = {
-    inherit (pkgs) pretalxFull;
-  };
+  packages = ["pretalxFull"];
 
   nixos = {
     modules.services.ngi-pretalx = ./service.nix;

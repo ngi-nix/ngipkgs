@@ -149,8 +149,9 @@
         ngiPackages
         // {
           overview = import ./overview {
-            inherit lib pkgs self;
-            projects = ngiProjects;
+            inherit lib self;
+            pkgs = pkgs // ngiPackages;
+            projects = rawNgiProjects;
             options = optionsDoc.optionsNix;
           };
 

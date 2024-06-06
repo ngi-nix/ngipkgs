@@ -57,7 +57,7 @@
       (option: any ((flip hasPrefix) (dottedLoc option)) spec)
       (attrValues options);
     examples = project: attrValues (project.nixos.examples or {});
-    packages = project: attrValues (project.packages or {});
+    packages = project: map (package: pkgs.${package}) (project.packages or []);
   };
 
   render = {

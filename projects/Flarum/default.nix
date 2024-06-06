@@ -1,4 +1,4 @@
 {pkgs, ...}: {
-  packages = {inherit (pkgs) flarum;};
+  packages = ["flarum"];
   nixos.modules.services.flarum = null;
 }

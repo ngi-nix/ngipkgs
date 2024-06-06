@@ -3,7 +3,7 @@
   lib,
   sources,
 } @ args: {
-  packages = {inherit (pkgs) kbin kbin-frontend kbin-backend;};
+  packages = ["kbin" "kbin-frontend" "kbin-backend"];
   nixos = {
     modules.services.kbin = ./service.nix;
     examples = {
