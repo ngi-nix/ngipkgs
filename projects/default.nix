@@ -1,8 +1,13 @@
 {
-  lib,
+  inputs ? import ./nix/flake-compat/inputs.nix,
+  nixpkgs ? inputs.nixpkgs,
+  dream2nix ? inputs.dream2nix,
+  sops-nix ? inputs.sops-nix,
   pkgs ? {},
-  sources,
 }: let
+  lib = import (nixpkgs + "/lib");
+  helpers = import ../nix/helpers.nix {inherit nixpkgs dream2nix sops-nix;};
+
   inherit
     (builtins)
     elem
@@ -15,6 +20,12 @@
     mapAttrs
     recursiveUpdate
     filterAttrs
+    ;
+
+  inherit
+    (helpers)
+    rawExamples
+    extendedNixosModules
     ;
 
   baseDirectory = ./.;
@@ -65,7 +76,11 @@ in
   mapAttrs (
     name: type: let
       project = import (baseDirectory + "/${name}") {
-        inherit lib pkgs sources;
+        inherit lib pkgs;
+        sources = {
+          examples = rawExamples;
+          modules = extendedNixosModules;
+        };
       };
     in
       if isMarkedBroken project
