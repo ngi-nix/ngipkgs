@@ -1,7 +1,7 @@
 {
   lib,
   pkgs ? {},
-  sources ? null,
+  sources,
 }: let
   inherit
     (builtins)

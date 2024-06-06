@@ -83,6 +83,7 @@
     # Note that modules and examples are system-agnostic, so import them first.
     rawNgiProjects = import ./projects {
       inherit lib;
+      sources = {};
     };
 
     rawExamples = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
