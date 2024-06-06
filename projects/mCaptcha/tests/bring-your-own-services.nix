@@ -1,4 +1,13 @@
-{sources, ...}: let
+{
+  sources,
+  lib,
+  ...
+}: let
+  inherit
+    (lib)
+    mkAfter
+    ;
+
   port = 7000;
   urlRoot = "http://localhost:${builtins.toString port}";
   redisPassword = "(*&(*):ps@r}";
@@ -22,7 +31,7 @@ in {
     services.mcaptcha.captcha.saltFile = pkgs.writeText "salt" "asdl;kjfhjawehfpa;osdkjasdvjaksndfpoanjdfainsdfaijdsfajlkjdsaf;ajsdfweroire";
 
     services.mcaptcha.settings.database.name = "my_mcaptcha";
-    services.mcaptcha.settings.database.username = "role_mcaptcha";
+    services.mcaptcha.settings.database.username = "my_mcaptcha";
     services.mcaptcha.settings.database.hostname = "my_own_services";
     services.mcaptcha.settings.database.port = 5432;
     services.mcaptcha.database.passwordFile = pkgs.writeText "db-password" "mcaptcha-db-secret";
@@ -38,10 +47,16 @@ in {
     networking.firewall.enable = false;
     services.postgresql.enable = true;
     services.postgresql.enableTCPIP = true;
-    services.postgresql.initialScript = pkgs.writeText "postgresql-init-script" ''
-      CREATE ROLE role_mcaptcha WITH LOGIN PASSWORD 'mcaptcha-db-secret';
-      CREATE DATABASE my_mcaptcha;
-      GRANT ALL PRIVILEGES ON DATABASE my_mcaptcha TO role_mcaptcha;
+    services.postgresql.ensureDatabases = ["my_mcaptcha"];
+    services.postgresql.ensureUsers = [
+      {
+        name = "my_mcaptcha";
+        ensureDBOwnership = true;
+      }
+    ];
+
+    systemd.services.postgresql.postStart = mkAfter ''
+      $PSQL my_mcaptcha -c "ALTER USER my_mcaptcha WITH PASSWORD 'mcaptcha-db-secret'"
     '';
     services.postgresql.authentication = ''
       #type  database  DBuser         auth-method
