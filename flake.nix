@@ -32,7 +32,8 @@
     ...
   }: let
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
-    lib = nixpkgs.lib.recursiveUpdate nixpkgs.lib (import ./lib.nix {inherit (nixpkgs) lib;});
+    lib = import (nixpkgs + "/lib");
+    lib' = import ./lib.nix {inherit lib;};
 
     inherit
       (builtins)
@@ -47,27 +48,32 @@
       foldr
       recursiveUpdate
       nameValuePair
-      nixosSystem
       filterAttrs
       attrByPath
-      mapAttrByPath
-      flattenAttrsDot
-      flattenAttrsSlash
       optionalAttrs
       ;
 
-    # NGI packages are imported from ./pkgs/by-name/default.nix.
-    importNgiPackages = pkgs: let
-      callPackage = pkgs.newScope (
-        ngiPackages // {inherit callPackage;}
-      );
+    inherit
+      (lib')
+      flattenAttrsDot
+      flattenAttrsSlash
+      mapAttrByPath
+      ;
 
-      ngiPackages = import ./pkgs/by-name {
+    # Imported from Nixpkgs
+    nixosSystem = args:
+      import (nixpkgs + "/nixos/lib/eval-config.nix") ({
+          inherit lib;
+          system = null;
+        }
+        // args);
+
+    # NGI packages are imported from ./pkgs/by-name/default.nix.
+    importNgiPackages = pkgs:
+      import ./pkgs/by-name {
         inherit (pkgs) lib;
-        inherit callPackage dream2nix pkgs;
+        inherit dream2nix pkgs;
       };
-    in
-      ngiPackages;
 
     # NGI projects are imported from ./projects/default.nix.
     # Each project includes packages, and optionally, modules, configurations and tests.
@@ -208,9 +214,9 @@
         pkgs = pkgs // nonBrokenNgiPackages;
       };
     in {
-      # Github Actions executes `nix flake check` therefore this output
+      # buildbot executes `nix flake check`, therefore this output
       # should only contain derivations that can built within CI.
-      # See `.github/workflows/ci.yaml`.
+      # see ./infra/makemake/buildbot.nix
       checks.${system} =
         # For `nix flake check` to *build* all packages, because by default
         # `nix flake check` only evaluates packages and does not build them.

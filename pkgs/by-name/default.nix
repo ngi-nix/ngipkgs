@@ -1,6 +1,5 @@
 {
   lib,
-  callPackage,
   dream2nix,
   pkgs,
 }: let
@@ -28,7 +27,7 @@
   callModule = module: let
     evaluated = lib.evalModules {
       specialArgs = {
-        inherit dream2nix;
+        dream2nix = import dream2nix;
         packageSets.nixpkgs = pkgs;
       };
       modules = [
@@ -43,6 +42,10 @@
     };
   in
     evaluated.config.public;
+
+  callPackage = pkgs.newScope (
+    self // {inherit callPackage;}
+  );
 
   self =
     mapAttrs (
