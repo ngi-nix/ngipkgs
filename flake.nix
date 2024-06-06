@@ -214,9 +214,9 @@
         pkgs = pkgs // nonBrokenNgiPackages;
       };
     in {
-      # Github Actions executes `nix flake check` therefore this output
+      # buildbot executes `nix flake check`, therefore this output
       # should only contain derivations that can built within CI.
-      # See `.github/workflows/ci.yaml`.
+      # see ./infra/makemake/buildbot.nix
       checks.${system} =
         # For `nix flake check` to *build* all packages, because by default
         # `nix flake check` only evaluates packages and does not build them.
