@@ -56,7 +56,7 @@
       filter
       (option: any ((flip hasPrefix) (dottedLoc option)) spec)
       (attrValues options);
-    configurations = project: attrValues (project.nixos.configurations or {});
+    examples = project: attrValues (project.nixos.examples or {});
     packages = project: attrValues (project.packages or {});
   };
 
@@ -113,20 +113,20 @@
         '';
     };
 
-    configurations = rec {
-      one = configuration: ''
+    examples = rec {
+      one = example: ''
         <li>
-          <p>${configuration.description}</p>
+          <p>${example.description}</p>
           ```nix
-        ${readFile configuration.path}
+        ${readFile example.path}
           ```
         </li>
       '';
-      many = configurations:
-        optionalString (!empty configurations)
+      many = examples:
+        optionalString (!empty examples)
         ''
-          <section><details><summary>${heading 3 "Configurations"}</summary><ul>
-          ${concatLines (map one configurations)}
+          <section><details><summary>${heading 3 "Examples"}</summary><ul>
+          ${concatLines (map one examples)}
           </ul></details></section>
         '';
     };
@@ -138,7 +138,7 @@
 
         ${render.packages.many (pick.packages project)}
         ${render.options.many (pick.options project)}
-        ${render.configurations.many (pick.configurations project)}
+        ${render.examples.many (pick.examples project)}
         </details></section>
       '';
       many = projects: concatLines (mapAttrsToList one projects);

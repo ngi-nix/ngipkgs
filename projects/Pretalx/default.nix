@@ -10,21 +10,21 @@
   nixos = {
     modules.services.ngi-pretalx = ./service.nix;
     tests.pretalx = import ./test args;
-    configurations = {
+    examples = {
       base = {
-        path = ./config/base.nix;
+        path = ./examples/base.nix;
         description = ''
           Basic configuration for Pretalx, incl. secret management with SOPS, excl. database settings.
         '';
       };
       postgresql = {
-        path = ./config/postgresql.nix;
+        path = ./examples/postgresql.nix;
         description = ''
           Supplementary to `base.nix`, adds database configuration for PostgreSQL.
         '';
       };
       mysql = {
-        path = ./config/mysql.nix;
+        path = ./examples/mysql.nix;
         description = ''
           Supplementary to `base.nix`, adds database configuration for MySQL.
         '';
