@@ -75,20 +75,15 @@
         inherit dream2nix pkgs;
       };
 
-    # NGI projects are imported from ./projects/default.nix.
-    # Each project includes packages, and optionally, modules, configurations and tests.
-    importNgiProjects = {
-      pkgs ? {},
-      sources ? {
-        examples = rawExamples;
-        modules = extendedNixosModules;
-      },
-    }:
-      import ./projects {inherit lib pkgs sources;};
+    overlay = final: prev: importNgiPackages prev;
 
-    # The above definition reimports `rawExamples` and `extendedNixosModules` into `sources`.
-    # As configurations and modules are system-agnostic, they are defined by passing `{}` to `importNgiProjects`.
-    rawNgiProjects = importNgiProjects {};
+    # NGI projects are imported from ./projects/default.nix.
+    # Each project includes packages, and optionally, modules, examples and tests.
+
+    # Note that modules and examples are system-agnostic, so import them first.
+    rawNgiProjects = import ./projects {
+      inherit lib;
+    };
 
     rawExamples = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
       mapAttrByPath ["nixos" "examples"] {} rawNgiProjects
@@ -98,8 +93,18 @@
       mapAttrByPath ["nixos" "modules"] {} rawNgiProjects
     )));
 
+    nixosModules =
+      {
+        unbootable = ./modules/unbootable.nix;
+        # The default module adds the default overlay on top of Nixpkgs.
+        # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
+        default.nixpkgs.overlays = [overlay];
+      }
+      // (filterAttrs (_: v: v != null) rawNixosModules);
+
+    # Next, extend the modules with the sops-nix module, used in the tests.
     extendedNixosModules =
-      self.nixosModules
+      nixosModules
       // {
         sops-nix = sops-nix.nixosModules.default;
       };
@@ -109,15 +114,66 @@
       (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;})
       rawExamples;
 
-    # Then, define the system-specific outputs.
+    # Then, import packages and tests, which are system-dependent.
+    importNgiProjects = pkgs:
+      import ./projects {
+        inherit lib pkgs;
+        sources = {
+          examples = rawExamples;
+          modules = extendedNixosModules;
+        };
+      };
+
+    # Finally, define the system-agnostic outputs.
+    systemAgnosticOutputs = {
+      nixosConfigurations =
+        extendedNixosConfigurations
+        // {
+          makemake = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+
+            modules = [
+              # Use NixOS module for pinned Hydra, but note that this doesn't
+              # set the package to be from that repo.  It juse uses the stock
+              # `pkgs.hydra_unstable` by default.
+              hydra.nixosModules.hydra
+
+              # Setup both a master and a worker buildbot instance in this host
+              buildbot-nix.nixosModules.buildbot-master
+              buildbot-nix.nixosModules.buildbot-worker
+
+              {
+                # Here, set the Hydra package to use the (complete
+                # self-contained, pinning nix, nixpkgs, etc.) default Hydra
+                # build. Other than this one package, those pins versions are
+                # not used.
+                services.hydra.package = hydra.packages.x86_64-linux.default;
+              }
+
+              sops-nix.nixosModules.default
+
+              ./infra/makemake/configuration.nix
+
+              {
+                #nix.registry.nixpkgs.flake = nixpkgs;
+                nix.nixPath = ["nixpkgs=${nixpkgs}"];
+              }
+            ];
+          };
+        };
+
+      inherit nixosModules;
+
+      # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
+      overlays.default = overlay;
+    };
+
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
 
       ngiPackages = importNgiPackages pkgs;
 
-      ngiProjects = importNgiProjects {
-        pkgs = pkgs // ngiPackages;
-      };
+      ngiProjects = importNgiProjects (pkgs // ngiPackages);
 
       toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
 
@@ -136,7 +192,7 @@
                   system.stateVersion = "23.05";
                 }
               ]
-              ++ attrValues self.nixosModules;
+              ++ attrValues nixosModules;
           })
           .options;
       };
@@ -200,7 +256,7 @@
 
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [self.overlays.default];
+        overlays = [overlay];
       };
 
       # Include all packages (with overview and options)
@@ -210,9 +266,7 @@
       # As a workaround, consider packages with empty meta as non-broken.
       nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
 
-      nonBrokenNgiProjects = importNgiProjects {
-        pkgs = pkgs // nonBrokenNgiPackages;
-      };
+      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
     in {
       # buildbot executes `nix flake check`, therefore this output
       # should only contain derivations that can built within CI.
@@ -240,56 +294,6 @@
           (name: config: config.config.system.build.toplevel)
           extendedNixosConfigurations;
       };
-    };
-
-    systemAgnosticOutputs = {
-      nixosConfigurations =
-        extendedNixosConfigurations
-        // {
-          makemake = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-
-            modules = [
-              # Use NixOS module for pinned Hydra, but note that this doesn't
-              # set the package to be from that repo.  It juse uses the stock
-              # `pkgs.hydra_unstable` by default.
-              hydra.nixosModules.hydra
-
-              # Setup both a master and a worker buildbot instance in this host
-              buildbot-nix.nixosModules.buildbot-master
-              buildbot-nix.nixosModules.buildbot-worker
-
-              {
-                # Here, set the Hydra package to use the (complete
-                # self-contained, pinning nix, nixpkgs, etc.) default Hydra
-                # build. Other than this one package, those pins versions are
-                # not used.
-                services.hydra.package = hydra.packages.x86_64-linux.default;
-              }
-
-              sops-nix.nixosModules.default
-
-              ./infra/makemake/configuration.nix
-
-              {
-                #nix.registry.nixpkgs.flake = nixpkgs;
-                nix.nixPath = ["nixpkgs=${nixpkgs}"];
-              }
-            ];
-          };
-        };
-
-      nixosModules =
-        {
-          unbootable = ./modules/unbootable.nix;
-          # The default module adds the default overlay on top of Nixpkgs.
-          # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-          default.nixpkgs.overlays = [self.overlays.default];
-        }
-        // (filterAttrs (_: v: v != null) rawNixosModules);
-
-      # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
-      overlays.default = final: prev: importNgiPackages prev;
     };
   in
     foldr recursiveUpdate {} [
