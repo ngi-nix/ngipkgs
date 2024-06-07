@@ -233,29 +233,39 @@
       # See ./infra/makemake/buildbot.nix for how it is set up.
       # NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
       checks = let
-        nixosTests = projectName: tests: (concatMapAttrs (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = test;}) tests);
+        checksForNixosTests = projectName: tests:
+          concatMapAttrs
+          (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = test;})
+          tests;
 
-        nixosExamples = projectName: examples: (concatMapAttrs (exampleName: example: {"projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example);}) examples);
+        checksForNixosExamples = projectName: examples:
+          concatMapAttrs
+          (exampleName: example: {"projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);})
+          examples;
 
         checksForProject = projectName: project:
-          (nixosTests projectName (project.nixos.tests or {}))
-          // (nixosExamples projectName (project.nixos.examples or {}));
+          (checksForNixosTests projectName (project.nixos.tests or {}))
+          // (checksForNixosExamples projectName (project.nixos.examples or {}));
 
         checksForAllProjects =
           concatMapAttrs
           checksForProject
           nonBrokenNgiProjects;
 
+        checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
+
+        checksForPackagePassthruTests = packageName: tests: (concatMapAttrs (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;}) tests);
+
         checksForPackage = packageName: package:
-          {"packages/${packageName}" = package;}
-          // (concatMapAttrs (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;}) (package.passthru.tests or {}));
+          (checksForPackageDerivation packageName package)
+          // (checksForPackagePassthruTests packageName (package.passthru.tests or {}));
 
         checksForAllPackages =
           concatMapAttrs
           checksForPackage
           nonBrokenNgiPackages;
       in
-        checksForAllPackages
+        checksForAllProjects
         // checksForAllPackages
         // {
           pre-commit = pre-commit-hooks.lib.${system}.run {
