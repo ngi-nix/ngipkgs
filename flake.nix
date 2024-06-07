@@ -50,7 +50,6 @@
       nameValuePair
       filterAttrs
       attrByPath
-      optionalAttrs
       ;
 
     inherit
@@ -110,10 +109,11 @@
         sops-nix = sops-nix.nixosModules.default;
       };
 
-    extendedNixosConfigurations =
-      mapAttrs
-      (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;})
-      rawExamples;
+    mkNixosSystem = config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;};
+
+    toplevel = machine: machine.config.system.build.toplevel;
+
+    extendedNixosConfigurations = mapAttrs (_: mkNixosSystem) rawExamples;
 
     # Then, import packages and tests, which are system-dependent.
     importNgiProjects = pkgs:
@@ -170,13 +170,20 @@
     };
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {inherit system;};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [overlay];
+      };
 
       ngiPackages = importNgiPackages pkgs;
 
+      # Dream2nix is failing to pass through the meta attribute set.
+      # As a workaround, consider packages with empty meta as non-broken.
+      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
+
       ngiProjects = importNgiProjects (pkgs // ngiPackages);
 
-      toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
+      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
@@ -221,8 +228,35 @@
             '';
         };
 
-      checks =
-        mapAttrs' toplevel extendedNixosConfigurations
+      # buildbot executes `nix flake check`, therefore this output
+      # should only contain derivations that can built within CI.
+      # See ./infra/makemake/buildbot.nix for how it is set up.
+      # NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
+      checks = let
+        nixosTests = projectName: tests: (concatMapAttrs (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = test;}) tests);
+
+        nixosExamples = projectName: examples: (concatMapAttrs (exampleName: example: {"projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example);}) examples);
+
+        checksForProject = projectName: project:
+          (nixosTests projectName (project.nixos.tests or {}))
+          // (nixosExamples projectName (project.nixos.examples or {}));
+
+        checksForAllProjects =
+          concatMapAttrs
+          checksForProject
+          nonBrokenNgiProjects;
+
+        checksForPackage = packageName: package:
+          {"packages/${packageName}" = package;}
+          // (concatMapAttrs (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;}) (package.passthru.tests or {}));
+
+        checksForAllPackages =
+          concatMapAttrs
+          checksForPackage
+          nonBrokenNgiPackages;
+      in
+        checksForAllPackages
+        // checksForAllPackages
         // {
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
@@ -231,7 +265,7 @@
               alejandra.enable = true;
             };
           };
-          makemake = self.nixosConfigurations.makemake.config.system.build.toplevel;
+          "infra/makemake" = toplevel self.nixosConfigurations.makemake;
         };
 
       devShells.default = pkgs.mkShell {
@@ -252,57 +286,9 @@
         '';
       };
     });
-
-    x86_64-linuxOutputs = let
-      system = flake-utils.lib.system.x86_64-linux;
-
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [overlay];
-      };
-
-      # Include all packages (with overview and options)
-      ngiPackages = self.packages.${system};
-
-      # Dream2nix is failing to pass through the meta attribute set.
-      # As a workaround, consider packages with empty meta as non-broken.
-      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
-
-      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
-    in {
-      # buildbot executes `nix flake check`, therefore this output
-      # should only contain derivations that can built within CI.
-      # See ./infra/makemake/buildbot.nix for how it's set up.
-      # NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
-      checks.${system} = let
-        vmTests = name: project:
-          optionalAttrs (project ? nixos.tests)
-          (concatMapAttrs (testname: test: {"projects/${name}/nixosTest/${testname}" = test;}) project.nixos.tests);
-
-        projects = concatMapAttrs vmTests nonBrokenNgiProjects;
-
-        passthruTests = name: package:
-          optionalAttrs (package ? passthru.tests)
-          (concatMapAttrs (testname: test: {"pkgs/${name}/passthru/${testname}" = test;}) package.passthru.tests);
-
-        packages =
-          concatMapAttrs
-          (name: package:
-            {"pkgs/${name}" = package;} // passthruTests name package)
-          nonBrokenNgiPackages;
-
-        configurations =
-          mapAttrs
-          (name: config: config.config.system.build.toplevel)
-          extendedNixosConfigurations;
-      in
-        # Build all packages, run all passthru tests, run all NixOS VM tests, build all example configurations
-        packages // projects // configurations;
-    };
   in
     foldr recursiveUpdate {} [
       eachDefaultSystemOutputs
-      x86_64-linuxOutputs
       systemAgnosticOutputs
     ];
 }
