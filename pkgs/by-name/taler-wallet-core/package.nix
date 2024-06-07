@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  esbuild,
   buildGoModule,
   fetchFromGitHub,
   fetchgit,
@@ -41,12 +40,12 @@
   };
   taler-wallet-core-pnpm-deps = stdenv.mkDerivation rec {
     pname = "taler-wallet-core-pnpm-deps";
-    version = "0.10.7";
+    version = "0.11.2";
 
     src = fetchgit {
       url = "https://git.taler.net/wallet-core.git";
       rev = "v${version}";
-      hash = "sha256-eKUuzw25Z7EYkk6YaFKAnRYuB04QC3swjn8tGm8uQNk=";
+      hash = "sha256-GtR87XqmunYubh9EiY3bJIqXiXrT+re3KqWypYK3NCo=";
     };
 
     nativeBuildInputs = [
@@ -77,11 +76,12 @@
 
     dontFixup = true;
 
+    outputHashAlgo = "sha256";
     outputHashMode = "recursive";
     outputHash =
       {
-        x86_64-linux = "sha256-pJrezaEDx7e8qZMICSQmtCwlA9RNObbrFYsnPd3Ag8Y=";
-        aarch64-linux = "sha256-48YXhLFbCsL0UqfrOI6a6MqJl0UpqQbMtbKsw6rjhcU=";
+        aarch64-linux = "sha256-8n/vM4RVyfbYf34i5CtlI/Hj9LGZtCpgYVnOvBZI7x4=";
+        x86_64-linux = "sha256-gsWbzFNy/bH+MLisiRms+sjF0fIdbChFbWjbhl8eA+Q=";
       }
       .${stdenv.system}
       or (throw "Unsupported system: ${stdenv.system}");
