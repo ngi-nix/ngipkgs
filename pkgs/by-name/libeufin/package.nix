@@ -6,16 +6,14 @@
   python3,
   jdk17_headless,
   gradle-packages,
-  perl,
   writeText,
-  git,
 }: let
   pname = "libeufin";
-  version = "0.9.3-dev.33";
+  version = "0.11.2";
   src = fetchgit {
     url = "https://git.taler.net/libeufin.git/";
     rev = "v${version}";
-    hash = "sha256-BGxlmK4u914byOt/4FGnw5wGZtxhQmfhQHSJY+C8YqY=";
+    hash = "sha256-7w5G8F/XWsWJwkpQQ8GqDA9u6HLV+X9N2RJHn+yXihs=";
     fetchSubmodules = true;
     leaveDotGit = true; # Required for correct submodule fetching
     # Delete .git folder for reproducibility (otherwise, the hash changes unexpectedly after fetching submodules)
@@ -23,7 +21,7 @@
     postFetch = ''
       (
         cd $out
-        git rev-parse --short HEAD > ./util/src/main/resources/HEAD.txt
+        git rev-parse --short HEAD > ./common/src/main/resources/HEAD.txt
         rm -rf .git
       )
     '';
