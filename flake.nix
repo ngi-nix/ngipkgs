@@ -277,7 +277,7 @@
       checks.${system} = let
         vmTests = name: project:
           optionalAttrs (project ? nixos.tests)
-          (concatMapAttrs (testname: test: {"projects/${name}/passthru/${testname}" = test;}) project.nixos.tests);
+          (concatMapAttrs (testname: test: {"projects/${name}/nixosTest/${testname}" = test;}) project.nixos.tests);
 
         projects = concatMapAttrs vmTests nonBrokenNgiProjects;
 
