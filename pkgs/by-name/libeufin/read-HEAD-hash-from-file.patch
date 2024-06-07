@@ -11,7 +11,7 @@ index 632f7c52..9cd52a1e 100644
      exec {
 -        commandLine 'git', 'rev-parse', '--short', 'HEAD'
 +        // Generated during src.postFetch
-+        commandLine 'cat', "${projectDir}/util/src/main/resources/HEAD.txt"
++        commandLine 'cat', "${projectDir}/common/src/main/resources/HEAD.txt"
          standardOutput = stdout
      }
      def gitHash = stdout.toString().trim()
