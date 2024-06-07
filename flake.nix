@@ -50,7 +50,6 @@
       nameValuePair
       filterAttrs
       attrByPath
-      optionalAttrs
       ;
 
     inherit
@@ -110,10 +109,11 @@
         sops-nix = sops-nix.nixosModules.default;
       };
 
-    extendedNixosConfigurations =
-      mapAttrs
-      (_: config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;})
-      rawExamples;
+    mkNixosSystem = config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;};
+
+    toplevel = machine: machine.config.system.build.toplevel;
+
+    extendedNixosConfigurations = mapAttrs (_: mkNixosSystem) rawExamples;
 
     # Then, import packages and tests, which are system-dependent.
     importNgiProjects = pkgs:
@@ -170,13 +170,20 @@
     };
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {inherit system;};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [overlay];
+      };
 
       ngiPackages = importNgiPackages pkgs;
 
+      # Dream2nix is failing to pass through the meta attribute set.
+      # As a workaround, consider packages with empty meta as non-broken.
+      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
+
       ngiProjects = importNgiProjects (pkgs // ngiPackages);
 
-      toplevel = name: config: nameValuePair "nixosConfigs/${name}" config.config.system.build.toplevel;
+      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
@@ -212,7 +219,8 @@
           };
 
           options =
-            pkgs.runCommand "options.json" {
+            pkgs.runCommand "options.json"
+            {
               build = optionsDoc.optionsJSON;
             } ''
               mkdir $out
@@ -220,8 +228,45 @@
             '';
         };
 
-      checks =
-        mapAttrs' toplevel extendedNixosConfigurations
+      # buildbot executes `nix flake check`, therefore this output
+      # should only contain derivations that can built within CI.
+      # See ./infra/makemake/buildbot.nix for how it is set up.
+      # NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
+      checks = let
+        checksForNixosTests = projectName: tests:
+          concatMapAttrs
+          (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = test;})
+          tests;
+
+        checksForNixosExamples = projectName: examples:
+          concatMapAttrs
+          (exampleName: example: {"projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);})
+          examples;
+
+        checksForProject = projectName: project:
+          (checksForNixosTests projectName (project.nixos.tests or {}))
+          // (checksForNixosExamples projectName (project.nixos.examples or {}));
+
+        checksForAllProjects =
+          concatMapAttrs
+          checksForProject
+          nonBrokenNgiProjects;
+
+        checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
+
+        checksForPackagePassthruTests = packageName: tests: (concatMapAttrs (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;}) tests);
+
+        checksForPackage = packageName: package:
+          (checksForPackageDerivation packageName package)
+          // (checksForPackagePassthruTests packageName (package.passthru.tests or {}));
+
+        checksForAllPackages =
+          concatMapAttrs
+          checksForPackage
+          nonBrokenNgiPackages;
+      in
+        checksForAllProjects
+        // checksForAllPackages
         // {
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
@@ -230,7 +275,7 @@
               alejandra.enable = true;
             };
           };
-          makemake = self.nixosConfigurations.makemake.config.system.build.toplevel;
+          "infra/makemake" = toplevel self.nixosConfigurations.makemake;
         };
 
       devShells.default = pkgs.mkShell {
@@ -251,55 +296,9 @@
         '';
       };
     });
-
-    x86_64-linuxOutputs = let
-      system = flake-utils.lib.system.x86_64-linux;
-
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [overlay];
-      };
-
-      # Include all packages (with overview and options)
-      ngiPackages = self.packages.${system};
-
-      # Dream2nix is failing to pass through the meta attribute set.
-      # As a workaround, consider packages with empty meta as non-broken.
-      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
-
-      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
-    in {
-      # buildbot executes `nix flake check`, therefore this output
-      # should only contain derivations that can built within CI.
-      # see ./infra/makemake/buildbot.nix
-      checks.${system} =
-        # For `nix flake check` to *build* all packages, because by default
-        # `nix flake check` only evaluates packages and does not build them.
-        mapAttrs' (name: check: nameValuePair "packages/${name}" check) nonBrokenNgiPackages;
-
-      # To generate a Hydra jobset for CI builds of all packages and tests.
-      # See <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main>.
-      hydraJobs = let
-        passthruTests = concatMapAttrs (name: value:
-          optionalAttrs (value ? passthru.tests) {${name} = value.passthru.tests;})
-        nonBrokenNgiPackages;
-      in {
-        packages.${system} = nonBrokenNgiPackages;
-        tests.${system} = {
-          passthru = passthruTests;
-          nixos = mapAttrByPath ["nixos" "tests"] {} nonBrokenNgiProjects;
-        };
-
-        nixosConfigurations.${system} =
-          mapAttrs
-          (name: config: config.config.system.build.toplevel)
-          extendedNixosConfigurations;
-      };
-    };
   in
     foldr recursiveUpdate {} [
       eachDefaultSystemOutputs
-      x86_64-linuxOutputs
       systemAgnosticOutputs
     ];
 }
