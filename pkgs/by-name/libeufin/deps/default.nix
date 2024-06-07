@@ -6,10 +6,7 @@
   src,
   patches,
   gradle,
-  fetchurl,
   stdenv,
-  fetchgit,
-  writeText,
   symlinkJoin,
   perl,
   callPackage,
@@ -32,12 +29,18 @@
         | sh
 
       # Work around naming issues. Remove "-gradleXX" from filename.
-      mv $out/org/jetbrains/kotlin/kotlin-gradle-plugin/1.9.20/kotlin-gradle-plugin-1.9.20{-gradle81,}.jar
-      mv $out/org/jetbrains/kotlin/kotlin-serialization/1.9.20/kotlin-serialization-1.9.20{-gradle81,}.jar
+      mv $out/org/jetbrains/kotlin/kotlin-gradle-plugin/1.9.23/kotlin-gradle-plugin-1.9.23{-gradle82,}.jar
+      mv $out/org/jetbrains/kotlin/kotlin-serialization/1.9.23/kotlin-serialization-1.9.23{-gradle82,}.jar
     '';
-    outputHashMode = "recursive";
-    outputHash = "sha256-0zHxaLGuRxvswtcd5LQpDS56cizygnT92KteEO8UWR4=";
     outputHashAlgo = "sha256";
+    outputHashMode = "recursive";
+    outputHash =
+      {
+        aarch64-linux = "sha256-bP38VcA6HxgkuXUUiQxXiGBgk9A+/jcMlpK1Z1Edo/0=";
+        x86_64-linux = "sha256-ir5fC6EJKoyvyDsBLdKt/7Wb9nhVFWTW4XBUTYIJZy8=";
+      }
+      .${stdenv.hostPlatform.system}
+      or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
   };
   # For dependencies that are still missing, we fetch them individually from Maven
   artifactsMeta = import ./artifacts.nix;
