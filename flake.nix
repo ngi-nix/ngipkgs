@@ -276,6 +276,7 @@
             };
           };
           "infra/makemake" = toplevel self.nixosConfigurations.makemake;
+          "infra/overview" = self.packages.${system}.overview;
         };
 
       devShells.default = pkgs.mkShell {
