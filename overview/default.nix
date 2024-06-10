@@ -28,6 +28,7 @@
     hasPrefix
     mapAttrsToList
     optionalString
+    splitString
     ;
 
   inherit
@@ -116,7 +117,7 @@
     examples = rec {
       one = example: ''
         <li>
-          <p>${example.description}</p>
+          ${concatStringsSep "\n" (map (s: "<p>" + s + "</p>") (splitString "\n" example.description))}
           ```nix
         ${readFile example.path}
           ```
