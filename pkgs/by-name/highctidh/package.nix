@@ -2,39 +2,33 @@
   lib,
   python3,
   fetchgit,
-}:
-with builtins; let
-  python = python3;
+}: let
+  inherit (lib) licenses maintainers;
+
+  version = "1.0.2024060500";
+  src = fetchgit {
+    url = "https://codeberg.org/vula/highctidh";
+    rev = "v${version}";
+    hash = "sha256-TyD5KzUz89RBxsSZeJYOkIzD29DF0BjizpMnsTpFOHI=";
+  };
 in
-  python.pkgs.buildPythonApplication rec {
+  python3.pkgs.buildPythonPackage {
     pname = "highctidh";
-    version = "1.0.2023121800";
-    format = "pyproject";
+    inherit version src;
+    pyproject = true;
 
-    src = fetchgit {
-      url = "https://codeberg.org/vula/highctidh";
-      rev = "v${version}";
-      hash = "sha256-83zTz5iBF/ApJV2hnsT2DfN/T36f73MrXmhLDJa5Z8I=";
-    };
+    sourceRoot = "${src.name}/src";
 
-    postPatch = ''
-      patchShebangs test.sh
-      mkdir -p build/tmp
-    '';
-
-    propagatedBuildInputs = with python.pkgs; [
+    nativeBuildInputs = with python3.pkgs; [
       setuptools
-      build
     ];
 
-    nativeBuildInputs = propagatedBuildInputs;
+    nativeCheckInputs = with python3.pkgs; [pytestCheckHook];
 
-    doCheck = true;
-
-    meta = with lib; {
-      description = "Fork of high-ctidh as as a portable shared library with Python bindings.";
+    meta = {
+      description = "Fork of high-ctidh as as a portable shared library with Python bindings";
       homepage = "https://codeberg.org/vula/highctidh";
       license = licenses.publicDomain;
-      maintainers = with maintainers; [lorenzleutgeb];
+      maintainers = with maintainers; [lorenzleutgeb mightyiam];
     };
   }
