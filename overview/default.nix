@@ -117,10 +117,13 @@
     examples = rec {
       one = example: ''
         <li>
-          ${concatStringsSep "\n" (map (s: "<p>" + s + "</p>") (splitString "\n" example.description))}
-          ```nix
+
+        ${example.description}
+
+        ```nix
         ${readFile example.path}
-          ```
+        ```
+
         </li>
       '';
       many = examples:
