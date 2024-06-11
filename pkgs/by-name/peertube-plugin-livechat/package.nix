@@ -3,6 +3,7 @@
   buildNpmPackage,
   fetchNpmDeps,
   fetchFromGitHub,
+  fetchpatch,
   stdenvNoCC,
   symlinkJoin,
   nodePackages,
@@ -140,7 +141,13 @@ buildNpmPackage rec {
 
   patches = [
     # Fix EPIPE when talking to prosodyctl process
-    ./0001-Don-t-crash-when-prosodyctl-process-disappears.patch
+    # Remove when fix for https://github.com/JohnXLivingston/peertube-plugin-livechat/issues/416 merged & in Nixpkgs / release
+    (fetchpatch {
+      name = "0001-peertube-plugin-livechat-Fix-EPIPE.patch";
+      url = "https://github.com/JohnXLivingston/peertube-plugin-livechat/commit/ad27a76fab884ae1d939aee094ec7414ee174ab7.patch";
+      excludes = [ "CHANGELOG.md" ];
+      hash = "sha256-sfLPeYStXlkX9QVEIlyNovojNyUl8GUPzEY4w1EiBxI=";
+    })
 
     # Change default, we don't want to bother with downloading & including a bundled prosody AppImage
     ./9000-Default-to-using-system-installed-prosody.patch
