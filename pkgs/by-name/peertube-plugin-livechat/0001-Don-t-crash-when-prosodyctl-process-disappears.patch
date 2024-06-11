@@ -1,0 +1,39 @@
+From a3120c922ece445942d5b9a86d50c9af6b3d6b1a Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Tue, 11 Jun 2024 21:53:54 +0200
+Subject: [PATCH] Don't crash when prosodyctl process disappears
+
+---
+ server/lib/prosody/ctl.ts | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/server/lib/prosody/ctl.ts b/server/lib/prosody/ctl.ts
+index bdadc0480..d717027cd 100644
+--- a/server/lib/prosody/ctl.ts
++++ b/server/lib/prosody/ctl.ts
+@@ -165,6 +165,14 @@ async function prosodyCtl (
+         options.peertubeHelpers.logger.debug('ProsodyCtl was called in yesMode, writing to standard input.')
+         spawned.stdin.write('\n')
+       }, 10)
++      spawned.stdin.on('close', () => {
++        options.peertubeHelpers.logger.debug('ProsodyCtl standard input closed, clearing interval.')
++        clearInterval(yesModeInterval)
++      })
++      spawned.stdin.on('error', () => {
++        options.peertubeHelpers.logger.debug('ProsodyCtl standard input errored, clearing interval.')
++        clearInterval(yesModeInterval)
++      })
+     }
+ 
+     spawned.stdout.on('data', (data) => {
+@@ -186,7 +194,6 @@ async function prosodyCtl (
+     // on 'close' and not 'exit', to be sure everything is done
+     // (else it can cause trouble by cleaning AppImage extract too soon)
+     spawned.on('close', (code) => {
+-      if (yesModeInterval) { clearInterval(yesModeInterval) }
+       resolve({
+         code: code,
+         stdout: d,
+-- 
+2.44.1
+

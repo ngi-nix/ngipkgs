@@ -10,7 +10,7 @@ let
   peerUser = "peertube";
   peerGroup = "peertube";
   localUser = "alice";
-  pluginPkgs = with pkgs; [ peertube-plugin-hello-world peertube-theme-dark ];
+  pluginPkgs = with pkgs; [ peertube-plugin-hello-world peertube-theme-dark peertube-plugin-livechat ];
 in
 {
   name = "peertube-plugins";
@@ -113,7 +113,7 @@ in
           server.wait_for_unit("peertube.service")
           server.wait_for_console_text("Web server: http://localhost:9000")
 
-      # Eventuall peertube-plugins-initial kicks in, sets up the initial state
+      # Eventually peertube-plugins-initial kicks in, sets up the initial state
     ''
     + (lib.strings.concatMapStringsSep "\n" (plugin: ''
       with subtest("peertube plugin ${plugin.pname} installs"):
@@ -132,11 +132,16 @@ in
     '') pluginPkgs)
     + ''
 
-      with subtest("peertube plugin ${pkgs.peertube-plugin-hello-world.pname} works"):
           # Now wait until we can get through to the instance
           server.wait_until_succeeds("curl -Ls http://localhost:9000")
 
-          # And the plugin should print something upon access
+      # And the plugins should now be loaded
+      # FIXME: Order of tests must match order of the logs, otherwise earlier waits digest the message
+
+      with subtest("peertube plugin ${pkgs.peertube-plugin-livechat.pname} works"):
+          server.wait_for_console_text("loading peertube admins and moderators")
+
+      with subtest("peertube plugin ${pkgs.peertube-plugin-hello-world.pname} works"):
           server.wait_for_console_text("hello world PeerTube admin")
     '';
 }

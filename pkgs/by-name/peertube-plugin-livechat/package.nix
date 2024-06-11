@@ -7,6 +7,7 @@
   symlinkJoin,
   nodePackages,
   npmHooks,
+  prosody,
 }:
 
 let
@@ -137,12 +138,22 @@ buildNpmPackage rec {
 
   src = merged-src;
 
+  patches = [
+    # Fix EPIPE when talking to prosodyctl process
+    ./0001-Don-t-crash-when-prosodyctl-process-disappears.patch
+
+    # Change default, we don't want to bother with downloading & including a bundled prosody AppImage
+    ./9000-Default-to-using-system-installed-prosody.patch
+  ];
+
   npmDeps = livechat-deps;
 
   postPatch = ''
     mkdir -p dist/client
     cp -r --no-preserve=mode,ownership ${conversejs} dist/client/conversejs
 
+    # clean:light would get rid of the built conversejs
+    # conversejs is already built, build:prosody would try to download an AppImage
     substituteInPlace package.json \
       --replace-fail '"build:avatars": "./build-avatars.js"' '"build:avatars": "node ./build-avatars.js"' \
       --replace-fail '"build": "npm-run-all -s clean:light' '"build": "npm-run-all -s' \
@@ -150,6 +161,21 @@ buildNpmPackage rec {
 
     substituteInPlace conversejs/build-conversejs.sh \
       --replace-fail '/bin/env node' 'node'
+
+    # We don't want to rely on a bundled AppImage version of prosody
+    substituteInPlace server/lib/settings.ts \
+      --replace-fail 'default: false' 'default: true'
+
+    # Wants to run its own prosody instance
+    substituteInPlace server/lib/prosody/config.ts \
+      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' prosody "prosody"}'" \
+      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
+  '';
+
+  # Don't try to delete & rebuild everything when installing the plugin in peertube
+  postInstall = ''
+    substituteInPlace $out/lib/node_modules/${pname}/package.json \
+      --replace-fail '"prepare": "npm run clean && npm run build",' ""
   '';
 
   strictDeps = true;

@@ -175,7 +175,11 @@ in
 
             Type = "oneshot";
             WorkingDirectory = peerCfg.package;
-            ReadWritePaths = [ "/var/lib/peertube" ] ++ peerCfg.dataDirs;
+            ReadWritePaths = [
+              # TODO set these as dataDirs defaults for Nixpkgs upstream's peertube module
+              "/var/lib/peertube"
+              "/var/cache/peertube"
+            ] ++ peerCfg.dataDirs;
 
             # User and group
             User = peerCfg.user;
@@ -202,7 +206,7 @@ in
           (oa.postPatch or "")
           + ''
             substituteInPlace server/core/lib/plugins/yarn.ts \
-              --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
+              --replace-fail 'yarn ''${command}' 'npm --offline --loglevel=verbose ''${command}'
           '';
       });
 
