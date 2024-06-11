@@ -5,7 +5,6 @@
 }: {
   imports = [
     ./buildbot.nix
-    ./hydra.nix
     ./hardware.nix
     ./sops.nix
   ];

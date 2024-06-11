@@ -5,7 +5,6 @@
   inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.hydra.url = "github:NixOS/hydra/nix-next";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
@@ -21,7 +20,6 @@
   inputs.systems.url = "github:nix-systems/default-linux";
 
   outputs = {
-    hydra,
     self,
     nixpkgs,
     flake-utils,
@@ -30,7 +28,7 @@
     dream2nix,
     buildbot-nix,
     ...
-  }: let
+  } @ inputs: let
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
     lib = import (nixpkgs + "/lib");
     lib' = import ./lib.nix {inherit lib;};
@@ -129,39 +127,7 @@
     systemAgnosticOutputs = {
       nixosConfigurations =
         extendedNixosConfigurations
-        // {
-          makemake = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-
-            modules = [
-              # Use NixOS module for pinned Hydra, but note that this doesn't
-              # set the package to be from that repo.  It juse uses the stock
-              # `pkgs.hydra_unstable` by default.
-              hydra.nixosModules.hydra
-
-              # Setup both a master and a worker buildbot instance in this host
-              buildbot-nix.nixosModules.buildbot-master
-              buildbot-nix.nixosModules.buildbot-worker
-
-              {
-                # Here, set the Hydra package to use the (complete
-                # self-contained, pinning nix, nixpkgs, etc.) default Hydra
-                # build. Other than this one package, those pins versions are
-                # not used.
-                services.hydra.package = hydra.packages.x86_64-linux.default;
-              }
-
-              sops-nix.nixosModules.default
-
-              ./infra/makemake/configuration.nix
-
-              {
-                #nix.registry.nixpkgs.flake = nixpkgs;
-                nix.nixPath = ["nixpkgs=${nixpkgs}"];
-              }
-            ];
-          };
-        };
+        // {makemake = import ./infra/makemake {inherit inputs;};};
 
       inherit nixosModules;
 
