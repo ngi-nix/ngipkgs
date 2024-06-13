@@ -6,11 +6,15 @@
   fetchgit,
   git,
   jq,
-  nodePackages,
+  nodejs_18,
   python3,
   zip,
   pnpm,
+  removeReferencesTo,
+  srcOnly,
 }: let
+  nodePackages = nodejs_18.pkgs;
+  nodeSources = srcOnly nodejs_18;
   esbuild_0_19_9 = buildGoModule rec {
     pname = "esbuild";
     version = "0.19.9";
@@ -82,10 +86,19 @@ in
       ./bootstrap
     '';
 
+    # After the pnpm configure, we need to build the binaries of all instances
+    # of better-sqlite3. It has a native part that it wants to build using a
+    # script which is disallowed.
+    # Adapted from mkYarnModules.
     preBuild = ''
-      export HOME=$(mktemp -d)
-
-      patchShebangs node_modules/{*,.*}
+      for f in $(find -path '*/node_modules/better-sqlite3' -type d); do
+        (cd "$f" && (
+        npm run build-release --offline --nodedir="${nodeSources}"
+        find build -type f -exec \
+          ${removeReferencesTo}/bin/remove-references-to \
+          -t "${nodeSources}" {} \;
+        ))
+      done
     '';
 
     env.ESBUILD_BINARY_PATH = lib.getExe esbuild_0_19_9;
