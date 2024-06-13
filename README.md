@@ -32,7 +32,7 @@ For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspi
 
 [Nix RFC 140]: https://github.com/NixOS/rfcs/blob/c8569f6719356009204133cd00d92010889ed56d/rfcs/0140-simple-package-paths.md
 
-Corresponding to [projects funded by NGI trough NLnet](https://nlnet.nl/project/) there are per-project subdirectories within [the `projects` directory](./projects).
+Corresponding to [projects funded by NGI through NLnet](https://nlnet.nl/project/) there are per-project subdirectories within [the `projects` directory](./projects).
 These per-project directories contain a `default.nix` which
 - Picks packages associated with the project from those defined in `pkgs` and Nixpkgs,
 - Exposes NixOS modules, tests, and configurations which are also contained in the per-project directory,
