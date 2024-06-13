@@ -6,15 +6,15 @@
   fetchgit,
   git,
   jq,
-  nodejs_18,
+  nodejs,
   python3,
   zip,
   pnpm,
   removeReferencesTo,
   srcOnly,
 }: let
-  nodePackages = nodejs_18.pkgs;
-  nodeSources = srcOnly nodejs_18;
+  nodePackages = nodejs.pkgs;
+  nodeSources = srcOnly nodejs;
   esbuild_0_19_9 = buildGoModule rec {
     pname = "esbuild";
     version = "0.19.9";
