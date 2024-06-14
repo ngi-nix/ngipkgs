@@ -25,6 +25,7 @@ let
     peertube-plugin-video-annotation
     peertube-theme-background-red
     peertube-theme-dark
+    peertube-theme-framasoft
     peertube-plugin-livechat
   ];
 in
