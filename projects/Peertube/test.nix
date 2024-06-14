@@ -12,6 +12,7 @@ let
   localUser = "alice";
   pluginPkgs = with pkgs; [
     peertube-plugin-akismet
+    peertube-plugin-auth-ldap
     peertube-plugin-hello-world
     peertube-theme-dark
     peertube-plugin-livechat
