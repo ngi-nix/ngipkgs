@@ -19,6 +19,7 @@ let
     peertube-plugin-auto-mute
     peertube-plugin-hello-world
     peertube-plugin-matomo
+    peertube-plugin-privacy-remover
     peertube-theme-dark
     peertube-plugin-livechat
   ];
