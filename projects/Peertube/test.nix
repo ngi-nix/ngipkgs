@@ -23,6 +23,7 @@ let
     peertube-plugin-transcoding-custom-quality
     peertube-plugin-transcoding-profile-debug
     peertube-plugin-video-annotation
+    peertube-theme-background-red
     peertube-theme-dark
     peertube-plugin-livechat
   ];
