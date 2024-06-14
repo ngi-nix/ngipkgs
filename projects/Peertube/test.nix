@@ -15,6 +15,7 @@ let
     peertube-plugin-auth-ldap
     peertube-plugin-auth-openid-connect
     peertube-plugin-auth-saml2
+    peertube-plugin-auto-block-videos
     peertube-plugin-hello-world
     peertube-theme-dark
     peertube-plugin-livechat
