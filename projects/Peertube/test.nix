@@ -20,6 +20,7 @@ let
     peertube-plugin-hello-world
     peertube-plugin-matomo
     peertube-plugin-privacy-remover
+    peertube-plugin-transcoding-custom-quality
     peertube-theme-dark
     peertube-plugin-livechat
   ];
