@@ -18,6 +18,7 @@ let
     peertube-plugin-auto-block-videos
     peertube-plugin-auto-mute
     peertube-plugin-hello-world
+    peertube-plugin-logo-framasoft
     peertube-plugin-matomo
     peertube-plugin-privacy-remover
     peertube-plugin-transcoding-custom-quality
