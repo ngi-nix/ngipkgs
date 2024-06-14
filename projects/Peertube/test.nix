@@ -21,6 +21,7 @@ let
     peertube-plugin-matomo
     peertube-plugin-privacy-remover
     peertube-plugin-transcoding-custom-quality
+    peertube-plugin-transcoding-profile-debug
     peertube-theme-dark
     peertube-plugin-livechat
   ];
