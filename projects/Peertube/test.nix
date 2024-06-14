@@ -18,6 +18,7 @@ let
     peertube-plugin-auto-block-videos
     peertube-plugin-auto-mute
     peertube-plugin-hello-world
+    peertube-plugin-matomo
     peertube-theme-dark
     peertube-plugin-livechat
   ];
