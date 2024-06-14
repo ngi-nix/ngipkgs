@@ -10,7 +10,11 @@ let
   peerUser = "peertube";
   peerGroup = "peertube";
   localUser = "alice";
-  pluginPkgs = with pkgs; [ peertube-plugin-hello-world peertube-theme-dark peertube-plugin-livechat ];
+  pluginPkgs = with pkgs; [
+    peertube-plugin-hello-world
+    peertube-theme-dark
+    peertube-plugin-livechat
+  ];
 in
 {
   name = "peertube-plugins";
@@ -23,6 +27,9 @@ in
           sources.modules.default
           sources.modules."services.peertube.plugins"
         ];
+
+        # Interactive testing can run into OOM with default
+        virtualisation.memorySize = 2047;
 
         users.users."${localUser}" = {
           description = localUser;
@@ -46,7 +53,12 @@ in
           };
         };
 
-        environment.systemPackages = with pkgs; [ firefox ];
+        environment = {
+          # To ease with interactive testing, use a fixed password
+          etc."peertube-envvars".text = ''
+            PT_INITIAL_ROOT_PASSWORD=changeme
+          '';
+        };
 
         services.peertube = {
           enable = true;
@@ -82,6 +94,8 @@ in
             enable = true;
             packages = pluginPkgs;
           };
+
+          serviceEnvironmentFile = "/etc/peertube-envvars";
         };
 
         systemd.tmpfiles.settings =

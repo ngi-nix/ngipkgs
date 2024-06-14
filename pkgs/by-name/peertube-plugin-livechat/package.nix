@@ -4,64 +4,106 @@
   fetchNpmDeps,
   fetchFromGitHub,
   fetchpatch,
+  runCommand,
   stdenvNoCC,
   symlinkJoin,
-  nodePackages,
-  npmHooks,
   prosody,
 }:
 
 let
-  livechat-pname = "peertube-plugin-livechat";
-  livechat-version = "10.0.2";
-  livechat-src = fetchFromGitHub {
-    owner = "JohnXLivingston";
-    repo = "peertube-plugin-livechat";
-    rev = "refs/tags/v${livechat-version}";
-    hash = "sha256-NnhH69yWyB1gZWKtp3+GmK1gwWp3eadQaO+Z/ISQmhI=";
-  };
-  livechat-deps = fetchNpmDeps {
-    name = "${livechat-pname}-${livechat-version}-npm-deps";
-    src = livechat-src;
-    hash = "sha256-atXmU6wAh0zLG6jsUwi1GBXexYbJvGvDiGHHdFdAm5k=";
+  details = {
+    livechat = rec {
+      pname = "peertube-plugin-livechat";
+      version = "10.0.2";
+      src = fetchFromGitHub {
+        owner = "JohnXLivingston";
+        repo = "peertube-plugin-livechat";
+        rev = "refs/tags/v${version}";
+        hash = "sha256-NnhH69yWyB1gZWKtp3+GmK1gwWp3eadQaO+Z/ISQmhI=";
+      };
+      npmDeps = fetchNpmDeps {
+        name = "${pname}-${version}-deps";
+        inherit src;
+        hash = "sha256-atXmU6wAh0zLG6jsUwi1GBXexYbJvGvDiGHHdFdAm5k=";
+      };
+    };
+
+    # Check <livechat-src>/conversejs/build-conversejs.sh for which conversejs to use
+    conversejs = rec {
+      pname = "conversejs-livechat";
+      version = "10.0.0";
+      src = fetchFromGitHub {
+        owner = "JohnXLivingston";
+        repo = "converse.js";
+        rev = "refs/tags/livechat-${version}";
+        hash = "sha256-YyaCmq/BXcxPe512w8mPBk5OP1zKmywyGqgdQIiGz5c=";
+      };
+      npmDeps = fetchNpmDeps {
+        name = "${pname}-${version}-deps";
+        inherit src;
+        hash = "sha256-1ObgAiaIsXK6ACxdNjRWxmRYClDfHZ3BdBb+47EsD4Q=";
+      };
+    };
   };
 
-  conversejs-pname = "conversejs-livechat";
-  conversejs-version = "10.0.0";
-  conversejs-src = fetchFromGitHub {
-    owner = "JohnXLivingston";
-    repo = "converse.js";
-    rev = "refs/tags/livechat-${conversejs-version}";
-    hash = "sha256-YyaCmq/BXcxPe512w8mPBk5OP1zKmywyGqgdQIiGz5c=";
-  };
-  conversejs-deps = fetchNpmDeps {
-    name = "${conversejs-pname}-${conversejs-version}-npm-deps";
-    src = conversejs-src;
-    hash = "sha256-1ObgAiaIsXK6ACxdNjRWxmRYClDfHZ3BdBb+47EsD4Q=";
+  commonMeta = {
+    description = "Provides chat system for Peertube videos";
+    homepage = "https://github.com/JohnXLivingston/peertube-plugin-livechat";
+    license = lib.licenses.agpl3Only;
+    maintainers = with lib.maintainers; [ OPNA2608 ];
+    platforms = lib.platforms.unix;
   };
 
-  merged-src = stdenvNoCC.mkDerivation (finalAttrs: {
-    pname = "peertube-plugin-livechat-src-full";
-    version = livechat-version;
+  # converse.js building needs generated translations from livechat
+  translations = buildNpmPackage {
+    pname = "${details.livechat.pname}-translations";
+    inherit (details.livechat) version src npmDeps;
 
-    dontUnpack = true;
     dontConfigure = true;
-    dontBuild = true;
+
+    npmBuildScript = "build:languages";
 
     installPhase = ''
       runHook preInstall
 
-      cp -r --no-preserve=mode,ownership ${livechat-src} $out
-      mkdir -p $out/vendor
-      cp -r --no-preserve=mode,ownership ${conversejs-src} $out/vendor/${conversejs-pname}-${conversejs-version}
+      mv dist/languages $out
 
       runHook postInstall
     '';
-  });
 
+    meta = {
+      description = "${commonMeta.description} - generated translations";
+      inherit (commonMeta)
+        homepage
+        license
+        maintainers
+        platforms
+        ;
+    };
+  };
+
+  # converse.js src is expected to be downloaded here by various scripts
+  merged-src =
+    runCommand "${details.livechat.pname}-src-full"
+      {
+        meta = {
+          description = "${commonMeta.description} - source with converse.js merged in";
+          platforms = lib.platforms.all;
+          inherit (commonMeta) homepage license maintainers;
+        };
+      }
+      ''
+        cp -r --no-preserve=mode,ownership ${details.livechat.src} $out
+        mkdir -p $out/vendor
+        cp -r --no-preserve=mode,ownership ${details.conversejs.src} $out/vendor/${details.conversejs.pname}-${details.conversejs.version}
+      '';
+
+  # <livechat-src>/conversejs/build-conversejs.sh applies various patches to the converse.js source before attempting to build it
+  # Patch the script to only applies its patches, then return the new source for separate converse.js building
   merged-patched-src = buildNpmPackage {
-    pname = "${conversejs-pname}-src-patched";
-    version = conversejs-version;
+    pname = "${details.conversejs.pname}-src-patched";
+    inherit (details.conversejs) version;
+    inherit (details.livechat) npmDeps;
 
     src = merged-src;
 
@@ -70,8 +112,6 @@ let
         --replace-fail '/bin/env node' 'node' \
         --replace-fail 'if [[ ! -d "$converse_build_dir/node_modules" ]]; then' 'echo "Done patching ConverseJS" && exit 0; if [[ ! -d "$converse_build_dir/node_modules" ]]; then'
     '';
-
-    npmDeps = livechat-deps;
 
     dontConfigure = true;
 
@@ -87,19 +127,29 @@ let
       runHook preInstall
 
       rm -r node_modules
-      rm -r vendor/${conversejs-pname}-${conversejs-version}
-      mv build/conversejs vendor/${conversejs-pname}-${conversejs-version}
+      rm -r vendor/${details.conversejs.pname}-${details.conversejs.version}
+      mv build/conversejs vendor/${details.conversejs.pname}-${details.conversejs.version}
       rmdir build
 
       cp -r . $out
 
       runHook postInstall
     '';
+
+    meta = {
+      description = "${commonMeta.description} - source with merged converse.js patched";
+      inherit (commonMeta)
+        homepage
+        license
+        maintainers
+        platforms
+        ;
+    };
   };
 
+  # livechat needs converse.js
   conversejs = buildNpmPackage rec {
-    pname = conversejs-pname;
-    version = conversejs-version;
+    inherit (details.conversejs) pname version npmDeps;
 
     src = merged-patched-src;
 
@@ -110,14 +160,16 @@ let
         --replace-fail 'if [[ ! -d "$converse_build_dir/node_modules" ]]; then' 'fi; if [[ ! -d "$converse_build_dir/node_modules" ]]; then'
     '';
 
-    npmRoot = "vendor/${conversejs-pname}-${conversejs-version}";
-
-    npmDeps = conversejs-deps;
+    npmRoot = "vendor/${details.conversejs.pname}-${details.conversejs.version}";
 
     makeCacheWritable = true;
 
     buildPhase = ''
       runHook preBuild
+
+      # Translations are needed for webpack building, else it silently fails
+      mkdir dist
+      cp -r --no-preserve=mode,ownership ${translations} dist/languages
 
       bash conversejs/build-conversejs.sh
 
@@ -131,11 +183,30 @@ let
 
       runHook postInstall
     '';
+
+    doInstallCheck = true;
+
+    installCheckPhase = ''
+      runHook preInstallCheck
+
+      if [ ! -f $out/converse.min.js -o ! -f $out/converse.min.css ]; then
+        echo "converse.min.js or converse.min.css failed to be generated, please check the build log!"
+        exit 1
+      fi
+
+      runHook postInstallCheck
+    '';
+
+    meta = {
+      description = "Web-based XMPP/Jabber chat client written in JavaScript";
+      homepage = "https://conversejs.org";
+      license = lib.licenses.mpl20;
+      inherit (commonMeta) maintainers platforms;
+    };
   };
 in
 buildNpmPackage rec {
-  pname = "peertube-plugin-livechat";
-  version = "10.0.2";
+  inherit (details.livechat) pname version npmDeps;
 
   src = merged-src;
 
@@ -153,17 +224,18 @@ buildNpmPackage rec {
     ./9000-Default-to-using-system-installed-prosody.patch
   ];
 
-  npmDeps = livechat-deps;
-
   postPatch = ''
     mkdir -p dist/client
+    cp -r --no-preserve=mode,ownership ${translations} dist/languages
     cp -r --no-preserve=mode,ownership ${conversejs} dist/client/conversejs
 
+    # Don't try to delete & rebuild everything when installing (either in this derivation or as a plugin in peertube)
     # clean:light would get rid of the built conversejs
-    # conversejs is already built, build:prosody would try to download an AppImage
+    # build:languages & conversejs already built separately, build:prosody would try to download an AppImage
     substituteInPlace package.json \
+      --replace-fail '"prepare": "npm run clean && npm run build",' "" \
       --replace-fail '"build:avatars": "./build-avatars.js"' '"build:avatars": "node ./build-avatars.js"' \
-      --replace-fail '"build": "npm-run-all -s clean:light' '"build": "npm-run-all -s' \
+      --replace-fail '"build": "npm-run-all -s clean:light build:languages' '"build": "npm-run-all -s' \
       --replace-fail 'build:prosodymodules build:converse build:prosody' 'build:prosodymodules'
 
     substituteInPlace conversejs/build-conversejs.sh \
@@ -179,19 +251,13 @@ buildNpmPackage rec {
       --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
   '';
 
-  # Don't try to delete & rebuild everything when installing the plugin in peertube
-  postInstall = ''
-    substituteInPlace $out/lib/node_modules/${pname}/package.json \
-      --replace-fail '"prepare": "npm run clean && npm run build",' ""
-  '';
-
-  strictDeps = true;
-
   meta = {
-    description = "Provides chat system for Peertube videos";
-    homepage = "https://github.com/JohnXLivingston/peertube-plugin-livechat";
-    license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ OPNA2608 ];
-    platforms = lib.platforms.unix;
+    inherit (commonMeta)
+      description
+      homepage
+      license
+      maintainers
+      platforms
+      ;
   };
 }
