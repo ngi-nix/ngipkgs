@@ -13,6 +13,7 @@ let
   pluginPkgs = with pkgs; [
     peertube-plugin-akismet
     peertube-plugin-auth-ldap
+    peertube-plugin-auth-openid-connect
     peertube-plugin-hello-world
     peertube-theme-dark
     peertube-plugin-livechat
