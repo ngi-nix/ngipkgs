@@ -22,6 +22,7 @@ let
     peertube-plugin-privacy-remover
     peertube-plugin-transcoding-custom-quality
     peertube-plugin-transcoding-profile-debug
+    peertube-plugin-video-annotation
     peertube-theme-dark
     peertube-plugin-livechat
   ];
