@@ -11,6 +11,7 @@ let
   peerGroup = "peertube";
   localUser = "alice";
   pluginPkgs = with pkgs; [
+    peertube-plugin-akismet
     peertube-plugin-hello-world
     peertube-theme-dark
     peertube-plugin-livechat
