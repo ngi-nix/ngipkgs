@@ -78,6 +78,56 @@ Many of them represent services that map to one or more systemd services that ar
 These modules are ready to be deployed to a NixOS system, such as a container, virtual machine, or physical machine.
 Example configurations found in the corresponding per-project directory are a good starting point for anyone interested in using these modules, and are sure to work because they are also used for testing.
 
+## How to install software from NGIpkgs
+
+Installation of software from NGIpkgs currently requires Nix [flakes to be enabled](https://nixos.wiki/wiki/Flakes).
+
+### Install to a local VM with QEMU
+
+For more information on how to deploy software from NGIpkgs to a local VM with QEMU, see this example repository: https://github.com/ngi-nix/flakes-ngipkgs
+
+### Install to an existing NixOS flake
+
+Here is a minimal `flake.nix` that installs the default module from NGIpkgs, containing all the of the packages from the repo:
+```
+{
+  inputs.ngipkgs.url = "github:ngi-nix/ngipkgs";
+  # Optional:
+  # inputs.ngipkgs.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs = { self, nixpkgs, agenix }: {
+    # Change `yourhostname` to your actual hostname
+    nixosConfigurations.yourhostname = nixpkgs.lib.nixosSystem {
+      # change to your system:
+      system = "x86_64-linux";
+      modules = [
+        ./configuration.nix
+        ngipkgs.nixosModules.default
+      ];
+    };
+  };
+}
+```
+
+Now any NGIpkgs package can be installed in the `configuration.nix` in the same ways as any package from nixpkgs.
+
+Each project within NGIpkgs has its own module that must also be added in order to deploy the services for that project.
+To use the Vula project as an example:
+```
+        modules = [
+          configuration.nix
+          ngipkgs.nixosModules.default
+          ngipkgs.nixosModules."services.vula"
+```
+
+The Vula service can then be enabled in the `configuration.nix`, as documented in the [`example-simple.nix`](https://github.com/ngi-nix/ngipkgs/blob/main/projects/Vula/example-simple.nix) for the project:
+```
+  services.vula.enable = true;
+  services.vula.openFirewall = true;
+```
+
+The list of projects that are available to be deployed in this way, and how the module for each one is labelled, is available in the `nixosModules` section of the outputs listed by the `nix flake show` command when run in the NGIpkgs repo.
+
 ## Continuous builds of packages with Hydra
 
 All packages in the [main branch of NGIpkgs](https://github.com/ngi-nix/ngipkgs/tree/main) are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
