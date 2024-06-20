@@ -14,7 +14,6 @@ in {
       admins = ["Erethon" "fricklerhandwerk" "Janik-Haag" "lorenzleutgeb"];
       workersFile = secret "workers";
       github = {
-        user = "ngi-nix-bot";
         oauthId = "Ov23linNGNKJg5zddrwX";
         oauthSecretFile = secret "github/oauth";
         tokenFile = secret "github/pat";
