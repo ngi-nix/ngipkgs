@@ -8,6 +8,11 @@
 
 ## Rebuilding `makemake`
 
+### Applying patches automatically
+By default, [a GitHub action deploys `makemake` automatically](https://github.com/ngi-nix/ngipkgs/actions/workflows/makemake.yaml) on every push to the `main` branch.
+No manual actions are required from our side.
+
+### Manually updating makemake to test changes
 A clone of this repository is stored at `/root/ngipkgs`, and is the source of
 truth for what is applied in `makemake`.
 
