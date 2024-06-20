@@ -1,0 +1,19 @@
+diff --git a/composer.lock b/composer.lock
+index 747c4247..1ed82552 100644
+--- a/composer.lock
++++ b/composer.lock
+@@ -5651,12 +5651,12 @@
+             "version": "2.3.2",
+             "source": {
+                 "type": "git",
+-                "url": "https://github.com/nucleos/NucleosAntiSpamBundle.git",
++                "url": "https://github.com/matgrula/NucleosAntiSpamBundle.git",
+                 "reference": "99e3410b14b0bc5b6c1bbd1907b2f3cc09f6bd53"
+             },
+             "dist": {
+                 "type": "zip",
+-                "url": "https://api.github.com/repos/nucleos/NucleosAntiSpamBundle/zipball/99e3410b14b0bc5b6c1bbd1907b2f3cc09f6bd53",
++                "url": "https://api.github.com/repos/matgrula/NucleosAntiSpamBundle/zipball/99e3410b14b0bc5b6c1bbd1907b2f3cc09f6bd53",
+                 "reference": "99e3410b14b0bc5b6c1bbd1907b2f3cc09f6bd53",
+                 "shasum": ""
+             },

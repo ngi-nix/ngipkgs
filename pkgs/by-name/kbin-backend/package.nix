@@ -26,7 +26,7 @@ in
     src = fetchgit {
       url = "https://codeberg.org/Kbin/kbin-core/";
       rev = "cc727b9133b60fe7411b8c4dbd90c0319d225916";
-      hash = "sha256-3y9Q+s2ImCFrsET76VXB9uzQ24F3SKfOk+fDINRZjWc=";
+      hash = "sha256-P1LUt5x1RTkSYG/ONWdX7/9MDYz03e//a9CjhqNdrss=";
 
       postFetch = ''
         # Work around <https://github.com/NixOS/nixpkgs/pull/257337>.
@@ -34,6 +34,8 @@ in
           --replace '@symfony/stimulus-bundle' '_symfony/stimulus-bundle' \
           --replace '@symfony/ux-autocomplete' '_symfony/ux-autocomplete' \
           --replace '@symfony/ux-chartjs'      '_symfony/ux-chartjs'
+
+        patch -p1 -d $out < ${./antispam-bundle.patch}
       '';
     };
 
@@ -60,7 +62,7 @@ in
           | sponge config/packages/oneup_flysystem.yaml
       '');
 
-    vendorHash = "sha256-lv13ze8PlJyOMDIrXrPzvQr4AgDpYx8Ns9+lUEFUEJ4=";
+    vendorHash = "sha256-f+ZjdcM+/cBQm/5Nlt42+4t9LI6WNmum0DFfTWQkS0o=";
 
     composerNoPlugins = false;
     composerStrictValidation = false;
