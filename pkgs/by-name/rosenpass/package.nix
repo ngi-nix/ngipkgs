@@ -17,16 +17,16 @@
 in
   rustPlatform.buildRustPackage rec {
     pname = "rosenpass";
-    version = "unstable-2023-09-28";
+    version = "0.2.2";
 
     src = fetchFromGitHub {
       owner = pname;
       repo = pname;
-      rev = "b15f17133f8b5c3c5175b4cfd4fc10039a4e203f";
-      hash = "sha256-UXAkmt4VY0irLK2k4t6SW+SEodFE3CbX5cFbsPG0ZCo=";
+      rev = "v${version}";
+      hash = "sha256-fQIeKGyTkFWUV9M1o256G4U1Os5OlVsRZu+5olEkbD4=";
     };
 
-    cargoHash = "sha256-N1DQHkgKgkDQ6DbgQJlpZkZ7AMTqX3P8R/cWr14jK2I=";
+    cargoHash = "sha256-GyeJCIE60JuZa/NuixDc3gTj9WAOpSReIyVxQqM4tDQ=";
 
     nativeBuildInputs = [
       cmake # for oqs build in the oqs-sys crate
