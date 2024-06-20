@@ -1,21 +1,24 @@
 .keys:
   .humans:
-    - &erethon       age187upwqdte7t0hkyec22jhac357m9y4fkcdvpg9sj5q9mekjupfnqg9a077
-    - &lorenzleutgeb age1c0g6s6daxy79dlm9uqczwlkh0hvjpghw5h8zzljc3vs275rvvqus30hv9l
+    - &erethon          age187upwqdte7t0hkyec22jhac357m9y4fkcdvpg9sj5q9mekjupfnqg9a077
+    - &fricklerhandwerk age10ldm537vh6np7hvgc084c30njmwgam2p22wysapyj8ya86rycyhsf8gmcn
+    - &lorenzleutgeb    age1c0g6s6daxy79dlm9uqczwlkh0hvjpghw5h8zzljc3vs275rvvqus30hv9l
   .machines:
-    - &makemake      age1ewus3xraznqv6xc2ptua2qjqrjyhfd8uugu08wjduushj3uhgqwsqd6vkk
+    - &makemake         age1ewus3xraznqv6xc2ptua2qjqrjyhfd8uugu08wjduushj3uhgqwsqd6vkk
 
 creation_rules:
   - path_regex: makemake/secrets
     key_groups:
       - age:
         - *erethon
+        - *fricklerhandwerk
         - *lorenzleutgeb
         - *makemake
   - path_regex: secrets.json
     key_groups:
       - age:
         - *erethon
+        - *fricklerhandwerk
         - *lorenzleutgeb
         - *makemake
 
