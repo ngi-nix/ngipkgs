@@ -18,12 +18,12 @@
 # From https://github.com/ngi-nix/gnunet-messenger-cli/blob/main/flake.nix
 stdenv.mkDerivation (finalAttrs: rec {
   name = "libgnunetchat";
-  version = "0.3.1";
+  version = "0.5.0";
 
   src = fetchgit {
     url = "https://git.gnunet.org/libgnunetchat";
     rev = "v${version}";
-    hash = "sha256-8MY5QSzzLH+YUjv7nqRfiCmpFO95LzvxdvxIgHaYJP4=";
+    hash = "sha256-/EAAIxsfbZ7bTX4UcyehK9hP8vMyrlX08N0L0jsLrw4=";
   };
 
   nativeBuildInputs = [meson ninja pkg-config validatePkgConfig];
