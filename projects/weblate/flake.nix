@@ -29,6 +29,7 @@
             {
               default = self.packages.${system}.weblate;
               weblate = poetry2nix_instanciated.mkPoetryApplication {
+                description = "";
                 src = weblate;
                 pyproject = ./pyproject.toml;
                 poetrylock = ./poetry.lock;
