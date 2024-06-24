@@ -56,7 +56,7 @@ in
 
     postInstall = ''
       mkdir -p $out/share
-      mv $out/${python3.sitePackages}/usr/share/icons $out/share
+      ln -s $out/${python3.sitePackages}/usr/share/icons $out/share
     '';
 
     meta = {
