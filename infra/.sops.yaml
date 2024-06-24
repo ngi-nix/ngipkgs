@@ -2,6 +2,7 @@
   .humans:
     - &erethon          age187upwqdte7t0hkyec22jhac357m9y4fkcdvpg9sj5q9mekjupfnqg9a077
     - &fricklerhandwerk age10ldm537vh6np7hvgc084c30njmwgam2p22wysapyj8ya86rycyhsf8gmcn
+    - &janik-haag       age1z7l86ldw44gjg3g6c4ztxcvmnf35q5umfam0w5rdc8pte60rzp4s5junff
     - &lorenzleutgeb    age1c0g6s6daxy79dlm9uqczwlkh0hvjpghw5h8zzljc3vs275rvvqus30hv9l
   .machines:
     - &makemake         age1ewus3xraznqv6xc2ptua2qjqrjyhfd8uugu08wjduushj3uhgqwsqd6vkk
@@ -12,6 +13,7 @@ creation_rules:
       - age:
         - *erethon
         - *fricklerhandwerk
+        - *janik-haag
         - *lorenzleutgeb
         - *makemake
   - path_regex: secrets.json
@@ -19,6 +21,7 @@ creation_rules:
       - age:
         - *erethon
         - *fricklerhandwerk
+        - *janik-haag
         - *lorenzleutgeb
         - *makemake
 
