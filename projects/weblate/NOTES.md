@@ -1,0 +1,2 @@
+- deprecate flakehub flake
+- deprecate flakestry flake
