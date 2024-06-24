@@ -103,7 +103,7 @@
                       cargoDeps =
                         let
                           getCargoHash = version: {
-                            "0.2.14" = "sha256-EzlwSic1Qgs4NZAde/KWg0Qjs+PNEPcnE8HyIPoYZQ0=";
+                            "0.2.17" = "";
                           }.${version};
                         in
                         pkgs.rustPlatform.fetchCargoTarball {

@@ -362,6 +362,7 @@ authors = ["Your Name <you@example.com>"]
 license = "GPLv3+"
 
 [tool.poetry.dependencies]
+python = ">=3.10,<=3.12"
 aeidon = ">=1.14.1,<1.16"
 ahocorasick-rs = ">=0.20.0,<0.23.0"
 borgbackup = ">=1.2.5,<1.3"
