@@ -378,7 +378,7 @@ in
       ensureUsers = [
         {
           name = "weblate";
-          ensurePermissions."DATABASE weblate" = "ALL PRIVILEGES";
+          ensureDBOwnership = true;
         }
       ];
       ensureDatabases = [ "weblate" ];
