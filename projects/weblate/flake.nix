@@ -6,7 +6,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     poetry2nix.url = "github:nix-community/poetry2nix";
     poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-    weblate.url = "github:WeblateOrg/weblate/weblate-5.0.2";
+    weblate.url = "github:WeblateOrg/weblate/weblate-5.6.1";
     weblate.flake = false;
     aeidon-src.url = "github:otsaloma/gaupol/1.12";
     aeidon-src.flake = false;
