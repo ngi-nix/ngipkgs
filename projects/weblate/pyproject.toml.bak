@@ -1,6 +1,13 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["poetry-core>=1.0.0", "setuptools", "wheel", "translate-toolkit"]  # PEP 508 specifications.
+
+requires = [
+  "poetry-core>=1.0.0", 
+  "setuptools", 
+  "wheel",
+  "translate-toolkit"
+ ]  # PEP 508 specifications.
+
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
