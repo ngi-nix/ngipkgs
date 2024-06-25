@@ -3,7 +3,6 @@
   buildNpmPackage,
   fetchNpmDeps,
   fetchFromGitHub,
-  fetchpatch,
   runCommand,
   stdenvNoCC,
   symlinkJoin,
@@ -12,29 +11,29 @@
   details = {
     livechat = rec {
       pname = "peertube-plugin-livechat";
-      version = "10.0.2";
+      version = "10.1.2";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "peertube-plugin-livechat";
         rev = "refs/tags/v${version}";
-        hash = "sha256-NnhH69yWyB1gZWKtp3+GmK1gwWp3eadQaO+Z/ISQmhI=";
+        hash = "sha256-YXx171816oZhZyNA4OSAlFIzyqq9nVLEZSHhM+F7AHg=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
         inherit src;
-        hash = "sha256-atXmU6wAh0zLG6jsUwi1GBXexYbJvGvDiGHHdFdAm5k=";
+        hash = "sha256-VnV1EyHDhvrjVUSOdjFef8aV6lGRVv8DZllf6ODVwx4=";
       };
     };
 
     # Check <livechat-src>/conversejs/build-conversejs.sh for which conversejs to use
     conversejs = rec {
       pname = "conversejs-livechat";
-      version = "10.0.0";
+      version = "10.1.0";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "converse.js";
         rev = "refs/tags/livechat-${version}";
-        hash = "sha256-YyaCmq/BXcxPe512w8mPBk5OP1zKmywyGqgdQIiGz5c=";
+        hash = "sha256-udSpkYSyBkR2d5jxRBz3qLwiRH4PXdHCsv8j4Z6i8xY=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
@@ -211,15 +210,6 @@ in
     src = merged-src;
 
     patches = [
-      # Fix EPIPE when talking to prosodyctl process
-      # Remove when fix for https://github.com/JohnXLivingston/peertube-plugin-livechat/issues/416 merged & in Nixpkgs / release
-      (fetchpatch {
-        name = "0001-peertube-plugin-livechat-Fix-EPIPE.patch";
-        url = "https://github.com/JohnXLivingston/peertube-plugin-livechat/commit/ad27a76fab884ae1d939aee094ec7414ee174ab7.patch";
-        excludes = ["CHANGELOG.md"];
-        hash = "sha256-sfLPeYStXlkX9QVEIlyNovojNyUl8GUPzEY4w1EiBxI=";
-      })
-
       # Change default, we don't want to bother with downloading & including a bundled prosody AppImage
       ./9000-Default-to-using-system-installed-prosody.patch
     ];
