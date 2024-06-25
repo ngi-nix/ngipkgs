@@ -6,12 +6,15 @@
   fetchgit,
   git,
   jq,
-  moreutils,
-  nodePackages,
-  cacert,
+  nodejs,
   python3,
   zip,
+  pnpm,
+  removeReferencesTo,
+  srcOnly,
 }: let
+  nodePackages = nodejs.pkgs;
+  nodeSources = srcOnly nodejs;
   esbuild_0_19_9 = buildGoModule rec {
     pname = "esbuild";
     version = "0.19.9";
@@ -38,8 +41,9 @@
       mainProgram = "esbuild";
     };
   };
-  taler-wallet-core-pnpm-deps = stdenv.mkDerivation rec {
-    pname = "taler-wallet-core-pnpm-deps";
+in
+  stdenv.mkDerivation rec {
+    pname = "taler-wallet-core";
     version = "0.11.2";
 
     src = fetchgit {
@@ -49,59 +53,22 @@
     };
 
     nativeBuildInputs = [
-      jq
-      moreutils
-      nodePackages.pnpm
-      cacert
-    ];
-
-    dontBuild = true;
-
-    installPhase = ''
-      runHook preInstall
-
-      export HOME=$(mktemp -d)
-
-      pnpm config set store-dir $out
-      pnpm install --frozen-lockfile --ignore-script
-
-      rm -rf $out/v3/tmp
-      for f in $(find $out -name "*.json"); do
-        sed -i -E -e 's/"checkedAt":[0-9]+,//g' $f
-        jq --sort-keys . $f | sponge $f
-      done
-
-      runHook postInstall
-    '';
-
-    dontFixup = true;
-
-    outputHashAlgo = "sha256";
-    outputHashMode = "recursive";
-    outputHash =
-      {
-        aarch64-linux = "sha256-8n/vM4RVyfbYf34i5CtlI/Hj9LGZtCpgYVnOvBZI7x4=";
-        x86_64-linux = "sha256-gsWbzFNy/bH+MLisiRms+sjF0fIdbChFbWjbhl8eA+Q=";
-      }
-      .${stdenv.system}
-      or (throw "Unsupported system: ${stdenv.system}");
-  };
-in
-  stdenv.mkDerivation {
-    pname = "taler-wallet-core";
-    inherit (taler-wallet-core-pnpm-deps) version src;
-
-    nativeBuildInputs = [
       git
       jq
       nodePackages.nodejs
-      nodePackages.pnpm
+      pnpm.configHook
       python3
       zip
     ];
 
+    pnpmDeps = pnpm.fetchDeps {
+      inherit pname version src;
+      hash = "sha256-RdG/QnZNIvQIMU7ScSFz2OfbctHBr65GWXLPvVaybfQ=";
+    };
+
     buildInputs = [nodePackages.nodejs];
 
+    # Use a fake git?
     postUnpack = ''
       git init -b master
       git config user.email "root@localhost"
@@ -119,12 +86,19 @@ in
       ./bootstrap
     '';
 
+    # After the pnpm configure, we need to build the binaries of all instances
+    # of better-sqlite3. It has a native part that it wants to build using a
+    # script which is disallowed.
+    # Adapted from mkYarnModules.
     preBuild = ''
-      export HOME=$(mktemp -d)
-
-      pnpm config set store-dir ${taler-wallet-core-pnpm-deps}
-      pnpm install --offline --frozen-lockfile --ignore-script
-      patchShebangs node_modules/{*,.*}
+      for f in $(find -path '*/node_modules/better-sqlite3' -type d); do
+        (cd "$f" && (
+        npm run build-release --offline --nodedir="${nodeSources}"
+        find build -type f -exec \
+          ${removeReferencesTo}/bin/remove-references-to \
+          -t "${nodeSources}" {} \;
+        ))
+      done
     '';
 
     env.ESBUILD_BINARY_PATH = lib.getExe esbuild_0_19_9;

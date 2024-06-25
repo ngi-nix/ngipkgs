@@ -1,0 +1,27 @@
+Subject: [PATCH] Use the existing mailbox and don't create a new one
+
+It's wrong to re-declare a new mailbox inside the main function
+since a global one is already defined.
+
+This is because if the global mailbox is not initialized, the
+program will panic whenever we try to read a key from the config.
+---
+ cmd/mailbox-server/main.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmd/mailbox-server/main.go b/cmd/mailbox-server/main.go
+index 070b7af..458c401 100644
+--- a/cmd/mailbox-server/main.go
++++ b/cmd/mailbox-server/main.go
+@@ -40,7 +40,7 @@ func main() {
+ 	if len(*cfgFlag) != 0 {
+ 		cfgfile = *cfgFlag
+ 	}
+-	m := mailbox.Mailbox{}
++	m = mailbox.Mailbox{}
+ 	m.Initialize(cfgfile)
+ 	handleRequests()
+ }
+-- 
+2.44.0
+
