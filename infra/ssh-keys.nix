@@ -1,4 +1,4 @@
-let
+rec {
   eelco = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAnI5L6oCgFyvEesL04LnbnH1TBhegq1Yery6TNlIRAA edolstra@gmail.com";
 
   zimbatm = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOuiDoBOxgyer8vGcfAIbE6TC4n4jo8lhG9l01iJ0bZz zimbatm";
@@ -35,5 +35,8 @@ let
     lorenz-leutgeb
     erethon
   ];
-in
-  infra ++ ngi ++ [deploy]
+
+  root = infra ++ ngi ++ [deploy];
+
+  remotebuild = infra ++ ngi;
+}
