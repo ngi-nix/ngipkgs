@@ -41,7 +41,6 @@
         "LOCATION": "unix://${config.services.redis.servers.weblate.unixSocket}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PARSER_CLASS": "redis.connection.HiredisParser",
             "PASSWORD": None,
             "CONNECTION_POOL_KWARGS": {},
         },
