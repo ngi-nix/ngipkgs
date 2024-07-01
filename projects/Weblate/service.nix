@@ -108,7 +108,6 @@
   environment = {
     PYTHONPATH = "${settings_py}";
     DJANGO_SETTINGS_MODULE = "settings";
-    GI_TYPELIB_PATH = "${pkgs.pango.out}/lib/girepository-1.0:${pkgs.harfbuzz}/lib/girepository-1.0";
   };
   weblate-env =
     pkgs.writeShellScriptBin
