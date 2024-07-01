@@ -17,8 +17,8 @@ poetry2nix.mkPoetryApplication {
   src = fetchFromGitHub {
     owner = "WeblateOrg";
     repo = "weblate";
-    rev = "weblate-5.0.2";
-    sha256 = "sha256-GVKSJZAiH1Sfr9n0zSK+EXqWqejrNYHj1OFtZQPbMa4=";
+    rev = "weblate-5.6.2";
+    sha256 = "sha256-t/hnigsKjdWCkUd8acNWhYVFmZ7oGn74+12347MkFgM=";
   };
 
   pyproject = ./pyproject.toml;
@@ -29,7 +29,7 @@ poetry2nix.mkPoetryApplication {
     # we increase it. I guess this is due to the fact that we test the setup
     # very early into the initialization of the server, so the load might be
     # higher compared to production setups?
-    ./longer-celery-wait-time.patch
+    # ./longer-celery-wait-time.patch
     # FIXME This shouldn't be necessary and probably has to do with some dependency mismatch.
     # ./cache.lock.patch
   ];
@@ -40,8 +40,8 @@ poetry2nix.mkPoetryApplication {
         src = fetchFromGitHub {
           owner = "otsaloma";
           repo = "gaupol";
-          rev = "1.12";
-          sha256 = "sha256-XMF1ra7ntEdp9JN458kRhWNlLbdPP1ip9S2TelMeMv0=";
+          rev = "1.15";
+          sha256 = "sha256-lhNyeieeiBBm3rNDEU0BuWKeM6XYlOtv1voW8tR8cUM=";
         };
         nativeBuildInputs = [gettext self.flake8];
         buildInputs = [isocodes];
@@ -96,7 +96,7 @@ poetry2nix.mkPoetryApplication {
         cargoDeps = let
           getCargoHash = version:
             {
-              "0.2.14" = "sha256-EzlwSic1Qgs4NZAde/KWg0Qjs+PNEPcnE8HyIPoYZQ0=";
+              "0.2.17" = "sha256-WomlVzKOUfcgAWGJInSvZn9hm+bFpgc4nJbRiyPCU64=";
             }
             .${version};
         in
@@ -134,7 +134,7 @@ poetry2nix.mkPoetryApplication {
           cargoDeps = rustPlatform.fetchCargoTarball {
             inherit (old) src;
             name = "${old.pname}-${old.version}";
-            hash = "sha256-/sel54PV58y6oUgIzHXSCL4RMljPL9kZ6ER/pRTAjAI=";
+            hash = "sha256-CIt/ChNcoqKln6PgeTGp9pfmIWlJj+c5SCPtBhsnT6U=";
           };
         }
       );
