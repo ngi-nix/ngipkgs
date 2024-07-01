@@ -31,7 +31,7 @@ poetry2nix.mkPoetryApplication {
     # higher compared to production setups?
     # ./longer-celery-wait-time.patch
     # FIXME This shouldn't be necessary and probably has to do with some dependency mismatch.
-    # ./cache.lock.patch
+    ./cache.lock.patch
   ];
 
   overrides = poetry2nix.overrides.withDefaults (
