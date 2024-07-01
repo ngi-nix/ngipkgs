@@ -124,6 +124,7 @@
         sources = {
           examples = rawExamples;
           modules = extendedNixosModules;
+          inherit nixpkgs;
         };
       };
 
