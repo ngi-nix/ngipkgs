@@ -4,14 +4,16 @@
   fetchFromGitHub,
   poetry2nix,
   pkg-config,
+  openssl,
   isocodes,
   gettext,
   maturin,
   rustPlatform,
-  openssl,
   postgresql,
   leptonica,
   tesseract,
+  pango,
+  harfbuzz,
 }:
 poetry2nix.mkPoetryApplication {
   src = fetchFromGitHub {
@@ -32,6 +34,12 @@ poetry2nix.mkPoetryApplication {
     # ./longer-celery-wait-time.patch
     # FIXME This shouldn't be necessary and probably has to do with some dependency mismatch.
     ./cache.lock.patch
+  ];
+
+  makeWrapperArgs = [
+    "--set"
+    "GI_TYPELIB_PATH"
+    "${pango.out}/lib/girepository-1.0:${harfbuzz}/lib/girepository-1.0"
   ];
 
   overrides = poetry2nix.overrides.withDefaults (
