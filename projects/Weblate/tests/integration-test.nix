@@ -3,35 +3,9 @@
   pkgs,
   ...
 }: let
-  serverDomain = "test.example";
+  certs = import "${sources.nixpkgs}/nixos/tests/common/acme/server/snakeoil-certs.nix";
 
-  runWithOpenSSL = filename: cmd:
-    pkgs.runCommand filename
-    {
-      buildInputs = [pkgs.openssl];
-    }
-    cmd;
-  certs = {
-    ca = {
-      key = runWithOpenSSL "ca.key" "openssl ecparam -name prime256v1 -genkey -noout -out $out";
-      cert =
-        runWithOpenSSL
-        "ca.crt"
-        ''
-          openssl req -new -x509 -sha256 \
-            -key ${certs.ca.key} \
-            -out $out -subj "/CN=${serverDomain}" -days 36500
-        '';
-    };
-    server = {
-      key = runWithOpenSSL "server.key" "openssl ecparam -name prime256v1 -genkey -noout -out $out";
-      cert = runWithOpenSSL "server.crt" ''
-        openssl req -new -sha256 -key ${certs.server.key} -out server.csr -subj "/CN=${serverDomain}"
-        openssl x509 -req -in server.csr -CA ${certs.ca.cert} -CAkey ${certs.ca.key} \
-          -CAcreateserial -out $out -days 36500 -sha256
-      '';
-    };
-  };
+  serverDomain = certs.domain;
 
   admin = {
     username = "admin";
@@ -68,8 +42,8 @@ in {
 
     services.nginx.virtualHosts."${serverDomain}" = {
       enableACME = lib.mkForce false;
-      sslCertificate = certs.server.cert;
-      sslCertificateKey = certs.server.key;
+      sslCertificate = certs."${serverDomain}".cert;
+      sslCertificateKey = certs."${serverDomain}".key;
     };
 
     services.postfix = {
@@ -79,8 +53,8 @@ in {
         smtpd_sasl_auth_enable = "yes";
         smtpd_client_restrictions = "permit";
       };
-      # sslKey = certs.server.key;
-      # sslCert = certs.server.cert;
+      # sslKey = certs.${serverDomain}.key;
+      # sslCert = certs.${serverDomain}.cert;
     };
 
     security.pki.certificateFiles = [certs.ca.cert];
