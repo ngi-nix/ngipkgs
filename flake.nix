@@ -15,6 +15,9 @@
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.buildbot-nix.url = "github:Mic92/buildbot-nix";
+  inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.poetry2nix.inputs.flake-utils.follows = "flake-utils";
+  inputs.poetry2nix.url = "github:nix-community/poetry2nix";
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
@@ -27,6 +30,7 @@
     pre-commit-hooks,
     dream2nix,
     buildbot-nix,
+    poetry2nix,
     ...
   } @ inputs: let
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
@@ -138,7 +142,10 @@
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [overlay];
+        overlays = [
+          overlay
+          poetry2nix.overlays.default
+        ];
       };
 
       ngiPackages = importNgiPackages pkgs;
