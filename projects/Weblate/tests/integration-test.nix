@@ -3,6 +3,8 @@
   pkgs,
   ...
 }: let
+  serverDomain = "test.example";
+
   runWithOpenSSL = filename: cmd:
     pkgs.runCommand filename
     {
@@ -18,20 +20,19 @@
         ''
           openssl req -new -x509 -sha256 \
             -key ${certs.ca.key} \
-            -out $out -subj "/CN=test.example" -days 36500
+            -out $out -subj "/CN=${serverDomain}" -days 36500
         '';
     };
     server = {
       key = runWithOpenSSL "server.key" "openssl ecparam -name prime256v1 -genkey -noout -out $out";
       cert = runWithOpenSSL "server.crt" ''
-        openssl req -new -sha256 -key ${certs.server.key} -out server.csr -subj "/CN=db.test.example"
+        openssl req -new -sha256 -key ${certs.server.key} -out server.csr -subj "/CN=${serverDomain}"
         openssl x509 -req -in server.csr -CA ${certs.ca.cert} -CAkey ${certs.ca.key} \
           -CAcreateserial -out $out -days 36500 -sha256
       '';
     };
   };
 
-  serverDomain = "test.example";
   admin = {
     username = "admin";
     password = "snakeoilpass";
