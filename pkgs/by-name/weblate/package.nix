@@ -31,11 +31,6 @@ poetry2nix.mkPoetryApplication {
   poetrylock = ./poetry.lock;
 
   patches = [
-    # The default timeout for the celery check is much too short upstream, so
-    # we increase it. I guess this is due to the fact that we test the setup
-    # very early into the initialization of the server, so the load might be
-    # higher compared to production setups?
-    # ./longer-celery-wait-time.patch
     # FIXME This shouldn't be necessary and probably has to do with some dependency mismatch.
     ./cache.lock.patch
   ];
