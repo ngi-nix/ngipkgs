@@ -12,8 +12,12 @@
   postgresql,
   leptonica,
   tesseract,
+  gobject-introspection,
+  wrapGAppsNoGuiHook,
   pango,
   harfbuzz,
+  librsvg,
+  gdk-pixbuf,
 }:
 poetry2nix.mkPoetryApplication {
   src = fetchFromGitHub {
@@ -37,10 +41,15 @@ poetry2nix.mkPoetryApplication {
   ];
 
   makeWrapperArgs = [
-    "--set"
-    "GI_TYPELIB_PATH"
-    "${pango.out}/lib/girepository-1.0:${harfbuzz}/lib/girepository-1.0"
+    "\${gappsWrapperArgs[@]}"
   ];
+
+  nativeBuildInputs = [
+    wrapGAppsNoGuiHook
+    gobject-introspection
+  ];
+
+  dontWrapGApps = true;
 
   overrides = poetry2nix.overrides.withDefaults (
     self: super: {
