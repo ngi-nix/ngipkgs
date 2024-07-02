@@ -1,0 +1,34 @@
+From 30f241d1246fe4c0ed7c30631348af99f0a20d36 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Tue, 11 Jun 2024 18:18:06 +0200
+Subject: [PATCH] Default to using system-installed prosody
+
+---
+ server/lib/settings.ts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/server/lib/settings.ts b/server/lib/settings.ts
+index eda78e1df..098ae3b14 100644
+--- a/server/lib/settings.ts
++++ b/server/lib/settings.ts
+@@ -120,7 +120,7 @@ function initImportantNotesSettings ({ registerSetting }: RegisterServerOptions)
+       // Note: the following text as a variable in it.
+       //   Not translating it: it should be very rare.
+       descriptionHTML: `<span class="peertube-plugin-livechat-warning">
+-It seems that your are using a ${process.arch} CPU, 
++It seems that your are using a ${process.arch} CPU,
+ which is not compatible with the plugin.
+ Please read
+ <a
+@@ -535,7 +535,7 @@ function initChatServerAdvancedSettings ({ registerSetting }: RegisterServerOpti
+     label: loc('system_prosody_label'),
+     descriptionHTML: loc('system_prosody_description'),
+     private: true,
+-    default: false
++    default: true
+   })
+ 
+   registerSetting({
+-- 
+2.44.1
+
