@@ -43,6 +43,41 @@ Many of them represent services that map to one or more systemd services that ar
 These modules are ready to be deployed to a NixOS system, such as a container, virtual machine, or physical machine.
 Example configurations found in the corresponding per-project directory are a good starting point for anyone interested in using these modules, and are sure to work because they are also used for testing.
 
+## How to install software from NGIpkgs
+
+These instructions are specifically for installing software on NixOS using flakes.
+
+1) The NGIpkgs repo must be added as an input in the flake.nix for the system:
+```
+inputs.ngipkgs.url = "github:ngi-nix/ngipkgs";
+```
+
+2) The default packages module for NGIpkgs must be added to the modules for the system:
+```
+        modules = [
+          [...]
+          ngipkgs.nixosModules.default
+```
+
+This will allow for installing any of the packages from NGIpkgs. This can be done in the `configuration.nix` in the same ways as any package from nixpkgs.
+
+3) Each project within NGIpkgs has its own module that must also be added to the modules list in order to deploy the services for that project.
+To use the Vula project as an example:
+```
+        modules = [
+          [...]
+          ngipkgs.nixosModules.default
+          ngipkgs.nixosModules."services.vula"
+```
+
+The Vula service can now be enabled in the `configuration.nix`, as documented in the `example-simple.nix` for the project:
+```
+  services.vula.enable = true;
+  services.vula.openFirewall = true;
+```
+
+The list of projects that are available to be deployed in this way, and how the module for each one is labelled, is available in the `nixosModules` section of the outputs listed by the `nix flake show` command when run in the NGIpkgs repo. 
+
 ## Continuous builds of packages with Hydra
 
 All packages in the [main branch of NGIpkgs](https://github.com/ngi-nix/ngipkgs/tree/main) are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
