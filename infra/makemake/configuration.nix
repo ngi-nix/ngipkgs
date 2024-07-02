@@ -46,7 +46,11 @@
 
   users = {
     mutableUsers = false;
-    users.root.openssh.authorizedKeys.keys = import ../ssh-keys.nix;
+    users.root.openssh.authorizedKeys.keys = (import ../ssh-keys.nix).root;
+    users.remotebuild = {
+      isNormalUser = true;
+      openssh.authorizedKeys.keys = (import ../ssh-keys.nix).remotebuild;
+    };
   };
 
   environment.systemPackages = with pkgs; [
