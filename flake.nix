@@ -80,7 +80,7 @@
     # Note that modules and examples are system-agnostic, so import them first.
     rawNgiProjects = import ./projects {
       inherit lib;
-      sources = {};
+      sources = {inherit inputs;};
     };
 
     rawExamples = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
@@ -118,6 +118,7 @@
       import ./projects {
         inherit lib pkgs;
         sources = {
+          inherit inputs;
           examples = rawExamples;
           modules = extendedNixosModules;
         };
