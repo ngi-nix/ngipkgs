@@ -109,8 +109,14 @@
     PYTHONPATH = "${settings_py}";
     DJANGO_SETTINGS_MODULE = "settings";
     # This could be moved into the makeWrapperArgs of the package,
-    # but then uwsgi would be missing out onthese variables.
-    GI_TYPELIB_PATH = with pkgs; "${pango.out}/lib/girepository-1.0:${harfbuzz}/lib/girepository-1.0:${gobject-introspection.out}/lib/girepository-1.0:${librsvg.out}/lib/girepository-1.0:${gdk-pixbuf.out}/lib/girepository-1.0:${glib.out}/lib/girepository-1.0";
+    # but then uwsgi would be missing out on these variables.
+    GI_TYPELIB_PATH = lib.makeSearchPathOutput "out" "lib/girepository-1.0" (with pkgs; [
+      pango
+      harfbuzz
+      librsvg
+      gdk-pixbuf
+      glib
+    ]);
   };
   weblate-env =
     pkgs.writeShellScriptBin
