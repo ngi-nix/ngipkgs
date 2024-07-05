@@ -104,11 +104,14 @@
       }
       // (filterAttrs (_: v: v != null) rawNixosModules);
 
-    # Next, extend the modules with the sops-nix module, used in the tests.
+    # Next, extend the modules with modules that are additionally required in the tests and examples.
     extendedNixosModules =
       nixosModules
       // {
         sops-nix = sops-nix.nixosModules.default;
+        poetry2nix = {
+          nixpkgs.overlays = [poetry2nix.overlays.default];
+        };
       };
 
     mkNixosSystem = config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;};
