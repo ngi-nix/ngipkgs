@@ -158,7 +158,7 @@ in {
         type = lib.types.lines;
         default = "";
         description = ''
-          Text to append to <filename>settings.py</filename> Weblate config file.
+          Text to append to `settings.py` Weblate config file.
         '';
       };
 
