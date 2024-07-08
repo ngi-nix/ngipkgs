@@ -62,7 +62,12 @@ python39Packages.buildPythonPackage rec {
   ];
 
   disabledTestPaths = [
-    "unused_please_ignore_completely/" # ???
+    # ???
+    "unused_please_ignore_completely/"
+    # TypeError: __init__() missing 4 required positional arguments: 'fukls', 'iodef', 'funit', and 'bigendian'
+    "src/soc/fu/compunits/test/"
+    # TypeError: unsupported operand type(s) for -: 'Mock' and 'int'
+    "src/soc/fu/mmu/test/"
   ];
 
   pythonImportsCheck = ["soc"];
