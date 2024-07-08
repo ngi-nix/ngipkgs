@@ -19,8 +19,8 @@ in
       hash = "sha256-ashH6QXlO5xbk2rxEskQR14nv3Z/efRSjBb5rx7A4lI=";
     };
 
-    propagatedBuildInputs = with python3.pkgs; [
-      pymeta3
+    propagatedBuildInputs = [
+      (pymeta3.override {inherit python3;})
     ];
 
     checkPhase = ''

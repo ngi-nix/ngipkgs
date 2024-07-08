@@ -71,6 +71,10 @@ in
       git commit --allow-empty -m "Initial commit"
     '';
 
+    patches = [
+      ./taler-python-3.12.patch
+    ];
+
     postPatch = ''
       patchShebangs packages/*/*.mjs
       substituteInPlace pnpm-lock.yaml \

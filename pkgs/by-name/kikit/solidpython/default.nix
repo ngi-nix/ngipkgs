@@ -64,7 +64,7 @@ in
         setuptools
       ]
       ++ [
-        euclid3
+        (euclid3.override {inherit python3;})
         pypng
       ];
 

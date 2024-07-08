@@ -1,7 +1,7 @@
 {
   lib,
   pybars3,
-  python3,
+  python311,
   openscad,
   fetchFromGitHub,
   bats,
@@ -15,7 +15,11 @@
 
   properCaseName = "KiKit";
 
-  solidpython = callPackage ./solidpython {};
+  python3 = python311;
+
+  solidpython = callPackage ./solidpython {
+    inherit python3;
+  };
 in
   python3.pkgs.buildPythonPackage rec {
     pname = toLower properCaseName;
@@ -39,12 +43,12 @@ in
         markdown2
         commentjson
         # https://github.com/yaqwsx/KiKit/issues/575
-        wxPython_4_2
+        wxpython
         shapely
         pcbnew-transition
       ]
       ++ [
-        pybars3
+        (pybars3.override {inherit python3;})
         # https://github.com/yaqwsx/KiKit/issues/576
         solidpython
         openscad

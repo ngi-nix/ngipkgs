@@ -1,0 +1,22 @@
+diff --git a/build-system/taler-build-scripts/talerbuildconfig.py b/build-system/taler-build-scripts/talerbuildconfig.py
+index 642bcbc..cb0133b 100644
+--- a/build-system/taler-build-scripts/talerbuildconfig.py
++++ b/build-system/taler-build-scripts/talerbuildconfig.py
+@@ -32,7 +32,7 @@ import os
+ import sys
+ import shlex
+ import logging
+-from distutils.spawn import find_executable
++from shutil import which
+ import subprocess
+ from dataclasses import dataclass
+ import semver
+@@ -179,7 +179,7 @@ class BuildConfig:
+ 
+ 
+ def existence(name):
+-    return find_executable(name) is not None
++    return which(name) is not None
+ 
+ 
+ class Option(Plugin):
