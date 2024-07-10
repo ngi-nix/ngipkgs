@@ -128,6 +128,16 @@ The Vula service can then be enabled in the `configuration.nix`, as documented i
 
 The list of projects that are available to be deployed in this way, and how the module for each one is labelled, is available in the `nixosModules` section of the outputs listed by the `nix flake show` command when run in the NGIpkgs repo.
 
+### Configuring a binary cache for NGIpkgs
+
+Add the following lines to your `configuration.nix` to enable the binary cache substituter for NGIpkgs, which will minimize the building of packages from source:
+```
+  nix.settings.substituters = ["https://ngi.cachix.org/"];
+  nix.settings.trusted-public-keys = ["ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw="];
+```
+
+For further documentation on use of the binary cache see https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/cachix.md.
+
 ## Continuous builds of packages with Hydra
 
 All packages in the [main branch of NGIpkgs](https://github.com/ngi-nix/ngipkgs/tree/main) are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
