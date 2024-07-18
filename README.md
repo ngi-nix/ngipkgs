@@ -1,10 +1,46 @@
 # NGIpkgs
 
-[Nix] packages, [NixOS] modules and example NixOS configurations of software projects funded by the [Next Generation Internet] (NGI) initiative of the European Commission.
+[Nix] is an open source build system, configuration management system, and mechanism for deploying software, focused on reproducibility.
+It is the basis of an ecosystem of exceptionally powerful tools.
+Nixpkgs is [the largest, most up-to-date software repository in the world][repology].
+NixOS is a Linux distribution that can be configured fully declaratively, with unmatched flexibility.
 
-[Nix]: https://nixos.org/manual/nix
+Many software projects funded by the [Next Generation Internet] (NGI) initiative of the European Commission through the [NLnet Foundation] are not mature enough to distribute through Nixpkgs, or cannot be included in Nixpkgs for technical reasons.
+This repository makes such projects available as
+
+- Package recipes compatible with [Nixpkgs]
+- Configuration modules compatible with [NixOS]
+
+and provides automatically tested example NixOS configurations.
+
+NGIpkgs was created as part of [Summer of Nix], organised by the [NixOS Foundation].
+NGIpkgs was created as a small  [Summer of Nix], organised by the [NixOS Foundation].
+
+[Nix]: https://github.com/NixOS/nix
+[repology]: https://repology.org/repositories/graphs
+[Nixpkgs]: https://github.com/nixos/nixpkgs
 [NixOS]: https://nixos.org/manual/nixos
 [Next Generation Internet]: https://www.ngi.eu
+[NLnet Foundation]: https://nlnet.nl
+[Summer of Nix]: https://github.com/ngi-nix/summer-of-nix
+[NixOS Foundation]: https://nixos.org/community/#foundation
+
+# How to use software from NGIpkgs
+
+This is what you can do with software from NGIpkgs:
+- Run **standalone programs** locally with Nix
+- Use **libraries or tools** to build software with Nixpkgs
+- Deploy **services** to machines running NixOS
+
+In order to do that:
+- [Install Nix on Linux or WSL](https://nix.dev/install-nix)
+- [Enable the flakes experimental feature](https://wiki.nixos.org/wiki/Flakes)
+
+It will help you to go more quickly if you learn to:
+- [Read the Nix language](https://nix.dev/tutorials/nix-language)
+- [Package existing software with Nixpkgs](https://nix.dev/tutorials/packaging-existing-software)
+- [Work with NixOS modules](https://nix.dev/tutorials/module-system/)
+- [Run NixOS in virtual machines](https://nix.dev/tutorials/nixos/nixos-configuration-on-vm)
 
 ## Structure of NGIpkgs
 
