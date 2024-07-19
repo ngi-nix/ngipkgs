@@ -77,9 +77,14 @@ stdenv.mkDerivation (finalAttrs: {
 
   doInstallCheck = true;
 
-  postInstallCheck = ''
-    # Check that anastasis-config can find gnunet at runtime
-    $out/bin/anastasis-config --help > /dev/null
+  # Check that anastasis-config can find gnunet at runtime
+  installCheckPhase = ''
+    runHook preInstallCheck
+
+    output=$($out/bin/anastasis-config --help || true)
+    echo "$output" | grep "Report bugs to contact@anastasis.lu."
+
+    runHook postInstallCheck
   '';
 
   passthru.tests.vmTest = callPackage ./test.nix {};

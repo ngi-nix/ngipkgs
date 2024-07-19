@@ -1,5 +1,7 @@
 {
+  gobject-introspection,
   lib,
+  libayatana-appindicator,
   python3,
   fetchgit,
   highctidh,
@@ -24,6 +26,8 @@ in
     # without removing `pyproject.toml` we don't end up with an executable.
     postPatch = ''
       rm pyproject.toml
+      substituteInPlace vula/frontend/constants.py \
+        --replace "IMAGE_BASE_PATH = '/usr/share/icons/vula/'" "IMAGE_BASE_PATH = '$out/share/icons/vula/'"
     '';
 
     propagatedBuildInputs =
@@ -34,8 +38,10 @@ in
         packaging
         pillow
         pydbus
+        pygobject3
         pynacl
         pyroute2
+        pystray
         pyyaml
         qrcode
         schema
@@ -44,8 +50,14 @@ in
       ])
       ++ [highctidh];
 
-    nativeBuildInputs = [wrapGAppsHook];
+    buildInputs = [libayatana-appindicator];
+    nativeBuildInputs = [wrapGAppsHook gobject-introspection];
     nativeCheckInputs = with python3.pkgs; [pytestCheckHook];
+
+    postInstall = ''
+      mkdir -p $out/share
+      ln -s $out/${python3.sitePackages}/usr/share/icons $out/share
+    '';
 
     meta = {
       description = "Automatic local network encryption";
