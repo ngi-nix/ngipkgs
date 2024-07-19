@@ -14,7 +14,6 @@ This repository makes such projects available as
 and provides automatically tested example NixOS configurations.
 
 NGIpkgs was created as part of [Summer of Nix], organised by the [NixOS Foundation].
-NGIpkgs was created as a small  [Summer of Nix], organised by the [NixOS Foundation].
 
 [Nix]: https://github.com/NixOS/nix
 [repology]: https://repology.org/repositories/graphs
