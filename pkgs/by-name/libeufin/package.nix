@@ -3,6 +3,7 @@
   callPackage,
   stdenv,
   fetchgit,
+  makeWrapper,
   python3,
   jdk17_headless,
   gradle-packages,
@@ -27,6 +28,7 @@
     '';
   };
   patches = [
+    ../taler-wallet-core/taler-python-3.12.patch
     # The .git folder had to be deleted. Read hash from file instead of using the git command.
     ./read-HEAD-hash-from-file.patch
     # Gradle projects provide a .module metadata file as artifact. This artifact is used by gradle
@@ -36,7 +38,7 @@
     ./use-maven-deps.patch
   ];
 
-  gradle = callPackage gradle-packages.gradle_8 {java = jdk17_headless;};
+  gradle = callPackage gradle-packages.gradle_8 {java = jdk;};
 
   # Pre-download deps into a derivation
   deps = callPackage ./deps {inherit gradle patches pname src version;};
@@ -48,6 +50,8 @@
     ["${deps}"]
     (builtins.readFile ./init.gradle.template)
   );
+
+  jdk = jdk17_headless;
 in
   stdenv.mkDerivation {
     inherit patches pname src version;
@@ -63,11 +67,17 @@ in
 
     installPhase = ''
       make install-nobuild
+
+      # wrap commands to provide JAVA_HOME
+      for name in libeufin-bank libeufin-dbconfig libeufin-nexus; do
+        wrapProgram $out/bin/$name --set JAVA_HOME "${jdk}"
+      done
     '';
 
     nativeBuildInputs = [
+      makeWrapper
       python3
-      jdk17_headless
+      jdk
       gradle
     ];
 
