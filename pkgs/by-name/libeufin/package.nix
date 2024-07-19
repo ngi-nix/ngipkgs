@@ -28,6 +28,7 @@
     '';
   };
   patches = [
+    ../taler-wallet-core/taler-python-3.12.patch
     # The .git folder had to be deleted. Read hash from file instead of using the git command.
     ./read-HEAD-hash-from-file.patch
     # Gradle projects provide a .module metadata file as artifact. This artifact is used by gradle
