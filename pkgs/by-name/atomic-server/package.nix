@@ -1,7 +1,8 @@
 {
   lib,
-  fetchCrate,
+  fetchFromGitHub,
   rustPlatform,
+  atomic-browser,
 }: let
   inherit
     (lib)
@@ -12,12 +13,22 @@ in
     pname = "atomic-server";
     version = "0.37.0";
 
-    src = fetchCrate {
-      inherit pname version;
-      hash = "sha256-/OKYac0HA9EWDQ5qNyMPITN5iUdLM9SAVmOm6PVIFOk=";
+    src = fetchFromGitHub {
+      owner = "atomicdata-dev";
+      repo = pname;
+      rev = "v${version}";
+      hash = "sha256-+Lk2MvkTj+B+G6cNbWAbPrN5ECiyMJ4HSiiLzBLd74g=";
     };
 
-    cargoHash = "sha256-LwSyK/7EEoTf1x7KGtebPxYTqH3SCjXGONNMxcmdEv0=";
+    cargoHash = "sha256-cSv1XnuzL5PxVOTAUiyiQsMHSRUMaFDkW2/4Bt75G9o=";
+
+    # server/assets_tmp is the directory atomic-server's build will check for
+    # compiled frontend assets to decide whether to rebuild or not
+    # https://github.com/atomicdata-dev/atomic-server/blob/ba3c5959867a563d4da00bb23fd13e45e69dc5d7/server/build.rs#L22-L37
+    postUnpack = ''
+      mkdir -p source/server/assets_tmp
+      cp -r ${atomic-browser}/* source/server/assets_tmp
+    '';
 
     doCheck = false; # TODO(jl): broken upstream
 
