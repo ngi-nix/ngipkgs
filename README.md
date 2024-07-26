@@ -78,10 +78,10 @@ Many of them represent services that map to one or more systemd services that ar
 These modules are ready to be deployed to a NixOS system, such as a container, virtual machine, or physical machine.
 Example configurations found in the corresponding per-project directory are a good starting point for anyone interested in using these modules, and are sure to work because they are also used for testing.
 
-## Continuous builds of packages with Hydra
+## Continuous builds of packages with Buildbot
 
-All packages in the [main branch of NGIpkgs](https://github.com/ngi-nix/ngipkgs/tree/main) are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
-The results of these builds can be found at <https://hydra.ngi0.nixos.org/jobset/ngipkgs/main#tabs-jobs>
+All packages in the [main branch of NGIpkgs](https://github.com/ngi-nix/ngipkgs/tree/main) are automatically built by a [Buildbot](https://github.com/buildbot/buildbot) server.
+The results of these builds can be found at <https://buildbot.ngi.nixos.org/#/projects/1>
 
 ## Reasoning for creation of the NGIpkgs monorepo
 
