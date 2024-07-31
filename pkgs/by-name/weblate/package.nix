@@ -55,7 +55,7 @@ poetry2nix.mkPoetryApplication {
           rev = "1.15";
           sha256 = "sha256-lhNyeieeiBBm3rNDEU0BuWKeM6XYlOtv1voW8tR8cUM=";
         };
-        nativeBuildInputs = [gettext self.flake8];
+        nativeBuildInputs = [self.setuptools self.flake8 gettext];
         buildInputs = [isocodes];
         installPhase = ''
           ${self.python.interpreter} setup.py --without-gaupol install --prefix=$out
