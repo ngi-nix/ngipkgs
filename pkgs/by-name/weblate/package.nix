@@ -14,10 +14,7 @@
   tesseract,
   gobject-introspection,
   wrapGAppsNoGuiHook,
-  pango,
-  harfbuzz,
-  librsvg,
-  gdk-pixbuf,
+  zlib,
 }:
 poetry2nix.mkPoetryApplication {
   src = fetchFromGitHub {
@@ -78,6 +75,9 @@ poetry2nix.mkPoetryApplication {
       });
       siphashc = super.siphashc.overridePythonAttrs (old: {
         nativeBuildInputs = (old.nativeBuildInputs or []) ++ [self.setuptools];
+      });
+      lxml = super.lxml.overridePythonAttrs (old: {
+        buildInputs = (old.buildInputs or []) ++ [zlib];
       });
       translate-toolkit = super.translate-toolkit.overridePythonAttrs (old: {
         nativeBuildInputs = (old.nativeBuildInputs or []) ++ [self.setuptools];
