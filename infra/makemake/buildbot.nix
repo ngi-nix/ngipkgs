@@ -21,8 +21,9 @@ in {
       };
       useHTTPS = true;
       cachix = {
+        enable = true;
         name = "ngi";
-        authTokenFile = config.sops.secrets."cachix".path;
+        auth.authToken.file = config.sops.secrets."cachix".path;
       };
     };
 
