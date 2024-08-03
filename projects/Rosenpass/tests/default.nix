@@ -75,7 +75,9 @@ in {
           enable = true;
           networks."rosenpass" = {
             matchConfig.Name = deviceName;
-            networkConfig.IPForward = true;
+            networkConfig = {
+              IPv6Forwarding = true;
+            };
             address = ["${peer.ip}/64"];
           };
 
