@@ -188,6 +188,7 @@ in {
 
     # Next workspace
     machine.send_key("ctrl-alt-right")
+    machine.sleep(2) # Make sure we're actually on the second workspace
 
     # Register profile with setup XMPP account in Libervia
     spawn_terminal()
