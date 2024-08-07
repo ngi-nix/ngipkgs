@@ -17,11 +17,12 @@ in {
   };
 
   config = let
-    pkg = pkgs.libervia-backend.override {withMedia = cfg.withMediaRepo;};
+    backend = pkgs.libervia-backend.override {withMedia = cfg.withMediaRepo;};
+    desktop-kivy = pkgs.libervia-desktop-kivy.override {withMedia = cfg.withMediaRepo;};
   in
     lib.mkIf cfg.enable {
-      environment.systemPackages = [pkg];
+      environment.systemPackages = [backend desktop-kivy];
 
-      services.dbus.packages = [pkg];
+      services.dbus.packages = [backend];
     };
 }
