@@ -10,12 +10,9 @@ in {
     enable = lib.mkEnableOption "Libervia";
   };
 
-  config = let
-    pkg = pkgs.libervia-backend;
-  in
-    lib.mkIf cfg.enable {
-      environment.systemPackages = [pkg];
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [libervia-backend libervia-web];
 
-      services.dbus.packages = [pkg];
-    };
+    services.dbus.packages = with pkgs; [libervia-backend];
+  };
 }
