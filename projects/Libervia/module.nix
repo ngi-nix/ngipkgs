@@ -21,7 +21,7 @@ in {
     desktop-kivy = pkgs.libervia-desktop-kivy.override {withMedia = cfg.withMediaRepo;};
   in
     lib.mkIf cfg.enable {
-      environment.systemPackages = [backend desktop-kivy];
+      environment.systemPackages = [backend desktop-kivy pkgs.libervia-web];
 
       services.dbus.packages = [backend];
     };
