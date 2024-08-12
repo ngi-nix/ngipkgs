@@ -18,26 +18,22 @@ in {
   meta.maintainers = with pkgs.lib.maintainers; [erictapen];
 
   nodes.server = {
-    config,
     pkgs,
     lib,
     ...
   }: {
     virtualisation.memorySize = 2048;
 
-    services.postgresql.package = pkgs.postgresql_14;
-
     imports = [sources.modules."services.weblate"];
 
     services.weblate = {
       enable = true;
       localDomain = "${serverDomain}";
-      djangoSecretKeyFile = pkgs.writeText "weblate-django-secret" "thisissnakeoilsecret";
-      smtp = {
-        createLocally = true;
-        user = "weblate@${serverDomain}";
-        passwordFile = pkgs.writeText "weblate-smtp-pass" "thisissnakeoilpassword";
-      };
+      djangoSecretKeyFile = pkgs.writeText "weblate-django-secret" "thisissnakeoilsecretwithmorethan50characterscorrecthorsebatterystaple";
+      extraConfig = ''
+        # Weblate tries to fetch Avatars from the network
+        ENABLE_AVATARS = False
+      '';
     };
 
     services.nginx.virtualHosts."${serverDomain}" = {
@@ -46,24 +42,14 @@ in {
       sslCertificateKey = certs."${serverDomain}".key;
     };
 
-    services.postfix = {
-      enableSubmission = true;
-      enableSubmissions = true;
-      submissionsOptions = {
-        smtpd_sasl_auth_enable = "yes";
-        smtpd_client_restrictions = "permit";
-      };
-      # sslKey = certs.${serverDomain}.key;
-      # sslCert = certs.${serverDomain}.cert;
-    };
-
     security.pki.certificateFiles = [certs.ca.cert];
 
     networking.hosts."::1" = ["${serverDomain}"];
-    networking.firewall.allowedTCPPorts = [80 443];
+    networking.firewall.allowedTCPPorts = [
+      80
+      443
+    ];
 
-    # We need weblate-env available to the root user.
-    environment.systemPackages = config.users.users.weblate.packages;
     users.users.weblate.shell = pkgs.bashInteractive;
   };
 
@@ -91,7 +77,7 @@ in {
     start_all()
     server.wait_for_unit("weblate.socket")
     server.wait_until_succeeds("curl -f https://${serverDomain}/")
-    server.succeed("sudo -iu weblate -- weblate-env weblate createadmin --username ${admin.username} --password ${admin.password} --email weblate@example.org")
+    server.succeed("sudo -iu weblate -- weblate createadmin --username ${admin.username} --password ${admin.password} --email weblate@example.org")
 
     # It's easier to replace the generated API token with a predefined one than
     # to extract it at runtime.
@@ -100,7 +86,7 @@ in {
     client.wait_for_unit("multi-user.target")
 
     # Test the official Weblate client wlc.
-    # client.wait_until_succeeds("wlc --debug list-projects")
+    client.wait_until_succeeds("REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt wlc --debug list-projects")
 
     def call_wl_api(arg):
         (rv, result) = client.execute("curl -H \"Content-Type: application/json\" -H \"Authorization: Token ${apiToken}\" https://${serverDomain}/api/{}".format(arg))
@@ -114,10 +100,10 @@ in {
           "email": "test1@example.org"
         })))
 
+    # TODO: Check sending and receiving email.
     # server.wait_for_unit("postfix.service")
 
-    # The goal is for this to succeed, but there are still some checks failing.
-    # server.succeed("sudo -iu weblate -- weblate-env weblate check --deploy")
-
+    # TODO: The goal is for this to succeed, but there are still some checks failing.
+    # server.succeed("sudo -iu weblate -- weblate check --deploy")
   '';
 }
