@@ -15,9 +15,6 @@
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.buildbot-nix.url = "github:Mic92/buildbot-nix";
-  inputs.poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.poetry2nix.inputs.flake-utils.follows = "flake-utils";
-  inputs.poetry2nix.url = "github:nix-community/poetry2nix";
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
@@ -30,7 +27,6 @@
     pre-commit-hooks,
     dream2nix,
     buildbot-nix,
-    poetry2nix,
     ...
   } @ inputs: let
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
@@ -109,9 +105,6 @@
       nixosModules
       // {
         sops-nix = sops-nix.nixosModules.default;
-        poetry2nix = {
-          nixpkgs.overlays = [poetry2nix.overlays.default];
-        };
       };
 
     mkNixosSystem = config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;};
@@ -149,7 +142,6 @@
         inherit system;
         overlays = [
           overlay
-          poetry2nix.overlays.default
         ];
       };
 
