@@ -16,7 +16,7 @@ in {
       github = {
         oauthId = "Ov23linNGNKJg5zddrwX";
         oauthSecretFile = secret "github/oauth";
-        tokenFile = secret "github/pat";
+        authType.legacy.tokenFile = secret "github/pat";
         webhookSecretFile = secret "github/webhook";
       };
       useHTTPS = true;
