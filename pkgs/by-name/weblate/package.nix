@@ -2,7 +2,9 @@
   stdenv,
   lib,
   fetchFromGitHub,
+  writeText,
   poetry2nix,
+  python3,
   pkg-config,
   openssl,
   isocodes,
@@ -12,11 +14,15 @@
   postgresql,
   leptonica,
   tesseract,
-  gobject-introspection,
-  wrapGAppsNoGuiHook,
   zlib,
+  pango,
+  harfbuzz,
+  librsvg,
+  gdk-pixbuf,
+  glib,
+  git,
 }:
-poetry2nix.mkPoetryApplication {
+poetry2nix.mkPoetryApplication rec {
   src = fetchFromGitHub {
     owner = "WeblateOrg";
     repo = "weblate";
@@ -27,21 +33,25 @@ poetry2nix.mkPoetryApplication {
   pyproject = ./pyproject.toml;
   poetrylock = ./poetry.lock;
 
+  outputs = [
+    "out"
+    "static"
+  ];
+
   patches = [
     # FIXME This shouldn't be necessary and probably has to do with some dependency mismatch.
     ./cache.lock.patch
   ];
 
-  makeWrapperArgs = [
-    "\${gappsWrapperArgs[@]}"
+  # We don't just use wrapGAppsNoGuiHook because we need to expose GI_TYPELIB_PATH
+  GI_TYPELIB_PATH = lib.makeSearchPathOutput "out" "lib/girepository-1.0" [
+    pango
+    harfbuzz
+    librsvg
+    gdk-pixbuf
+    glib
   ];
-
-  nativeBuildInputs = [
-    wrapGAppsNoGuiHook
-    gobject-introspection
-  ];
-
-  dontWrapGApps = true;
+  makeWrapperArgs = ["--set GI_TYPELIB_PATH \"$GI_TYPELIB_PATH\""];
 
   overrides = poetry2nix.overrides.withDefaults (
     self: super: {
@@ -152,6 +162,28 @@ poetry2nix.mkPoetryApplication {
       );
     }
   );
+
+  nativeBuildInputs = [git];
+
+  # Build static files into a separate output
+  postBuild = let
+    staticSettings = writeText "static_settings.py" ''
+      STATIC_ROOT = os.environ["static"] + "/static"
+      COMPRESS_ENABLED = True
+      COMPRESS_OFFLINE = True
+      COMPRESS_ROOT = os.environ["static"] + "/compressor-cache"
+      # So we don't need postgres dependencies
+      DATABASES = {}
+    '';
+  in ''
+    mkdir $static
+    cat weblate/settings_example.py ${staticSettings} > weblate/settings_static.py
+    export DJANGO_SETTINGS_MODULE="weblate.settings_static"
+    ${python3.pythonOnBuildForHost.interpreter} manage.py collectstatic --no-input
+    ${python3.pythonOnBuildForHost.interpreter} manage.py compress
+  '';
+
+  passthru = {inherit GI_TYPELIB_PATH;};
 
   meta = with lib; {
     description = "Web based translation tool with tight version control integration";

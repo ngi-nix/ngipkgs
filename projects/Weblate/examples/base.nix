@@ -11,8 +11,10 @@
     # `weblate-generate-secret-key > django-secret` when run as the weblate user.
     djangoSecretKeyFile = "/var/lib/weblate/django-secret";
     smtp = {
-      # either use smtp.createLocally or specify a valid account on your mail provider.
+      enable = true;
+      # Specify a valid account and server for your mail provider.
       user = "weblate@example.org";
+      host = "mail.example.org";
       # Manually deployed secret
       passwordFile = "/var/lib/weblate/smtp-password";
     };
