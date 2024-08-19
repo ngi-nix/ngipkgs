@@ -8,27 +8,28 @@
   pkg-config,
   perl,
 }: let
+  version = "0.1.0";
+
+  releaseDate = "2024-03-15";
+
   rootSrc = fetchFromGitHub {
     owner = "mCaptcha";
     repo = "mCaptcha";
-    rev = "f337ee0643d88723776e1de4e5588dfdb6c0c574";
-    sha256 = "sha256-UP7V2TfbW+KJpNAQLxQIcRsT9ZWYGVkS13XxMbHEH2I=";
+    rev = "v${version}";
+    hash = "sha256-2900GArHM75IHMfN+bWFbeczKrZK/fG50ImUtiLMft4=";
   };
-
-  releaseDate = "2023-07-04";
 
   frontend = let
     src = rootSrc;
   in
     mkYarnPackage {
       pname = "mcaptcha-frontend";
-      version = "unstable-${releaseDate}";
-      inherit src;
+      inherit version src;
 
       packageJSON = ./frontend-package.json;
       offlineCache = fetchYarnDeps {
         yarnLock = "${src}/yarn.lock";
-        sha256 = "sha256-GyWjQdFJ+hEuR4PebhYzFwiuyMyamRY5GPaJ7rK9Rsc=";
+        hash = "sha256-3HttWhqK1EWYnVR+dkp495jNRwib9qq7WJZzQ+Wl1DY=";
       };
 
       buildPhase = ''
@@ -81,13 +82,12 @@
   in
     mkYarnPackage {
       pname = "mcaptcha-openapi";
-      version = "unstable-${releaseDate}";
-      inherit src;
+      inherit version src;
 
       packageJSON = ./openapi-package.json;
       offlineCache = fetchYarnDeps {
         yarnLock = "${src}/yarn.lock";
-        sha256 = "sha256-mdd5AwO4WO/RoR/ycR+miJvRXgu1K6WXvMZtyyV/0Tc=";
+        hash = "sha256-vsgc/y/3aQOwoWM/WWf3oYNX0RucaXvJdgigb56j+w8=";
       };
 
       buildPhase = ''
@@ -116,23 +116,17 @@
     rustPlatform.buildRustPackage {
       inherit src;
       pname = "cache-bust";
-      version = "unstable-${releaseDate}";
+      inherit version;
 
-      cargoLock = {
-        lockFile = ./mcaptcha-cache-bust-Cargo.lock;
-        outputHashes = {
-          "cache-buster-0.2.0" = "sha256-FT+GV2c+jZyVyC2pEtDm52Aurbf6tOZeBqzHq3NZptw=";
-        };
-      };
+      cargoHash = "sha256-WULS0Sn5a+Zgyl8GFP+wlVTkTJoSZk0bvTkwsMl1pGk=";
     };
 
   mcaptcha = let
     src = rootSrc;
   in
     rustPlatform.buildRustPackage {
-      inherit src;
       pname = "mcaptcha";
-      version = "unstable-${releaseDate}";
+      inherit version src;
 
       cargoLock = {
         # Note: this isn't the lockfile from upstream, it has been patched, see
@@ -142,23 +136,14 @@
           "actix-auth-middleware-0.2.0" = "sha256-sLd2Fsa02bXE+CTzTcByTF2PAnzn5YEYGekCmw+AG4E=";
           "actix-web-codegen-4.0.0" = "sha256-2MKgeCa9C5WL0TtvQSTvz2YMBBgzn7tnkFL7c7KJFSs=";
           "argon2-creds-0.2.2" = "sha256-A5xkcVvi+xfdQ0vBdqJgtlIbiNmOz6weSB3ho6kAz+A=";
-          "cache-buster-0.2.0" = "sha256-FT+GV2c+jZyVyC2pEtDm52Aurbf6tOZeBqzHq3NZptw=";
-          "libmcaptcha-0.2.3" = "sha256-oedAXrasZ3YAj6PiscdasAQ0RlG9YcFAuFRtxicmkhY=";
-          "pow_sha256-0.3.1" = "sha256-gprbSYL0tjKQlQe/lJwFZM0avSQT92nAwUnr61t0X0g=";
         };
       };
 
       patches = [
-        # https://github.com/mCaptcha/mCaptcha/issues/105
-        ./support-for-setting-cookie-secret-with-env-var.patch
         # build.rs does some impure stuff with git to inject a commit hash and
         # a compilation date. That isn't nix-compatible, so we remove it, and
         # simulate its effects (see GIT_HASH and COMPILED_DATE below).
         ./no-build-script.patch
-        # This is blocked on https://github.com/mCaptcha/libmcaptcha/pull/13.
-        # Once that PR is merged, we can re-lock dependencies in mCaptcha, and
-        # the duplicate pow_sha256 will go away.
-        ./deduplicate-pow_sha256-in-lockfile.patch
       ];
 
       # Remove the build.rs mentioned in no-build-script.patch above. (This is
@@ -166,6 +151,7 @@
       # patch file).
       postPatch = ''
         rm build.rs
+        cp ${./mcaptcha-Cargo.lock} Cargo.lock
       '';
 
       # Setting these variables to simulate the behavior of the (impure)
