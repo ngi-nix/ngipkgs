@@ -202,17 +202,21 @@ in {
     systemd.services.mcaptcha.description = "mCaptcha: a CAPTCHA system that gives attackers a run for their money";
 
     systemd.services.mcaptcha.script = let
-      serverCookieSecret = "export MCAPTCHA_SERVER_COOKIE_SECRET=$(< ${cfg.server.cookieSecretFile})";
-      captchaSalt = "export MCAPTCHA_CAPTCHA_SALT=$(< ${cfg.captcha.saltFile})";
+      serverCookieSecret = "export MCAPTCHA__server_COOKIE_SECRET=$(< ${cfg.server.cookieSecretFile})";
+      captchaSalt = "export MCAPTCHA_captcha_SALT=$(< ${cfg.captcha.saltFile})";
       databaseLocalUrl = ''export DATABASE_URL="postgres:///${cfg.settings.database.name}?host=/run/postgresql"'';
-      databasePassword = "export MCAPTCHA_DATABASE_PASSWORD=$(< ${cfg.database.passwordFile})";
-      redisLocalUrl = ''export MCAPTCHA_REDIS_URL="redis://${cfg.redis.host}:${builtins.toString cfg.redis.port}"'';
+      databaseRemoteUrl = let
+        inherit (cfg.settings.database) username hostname port name;
+      in ''
+        export DATABASE_URL="postgres://${username}:$(< ${cfg.database.passwordFile})@${hostname}:${builtins.toString port}/${name}"
+      '';
+      redisLocalUrl = ''export MCAPTCHA_redis_URL="redis://${cfg.redis.host}:${builtins.toString cfg.redis.port}"'';
       redisRemoteUrl = let
         urlencode = lib.getExe' pkgs.urlencode "urlencode";
       in ''
         redis_user=$(${urlencode} -e userinfo ${lib.escapeShellArg cfg.redis.user})
         redis_pass=$(${urlencode} -e userinfo < ${cfg.redis.passwordFile})
-        export MCAPTCHA_REDIS_URL="redis://$redis_user:$redis_pass@${cfg.redis.host}:${builtins.toString cfg.redis.port}"
+        export MCAPTCHA_redis_URL="redis://$redis_user:$redis_pass@${cfg.redis.host}:${builtins.toString cfg.redis.port}"
       '';
       exec = "exec ${lib.getExe cfg.package}";
     in
@@ -222,7 +226,7 @@ in {
         (
           if cfg.database.createLocally
           then databaseLocalUrl
-          else databasePassword
+          else databaseRemoteUrl
         )
         (
           if cfg.redis.createLocally
