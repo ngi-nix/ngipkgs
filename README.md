@@ -82,51 +82,39 @@ Example configurations found in the corresponding per-project directory are a go
 
 Installation of software from NGIpkgs currently requires Nix [flakes to be enabled](https://nixos.wiki/wiki/Flakes).
 
-### Install to a local VM with QEMU
+###  Run a **standalone programs** locally with Nix
 
-For more information on how to deploy software from NGIpkgs to a local VM with QEMU, see this example repository: https://github.com/ngi-nix/flakes-ngipkgs
-
-### Install to an existing NixOS flake
-
-Here is a minimal `flake.nix` that installs the default module from NGIpkgs, containing all the of the packages from the repo:
+This example uses atomic-cli, but this can be replaced with any package from NGIpkgs:
 ```
-{
-  inputs.ngipkgs.url = "github:ngi-nix/ngipkgs";
-  # Optional:
-  # inputs.ngipkgs.inputs.nixpkgs.follows = "nixpkgs";
-
-  outputs = { self, nixpkgs, agenix }: {
-    # Change `yourhostname` to your actual hostname
-    nixosConfigurations.yourhostname = nixpkgs.lib.nixosSystem {
-      # change to your system:
-      system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
-        ngipkgs.nixosModules.default
-      ];
-    };
-  };
-}
+nix run github:ngi-nix/ngipkgs#atomic-cli
 ```
 
-Now any NGIpkgs package can be installed in the `configuration.nix` in the same ways as any package from nixpkgs.
+### Deploy **services** to machines running NixOS
 
-Each project within NGIpkgs has its own module that must also be added in order to deploy the services for that project.
-To use the Vula project as an example:
+1. Run the following script to prepare a local repo for deploying from NGIpkgs:
 ```
-        modules = [
-          configuration.nix
-          ngipkgs.nixosModules.default
-          ngipkgs.nixosModules."services.vula"
-```
-
-The Vula service can then be enabled in the `configuration.nix`, as documented in the [`example-simple.nix`](https://github.com/ngi-nix/ngipkgs/blob/main/projects/Vula/example-simple.nix) for the project:
-```
-  services.vula.enable = true;
-  services.vula.openFirewall = true;
+git clone --no-checkout --depth=1 https://github.com/ngi-nix/ngipkgs.git deploy-ngipkgs &&
+cd deploy-ngipkgs && 
+git checkout main -- projects && # checkout only the projects directory of ngipkgs
+cp -a projects/. . && # copy contents of the projects directory into the root of deploy-ngipkgs
+rm -rf .git projects default.nix && # cleanup
+git init && git add . # create a new git repo for tracking config changes during deployment
 ```
 
-The list of projects that are available to be deployed in this way, and how the module for each one is labelled, is available in the `nixosModules` section of the outputs listed by the `nix flake show` command when run in the NGIpkgs repo.
+2. Edit the flake.nix to enable a service by removing comments from its config lines under 
+```
+modules = [
+```
+
+3. Run the following commands to build deploy a local QEMU VM running the enabled service:
+```
+nix build .#nixosConfigurations.myMachine.config.system.build.vm && export QEMU_NET_OPTS="hostfwd=tcp::2221-:22,hostfwd=tcp::8080-:80" && ./result/bin/run-nixos-vm
+```
+
+QEMU will open its own terminal window that shows the boot log. It is possible to login via this terminal (username `user`, password `pass`), but the UX will usually be better with a regular SSH login:
+```
+ssh -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no user@localhost -p 2221
+```
 
 ### Configuring a binary cache for NGIpkgs
 
