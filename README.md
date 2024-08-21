@@ -91,19 +91,29 @@ nix run github:ngi-nix/ngipkgs#atomic-cli
 
 ### Deploy **services** to machines running NixOS
 
-1. Run the following script to prepare a local repo for deploying from NGIpkgs:
+1. Run the `deploy-ngipkgs` script to create a local repo for deploying from NGIpkgs:
 ```
-git clone --no-checkout --depth=1 https://github.com/ngi-nix/ngipkgs.git deploy-ngipkgs &&
-cd deploy-ngipkgs && 
-git checkout main -- projects && # checkout only the projects directory of ngipkgs
-cp -a projects/. . && # copy contents of the projects directory into the root of deploy-ngipkgs
-rm -rf .git projects default.nix && # cleanup
-git init && git add . # create a new git repo for tracking config changes during deployment
+nix run github:ngi-nix/ngipkgs/howto-docs#deploy-ngipkgs
+# TODO: remove PR branch name here and in package.nix before merging
 ```
 
-2. Edit the flake.nix to enable a service by removing comments from its config lines under 
+2. Edit the flake.nix to enable a service by removing comments from its module and example config. For example, this would enable the Kbin service:
 ```
 modules = [
+  [...]
+  ### VULA
+  # ngipkgs.nixosModules."services.vula"
+  # ./Vula/example-simple.nix
+  ###
+  ### KBIN
+  ngipkgs.nixosModules."services.kbin"
+  ./Kbin/example.nix
+  ###
+  ### PEERTUBE
+  # ngipkgs.nixosModules."services.peertube.plugins"
+  # ./PeerTube/example.nix
+  ###
+  ];
 ```
 
 3. Run the following commands to build deploy a local QEMU VM running the enabled service:
