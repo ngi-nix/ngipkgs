@@ -78,6 +78,64 @@ Many of them represent services that map to one or more systemd services that ar
 These modules are ready to be deployed to a NixOS system, such as a container, virtual machine, or physical machine.
 Example configurations found in the corresponding per-project directory are a good starting point for anyone interested in using these modules, and are sure to work because they are also used for testing.
 
+## How to install software from NGIpkgs
+
+Installation of software from NGIpkgs currently requires Nix [flakes to be enabled](https://nixos.wiki/wiki/Flakes).
+
+###  Run a **standalone programs** locally with Nix
+
+This example uses atomic-cli, but this can be replaced with any package from NGIpkgs:
+```
+nix run github:ngi-nix/ngipkgs#atomic-cli
+```
+
+### Deploy **services** to machines running NixOS
+
+1. Run the `deploy-ngipkgs` script to create a local repo for deploying from NGIpkgs:
+```
+nix run github:ngi-nix/ngipkgs/howto-docs#deploy-ngipkgs
+# TODO: remove PR branch name here and in package.nix before merging
+```
+
+2. Edit the flake.nix to enable a service by removing comments from its module and example config. For example, this would enable the Kbin service:
+```
+modules = [
+  [...]
+  ### VULA
+  # ngipkgs.nixosModules."services.vula"
+  # ./Vula/example-simple.nix
+  ###
+  ### KBIN
+  ngipkgs.nixosModules."services.kbin"
+  ./Kbin/example.nix
+  ###
+  ### PEERTUBE
+  # ngipkgs.nixosModules."services.peertube.plugins"
+  # ./PeerTube/example.nix
+  ###
+  ];
+```
+
+3. Run the following commands to build deploy a local QEMU VM running the enabled service:
+```
+nix build .#nixosConfigurations.myMachine.config.system.build.vm && export QEMU_NET_OPTS="hostfwd=tcp::2221-:22,hostfwd=tcp::8080-:80" && ./result/bin/run-nixos-vm
+```
+
+QEMU will open its own terminal window that shows the boot log. It is possible to login via this terminal (username `user`, password `pass`), but the UX will usually be better with a regular SSH login:
+```
+ssh -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no user@localhost -p 2221
+```
+
+### Configuring a binary cache for NGIpkgs
+
+Add the following lines to your `configuration.nix` to enable the binary cache substituter for NGIpkgs, which will minimize the building of packages from source:
+```
+  nix.settings.substituters = ["https://ngi.cachix.org/"];
+  nix.settings.trusted-public-keys = ["ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw="];
+```
+
+For further documentation on use of the binary cache see https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/cachix.md.
+
 ## Continuous builds of packages with Hydra
 
 All packages in the [main branch of NGIpkgs](https://github.com/ngi-nix/ngipkgs/tree/main) are automatically built by a [Hydra](https://github.com/NixOS/hydra) server.
