@@ -23,8 +23,7 @@ in {
       cachix = {
         enable = true;
         name = "ngi";
-        # https://github.com/nix-community/buildbot-nix/pull/241
-        authTokenFile = config.sops.secrets."cachix".path;
+        auth.authToken.file = config.sops.secrets."cachix".path;
       };
     };
 
