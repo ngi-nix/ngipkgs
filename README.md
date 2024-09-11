@@ -40,6 +40,8 @@ It will help you to go more quickly if you learn to:
 - [Package existing software with Nixpkgs](https://nix.dev/tutorials/packaging-existing-software)
 - [Work with NixOS modules](https://nix.dev/tutorials/module-system/)
 - [Run NixOS in virtual machines](https://nix.dev/tutorials/nixos/nixos-configuration-on-vm)
+- [Provision remote NixOS machines via SSH](https://nix.dev/tutorials/nixos/provisioning-remote-machines)
+- [Set up your own cache for sharing binaries](https://nix.dev/tutorials/nixos/binary-cache-setup)
 
 ## Structure of NGIpkgs
 
