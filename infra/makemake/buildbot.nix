@@ -16,8 +16,11 @@ in {
       github = {
         oauthId = "Ov23linNGNKJg5zddrwX";
         oauthSecretFile = secret "github/oauth";
-        authType.legacy.tokenFile = secret "github/pat";
         webhookSecretFile = secret "github/webhook";
+        authType.app = {
+          id = 994441;
+          secretKeyFile = secret "buildbot.pem";
+        };
       };
       useHTTPS = true;
       cachix = {
@@ -56,6 +59,10 @@ in {
     // {
       ${sopsPrefix "workers"} = {
         sopsFile = ./secrets/buildbot-workers.json;
+        format = "binary";
+      };
+      ${sopsPrefix "buildbot.pem"} = {
+        sopsFile = ./secrets/buildbot.pem;
         format = "binary";
       };
     };
