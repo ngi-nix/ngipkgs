@@ -4,19 +4,21 @@
   arpa2cm,
   arpa2common,
   quickder,
+  quickmem,
+  quicksasl,
   lillydap,
   fetchFromGitLab,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "leaf";
-  version = "unstable-2020-04-28";
+  version = "0.2";
 
   src = fetchFromGitLab {
     owner = "arpa2";
     repo = "leaf";
-    rev = "b3861efce0ba143f6eb5451aac5be24f18e6d8ab";
-    hash = "sha256-woEzlXyulVSpeJJQU0SsfC3U90cv3b9zzVh/w5iouJY=";
+    rev = "v${version}";
+    hash = "sha256-s52gtxM+BmG7oVrB5F0ORjkb4F3fWONiOxIWdDn2P5k=";
   };
 
-  nativeBuildInputs = [cmake arpa2cm arpa2common quickder lillydap];
+  nativeBuildInputs = [cmake arpa2cm arpa2common quickder quickmem quicksasl lillydap];
 }
