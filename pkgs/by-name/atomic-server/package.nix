@@ -3,6 +3,7 @@
   fetchFromGitHub,
   rustPlatform,
   atomic-browser,
+  nasm,
 }: let
   inherit
     (lib)
@@ -11,16 +12,16 @@
 in
   rustPlatform.buildRustPackage rec {
     pname = "atomic-server";
-    version = "0.37.0";
+    version = "0.39.0";
 
     src = fetchFromGitHub {
       owner = "atomicdata-dev";
-      repo = pname;
+      repo = "atomic-server";
       rev = "v${version}";
-      hash = "sha256-+Lk2MvkTj+B+G6cNbWAbPrN5ECiyMJ4HSiiLzBLd74g=";
+      hash = "sha256-qqk+yliCpIHfazGY8dkW3CkIKk6paEn/EhJWLO4zgNQ=";
     };
 
-    cargoHash = "sha256-cSv1XnuzL5PxVOTAUiyiQsMHSRUMaFDkW2/4Bt75G9o=";
+    cargoHash = "sha256-2HZn6gs71Aw+44AqeYmelgjj9W2gZBA5Udmg3JMPP6o=";
 
     # server/assets_tmp is the directory atomic-server's build will check for
     # compiled frontend assets to decide whether to rebuild or not
@@ -30,11 +31,14 @@ in
       cp -r ${atomic-browser}/* source/server/assets_tmp
     '';
 
+    nativeBuildInputs = [nasm];
+
     doCheck = false; # TODO(jl): broken upstream
 
     meta = {
-      description = "A Rust library to serialize, parse, store, convert, validate, edit, fetch and store Atomic Data. Powers both atomic-cli and atomic-server.";
-      homepage = "docs.atomicdata.dev";
+      description = "Reference implementation for the Atomic Data specification";
+      homepage = "https://docs.atomicdata.dev";
       license = licenses.mit;
+      mainProgram = "atomic-server";
     };
   }
