@@ -8,7 +8,6 @@
   flex,
   bison,
   sqlite,
-  catch2,
   log4cpp,
   fetchFromGitLab,
 }: let
