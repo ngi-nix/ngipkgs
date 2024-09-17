@@ -17,12 +17,14 @@
     concatMapAttrs
     ;
 
-  names = name: type:
-    if type != "directory"
-    then assert name == "README.md" || name == "default.nix"; {}
-    else {${name} = baseDirectory + "/${name}";};
-
-  packageDirectories = concatMapAttrs names (readDir baseDirectory);
+  packageDirectories = let
+    names = name: type:
+      if type == "directory"
+      then {${name} = baseDirectory + "/${name}";}
+      # nothing else should be kept in this directory reserved for derivations
+      else assert name == "README.md" || name == "default.nix"; {};
+  in
+    concatMapAttrs names (readDir baseDirectory);
 
   callModule = module: let
     evaluated = lib.evalModules {
