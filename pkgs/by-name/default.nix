@@ -1,7 +1,7 @@
 {
+  pkgs,
   lib,
   dream2nix,
-  pkgs,
 }: let
   baseDirectory = ./.;
 
@@ -29,7 +29,7 @@
   callModule = module: let
     evaluated = lib.evalModules {
       specialArgs = {
-        dream2nix = import dream2nix;
+        inherit dream2nix;
         packageSets.nixpkgs = pkgs;
       };
       modules = [

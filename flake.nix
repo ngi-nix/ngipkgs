@@ -65,14 +65,11 @@
         }
         // args);
 
-    # NGI packages are imported from ./pkgs/by-name/default.nix.
-    importNgiPackages = pkgs:
+    overlay = final: prev:
       import ./pkgs/by-name {
-        inherit (pkgs) lib;
-        inherit dream2nix pkgs;
+        pkgs = prev;
+        inherit lib dream2nix;
       };
-
-    overlay = final: prev: importNgiPackages prev;
 
     # NGI projects are imported from ./projects/default.nix.
     # Each project includes packages, and optionally, modules, examples and tests.
@@ -145,7 +142,7 @@
         ];
       };
 
-      ngiPackages = importNgiPackages pkgs;
+      ngiPackages = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
 
       # Dream2nix is failing to pass through the meta attribute set.
       # As a workaround, consider packages with empty meta as non-broken.
