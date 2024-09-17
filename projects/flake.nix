@@ -13,7 +13,13 @@
       modules = [
         ./configuration.nix
         ngipkgs.nixosModules.default
-        ###
+
+        # GENERATE-HERE
+
+
+
+       ########################################
+
         ### VULA
         # ngipkgs.nixosModules."services.vula"
         # ./Vula/example-simple.nix
