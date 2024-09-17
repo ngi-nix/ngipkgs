@@ -260,8 +260,5 @@
       };
     });
   in
-    foldr recursiveUpdate {} [
-      eachDefaultSystemOutputs
-      systemAgnosticOutputs
-    ];
+    eachDefaultSystemOutputs // systemAgnosticOutputs;
 }
