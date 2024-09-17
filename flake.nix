@@ -137,9 +137,7 @@
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [
-          overlay
-        ];
+        overlays = [overlay];
       };
 
       ngiPackages = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
@@ -214,23 +212,20 @@
           (checksForNixosTests projectName (project.nixos.tests or {}))
           // (checksForNixosExamples projectName (project.nixos.examples or {}));
 
-        checksForAllProjects =
-          concatMapAttrs
-          checksForProject
-          nonBrokenNgiProjects;
+        checksForAllProjects = concatMapAttrs checksForProject nonBrokenNgiProjects;
 
         checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
 
-        checksForPackagePassthruTests = packageName: tests: (concatMapAttrs (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;}) tests);
+        checksForPackagePassthruTests = packageName: tests:
+          concatMapAttrs
+          (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;})
+          tests;
 
         checksForPackage = packageName: package:
           (checksForPackageDerivation packageName package)
           // (checksForPackagePassthruTests packageName (package.passthru.tests or {}));
 
-        checksForAllPackages =
-          concatMapAttrs
-          checksForPackage
-          nonBrokenNgiPackages;
+        checksForAllPackages = concatMapAttrs checksForPackage nonBrokenNgiPackages;
       in
         checksForAllProjects
         // checksForAllPackages

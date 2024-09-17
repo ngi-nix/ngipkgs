@@ -50,7 +50,8 @@
   );
 
   self =
-    mapAttrs (
+    mapAttrs
+    (
       _: directory:
         if pathExists (directory + "/package.nix")
         then callPackage (directory + "/package.nix") {}
