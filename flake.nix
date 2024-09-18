@@ -47,7 +47,6 @@
       recursiveUpdate
       nameValuePair
       filterAttrs
-      attrByPath
       ;
 
     inherit
@@ -140,15 +139,9 @@
         overlays = [overlay];
       };
 
-      ngiPackages = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
+      ngipkgs = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
 
-      # Dream2nix is failing to pass through the meta attribute set.
-      # As a workaround, consider packages with empty meta as non-broken.
-      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
-
-      ngiProjects = importNgiProjects (pkgs // ngiPackages);
-
-      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
+      ngiProjects = importNgiProjects (pkgs // ngipkgs);
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
@@ -175,7 +168,7 @@
       };
 
       packages =
-        ngiPackages
+        ngipkgs
         // {
           overview = import ./overview {
             inherit lib pkgs self;
@@ -212,8 +205,6 @@
           (checksForNixosTests projectName (project.nixos.tests or {}))
           // (checksForNixosExamples projectName (project.nixos.examples or {}));
 
-        checksForAllProjects = concatMapAttrs checksForProject nonBrokenNgiProjects;
-
         checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
 
         checksForPackagePassthruTests = packageName: tests:
@@ -225,7 +216,14 @@
           (checksForPackageDerivation packageName package)
           // (checksForPackagePassthruTests packageName (package.passthru.tests or {}));
 
-        checksForAllPackages = concatMapAttrs checksForPackage nonBrokenNgiPackages;
+        # everything must evaluate for checks to run
+        nonBrokenPackages = filterAttrs (_: v: ! v.meta.broken or false) ngipkgs;
+
+        checksForAllProjects =
+          concatMapAttrs checksForProject
+          (importNgiProjects (pkgs // nonBrokenPackages));
+
+        checksForAllPackages = concatMapAttrs checksForPackage nonBrokenPackages;
       in
         checksForAllProjects
         // checksForAllPackages
