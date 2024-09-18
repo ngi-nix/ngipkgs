@@ -3,26 +3,28 @@
   lib,
   dream2nix,
 }: let
-  baseDirectory = ./.;
-
   inherit
     (builtins)
+    elem
     pathExists
     readDir
     ;
 
   inherit
     (lib.attrsets)
-    mapAttrs
     concatMapAttrs
+    mapAttrs
     ;
+
+  baseDirectory = ./.;
 
   packageDirectories = let
     names = name: type:
       if type == "directory"
       then {${name} = baseDirectory + "/${name}";}
       # nothing else should be kept in this directory reserved for derivations
-      else assert name == "README.md" || name == "default.nix"; {};
+      else assert elem name allowedFiles; {};
+    allowedFiles = ["README.md" "default.nix"];
   in
     concatMapAttrs names (readDir baseDirectory);
 
