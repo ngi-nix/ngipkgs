@@ -42,10 +42,7 @@
     inherit
       (lib)
       concatMapAttrs
-      mapAttrs'
-      foldr
       recursiveUpdate
-      nameValuePair
       filterAttrs
       ;
 
@@ -53,7 +50,6 @@
       (lib')
       flattenAttrsDot
       flattenAttrsSlash
-      mapAttrByPath
       ;
 
     # Imported from Nixpkgs
@@ -79,12 +75,12 @@
       sources = {inherit inputs;};
     };
 
-    rawExamples = flattenAttrsSlash (mapAttrs (_: v: mapAttrs (_: v: v.path) v) (
-      mapAttrByPath ["nixos" "examples"] {} rawNgiProjects
-    ));
+    rawExamples = flattenAttrsSlash (
+      mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
+    );
 
     rawNixosModules = flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (
-      mapAttrByPath ["nixos" "modules"] {} rawNgiProjects
+      mapAttrs (_: project: project.nixos.modules) rawNgiProjects
     )));
 
     nixosModules =
@@ -180,7 +176,7 @@
       };
     in rec {
       legacyPackages = {
-        nixosTests = mapAttrByPath ["nixos" "tests"] {} ngiProjects;
+        nixosTests = mapAttrs (_: project: project.nixos.tests) ngiProjects;
       };
 
       packages =
@@ -218,8 +214,8 @@
           examples;
 
         checksForProject = projectName: project:
-          (checksForNixosTests projectName (project.nixos.tests or {}))
-          // (checksForNixosExamples projectName (project.nixos.examples or {}));
+          (checksForNixosTests projectName project.nixos.tests)
+          // (checksForNixosExamples projectName project.nixos.examples);
 
         checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
 

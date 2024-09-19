@@ -28,7 +28,6 @@
     hasPrefix
     mapAttrsToList
     optionalString
-    splitString
     ;
 
   inherit
@@ -52,13 +51,13 @@
 
   pick = {
     options = project: let
-      spec = attrNames (flattenAttrsDot (project.nixos.modules or {}));
+      spec = attrNames (flattenAttrsDot project.nixos.modules);
     in
       filter
       (option: any ((flip hasPrefix) (dottedLoc option)) spec)
       (attrValues options);
-    examples = project: attrValues (project.nixos.examples or {});
-    packages = project: attrValues (project.packages or {});
+    examples = project: attrValues project.nixos.examples;
+    packages = project: attrValues project.packages;
   };
 
   render = {
