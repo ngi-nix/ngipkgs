@@ -13,9 +13,7 @@
   inherit
     (lib.attrsets)
     concatMapAttrs
-    filterAttrs
     mapAttrs
-    recursiveUpdate
     ;
 
   baseDirectory = ./.;
@@ -46,10 +44,12 @@
   in
     pkgs.nixosTest (debugging // test);
 
-  hydrate = project:
-    recursiveUpdate
-    project
-    {nixos.tests = mapAttrs (_: nixosTest) project.nixos.tests or {};};
+  hydrate = project: {
+    packages = project.packages or {};
+    nixos.modules = project.nixos.modules or {};
+    nixos.examples = project.nixos.examples or {};
+    nixos.tests = mapAttrs (_: nixosTest) project.nixos.tests or {};
+  };
 in
   mapAttrs
   (

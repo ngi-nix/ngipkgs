@@ -2,14 +2,12 @@
 {lib}: let
   inherit
     (builtins)
-    mapAttrs
     isAttrs
     concatStringsSep
     ;
 
   inherit
     (lib)
-    attrByPath
     concatMapAttrs
     ;
 in rec {
@@ -46,6 +44,4 @@ in rec {
 
   flattenAttrsSlash = flattenAttrs "/" [];
   flattenAttrsDot = flattenAttrs "." [];
-
-  mapAttrByPath = attrPath: default: mapAttrs (_: attrByPath attrPath default);
 }
