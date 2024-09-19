@@ -255,7 +255,7 @@
 
       devShells.default = pkgs.mkShell {
         inherit (checks."infra/pre-commit") shellHook;
-        buildInputs = checks.pre-commit.enabledPackages;
+        buildInputs = checks."infra/pre-commit".enabledPackages;
       };
 
       formatter = pkgs.writeShellApplication {
