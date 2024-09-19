@@ -224,11 +224,9 @@
           (importNgiProjects (pkgs // nonBrokenPackages));
 
         checksForAllPackages = concatMapAttrs checksForPackage nonBrokenPackages;
-      in
-        checksForAllProjects
-        // checksForAllPackages
-        // {
-          pre-commit = pre-commit-hooks.lib.${system}.run {
+
+        checksForInfrastructure = {
+          "infra/pre-commit" = pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
               actionlint.enable = true;
@@ -238,9 +236,13 @@
           "infra/makemake" = toplevel self.nixosConfigurations.makemake;
           "infra/overview" = self.packages.${system}.overview;
         };
+      in
+        checksForInfrastructure
+        // checksForAllProjects
+        // checksForAllPackages;
 
       devShells.default = pkgs.mkShell {
-        inherit (checks.pre-commit) shellHook;
+        inherit (checks."infra/pre-commit") shellHook;
         buildInputs = checks.pre-commit.enabledPackages;
       };
 
@@ -249,7 +251,7 @@
         text = ''
           # shellcheck disable=all
           shell-hook () {
-            ${checks.pre-commit.shellHook}
+            ${checks."infra/pre-commit".shellHook}
           }
 
           shell-hook
