@@ -12,21 +12,23 @@
 
   inherit
     (lib.attrsets)
+    concatMapAttrs
+    filterAttrs
     mapAttrs
     recursiveUpdate
-    filterAttrs
     ;
 
   baseDirectory = ./.;
 
-  allowedFiles = ["README.md" "default.nix"];
-
-  isMarkedBroken = project: project.broken or false;
-
-  filter = name: type:
-    if type != "directory"
-    then assert elem name allowedFiles; false
-    else true;
+  projectDirectories = let
+    names = name: type:
+      if type == "directory"
+      then {${name} = baseDirectory + "/${name}";}
+      # nothing else should be kept in this directory reserved for projects
+      else assert elem name allowedFiles; {};
+    allowedFiles = ["README.md" "default.nix"];
+  in
+    concatMapAttrs names (readDir baseDirectory);
 
   nixosTest = test: let
     # Amenities for interactive tests
@@ -49,13 +51,13 @@
     project
     {nixos.tests = mapAttrs (_: nixosTest) project.nixos.tests or {};};
 in
-  mapAttrs (
-    name: type: let
-      project = import (baseDirectory + "/${name}") {
-        inherit lib pkgs sources;
-      };
+  mapAttrs
+  (
+    name: directory: let
+      project = import directory {inherit lib pkgs sources;};
     in
-      if isMarkedBroken project
+      if project.broken or false
       then trace "Skipping project '${name}' which is marked as broken for system '${pkgs.system or "undefined"}'." {}
       else hydrate project
-  ) (filterAttrs filter (readDir baseDirectory))
+  )
+  projectDirectories

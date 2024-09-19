@@ -47,7 +47,6 @@
       recursiveUpdate
       nameValuePair
       filterAttrs
-      attrByPath
       ;
 
     inherit
@@ -65,14 +64,11 @@
         }
         // args);
 
-    # NGI packages are imported from ./pkgs/by-name/default.nix.
-    importNgiPackages = pkgs:
+    overlay = final: prev:
       import ./pkgs/by-name {
-        inherit (pkgs) lib;
-        inherit dream2nix pkgs;
+        pkgs = prev;
+        inherit lib dream2nix;
       };
-
-    overlay = final: prev: importNgiPackages prev;
 
     # NGI projects are imported from ./projects/default.nix.
     # Each project includes packages, and optionally, modules, examples and tests.
@@ -140,20 +136,12 @@
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [
-          overlay
-        ];
+        overlays = [overlay];
       };
 
-      ngiPackages = importNgiPackages pkgs;
+      ngipkgs = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
 
-      # Dream2nix is failing to pass through the meta attribute set.
-      # As a workaround, consider packages with empty meta as non-broken.
-      nonBrokenNgiPackages = filterAttrs (_: v: !(attrByPath ["meta" "broken"] false v)) ngiPackages;
-
-      ngiProjects = importNgiProjects (pkgs // ngiPackages);
-
-      nonBrokenNgiProjects = importNgiProjects (pkgs // nonBrokenNgiPackages);
+      ngiProjects = importNgiProjects (pkgs // ngipkgs);
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
@@ -180,7 +168,7 @@
       };
 
       packages =
-        ngiPackages
+        ngipkgs
         // {
           overview = import ./overview {
             inherit lib pkgs self;
@@ -217,28 +205,28 @@
           (checksForNixosTests projectName (project.nixos.tests or {}))
           // (checksForNixosExamples projectName (project.nixos.examples or {}));
 
-        checksForAllProjects =
-          concatMapAttrs
-          checksForProject
-          nonBrokenNgiProjects;
-
         checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
 
-        checksForPackagePassthruTests = packageName: tests: (concatMapAttrs (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;}) tests);
+        checksForPackagePassthruTests = packageName: tests:
+          concatMapAttrs
+          (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;})
+          tests;
 
         checksForPackage = packageName: package:
           (checksForPackageDerivation packageName package)
           // (checksForPackagePassthruTests packageName (package.passthru.tests or {}));
 
-        checksForAllPackages =
-          concatMapAttrs
-          checksForPackage
-          nonBrokenNgiPackages;
-      in
-        checksForAllProjects
-        // checksForAllPackages
-        // {
-          pre-commit = pre-commit-hooks.lib.${system}.run {
+        # everything must evaluate for checks to run
+        nonBrokenPackages = filterAttrs (_: v: ! v.meta.broken or false) ngipkgs;
+
+        checksForAllProjects =
+          concatMapAttrs checksForProject
+          (importNgiProjects (pkgs // nonBrokenPackages));
+
+        checksForAllPackages = concatMapAttrs checksForPackage nonBrokenPackages;
+
+        checksForInfrastructure = {
+          "infra/pre-commit" = pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
               actionlint.enable = true;
@@ -248,9 +236,13 @@
           "infra/makemake" = toplevel self.nixosConfigurations.makemake;
           "infra/overview" = self.packages.${system}.overview;
         };
+      in
+        checksForInfrastructure
+        // checksForAllProjects
+        // checksForAllPackages;
 
       devShells.default = pkgs.mkShell {
-        inherit (checks.pre-commit) shellHook;
+        inherit (checks."infra/pre-commit") shellHook;
         buildInputs = checks.pre-commit.enabledPackages;
       };
 
@@ -259,7 +251,7 @@
         text = ''
           # shellcheck disable=all
           shell-hook () {
-            ${checks.pre-commit.shellHook}
+            ${checks."infra/pre-commit".shellHook}
           }
 
           shell-hook
@@ -268,8 +260,5 @@
       };
     });
   in
-    foldr recursiveUpdate {} [
-      eachDefaultSystemOutputs
-      systemAgnosticOutputs
-    ];
+    eachDefaultSystemOutputs // systemAgnosticOutputs;
 }
