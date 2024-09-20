@@ -89,7 +89,7 @@
         # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
         default.nixpkgs.overlays = [overlay];
       }
-      // (filterAttrs (_: v: v != null) rawNixosModules);
+      // rawNixosModules;
 
     # Next, extend the modules with modules that are additionally required in the tests and examples.
     extendedNixosModules =
