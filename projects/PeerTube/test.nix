@@ -10,7 +10,7 @@
     server = {config, ...}: {
       imports = [
         sources.modules.default
-        sources.modules."services.peertube.plugins"
+        sources.modules."services.peertube"
         sources.examples."PeerTube/base"
       ];
     };
