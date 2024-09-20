@@ -89,7 +89,6 @@
 
     nixosModules =
       {
-        unbootable = ./modules/unbootable.nix;
         # The default module adds the default overlay on top of Nixpkgs.
         # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
         default.nixpkgs.overlays = [overlay];
@@ -103,11 +102,28 @@
         sops-nix = sops-nix.nixosModules.default;
       };
 
-    mkNixosSystem = config: nixosSystem {modules = [config ./dummy.nix] ++ attrValues extendedNixosModules;};
+    mkNixosSystem = config:
+      nixosSystem {
+        modules =
+          [
+            config
+            {
+              nixpkgs.hostPlatform = "x86_64-linux";
+              system.stateVersion = "23.05";
+
+              # The examples that the flake exports are not meant to be used/booted directly.
+              # See <https://github.com/ngi-nix/ngipkgs/issues/128> for more information.
+              boot = {
+                initrd.enable = false;
+                kernel.enable = false;
+                loader.grub.enable = false;
+              };
+            }
+          ]
+          ++ attrValues extendedNixosModules;
+      };
 
     toplevel = machine: machine.config.system.build.toplevel;
-
-    extendedNixosConfigurations = mapAttrs (_: mkNixosSystem) rawExamples;
 
     # Then, import packages and tests, which are system-dependent.
     importNgiProjects = pkgs:
@@ -124,7 +140,7 @@
     # Finally, define the system-agnostic outputs.
     systemAgnosticOutputs = {
       nixosConfigurations =
-        extendedNixosConfigurations
+        mapAttrs (_: mkNixosSystem) rawExamples
         // {makemake = import ./infra/makemake {inherit inputs;};};
 
       inherit nixosModules;
@@ -145,7 +161,7 @@
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
-          (import (nixpkgs + "/nixos/lib/eval-config.nix") {
+          (nixosSystem {
             inherit system;
             modules =
               [
