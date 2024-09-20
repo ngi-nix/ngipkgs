@@ -19,11 +19,8 @@ in {
       imports = [
         sources.modules.default
         sources.modules."services.atomic-server"
-        sources.modules.unbootable
         sources.examples."AtomicData/base"
       ];
-
-      unbootable = mkForce false;
     };
   };
 

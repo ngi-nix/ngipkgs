@@ -22,10 +22,7 @@ in {
         sources.modules.default
         sources.modules."services.ngi-pretalx"
         sources.modules.sops-nix
-        sources.modules.unbootable
       ];
-
-      unbootable = mkForce false;
 
       sops = mkForce {
         age.keyFile = "/run/keys.txt";
