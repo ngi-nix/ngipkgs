@@ -79,9 +79,11 @@
       mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
     );
 
-    rawNixosModules = flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (
-      mapAttrs (_: project: project.nixos.modules) rawNgiProjects
-    )));
+    rawNixosModules = flattenAttrsDot (
+      lib.foldl recursiveUpdate {} (attrValues (
+        mapAttrs (_: project: project.nixos.modules) rawNgiProjects
+      ))
+    );
 
     nixosModules =
       {
