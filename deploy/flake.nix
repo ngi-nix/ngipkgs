@@ -30,7 +30,6 @@
         # ngipkgs.nixosModules."services.atomic-server"
         # ../projects/AtomicData/example.nix
         ###
-
       ];
     };
   };
