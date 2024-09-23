@@ -227,39 +227,36 @@
       # See ./infra/makemake/buildbot.nix for how it is set up.
       # NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
       checks = let
-        checksForNixosTests = projectName: tests:
-          concatMapAttrs
-          (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = pkgs.nixosTest test;})
-          tests;
-
-        checksForNixosExamples = projectName: examples:
-          concatMapAttrs
-          (exampleName: example: {"projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);})
-          examples;
-
-        checksForProject = projectName: project:
-          (checksForNixosTests projectName project.nixos.tests)
-          // (checksForNixosExamples projectName project.nixos.examples);
-
-        checksForPackageDerivation = packageName: package: {"packages/${packageName}" = package;};
-
-        checksForPackagePassthruTests = packageName: tests:
-          concatMapAttrs
-          (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;})
-          tests;
-
-        checksForPackage = packageName: package:
-          (checksForPackageDerivation packageName package)
-          // (checksForPackagePassthruTests packageName (package.passthru.tests or {}));
-
         # everything must evaluate for checks to run
         nonBrokenPackages = filterAttrs (_: v: ! v.meta.broken or false) ngipkgs;
 
-        checksForAllProjects =
-          concatMapAttrs checksForProject
-          (importNgiProjects (pkgs // nonBrokenPackages));
+        checksForAllProjects = let
+          checksForProject = projectName: project: let
+            checksForNixosTests =
+              concatMapAttrs
+              (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = pkgs.nixosTest test;})
+              project.nixos.tests;
 
-        checksForAllPackages = concatMapAttrs checksForPackage nonBrokenPackages;
+            checksForNixosExamples =
+              concatMapAttrs
+              (exampleName: example: {"projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);})
+              project.nixos.examples;
+          in
+            checksForNixosTests // checksForNixosExamples;
+        in
+          concatMapAttrs checksForProject (importNgiProjects (pkgs // nonBrokenPackages));
+
+        checksForAllPackages = let
+          checksForPackage = packageName: package: let
+            checksForPackageDerivation = {"packages/${packageName}" = package;};
+            checksForPackagePassthruTests =
+              concatMapAttrs
+              (passthruName: test: {"packages/${packageName}/passthru/${passthruName}" = test;})
+              (package.passthru.tests or {});
+          in
+            checksForPackageDerivation // checksForPackagePassthruTests;
+        in
+          concatMapAttrs checksForPackage nonBrokenPackages;
 
         checksForInfrastructure = {
           "infra/pre-commit" = pre-commit-hooks.lib.${system}.run {
