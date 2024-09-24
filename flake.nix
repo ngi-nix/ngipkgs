@@ -79,9 +79,11 @@
       mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
     );
 
-    rawNixosModules = flattenAttrsDot (lib.foldl recursiveUpdate {} (attrValues (
-      mapAttrs (_: project: project.nixos.modules) rawNgiProjects
-    )));
+    rawNixosModules = flattenAttrsDot (
+      lib.foldl recursiveUpdate {} (attrValues (
+        mapAttrs (_: project: project.nixos.modules) rawNgiProjects
+      ))
+    );
 
     nixosModules =
       {
@@ -175,8 +177,30 @@
           .options;
       };
     in rec {
+      # This is omitted in `nix flake show`.
       legacyPackages = {
-        nixosTests = mapAttrs (_: project: project.nixos.tests) ngiProjects;
+        # Run interactive tests with:
+        #
+        #     nix run .#legacyPackages.x86_64-linux.nixosTests.<project>.<test>.driverInteractive
+        #
+        nixosTests = let
+          nixosTest = test: let
+            # Amenities for interactive tests
+            tools = {pkgs, ...}: {
+              environment.systemPackages = with pkgs; [vim tmux jq];
+              # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
+              # to provide a slightly nicer console.
+              # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
+              services.kmscon = {
+                enable = true;
+                autologinUser = "root";
+              };
+            };
+            debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
+          in
+            pkgs.nixosTest (debugging // test);
+        in
+          mapAttrs (_: project: mapAttrs (_: nixosTest) project.nixos.tests) ngiProjects;
       };
 
       packages =
@@ -205,7 +229,7 @@
       checks = let
         checksForNixosTests = projectName: tests:
           concatMapAttrs
-          (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = test;})
+          (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = pkgs.nixosTest test;})
           tests;
 
         checksForNixosExamples = projectName: examples:
