@@ -6,8 +6,11 @@
     ngipkgs.url = "github:ngi-nix/ngipkgs";
   };
 
-  outputs = { self, nixpkgs, ngipkgs }: {
-
+  outputs = {
+    self,
+    nixpkgs,
+    ngipkgs,
+  }: {
     nixosConfigurations.myMachine = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
