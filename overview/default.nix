@@ -1,12 +1,11 @@
 {
   lib,
+  lib',
   options,
   pkgs,
   projects,
   self,
 }: let
-  lib' = import ../lib.nix {inherit lib;};
-
   inherit
     (builtins)
     any
@@ -30,11 +29,6 @@
     optionalString
     ;
 
-  inherit
-    (lib')
-    flattenAttrsDot
-    ;
-
   empty = xs: assert isList xs; xs == [];
   heading = i: text: "<h${toString i}>${text}</h${toString i}>";
   dottedLoc = option: concatStringsSep "." option.loc;
@@ -51,7 +45,7 @@
 
   pick = {
     options = project: let
-      spec = attrNames (flattenAttrsDot project.nixos.modules);
+      spec = attrNames (lib'.flattenAttrs "." project.nixos.modules);
     in
       filter
       (option: any ((flip hasPrefix) (dottedLoc option)) spec)
@@ -159,7 +153,8 @@
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 in
-  pkgs.runCommand "overview" {
+  pkgs.runCommand "overview"
+  {
     nativeBuildInputs = with pkgs; [jq gnused pandoc validator-nu];
   } ''
     mkdir -v $out
