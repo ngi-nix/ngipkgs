@@ -34,22 +34,12 @@
     lib' = import ./lib.nix {inherit lib;};
 
     inherit
-      (builtins)
-      mapAttrs
-      attrValues
-      ;
-
-    inherit
       (lib)
+      attrValues
       concatMapAttrs
-      recursiveUpdate
       filterAttrs
-      ;
-
-    inherit
-      (lib')
-      flattenAttrsDot
-      flattenAttrsSlash
+      mapAttrs
+      recursiveUpdate
       ;
 
     # Imported from Nixpkgs
@@ -75,15 +65,15 @@
       sources = {inherit inputs;};
     };
 
-    rawExamples = flattenAttrsSlash (
-      mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
+    rawExamples = lib'.flattenAttrs "/" (
+      mapAttrs
+      (_: project: mapAttrs (_: example: example.path) project.nixos.examples)
+      rawNgiProjects
     );
 
-    rawNixosModules = flattenAttrsDot (
-      lib.foldl recursiveUpdate {} (attrValues (
-        mapAttrs (_: project: project.nixos.modules) rawNgiProjects
-      ))
-    );
+    rawNixosModules = lib'.flattenAttrs "." (lib.foldl recursiveUpdate {} (attrValues (
+      mapAttrs (_: project: project.nixos.modules) rawNgiProjects
+    )));
 
     nixosModules =
       {
@@ -207,7 +197,7 @@
         ngipkgs
         // {
           overview = import ./overview {
-            inherit lib pkgs self;
+            inherit lib lib' pkgs self;
             projects = ngiProjects;
             options = optionsDoc.optionsNix;
           };
