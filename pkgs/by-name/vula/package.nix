@@ -5,6 +5,7 @@
   python3,
   fetchgit,
   highctidh,
+  hkdf,
   wrapGAppsHook,
 }: let
   inherit
@@ -34,7 +35,6 @@ in
       (with python3.pkgs; [
         click
         cryptography
-        hkdf
         packaging
         pillow
         pydbus
@@ -48,7 +48,10 @@ in
         tkinter
         zeroconf
       ])
-      ++ [highctidh];
+      ++ [
+        highctidh
+        hkdf
+      ];
 
     buildInputs = [libayatana-appindicator];
     nativeBuildInputs = [wrapGAppsHook gobject-introspection];
