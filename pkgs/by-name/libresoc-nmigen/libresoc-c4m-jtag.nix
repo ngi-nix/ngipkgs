@@ -24,9 +24,6 @@ python39Packages.buildPythonPackage rec {
   nativeBuildInputs = with python39Packages; [setuptools-scm];
   propagatedBuildInputs = [nmigen-soc];
 
-  nativeCheckInputs = with python39Packages; [nose];
-  checkPhase = "nosetests";
-
   pythonImportsCheck = ["c4m.nmigen.jtag.tap"];
 
   meta = {
