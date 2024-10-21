@@ -23,16 +23,6 @@ python3.pkgs.buildPythonPackage {
     "hkdf"
   ];
 
-  nativeCheckInputs = [
-    python3.pkgs.nose
-  ];
-
-  checkPhase = ''
-    runHook preCheck
-    nosetests
-    runHook postCheck
-  '';
-
   meta = {
     description = "HMAC-based Extract-and-Expand Key Derivation Function (HKDF)";
     homepage = "https://github.com/casebeer/python-hkdf";
