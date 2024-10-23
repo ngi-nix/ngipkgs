@@ -13,6 +13,8 @@
         sources.modules."services.peertube"
         sources.examples."PeerTube/base"
       ];
+
+      boot.kernelPackages = pkgs.linuxPackages_latest;
     };
   };
 
