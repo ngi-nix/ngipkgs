@@ -12,7 +12,7 @@
 
     mysql = {
       enable = true;
-      package = pkgs.mysql;
+      package = pkgs.mariadb;
       ensureUsers = [
         {
           name = config.services.ngi-pretalx.database.user;
