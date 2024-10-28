@@ -5,7 +5,7 @@
   inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
+  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.pre-commit-hooks.inputs.nixpkgs-stable.follows = "nixpkgs-stable";
   inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
