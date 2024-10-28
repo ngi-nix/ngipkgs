@@ -16,7 +16,7 @@
 in
   python3.pkgs.buildPythonApplication {
     pname = "vula";
-    version = "unstable-2024-05-17";
+    version = "0.2-unstable-2024-05-17";
 
     src = fetchgit {
       url = "https://codeberg.org/vula/vula";
@@ -45,6 +45,7 @@ in
         pyyaml
         qrcode
         schema
+        setuptools
         tkinter
         zeroconf
       ])
