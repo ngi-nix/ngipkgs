@@ -17,7 +17,7 @@ maven.buildMavenPackage rec {
   };
 
   mvnJdk = jdk_headless;
-  mvnHash = "sha256-PovHnAR10IxDTyoXCH4LCWZzIv6cNMl9JI0B4stDBo8=";
+  mvnHash = "sha256-xweU+/U3BysJUvoAFZa5FZR5TRMlFUWvcrMGZyMsfDM=";
 
   # some deps require internet for tests
   mvnParameters = "-Dmaven.test.skip";
