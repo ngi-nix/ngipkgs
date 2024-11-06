@@ -14,6 +14,7 @@
   helium,
   libervia-media,
   libervia-templates,
+  libnice,
   libsodium,
   libxeddsa,
   oldmemo,
@@ -80,10 +81,12 @@ python3Packages.buildPythonApplication rec {
       pythonRelaxDepsHook
     ]);
 
-  buildInputs = with gst_all_1; [
-    gst-plugins-good # autoaudiosink
-    gst-plugins-bad # Namespace GstWebRTC not available
-  ];
+  buildInputs =
+    [libnice]
+    ++ (with gst_all_1; [
+      gst-plugins-good # autoaudiosink
+      gst-plugins-bad # Namespace GstWebRTC not available
+    ]);
 
   pythonRelaxDeps = [
     "dbus-python"
@@ -91,6 +94,7 @@ python3Packages.buildPythonApplication rec {
     "lxml"
     "progressbar2"
     "treq"
+    "miniupnpc"
   ];
 
   propagatedBuildInputs =
@@ -153,14 +157,10 @@ python3Packages.buildPythonApplication rec {
       geckodriver
       which
     ]
-    ++ (with python3Packages; [
-      pytestCheckHook
-    ]);
+    ++ (with python3Packages; [pytestCheckHook]);
 
   checkInputs =
-    [
-      helium
-    ]
+    [helium]
     ++ (with python3Packages; [
       aiosmtpd
       sh
@@ -183,9 +183,7 @@ python3Packages.buildPythonApplication rec {
   '';
 
   # Fairly sure these are bitrotten & not intended to be run anymore
-  disabledTestPaths = [
-    "libervia/backend"
-  ];
+  disabledTestPaths = ["libervia/backend"];
 
   meta = {
     description = "Feature-rich XMPP client showcasing diverse frontends, uniting instant messaging, blogging, file sharing, and ActivityPub-XMPP interactions seamlessly";
