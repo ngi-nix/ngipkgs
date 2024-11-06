@@ -52,7 +52,7 @@ in {
 
           # sign the request/generate the certificate
           openssl req -new -x509 -nodes -utf8 \
-            -CA $out/ca.crt -CAkey $out/ca.key -CAcreateserial \
+            -CA $out/ca.crt -CAkey $out/ca.key \
             -key $out/server.key \
             -days 500 -sha256 \
             -config ${csr-conf} \
