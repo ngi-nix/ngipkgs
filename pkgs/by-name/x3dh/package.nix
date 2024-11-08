@@ -6,14 +6,14 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "x3dh";
-  version = "1.0.4";
+  version = "1.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-x3dh";
     rev = "refs/tags/v${version}";
-    hash = "sha256-rmIYNaiHhZq72CZad1c3Hq20IgBo7mZNg4LVXSmjjbs=";
+    hash = "sha256-/hC1Kze4yBOlgbWJcGddcYty9fqwZ08Lyi0IiqSDibI=";
   };
 
   strictDeps = true;
