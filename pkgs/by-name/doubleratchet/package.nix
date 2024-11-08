@@ -5,14 +5,14 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "doubleratchet";
-  version = "1.0.4";
+  version = "1.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-doubleratchet";
     rev = "refs/tags/v${version}";
-    hash = "sha256-3IQqhKkd15uNRbupB9h0ZagurVXfiJt6NHvtr1fNZJQ=";
+    hash = "sha256-yoph3u7LjGjSPi1hFlXzWmSNkCXvY/ocTt2MKa+F1fs=";
   };
 
   strictDeps = true;
