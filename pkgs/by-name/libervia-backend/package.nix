@@ -32,13 +32,13 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "libervia-backend";
-  version = "0.8.0-unstable-2024-07-14";
+  version = "0.8.0-unstable-2024-10-26";
   pyproject = true;
 
   src = fetchhg {
     url = "https://repos.goffi.org/libervia-backend";
-    rev = "f1d0cde61af7c988bf5a8686e6f5190e2d178100";
-    hash = "sha256-4ZFRMmsqoWy85LSjiRpA1tJFsKb9Y5/ruqUy8zWGBAU=";
+    rev = "00837fa13e5aafe40ef821eb73da5bde92ae9883";
+    hash = "sha256-D0iuwHJ277oxGySa8IltotwEPWCTssPehgQ9U0gYIK8=";
   };
 
   postPatch = let
