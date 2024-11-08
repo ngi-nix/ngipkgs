@@ -5,12 +5,12 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "libervia-media";
-  version = "0.8.0-unstable-2024-05-30";
+  version = "0.8.0-unstable-2024-10-26";
 
   src = fetchhg {
     url = "https://repos.goffi.org/libervia-media";
-    rev = "731c6580247755d4e0429ffdbad4353fb976f7aa";
-    hash = "sha256-NHEUvRaGe2WAocqsrl/jDtRmjwWvfbtlqyuJ5WR6ShA=";
+    rev = "aedac563c3f087d5cae4cb49322321906985ef45";
+    hash = "sha256-n1z1xgJi5D1raTgfiHpymAgdnfJ8eKT+zcW6Z/9ciBQ=";
   };
 
   dontBuild = true;
@@ -29,7 +29,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     homepage = "https://libervia.org";
     license = with lib.licenses; [
       ofl # fonts
-      cc-by-nd-30 # linecons font, taints this as unfree
+      mit # fontawesome non-icons
+      cc-by-40 # fontawesome icons
       gpl3Plus # split_card.sh
       cc-by-sa-30 # tarot, quiz images; toolbar, menu, misc, libervia icons; vector icons
       lgpl21Plus # crystal clear browser icons
