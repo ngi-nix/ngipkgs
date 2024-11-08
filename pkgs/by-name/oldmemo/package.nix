@@ -8,14 +8,14 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "oldmemo";
-  version = "1.0.4";
+  version = "1.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-oldmemo";
     rev = "refs/tags/v${version}";
-    hash = "sha256-OR7VDkzwTMWOFpeJayY1DpH6yjOeCYm2Kf9MNQoRcXY=";
+    hash = "sha256-iAsp42VcGsf3Nhk0I97Wi3SlpLxcA6BkVaFm1yY0HrY=";
   };
 
   strictDeps = true;
