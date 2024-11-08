@@ -7,14 +7,14 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "xeddsa";
-  version = "1.0.3";
+  version = "1.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-xeddsa";
     rev = "refs/tags/v${version}";
-    hash = "sha256-5/WQAd3Fdmjt2VteuwYZ5h9s3GW0CY1LJQCuv7xopJs=";
+    hash = "sha256-636zsJXD8EtLDXMIkJTON0g3sg0EPrMzcfR7SUrURac=";
   };
 
   nativeBuildInputs = with python3Packages; [setuptools];
