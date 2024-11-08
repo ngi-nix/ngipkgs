@@ -28,7 +28,6 @@
   writeScript,
   x3dh,
   xeddsa,
-  withMedia ? false,
 }:
 python3Packages.buildPythonApplication rec {
   pname = "libervia-backend";
@@ -45,28 +44,25 @@ python3Packages.buildPythonApplication rec {
     # We need lib.getExe python3Packages.alembic's main, but with libervia modules available
     # Workaround by declaring a script that runs alembic's main as part of libervia-backend's scripts
     migrationScriptName = "libervia-migration-invoker";
-  in
-    ''
-      # So backend can be started via dbus
-      substituteInPlace misc/org.libervia.Libervia.service \
-        --replace-fail 'Exec=libervia-backend' "Exec=$out/bin/libervia-backend"
+  in ''
+    # So backend can be started via dbus
+    substituteInPlace misc/org.libervia.Libervia.service \
+      --replace-fail 'Exec=libervia-backend' "Exec=$out/bin/libervia-backend"
 
-      # Needs a python interp with alembic & libervia available, call our invoker script instead which gets regular wrapping
-      substituteInPlace libervia/backend/memory/sqla.py \
-        --replace-fail 'sys.executable' '"${placeholder "out"}/bin/${migrationScriptName}"' \
-        --replace-fail '"-m",' "" \
-        --replace-fail '"alembic",' ""
+    # Needs a python interp with alembic & libervia available, call our invoker script instead which gets regular wrapping
+    substituteInPlace libervia/backend/memory/sqla.py \
+      --replace-fail 'sys.executable' '"${placeholder "out"}/bin/${migrationScriptName}"' \
+      --replace-fail '"-m",' "" \
+      --replace-fail '"alembic",' ""
 
-      substituteInPlace pyproject.toml \
-        --replace-fail '[project.scripts]' '[project.scripts]
-      ${migrationScriptName} = "alembic.config:main"'
+    substituteInPlace pyproject.toml \
+      --replace-fail '[project.scripts]' '[project.scripts]
+    ${migrationScriptName} = "alembic.config:main"'
 
-    ''
-    + lib.optionalString withMedia ''
-      # Point at media content
-      substituteInPlace libervia/backend/core/constants.py \
-        --replace-fail '"media_dir": "/usr/share' '"media_dir": "${libervia-media}/share'
-    '';
+    # Point at media content
+    substituteInPlace libervia/backend/core/constants.py \
+      --replace-fail '"media_dir": "/usr/share' '"media_dir": "${libervia-media}/share'
+  '';
 
   strictDeps = true;
 
