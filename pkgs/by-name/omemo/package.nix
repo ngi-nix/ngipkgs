@@ -6,14 +6,14 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "omemo";
-  version = "1.0.4";
+  version = "1.2.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-omemo";
     rev = "refs/tags/v${version}";
-    hash = "sha256-tcIAWRzEbjGOtsQHRUoU6S1bXCYajQ5JcGp1t4TXJu4=";
+    hash = "sha256-egb4UFoF/gS3LKutArnJSXxDYH/xyBLOxWec98rOT9Y=";
   };
 
   strictDeps = true;
