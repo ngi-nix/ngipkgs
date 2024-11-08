@@ -5,7 +5,7 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "urwid-satext";
-  version = "0.8.0-unstable-2024-04-08";
+  version = "0.8.0-unstable-2023-04-08";
   pyproject = true;
 
   src = fetchhg {
