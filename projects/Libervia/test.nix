@@ -156,13 +156,16 @@ in {
     # Need a terminal to run stuff, need D-Bus session
     def spawn_terminal():
         machine.send_key("ctrl-alt-t")
-        machine.wait_for_text("alice")
+        # Can't reliably OCR for this at default size. sleep, adjust & check later
+        machine.sleep(10)
         machine.send_key("alt-f10")
         # Increase font size to help with OCR
         machine.send_key("shift-kp_add")
         machine.send_key("shift-kp_add")
         machine.send_key("shift-kp_add")
         machine.send_key("shift-kp_add")
+        # Now check if we can see it
+        machine.wait_for_text("alice")
 
     start_all()
 
