@@ -1,4 +1,5 @@
 {
+  stdenv,
   python3Packages,
   lib,
   fetchFromGitHub,
@@ -37,6 +38,9 @@ python3Packages.buildPythonPackage rec {
   checkInputs = with python3Packages; [
     psutil
   ];
+
+  # Selenium doesn't support testing on all setups
+  doCheck = stdenv.hostPlatform.isDarwin || (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isx86_64);
 
   # Selenium setup
   preCheck = ''
