@@ -17,6 +17,11 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-636zsJXD8EtLDXMIkJTON0g3sg0EPrMzcfR7SUrURac=";
   };
 
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "setuptools<74" "setuptools"
+  '';
+
   nativeBuildInputs = with python3Packages; [setuptools];
 
   buildInputs = [
