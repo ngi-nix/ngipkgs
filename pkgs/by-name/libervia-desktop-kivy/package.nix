@@ -12,13 +12,13 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "libervia-desktop-kivy";
-  version = "0.8.0-unstable-2024-07-13";
+  version = "0.8.0-unstable-2024-10-26";
   pyproject = true;
 
   src = fetchhg {
     url = "https://repos.goffi.org/libervia-desktop-kivy";
-    rev = "f316c7f1990920077289657ec4dc6989fd8589e6";
-    hash = "sha256-EVY/2HtBY+z6qMlOG9Mz7zRv8aqCzAg2llNtc6Bf0PA=";
+    rev = "196483685a638a0e8abd2d7737f89a4409d4fbb9";
+    hash = "sha256-Hh3iy9fGwOfWd8pRJyejpNEvXdyXR04MDUFJBITV+Jo=";
   };
 
   postPatch = ''
