@@ -1,0 +1,3 @@
+{...}: {
+  programs.libervia.enable = true;
+}
