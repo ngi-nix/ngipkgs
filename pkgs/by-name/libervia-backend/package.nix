@@ -28,6 +28,7 @@
   writeScript,
   x3dh,
   xeddsa,
+  gpgme_1_24_0,
 }:
 python3Packages.buildPythonApplication rec {
   pname = "libervia-backend";
@@ -112,7 +113,7 @@ python3Packages.buildPythonApplication rec {
       cryptography
       dbus-python
       emoji
-      gpgme
+      gpgme_1_24_0
       gst-python
       html2text
       jinja2
