@@ -5,14 +5,20 @@
   ...
 }: let
   xmppUser = "alice";
-  xmppId = "${xmppUser}@example.org";
+  xmppHost = "example.org";
+  xmppId = "${xmppUser}@${xmppHost}";
+  xmppLiberviaId = "libervia@${xmppHost}";
   xmppPassword = "foobar";
   xmppMessage = "This is a test message.";
-  setup-initial-libervia-user = pkgs.writeShellApplication {
-    name = "setup-initial-libervia-user";
+  setup-initial-libervia-users = pkgs.writeShellApplication {
+    name = "setup-initial-libervia-users";
     runtimeInputs = with pkgs; [prosody];
     text = ''
-      exec prosodyctl adduser ${xmppId} <<EOF
+      prosodyctl adduser ${xmppId} <<EOF
+      ${xmppPassword}
+      ${xmppPassword}
+      EOF
+      prosodyctl adduser ${xmppLiberviaId} <<EOF
       ${xmppPassword}
       ${xmppPassword}
       EOF
@@ -135,6 +141,9 @@ in {
             hosts_dict = {
                 "example.org": {"host": "127.0.0.1"}
                 }
+
+            [web]
+            passphrase = ${xmppPassword}
           '';
 
           # Input for message sending command
@@ -143,7 +152,8 @@ in {
 
         # Small script to register our test user in prosody
         systemPackages = [
-          setup-initial-libervia-user
+          setup-initial-libervia-users
+          pkgs.firefox
         ];
       };
     };
@@ -174,7 +184,7 @@ in {
 
     # Setup prosody so we can connect
     machine.wait_for_console_text("Started Prosody XMPP server")
-    machine.succeed("sudo -su prosody ${lib.getExe setup-initial-libervia-user}")
+    machine.succeed("sudo -su prosody ${lib.getExe setup-initial-libervia-users}")
 
     # We use in-session terminals for running commands, but relying on OCR to view results is slow
     # Create some output files for commands to pipe outputs into
@@ -210,5 +220,9 @@ in {
     machine.send_chars("libervia-cli message mam | tee -a ~/frontend.log\n")
     machine.wait_for_console_text("${xmppUser}> ${xmppMessage}") # first log, us sending the message to ourself
     machine.wait_for_console_text("${xmppUser}> ${xmppMessage}") # second log, us receicing the message from ourself
+
+    # Register web profile with setup XMPP account in Libervia
+    machine.send_chars("libervia-cli profile create -j ${xmppLiberviaId} -p ${xmppPassword} libervia | tee -a ~/frontend.log\n")
+    machine.wait_for_console_text(r"\[libervia\] Profile session started")
   '';
 }
