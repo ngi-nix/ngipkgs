@@ -28,12 +28,21 @@
   in
     concatMapAttrs names (readDir baseDirectory);
 
-  hydrate = project: {
-    packages = project.packages or {};
-    nixos.modules = project.nixos.modules or {};
-    nixos.examples = project.nixos.examples or {};
-    nixos.tests = project.nixos.tests or {};
-  };
+  hydrate = let
+    empty-if-null = x:
+      if x != null
+      then x
+      else {};
+  in
+    # we use fields to track state of completion.
+    # - `null` means "expected but missing"
+    # - not set means "not applicable"
+    project: {
+      packages = empty-if-null (project.packages or {});
+      nixos.modules = empty-if-null (project.nixos.modules or {});
+      nixos.examples = empty-if-null (project.nixos.examples or {});
+      nixos.tests = empty-if-null (project.nixos.tests or {});
+    };
 in
   mapAttrs
   (
