@@ -28,6 +28,22 @@
   in
     concatMapAttrs names (readDir baseDirectory);
 
+  nixosTest = test: let
+    # Amenities for interactive tests
+    tools = {pkgs, ...}: {
+      environment.systemPackages = with pkgs; [vim tmux jq];
+      # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
+      # to provide a slightly nicer console.
+      # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
+      services.kmscon = {
+        enable = true;
+        autologinUser = "root";
+      };
+    };
+    debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
+  in
+    pkgs.nixosTest (debugging // test);
+
   hydrate = let
     empty-if-null = x:
       if x != null
@@ -41,7 +57,19 @@
       packages = empty-if-null (project.packages or {});
       nixos.modules = empty-if-null (project.nixos.modules or {});
       nixos.examples = empty-if-null (project.nixos.examples or {});
-      nixos.tests = empty-if-null (project.nixos.tests or {});
+      nixos.tests =
+        mapAttrs
+        (
+          _: test:
+            if lib.isString test
+            then
+              (import test {
+                inherit pkgs;
+                inherit (pkgs) system;
+              })
+            else nixosTest test
+        )
+        (empty-if-null (project.nixos.tests or {}));
     };
 in
   mapAttrs

@@ -167,32 +167,6 @@
           .options;
       };
     in rec {
-      # This is omitted in `nix flake show`.
-      legacyPackages = {
-        # Run interactive tests with:
-        #
-        #     nix run .#legacyPackages.x86_64-linux.nixosTests.<project>.<test>.driverInteractive
-        #
-        nixosTests = let
-          nixosTest = test: let
-            # Amenities for interactive tests
-            tools = {pkgs, ...}: {
-              environment.systemPackages = with pkgs; [vim tmux jq];
-              # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
-              # to provide a slightly nicer console.
-              # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
-              services.kmscon = {
-                enable = true;
-                autologinUser = "root";
-              };
-            };
-            debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
-          in
-            pkgs.nixosTest (debugging // test);
-        in
-          mapAttrs (_: project: mapAttrs (_: nixosTest) project.nixos.tests) ngiProjects;
-      };
-
       packages =
         ngipkgs
         // {
@@ -224,7 +198,7 @@
           checksForProject = projectName: project: let
             checksForNixosTests =
               concatMapAttrs
-              (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = pkgs.nixosTest test;})
+              (testName: test: {"projects/${projectName}/nixos/tests/${testName}" = test;})
               project.nixos.tests;
 
             checksForNixosExamples =
