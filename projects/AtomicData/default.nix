@@ -1,5 +1,12 @@
 {pkgs, ...} @ args: {
-  packages = {inherit (pkgs) atomic-server;};
+  packages = {
+    inherit
+      (pkgs)
+      atomic-server
+      atomic-browser
+      atomic-cli
+      ;
+  };
   nixos = {
     modules.services.atomic-server = ./service.nix;
     examples = {
