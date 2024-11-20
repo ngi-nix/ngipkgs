@@ -1,3 +1,5 @@
 {pkgs, ...} @ args: {
-  packages = {inherit (pkgs) alive2;}; 
+  packages = {
+    inherit (pkgs) alive2;
+  };
 }
