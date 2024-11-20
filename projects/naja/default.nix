@@ -4,6 +4,6 @@
   sources,
 } @ args: {
   packages = {
-    inherit (pkgs) naja;
+    inherit (pkgs) naja libdwarf-lite;
   };
 }
