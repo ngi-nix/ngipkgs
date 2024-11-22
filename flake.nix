@@ -207,7 +207,7 @@
             src = ./.;
             hooks = {
               actionlint.enable = true;
-              alejandra.enable = true;
+              nixfmt-rfc-style.enable = true;
             };
           };
           "infra/makemake" = toplevel self.nixosConfigurations.makemake;
