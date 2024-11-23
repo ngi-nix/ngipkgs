@@ -3,6 +3,8 @@
   atomic-server,
 }:
 runCommand "atomic-cli" {
+  pname = "atomic-cli";
+  inherit (atomic-server) version;
   meta = {
     inherit (atomic-server.meta) description homepage license;
     mainProgram = "atomic-cli";
