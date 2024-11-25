@@ -2,7 +2,6 @@
   packages = {
     inherit
       (pkgs)
-      freeDiameter
       kip
       leaf
       lillydap
