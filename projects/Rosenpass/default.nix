@@ -8,7 +8,8 @@
   };
   nixos = {
     modules.services.rosenpass = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/rosenpass.nix";
-    tests.rosenpass = import ./tests args;
+    tests.with-sops = import ./tests args;
+    tests.without-sops = "${sources.inputs.nixpkgs}/nixos/tests/rosenpass.nix";
     examples = null;
   };
 }
