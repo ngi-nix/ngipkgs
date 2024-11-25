@@ -172,5 +172,5 @@ in
       --in-place \
       $out/index.html
 
-    vnu -Werror --format json $out/*.html 2>&1 | jq
+    vnu -Werror --format json $out/*.html | jq
   ''
