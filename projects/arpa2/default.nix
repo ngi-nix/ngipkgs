@@ -10,6 +10,9 @@
       steamworks-pulleyback
       tlspool
       tlspool-gui
+      quickmem
+      arpa2cm
+      arpa2common
       ;
   };
 }
