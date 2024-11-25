@@ -64,7 +64,7 @@
           <table>
             <tr>
               <td>Description:</td>
-              <td>${value.description}</td>
+              <td>${lib.escapeXML value.description}</td>
             </tr>
             <tr>
               <td>Type:</td>
