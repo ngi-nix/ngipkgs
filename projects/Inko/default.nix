@@ -6,7 +6,4 @@
   packages = {
     inherit (pkgs) inko ivm;
   };
-  nixos = {
-    examples = null;
-  };
 }
