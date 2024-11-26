@@ -14,6 +14,7 @@
     (lib.attrsets)
     concatMapAttrs
     mapAttrs
+    filterAttrs
     ;
 
   baseDirectory = ./.;
@@ -54,7 +55,7 @@
     # - `null` means "expected but missing"
     # - not set means "not applicable"
     project: {
-      packages = empty-if-null (project.packages or {});
+      packages = empty-if-null (filterAttrs (name: value: value != null) (project.packages or {}));
       nixos.modules = empty-if-null (project.nixos.modules or {});
       nixos.examples = empty-if-null (project.nixos.examples or {});
       nixos.tests =
