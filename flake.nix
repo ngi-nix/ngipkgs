@@ -120,7 +120,6 @@
           inherit inputs;
           examples = rawExamples;
           modules = extendedNixosModules;
-          inherit nixpkgs;
         };
       };
 
