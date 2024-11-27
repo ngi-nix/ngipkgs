@@ -9,7 +9,7 @@
     },
   lib ? import "${sources.nixpkgs}/lib",
 }: let
-  dream2nix = import sources.dream2nix;
+  dream2nix = (import sources.dream2nix).overrideInputs {inherit (sources) nixpkgs;};
   sops-nix = import "${sources.sops-nix}/modules/sops";
 in rec {
   inherit lib pkgs system sources;
