@@ -1,0 +1,2 @@
+# Ignore reformatting changes for bisect
+* whitespace=ignore-all-space
