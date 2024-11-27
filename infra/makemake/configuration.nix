@@ -45,17 +45,28 @@
   time.timeZone = "Europe/Amsterdam";
 
   users = let
-    groups = with lib.attrsets;
-      mapAttrs
-      (group: _:
-        mapAttrsToList (name: _: ./keys/${group}/${name}) (builtins.readDir ./keys/${group}))
-      (builtins.readDir ./keys);
+    keys = with lib; mapAttrs (name: value: ./keys/${name}) (builtins.readDir ./keys);
+    deploy = with keys; [makemake];
+    infra = with keys; [
+      hexa-gaia
+      hexa-helix
+      julienmalka
+      vcunat
+      zimbatm
+    ];
+    ngi = with keys; [
+      erethon
+      lorenzleutgeb
+    ];
+    remotebuild = with keys; [
+      fricklerhandwerk
+    ];
   in {
     mutableUsers = false;
-    users.root.openssh.authorizedKeys.keyFiles = with groups; deploy ++ infra ++ ngi;
+    users.root.openssh.authorizedKeys.keyFiles = deploy ++ infra ++ ngi;
     users.remotebuild = {
       isNormalUser = true;
-      openssh.authorizedKeys.keyFiles = with groups; infra ++ ngi ++ remotebuild;
+      openssh.authorizedKeys.keyFiles = infra ++ ngi ++ remotebuild;
     };
   };
 
