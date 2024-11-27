@@ -59,6 +59,7 @@
     # Each project includes packages, and optionally, modules, examples and tests.
 
     # Note that modules and examples are system-agnostic, so import them first.
+    # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
     rawNgiProjects = import ./projects {
       inherit lib;
       sources = {inherit inputs;};
@@ -86,6 +87,7 @@
     extendedNixosModules =
       nixosModules
       // {
+        # TODO: only one module uses this, get it from `sources` there
         sops-nix = sops-nix.nixosModules.default;
       };
 
@@ -126,6 +128,7 @@
     # Finally, define the system-agnostic outputs.
     systemAgnosticOutputs = {
       nixosConfigurations =
+        # TODO: remove these, noone will (or can even, realistically) use them
         mapAttrs (_: mkNixosSystem) rawExamples
         // {makemake = import ./infra/makemake {inherit inputs;};};
 
@@ -141,9 +144,11 @@
         overlays = [overlay];
       };
 
-      ngipkgs = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
+      classic = import ./. {inherit system;};
 
-      ngiProjects = importNgiProjects (pkgs // ngipkgs);
+      ngipkgs = classic.ngipkgs;
+
+      ngiProjects = classic.projects;
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
