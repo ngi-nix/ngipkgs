@@ -7,8 +7,6 @@
   lua,
   doxygen,
   graphviz,
-  libressl,
-  lmdb,
   libuuid,
   fetchFromGitLab,
 }:

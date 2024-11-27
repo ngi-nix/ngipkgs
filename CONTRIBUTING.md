@@ -21,6 +21,10 @@ However, there may be reasons speaking against that, including:
 
 In any case, it is encouraged to create a pull request to Nixpkgs, then to this repository, with a comment linking to the Nixpkgs pull request in the description and the Nix expressions.
 
+## Documentation style guide
+
+When contributing documentation, do not split lines at arbitrary character lengths.
+Instead, write one sentence per line, as this makes it easier to review changes.
 
 ## How to create pull requests to NGIpkgs
 

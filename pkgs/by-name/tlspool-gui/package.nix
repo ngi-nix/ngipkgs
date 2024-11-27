@@ -1,6 +1,5 @@
 {
   stdenv,
-  lib,
   cmake,
   arpa2common,
   arpa2cm,

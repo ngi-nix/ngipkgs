@@ -16,13 +16,17 @@ in {
       github = {
         oauthId = "Ov23linNGNKJg5zddrwX";
         oauthSecretFile = secret "github/oauth";
-        tokenFile = secret "github/pat";
         webhookSecretFile = secret "github/webhook";
+        authType.app = {
+          id = 994441;
+          secretKeyFile = secret "buildbot.pem";
+        };
       };
       useHTTPS = true;
       cachix = {
+        enable = true;
         name = "ngi";
-        authTokenFile = config.sops.secrets."cachix".path;
+        auth.authToken.file = config.sops.secrets."cachix".path;
       };
     };
 
@@ -55,6 +59,10 @@ in {
     // {
       ${sopsPrefix "workers"} = {
         sopsFile = ./secrets/buildbot-workers.json;
+        format = "binary";
+      };
+      ${sopsPrefix "buildbot.pem"} = {
+        sopsFile = ./secrets/buildbot.pem;
         format = "binary";
       };
     };

@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   cmake,
   pkg-config,
@@ -40,15 +41,15 @@
     buildInputs = old.buildInputs ++ [e2fsprogs];
   });
 in
-  stdenv.mkDerivation {
+  stdenv.mkDerivation rec {
     pname = "kip";
-    version = "unstable-2021-07-27";
+    version = "0.15.0";
 
     src = fetchFromGitLab {
       owner = "arpa2";
       repo = "kip";
-      rev = "7683e76368cfd432c740907f4d27592b1364b732";
-      hash = "sha256-SImz4ZzUXRmk4ZPbVjtUuRPqla8AiiVGa4HdSKVVI6g=";
+      rev = "v${version}";
+      hash = "sha256-A+tPaImjd9j1Vq69Dgh3j86xI/OcovwTZSULLkOVZaI=";
     };
 
     nativeBuildInputs = [cmake pkg-config cacert openssl libressl gnutls];
@@ -71,19 +72,11 @@ in
       python-with-packages
     ];
 
-    configurePhase = ''
-      mkdir -p build
-      cd build
-      cmake .. -DCMAKE_INSTALL_PREFIX=$out -DCMAKE_PREFIX_PATH=$out \
-            -DfreeDiameter_EXTENSION_DIR=$out/lib/freeDiameter
+    cmakeFlags = [
+      (lib.cmakeFeature "freeDiameter_EXTENSION_DIR" "${placeholder "out"}/lib/freeDiameter")
+    ];
+
+    preBuild = ''
       patchShebangs test
-    '';
-
-    buildPhase = ''
-      cmake --build .
-    '';
-
-    installPhase = ''
-      cmake --install . --prefix $out
     '';
   }

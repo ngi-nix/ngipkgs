@@ -6,12 +6,12 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "meta-press";
-  version = "1.8.14";
+  version = "1.8.17.1";
 
   src = fetchgit {
     url = "https://framagit.org/Siltaar/meta-press-ext.git";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-lGO35xutCnn/8zoSQlWCnmbWrCjBRuTJKylV7tZr+QA=";
+    hash = "sha256-5/TotS+Je4AlKVPq1H4BVEc2gkJ8NSmDuKJzRN7qR1M=";
   };
 
   # The Makefile moves the output to the enclosing folder

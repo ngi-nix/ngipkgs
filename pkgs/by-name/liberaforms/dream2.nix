@@ -37,6 +37,7 @@ in {
   mkDerivation = {
     inherit src;
     dontConfigure = true;
+    dontBuild = true;
 
     installPhase = ''
       runHook preInstall
@@ -89,7 +90,6 @@ in {
   };
 
   pip = {
-    pypiSnapshotDate = "2024-04-01";
     requirementsFiles = ["${src}/requirements.txt"];
     requirementsList = [
       "factory-boy"
@@ -123,6 +123,11 @@ in {
               libmagic = "${config.deps.file}/lib/libmagic.so";
             })
           ];
+        };
+      };
+      flask-session2 = {
+        mkDerivation = {
+          dontBuild = true;
         };
       };
     };

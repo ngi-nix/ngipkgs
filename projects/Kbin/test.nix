@@ -19,11 +19,8 @@ in {
       imports = [
         sources.modules.default
         sources.modules."services.kbin"
-        sources.modules.unbootable
         sources.examples."Kbin/base"
       ];
-
-      unbootable = mkForce false;
 
       services.phpfpm.pools.kbin = {
         settings = {

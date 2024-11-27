@@ -1,12 +1,11 @@
 {
   lib,
+  lib',
   options,
   pkgs,
   projects,
   self,
 }: let
-  lib' = import ../lib.nix {inherit lib;};
-
   inherit
     (builtins)
     any
@@ -28,12 +27,6 @@
     hasPrefix
     mapAttrsToList
     optionalString
-    splitString
-    ;
-
-  inherit
-    (lib')
-    flattenAttrsDot
     ;
 
   empty = xs: assert isList xs; xs == [];
@@ -52,13 +45,13 @@
 
   pick = {
     options = project: let
-      spec = attrNames (flattenAttrsDot (project.nixos.modules or {}));
+      spec = attrNames (lib'.flattenAttrs "." project.nixos.modules);
     in
       filter
       (option: any ((flip hasPrefix) (dottedLoc option)) spec)
       (attrValues options);
-    examples = project: attrValues (project.nixos.examples or {});
-    packages = project: attrValues (project.packages or {});
+    examples = project: attrValues project.nixos.examples;
+    packages = project: attrValues project.packages;
   };
 
   render = {
@@ -71,7 +64,7 @@
           <table>
             <tr>
               <td>Description:</td>
-              <td>${value.description}</td>
+              <td>${lib.escapeXML value.description}</td>
             </tr>
             <tr>
               <td>Type:</td>
@@ -160,7 +153,8 @@
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 in
-  pkgs.runCommand "overview" {
+  pkgs.runCommand "overview"
+  {
     nativeBuildInputs = with pkgs; [jq gnused pandoc validator-nu];
   } ''
     mkdir -v $out
@@ -178,5 +172,5 @@ in
       --in-place \
       $out/index.html
 
-    vnu -Werror --format json $out/*.html 2>&1 | jq
+    vnu -Werror --format json $out/*.html | jq
   ''

@@ -5,6 +5,7 @@
   python3,
   fetchgit,
   highctidh,
+  hkdf,
   wrapGAppsHook,
 }: let
   inherit
@@ -15,7 +16,7 @@
 in
   python3.pkgs.buildPythonApplication {
     pname = "vula";
-    version = "unstable-2024-05-17";
+    version = "0.2-unstable-2024-05-17";
 
     src = fetchgit {
       url = "https://codeberg.org/vula/vula";
@@ -34,7 +35,6 @@ in
       (with python3.pkgs; [
         click
         cryptography
-        hkdf
         packaging
         pillow
         pydbus
@@ -45,10 +45,14 @@ in
         pyyaml
         qrcode
         schema
+        setuptools
         tkinter
         zeroconf
       ])
-      ++ [highctidh];
+      ++ [
+        highctidh
+        hkdf
+      ];
 
     buildInputs = [libayatana-appindicator];
     nativeBuildInputs = [wrapGAppsHook gobject-introspection];

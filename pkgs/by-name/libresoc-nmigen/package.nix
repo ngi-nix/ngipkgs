@@ -1,7 +1,32 @@
 {
-  callPackage,
-  fetchgit,
+  newScope,
+  fetchFromGitHub,
+  python39,
 }: let
+  python = let
+    packageOverrides = self: super: {
+      setuptools = super.setuptools.overridePythonAttrs (old: rec {
+        version = "75.1.1";
+
+        src = fetchFromGitHub {
+          owner = "pypa";
+          repo = "setuptools";
+          rev = "refs/tags/v${version}";
+          hash = "sha256-b8O/DrDWAbD6ht9M762fFN6kPtV8hAbn1gAN9SS7H5g=";
+        };
+      });
+    };
+  in
+    python39.override {
+      inherit packageOverrides;
+      self = python;
+    };
+
+  callPackage = newScope {
+    python39 = python;
+    python39Packages = python.pkgs;
+  };
+
   lib = callPackage ./lib.nix {};
   inherit (lib) fetchFromLibresoc;
 

@@ -1,7 +1,7 @@
 {
   lib,
   fetchgit,
-  php,
+  php82,
   moreutils,
   yq,
   withS3 ? false,
@@ -10,6 +10,8 @@
     (lib)
     optionalString
     ;
+
+  php = php82;
 
   phpWithExtensions = php.withExtensions ({
     enabled,
