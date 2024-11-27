@@ -17,9 +17,9 @@ in {
       ...
     }: {
       imports = [
-        sources.modules.default
-        sources.modules."services.atomic-server"
-        sources.examples."AtomicData/base"
+        sources.modules.ngipkgs
+        sources.modules.services.atomic-server
+        sources.examples.AtomicData.base
       ];
     };
   };

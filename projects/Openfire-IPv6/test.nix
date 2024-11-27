@@ -16,8 +16,8 @@
   nodes = {
     server = {config, ...}: {
       imports = [
-        sources.modules.default
-        sources.modules."services.openfire-server"
+        sources.modules.ngipkgs
+        sources.modules.services.openfire-server
       ];
 
       services.openfire-server = {

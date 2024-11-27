@@ -52,7 +52,7 @@ in {
       ...
     }: {
       imports = [
-        sources.modules.default
+        sources.modules.ngipkgs
         sources.modules.sops-nix
       ];
 
