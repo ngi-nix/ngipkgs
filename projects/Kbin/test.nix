@@ -17,9 +17,9 @@ in {
       ...
     }: {
       imports = [
-        sources.modules.default
-        sources.modules."services.kbin"
-        sources.examples."Kbin/base"
+        sources.modules.ngipkgs
+        sources.modules.services.kbin
+        sources.examples.Kbin.base
       ];
 
       services.phpfpm.pools.kbin = {

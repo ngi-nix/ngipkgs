@@ -86,9 +86,9 @@ in {
         '';
     in {
       imports = [
-        sources.modules.default
-        sources.modules."programs.libervia"
-        sources.examples."Libervia/base"
+        sources.modules.ngipkgs
+        sources.modules.programs.libervia
+        sources.examples.Libervia.base
         # can't test Libervia/unfree, enabling unfree derivations breaks nixosTests eval
       ];
 

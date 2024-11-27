@@ -28,9 +28,9 @@
     buildbot-nix,
     ...
   } @ inputs: let
+    classic' = import ./. {system = null;};
     # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
-    lib = import (nixpkgs + "/lib");
-    lib' = import ./lib.nix {inherit lib;};
+    inherit (classic') lib lib';
 
     inherit
       (lib)
@@ -49,21 +49,14 @@
         }
         // args);
 
-    overlay = final: prev:
-      import ./pkgs/by-name {
-        pkgs = prev;
-        inherit lib dream2nix;
-      };
+    overlay = classic'.overlays.default;
 
     # NGI projects are imported from ./projects/default.nix.
     # Each project includes packages, and optionally, modules, examples and tests.
 
     # Note that modules and examples are system-agnostic, so import them first.
     # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
-    rawNgiProjects = import ./projects {
-      inherit lib;
-      sources = {inherit inputs;};
-    };
+    rawNgiProjects = classic'.projects;
 
     rawExamples = lib'.flattenAttrs "/" (
       mapAttrs
@@ -114,17 +107,6 @@
 
     toplevel = machine: machine.config.system.build.toplevel;
 
-    # Then, import packages and tests, which are system-dependent.
-    importNgiProjects = pkgs:
-      import ./projects {
-        inherit lib pkgs;
-        sources = {
-          inherit inputs;
-          examples = rawExamples;
-          modules = extendedNixosModules;
-        };
-      };
-
     # Finally, define the system-agnostic outputs.
     systemAgnosticOutputs = {
       nixosConfigurations =
@@ -139,14 +121,9 @@
     };
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [overlay];
-      };
-
       classic = import ./. {inherit system;};
 
-      ngipkgs = classic.ngipkgs;
+      inherit (classic) pkgs ngipkgs;
 
       ngiProjects = classic.projects;
 
@@ -174,7 +151,8 @@
         ngipkgs
         // {
           overview = import ./overview {
-            inherit lib lib' pkgs self;
+            inherit lib lib' self;
+            pkgs = pkgs // ngipkgs;
             projects = ngiProjects;
             options = optionsDoc.optionsNix;
           };
@@ -211,7 +189,7 @@
           in
             checksForNixosTests // checksForNixosExamples;
         in
-          concatMapAttrs checksForProject (importNgiProjects (pkgs // nonBrokenPackages));
+          concatMapAttrs checksForProject classic.projects;
 
         checksForAllPackages = let
           checksForPackage = packageName: package: let

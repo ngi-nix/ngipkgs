@@ -2,8 +2,7 @@
   sources ? (import ./flake-compat.nix {root = ./.;}).inputs,
   system ? builtins.currentSystem,
   pkgs ?
-    import sources.nixpkgs
-    {
+    import sources.nixpkgs {
       config = {};
       overlays = [];
       inherit system;
@@ -13,6 +12,12 @@
   dream2nix = import sources.dream2nix;
   sops-nix = import "${sources.sops-nix}/modules/sops";
 in rec {
+  inherit lib pkgs system sources;
+
+  # TODO: we should be exporting our custom functions as `lib`, but refactoring
+  # this to use `pkgs.lib` everywhere is a lot of movement
+  lib' = import ./lib.nix {inherit lib;};
+
   overlays.default = final: prev:
     import ./pkgs/by-name {
       pkgs = prev;
