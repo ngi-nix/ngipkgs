@@ -48,7 +48,7 @@
     groups = with lib.attrsets;
       mapAttrs
       (group: _:
-        mapAttrsToList (name: _: /keys/${group}/${name}) (builtins.readDir ./keys/${group}))
+        mapAttrsToList (name: _: ./keys/${group}/${name}) (builtins.readDir ./keys/${group}))
       (builtins.readDir ./keys);
   in {
     mutableUsers = false;
