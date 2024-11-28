@@ -60,6 +60,7 @@
     ];
     remotebuild = with keys; [
       fricklerhandwerk
+      getpsyched
     ];
   in {
     mutableUsers = false;
