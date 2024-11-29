@@ -39,6 +39,7 @@
       cores = 0;
       experimental-features = ["nix-command" "flakes" "ca-derivations"];
       sandbox = true;
+      trusted-users = ["remotebuild"];
     };
   };
 
@@ -67,8 +68,11 @@
     users.root.openssh.authorizedKeys.keyFiles = deploy ++ infra ++ ngi;
     users.remotebuild = {
       isNormalUser = true;
+      createHome = false;
+      group = "remotebuild";
       openssh.authorizedKeys.keyFiles = infra ++ ngi ++ remotebuild;
     };
+    groups.remotebuild = {};
   };
 
   environment.systemPackages = with pkgs; [
