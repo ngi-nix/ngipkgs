@@ -29,7 +29,6 @@
     ...
   } @ inputs: let
     classic' = import ./. {system = null;};
-    # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
     inherit (classic') lib lib';
 
     inherit
@@ -41,7 +40,6 @@
       recursiveUpdate
       ;
 
-    # Imported from Nixpkgs
     nixosSystem = args:
       import (nixpkgs + "/nixos/lib/eval-config.nix") ({
           inherit lib;
@@ -50,9 +48,6 @@
         // args);
 
     overlay = classic'.overlays.default;
-
-    # NGI projects are imported from ./projects/default.nix.
-    # Each project includes packages, and optionally, modules, examples and tests.
 
     # Note that modules and examples are system-agnostic, so import them first.
     # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
@@ -76,9 +71,11 @@
       }
       // rawNixosModules;
 
-    # Next, extend the modules with modules that are additionally required in the tests and examples.
     extendedNixosModules =
-      nixosModules
+      # TODO: clean this up
+      classic'.nixos-modules.programs
+      // classic'.nixos-modules.services
+      // {inherit (classic'.nixos-modules) ngipkgs;}
       // {
         # TODO: only one module uses this, get it from `sources` there
         sops-nix = sops-nix.nixosModules.default;
@@ -102,6 +99,8 @@
               };
             }
           ]
+          # TODO: this needs to take a different shape,
+          # otherwise the transformation to obtain it is confusing
           ++ attrValues extendedNixosModules;
       };
 
