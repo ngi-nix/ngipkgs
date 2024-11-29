@@ -45,7 +45,10 @@
 
   pick = {
     options = project: let
-      spec = attrNames (lib'.flattenAttrs "." project.nixos.modules);
+      # TODO: do this massaging in a central place
+      spec = attrNames (lib'.flattenAttrs "." (
+        with lib; foldl recursiveUpdate {} (attrValues (filterAttrs (_: m: m != null) project.nixos.modules))
+      ));
     in
       filter
       (option: any ((flip hasPrefix) (dottedLoc option)) spec)

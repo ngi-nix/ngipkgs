@@ -27,13 +27,15 @@ in rec {
   examples = with lib; mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) projects;
 
   nixos-modules = with lib;
-    foldl recursiveUpdate {} (attrValues (mapAttrs (_: project: project.nixos.modules) projects))
-    // {
+  # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
+    {
       # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
       ngipkgs = {...}: {
         nixpkgs.overlays = [overlays.default];
       };
-    };
+    }
+    // foldl recursiveUpdate {}
+    (map (project: filterAttrs (_: m: m != null) project.nixos.modules) (attrValues projects));
 
   ngipkgs = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
 
