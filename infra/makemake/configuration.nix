@@ -55,11 +55,11 @@
       zimbatm
     ];
     ngi = with keys; [
+      fricklerhandwerk
       erethon
       lorenzleutgeb
     ];
     remotebuild = with keys; [
-      fricklerhandwerk
       getpsyched
     ];
   in {
