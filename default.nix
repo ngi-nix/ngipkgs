@@ -35,7 +35,7 @@ in rec {
       };
     }
     // foldl recursiveUpdate {}
-    (map (project: filterAttrs (_: m: m != null) project.nixos.modules) (attrValues projects));
+    (map (project: project.nixos.modules) (attrValues projects));
 
   ngipkgs = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
 
@@ -137,7 +137,7 @@ in rec {
       # TODO: encode this in types, either yants or the module system
       project: {
         packages = empty-if-null (filterAttrs (name: value: value != null) (project.packages or {}));
-        nixos.modules = empty-if-null (project.nixos.modules or {});
+        nixos.modules = empty-if-null (filterAttrs (_: m: m != null) (project.nixos.modules or {}));
         nixos.examples = empty-if-null (project.nixos.examples or {});
         nixos.tests =
           mapAttrs
