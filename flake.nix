@@ -28,9 +28,8 @@
     buildbot-nix,
     ...
   } @ inputs: let
-    # Take Nixpkgs' lib and update it with the definitions in ./lib.nix
-    lib = import (nixpkgs + "/lib");
-    lib' = import ./lib.nix {inherit lib;};
+    classic' = import ./. {system = null;};
+    inherit (classic') lib lib';
 
     inherit
       (lib)
@@ -41,7 +40,6 @@
       recursiveUpdate
       ;
 
-    # Imported from Nixpkgs
     nixosSystem = args:
       import (nixpkgs + "/nixos/lib/eval-config.nix") ({
           inherit lib;
@@ -49,20 +47,11 @@
         }
         // args);
 
-    overlay = final: prev:
-      import ./pkgs/by-name {
-        pkgs = prev;
-        inherit lib dream2nix;
-      };
-
-    # NGI projects are imported from ./projects/default.nix.
-    # Each project includes packages, and optionally, modules, examples and tests.
+    overlay = classic'.overlays.default;
 
     # Note that modules and examples are system-agnostic, so import them first.
-    rawNgiProjects = import ./projects {
-      inherit lib;
-      sources = {inherit inputs;};
-    };
+    # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
+    rawNgiProjects = classic'.projects;
 
     rawExamples = lib'.flattenAttrs "/" (
       mapAttrs
@@ -82,10 +71,13 @@
       }
       // rawNixosModules;
 
-    # Next, extend the modules with modules that are additionally required in the tests and examples.
     extendedNixosModules =
-      nixosModules
+      # TODO: clean this up
+      classic'.nixos-modules.programs
+      // classic'.nixos-modules.services
+      // {inherit (classic'.nixos-modules) ngipkgs;}
       // {
+        # TODO: only one module uses this, get it from `sources` there
         sops-nix = sops-nix.nixosModules.default;
       };
 
@@ -107,25 +99,17 @@
               };
             }
           ]
+          # TODO: this needs to take a different shape,
+          # otherwise the transformation to obtain it is confusing
           ++ attrValues extendedNixosModules;
       };
 
     toplevel = machine: machine.config.system.build.toplevel;
 
-    # Then, import packages and tests, which are system-dependent.
-    importNgiProjects = pkgs:
-      import ./projects {
-        inherit lib pkgs;
-        sources = {
-          inherit inputs;
-          examples = rawExamples;
-          modules = extendedNixosModules;
-        };
-      };
-
     # Finally, define the system-agnostic outputs.
     systemAgnosticOutputs = {
       nixosConfigurations =
+        # TODO: remove these, noone will (or can even, realistically) use them
         mapAttrs (_: mkNixosSystem) rawExamples
         // {makemake = import ./infra/makemake {inherit inputs;};};
 
@@ -136,14 +120,11 @@
     };
 
     eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [overlay];
-      };
+      classic = import ./. {inherit system;};
 
-      ngipkgs = import ./pkgs/by-name {inherit pkgs lib dream2nix;};
+      inherit (classic) pkgs ngipkgs;
 
-      ngiProjects = importNgiProjects (pkgs // ngipkgs);
+      ngiProjects = classic.projects;
 
       optionsDoc = pkgs.nixosOptionsDoc {
         options =
@@ -169,7 +150,8 @@
         ngipkgs
         // {
           overview = import ./overview {
-            inherit lib lib' pkgs self;
+            inherit lib lib' self;
+            pkgs = pkgs // ngipkgs;
             projects = ngiProjects;
             options = optionsDoc.optionsNix;
           };
@@ -206,7 +188,7 @@
           in
             checksForNixosTests // checksForNixosExamples;
         in
-          concatMapAttrs checksForProject (importNgiProjects (pkgs // nonBrokenPackages));
+          concatMapAttrs checksForProject classic.projects;
 
         checksForAllPackages = let
           checksForPackage = packageName: package: let

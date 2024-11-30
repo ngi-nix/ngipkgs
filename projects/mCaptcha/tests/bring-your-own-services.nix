@@ -20,8 +20,8 @@ in {
     ...
   }: {
     imports = [
-      sources.modules.default
-      sources.modules."services.mcaptcha"
+      sources.modules.ngipkgs
+      sources.modules.services.mcaptcha
     ];
 
     services.mcaptcha.enable = true;
@@ -42,7 +42,7 @@ in {
 
   nodes.my_own_services = {pkgs, ...}: {
     imports = [
-      sources.modules.default
+      sources.modules.ngipkgs
     ];
     networking.firewall.enable = false;
     services.postgresql.enable = true;

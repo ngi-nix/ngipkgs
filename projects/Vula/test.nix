@@ -9,8 +9,8 @@ in {
 
   nodes.a = {
     imports = [
-      sources.modules.default
-      sources.modules."services.vula"
+      sources.modules.ngipkgs
+      sources.modules.services.vula
     ];
 
     services.vula.enable = true;
@@ -31,8 +31,8 @@ in {
   };
 
   nodes.b.imports = [
-    sources.modules.default
-    sources.modules."services.vula"
+    sources.modules.ngipkgs
+    sources.modules.services.vula
     ./example-simple.nix
   ];
 

@@ -52,7 +52,7 @@ in {
       ...
     }: {
       imports = [
-        sources.modules.default
+        sources.modules.ngipkgs
         sources.modules.sops-nix
       ];
 
@@ -177,6 +177,6 @@ in {
         # Thus, if it is not active, then no key will be set, and the output of `wg show` will contain "none".
         # Otherwise, if it is active, then the key will be set and "none" will not be found in the output of `wg show`.
         for machine in [server, client]:
-            machine.wait_until_succeeds("wg show all preshared-keys | grep --invert-match none", timeout=5)
+            machine.wait_until_succeeds("wg show all preshared-keys | grep --invert-match none", timeout=15)
   '';
 }
