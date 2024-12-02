@@ -8,8 +8,8 @@
       ...
     }: {
       imports = [
-        sources.modules.default
-        sources.modules."services.liberaforms"
+        sources.modules.ngipkgs
+        sources.modules.services.liberaforms
       ];
 
       services.liberaforms = {

@@ -20,18 +20,21 @@
     toString
     ;
 
+  join = concatStringsSep;
+
   inherit
     (lib)
     concatLines
     flip
+    foldl'
     hasPrefix
     mapAttrsToList
     optionalString
+    recursiveUpdate
     ;
 
   empty = xs: assert isList xs; xs == [];
   heading = i: text: "<h${toString i}>${text}</h${toString i}>";
-  dottedLoc = option: concatStringsSep "." option.loc;
 
   # Splits a compressed date up into ISO 8601
   lastModified = let
@@ -45,10 +48,14 @@
 
   pick = {
     options = project: let
-      spec = attrNames (lib'.flattenAttrs "." project.nixos.modules);
+      # string comparison is faster than collecting attribute paths as lists
+      spec = attrNames (lib'.flattenAttrs "." (
+        foldl' recursiveUpdate {}
+        (mapAttrsToList (name: value: {${name} = value;}) project.nixos.modules)
+      ));
     in
       filter
-      (option: any ((flip hasPrefix) (dottedLoc option)) spec)
+      (option: any ((flip hasPrefix) (join "." option.loc)) spec)
       (attrValues options);
     examples = project: attrValues project.nixos.examples;
     packages = project: attrValues project.packages;
@@ -56,19 +63,19 @@
 
   render = {
     options = rec {
-      one = value: let
-        maybeDefault = optionalString (value ? default.text) "`${value.default.text}`";
+      one = option: let
+        maybeDefault = optionalString (option ? default.text) "`${option.default.text}`";
       in ''
-        <dt>`${dottedLoc value}`</dt>
+        <dt>`${join "." option.loc}`</dt>
         <dd>
           <table>
             <tr>
               <td>Description:</td>
-              <td>${lib.escapeXML value.description}</td>
+              <td>${lib.escapeXML option.description}</td>
             </tr>
             <tr>
               <td>Type:</td>
-              <td>`${value.type}`</td>
+              <td>`${option.type}`</td>
             </tr>
             <tr>
               <td>Default:</td>

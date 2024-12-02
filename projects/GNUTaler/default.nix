@@ -19,6 +19,11 @@
       twister
       ;
   };
-  # TODO: move test in pkgs/by-name/anastasis/test.nix into project directory
-  # TODO: add modules once https://github.com/NixOS/nixpkgs/pull/332699 is merged
+  nixos = {
+    # TODO: add modules once https://github.com/NixOS/nixpkgs/pull/332699 is merged
+    modules.services = null;
+    # TODO: move test in pkgs/by-name/anastasis/test.nix into project directory
+    tests = null;
+    examples = null;
+  };
 }

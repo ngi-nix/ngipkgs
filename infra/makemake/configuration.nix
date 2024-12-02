@@ -39,14 +39,40 @@
       cores = 0;
       experimental-features = ["nix-command" "flakes" "ca-derivations"];
       sandbox = true;
+      trusted-users = ["remotebuild"];
     };
   };
 
   time.timeZone = "Europe/Amsterdam";
 
-  users = {
+  users = let
+    keys = with lib; mapAttrs (name: value: ./keys/${name}) (builtins.readDir ./keys);
+    deploy = with keys; [makemake];
+    infra = with keys; [
+      hexa-gaia
+      hexa-helix
+      julienmalka
+      vcunat
+      zimbatm
+    ];
+    ngi = with keys; [
+      fricklerhandwerk
+      erethon
+      lorenzleutgeb
+    ];
+    remotebuild = with keys; [
+      getpsyched
+    ];
+  in {
     mutableUsers = false;
-    users.root.openssh.authorizedKeys.keys = import ../ssh-keys.nix;
+    users.root.openssh.authorizedKeys.keyFiles = deploy ++ infra ++ ngi;
+    users.remotebuild = {
+      isNormalUser = true;
+      createHome = false;
+      group = "remotebuild";
+      openssh.authorizedKeys.keyFiles = infra ++ ngi ++ remotebuild;
+    };
+    groups.remotebuild = {};
   };
 
   environment.systemPackages = with pkgs; [

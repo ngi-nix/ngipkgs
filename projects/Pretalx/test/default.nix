@@ -17,10 +17,10 @@ in {
       ...
     }: {
       imports = [
-        sources.examples."Pretalx/base"
-        sources.examples."Pretalx/postgresql"
-        sources.modules.default
-        sources.modules."services.ngi-pretalx"
+        sources.examples.Pretalx.base
+        sources.examples.Pretalx.postgresql
+        sources.modules.ngipkgs
+        sources.modules.services.ngi-pretalx
         sources.modules.sops-nix
       ];
 
