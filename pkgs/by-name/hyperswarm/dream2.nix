@@ -3,7 +3,8 @@
   config,
   dream2nix,
   ...
-}: rec {
+}:
+rec {
   name = "hyperswarm-${version}";
   version = "4.7.3";
 
@@ -30,15 +31,16 @@
     };
   };
 
-  deps = {nixpkgs, ...}: {
-    inherit
-      (nixpkgs)
-      fetchFromGitHub
-      stdenv
-      ;
+  deps =
+    { nixpkgs, ... }:
+    {
+      inherit (nixpkgs)
+        fetchFromGitHub
+        stdenv
+        ;
 
-    npm = nixpkgs.nodejs.pkgs.npm;
-  };
+      npm = nixpkgs.nodejs.pkgs.npm;
+    };
 
   nodejs-package-lock-v3 = {
     packageLockFile = ./package-lock.json;

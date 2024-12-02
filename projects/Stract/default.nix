@@ -1,3 +1,4 @@
-{pkgs, ...} @ args: {
-  packages = {inherit (pkgs) stract;};
+{ pkgs, ... }@args:
+{
+  packages = { inherit (pkgs) stract; };
 }

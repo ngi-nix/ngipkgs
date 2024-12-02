@@ -22,7 +22,7 @@ maven.buildMavenPackage rec {
   # some deps require internet for tests
   mvnParameters = "-Dmaven.test.skip";
 
-  nativeBuildInputs = [makeWrapper];
+  nativeBuildInputs = [ makeWrapper ];
 
   installPhase = ''
     runHook preInstall
@@ -49,7 +49,7 @@ maven.buildMavenPackage rec {
     description = "An XMPP server licensed under the Open Source Apache License";
     homepage = "https://github.com/igniterealtime/Openfire";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     mainProgram = "openfire";
     platforms = lib.platforms.all;
   };

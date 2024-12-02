@@ -19,20 +19,20 @@ stdenv.mkDerivation (finalAttrs: {
 
   strictDeps = true;
 
-  nativeBuildInputs = [cmake];
+  nativeBuildInputs = [ cmake ];
 
-  buildInputs = [libsodium];
+  buildInputs = [ libsodium ];
 
   doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
 
-  passthru.updateScript = gitUpdater {rev-prefix = "v";};
+  passthru.updateScript = gitUpdater { rev-prefix = "v"; };
 
   meta = {
     description = "Toolkit around Curve25519 and Ed25519 key pairs";
     homepage = "https://github.com/Syndace/libxeddsa";
     changelog = "https://github.com/Syndace/libxeddsa/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
     platforms = lib.platforms.all;
   };
 })

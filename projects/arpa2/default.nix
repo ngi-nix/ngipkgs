@@ -1,7 +1,7 @@
-{pkgs, ...} @ args: {
+{ pkgs, ... }@args:
+{
   packages = {
-    inherit
-      (pkgs)
+    inherit (pkgs)
       kip
       leaf
       lillydap

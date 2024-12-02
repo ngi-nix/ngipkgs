@@ -2,9 +2,11 @@
   sources,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) recursiveUpdate mkForce;
-in {
+in
+{
   name = "vula";
 
   nodes.a = {
@@ -27,7 +29,7 @@ in {
     services.vula.operatorsGroup = "vula-managers";
     users.users.user.isNormalUser = true;
     users.users.admin.isNormalUser = true;
-    users.users.admin.extraGroups = ["vula-managers"];
+    users.users.admin.extraGroups = [ "vula-managers" ];
   };
 
   nodes.b.imports = [
@@ -84,7 +86,7 @@ in {
     users.users.joe.isNormalUser = true;
     users.users.joe.password = "";
     users.users.admin.isNormalUser = true;
-    users.users.admin.extraGroups = ["vula-ops"];
+    users.users.admin.extraGroups = [ "vula-ops" ];
     users.users.admin.password = "";
     services.xserver = {
       enable = true;

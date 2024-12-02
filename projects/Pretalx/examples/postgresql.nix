@@ -1,4 +1,5 @@
-{config, ...}: {
+{ config, ... }:
+{
   services = {
     ngi-pretalx.database = {
       backend = "postgresql";
@@ -14,7 +15,7 @@
           ensureDBOwnership = true;
         }
       ];
-      ensureDatabases = [config.services.ngi-pretalx.database.name];
+      ensureDatabases = [ config.services.ngi-pretalx.database.name ];
     };
   };
 }

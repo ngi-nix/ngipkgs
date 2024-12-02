@@ -1,7 +1,7 @@
-{pkgs, ...} @ args: {
+{ pkgs, ... }@args:
+{
   packages = {
-    inherit
-      (pkgs)
+    inherit (pkgs)
       # TODO: nitrokey-3-firmware
       nitrokey-fido2-firmware
       nitrokey-pro-firmware

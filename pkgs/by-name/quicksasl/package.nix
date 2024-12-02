@@ -23,5 +23,16 @@ stdenv.mkDerivation rec {
     hash = "sha256-kMKZRromm/hb9PZwvWAzmJorSqTB8xMIbWASfSjajiQ=";
   };
 
-  nativeBuildInputs = [cmake arpa2cm arpa2common libkrb5 quickmem cyrus_sasl quickder libev e2fsprogs pkg-config];
+  nativeBuildInputs = [
+    cmake
+    arpa2cm
+    arpa2common
+    libkrb5
+    quickmem
+    cyrus_sasl
+    quickder
+    libev
+    e2fsprogs
+    pkg-config
+  ];
 }

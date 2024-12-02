@@ -23,11 +23,20 @@ python39Packages.buildPythonPackage rec {
     touch ./src/ieee754/part{,_ass,_cat,_repl}/__init__.py
   '';
 
-  propagatedBuildInputs = [nmutil];
+  propagatedBuildInputs = [ nmutil ];
 
   nativeCheckInputs =
-    [pytest-output-to-files nmigen symbiyosys sfpy bigfloat]
-    ++ (with python39Packages; [pytestCheckHook pytest-xdist]);
+    [
+      pytest-output-to-files
+      nmigen
+      symbiyosys
+      sfpy
+      bigfloat
+    ]
+    ++ (with python39Packages; [
+      pytestCheckHook
+      pytest-xdist
+    ]);
 
   disabledTests = [
     "test_fadd_f16_rna_formal"
@@ -74,7 +83,7 @@ python39Packages.buildPythonPackage rec {
     "test_fsub_f16_rtz_formal"
   ];
 
-  pythonImportsCheck = ["ieee754.part"];
+  pythonImportsCheck = [ "ieee754.part" ];
 
   meta = {
     description = "A nmigen (HDL) IEEE754 Floating-Point library";

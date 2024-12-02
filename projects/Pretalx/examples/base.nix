@@ -2,9 +2,10 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   networking = {
-    firewall.allowedTCPPorts = [config.services.nginx.defaultHTTPListenPort];
+    firewall.allowedTCPPorts = [ config.services.nginx.defaultHTTPListenPort ];
     hostName = "server";
     domain = "example.com";
   };
@@ -16,18 +17,20 @@
     defaultSopsFile = "/dev/null"; # For a production configuration, set this option.
     validateSopsFiles = false; # For a production configuration, remove this line.
 
-    secrets = let
-      pretalxSecret = {
-        owner = config.services.ngi-pretalx.user;
-        group = config.services.ngi-pretalx.group;
+    secrets =
+      let
+        pretalxSecret = {
+          owner = config.services.ngi-pretalx.user;
+          group = config.services.ngi-pretalx.group;
+        };
+      in
+      {
+        "pretalx/database/password" = pretalxSecret;
+        "pretalx/redis/location" = pretalxSecret;
+        "pretalx/init/admin/password" = pretalxSecret;
+        "pretalx/celery/backend" = pretalxSecret;
+        "pretalx/celery/broker" = pretalxSecret;
       };
-    in {
-      "pretalx/database/password" = pretalxSecret;
-      "pretalx/redis/location" = pretalxSecret;
-      "pretalx/init/admin/password" = pretalxSecret;
-      "pretalx/celery/backend" = pretalxSecret;
-      "pretalx/celery/broker" = pretalxSecret;
-    };
   };
 
   services = {

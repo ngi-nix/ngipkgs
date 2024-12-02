@@ -1,7 +1,7 @@
-{pkgs, ...} @ args: {
+{ pkgs, ... }@args:
+{
   packages = {
-    inherit
-      (pkgs)
+    inherit (pkgs)
       atomic-server
       atomic-browser
       atomic-cli

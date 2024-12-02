@@ -1,3 +1,4 @@
-{pkgs, ...}: {
-  packages = {inherit (pkgs) tslib;};
+{ pkgs, ... }:
+{
+  packages = { inherit (pkgs) tslib; };
 }

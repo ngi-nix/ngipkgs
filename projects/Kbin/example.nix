@@ -1,5 +1,6 @@
-{...}: {
-  networking.firewall.allowedTCPPorts = [80];
+{ ... }:
+{
+  networking.firewall.allowedTCPPorts = [ 80 ];
 
   services = {
     kbin = {
@@ -16,7 +17,7 @@
           ensureDBOwnership = true;
         }
       ];
-      ensureDatabases = ["kbin"];
+      ensureDatabases = [ "kbin" ];
       enableTCPIP = true;
     };
   };

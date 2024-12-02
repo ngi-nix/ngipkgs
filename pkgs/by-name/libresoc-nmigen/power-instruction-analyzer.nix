@@ -21,7 +21,10 @@ python39Packages.buildPythonPackage rec {
     hash = "sha256-lkSdkkU0lvGtEHbM3eFrXHiUcWEPkHL1sQeebAyMUcY=";
   };
 
-  nativeBuildInputs = with rustPlatform; [cargoSetupHook maturinBuildHook];
+  nativeBuildInputs = with rustPlatform; [
+    cargoSetupHook
+    maturinBuildHook
+  ];
   maturinBuildFlags = "-F python";
 
   meta = {

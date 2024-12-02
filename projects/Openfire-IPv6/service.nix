@@ -3,12 +3,14 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.services.openfire-server;
-in {
+in
+{
   options.services.openfire-server = {
     enable = lib.mkEnableOption "Openfire XMPP server";
-    package = lib.mkPackageOption pkgs "openfire" {};
+    package = lib.mkPackageOption pkgs "openfire" { };
 
     autoUpdateState = lib.mkOption {
       type = lib.types.bool;
@@ -77,10 +79,10 @@ in {
       isSystemUser = true;
       group = "openfire";
     };
-    users.groups.openfire = {};
+    users.groups.openfire = { };
 
     systemd.services.openfire-server = {
-      path = [pkgs.rsync];
+      path = [ pkgs.rsync ];
       description = "Openfire Server Daemon";
       serviceConfig = lib.mkMerge [
         {
@@ -95,8 +97,8 @@ in {
         })
       ];
       environment.OPENFIRE_HOME = cfg.stateDir;
-      wantedBy = ["multi-user.target"];
-      after = ["network.target"];
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
 
       # Files under `OPENFIRE_HOME` require read-write permissions for Openfire
       # to work correctly, so we can't directly run it from the nix store.
@@ -107,72 +109,74 @@ in {
       #
       # As such, if `version` already exists, we assume the rest of
       # the files do as well, and copy nothing.
-      preStart = let
-        # Update Openfire
-        # https://download.igniterealtime.org/openfire/docs/latest/documentation/upgrade-guide.html
-        updateState = ''
-          tmpDir="/tmp/openfire-backup"
-          oldVersion=$(cat "${cfg.stateDir}/version")
-          newVersion=$(cat "${cfg.dataDir}/version")
+      preStart =
+        let
+          # Update Openfire
+          # https://download.igniterealtime.org/openfire/docs/latest/documentation/upgrade-guide.html
+          updateState = ''
+            tmpDir="/tmp/openfire-backup"
+            oldVersion=$(cat "${cfg.stateDir}/version")
+            newVersion=$(cat "${cfg.dataDir}/version")
 
-          if [ $oldVersion != $newVersion ]; then
-            echo "Attempting to update Openfire from $oldVersion to $newVersion"
+            if [ $oldVersion != $newVersion ]; then
+              echo "Attempting to update Openfire from $oldVersion to $newVersion"
 
-            # Back up the Openfire state directory
-            rsync -a "${cfg.stateDir}/" $tmpDir/
+              # Back up the Openfire state directory
+              rsync -a "${cfg.stateDir}/" $tmpDir/
 
-            # Clear old state
-            rm -rf "${cfg.stateDir}/*"
+              # Clear old state
+              rm -rf "${cfg.stateDir}/*"
 
-            # Install new state
+              # Install new state
+              rsync -a --chmod=u=rwX,go=rX "${cfg.package}/opt/" "${cfg.stateDir}/"
+
+              # Copy old configuration
+              # TODO: only backup these directories?
+              rsync -a $tmpDir/plugins/ ${cfg.stateDir}/ --exclude=admin
+              for dir in conf embedded-db enterprise resources/security; do
+                [ -e $tmpDir/$dir ] && rsync -a $tmpDir/$dir ${cfg.stateDir}/;
+              done
+
+              rm -rf $tmpDir
+
+              echo "Update complete"
+            fi
+          '';
+
+          oldStateMessage = ''
+            oldVersion=$(cat "${cfg.stateDir}/version")
+            newVersion=$(cat "${cfg.dataDir}/version")
+
+            cat <<EOF
+            You are trying to run Openfire $newVersion
+            with a systemd state directory created by Openfire $oldVersion.
+            Until you update the state directory, Openfire will continue using $oldVersion.
+
+            Possible workarounds:
+            1. Enable "services.openfire-server.autoUpdateState" to automatically handle this.
+            2. Export your data from Openfire $oldVersion,
+                clear the state directory, and
+                import your data to Openfire $newVersion
+
+                See Openfire documentation for migrating state:
+                https://download.igniterealtime.org/openfire/docs/latest/documentation/upgrade-guide.html
+            EOF
+          '';
+        in
+        ''
+          set -e
+
+          # Install package to state directory (initial run)
+          if [ ! -e "${cfg.stateDir}"/version ]; then
             rsync -a --chmod=u=rwX,go=rX "${cfg.package}/opt/" "${cfg.stateDir}/"
-
-            # Copy old configuration
-            # TODO: only backup these directories?
-            rsync -a $tmpDir/plugins/ ${cfg.stateDir}/ --exclude=admin
-            for dir in conf embedded-db enterprise resources/security; do
-              [ -e $tmpDir/$dir ] && rsync -a $tmpDir/$dir ${cfg.stateDir}/;
-            done
-
-            rm -rf $tmpDir
-
-            echo "Update complete"
-          fi
-        '';
-
-        oldStateMessage = ''
-          oldVersion=$(cat "${cfg.stateDir}/version")
-          newVersion=$(cat "${cfg.dataDir}/version")
-
-          cat <<EOF
-          You are trying to run Openfire $newVersion
-          with a systemd state directory created by Openfire $oldVersion.
-          Until you update the state directory, Openfire will continue using $oldVersion.
-
-          Possible workarounds:
-          1. Enable "services.openfire-server.autoUpdateState" to automatically handle this.
-          2. Export your data from Openfire $oldVersion,
-              clear the state directory, and
-              import your data to Openfire $newVersion
-
-              See Openfire documentation for migrating state:
-              https://download.igniterealtime.org/openfire/docs/latest/documentation/upgrade-guide.html
-          EOF
-        '';
-      in ''
-        set -e
-
-        # Install package to state directory (initial run)
-        if [ ! -e "${cfg.stateDir}"/version ]; then
-          rsync -a --chmod=u=rwX,go=rX "${cfg.package}/opt/" "${cfg.stateDir}/"
-        else
-          if [ ${toString cfg.autoUpdateState} ]; then
-            ${updateState}
           else
-            ${oldStateMessage}
+            if [ ${toString cfg.autoUpdateState} ]; then
+              ${updateState}
+            else
+              ${oldStateMessage}
+            fi
           fi
-        fi
-      '';
+        '';
     };
 
     networking.firewall = lib.mkIf cfg.openFirewall {

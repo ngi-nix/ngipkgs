@@ -21,7 +21,16 @@ stdenv.mkDerivation rec {
     hash = "sha256-hd71wR4b/pnAUcd2U4/InmubCAqkKUZeZTBrGTV3FSY=";
   };
 
-  nativeBuildInputs = [cmake pkg-config flex bison lksctp-tools libidn libgcrypt gnutls];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    flex
+    bison
+    lksctp-tools
+    libidn
+    libgcrypt
+    gnutls
+  ];
 
   configurePhase = ''
     mkdir -p build

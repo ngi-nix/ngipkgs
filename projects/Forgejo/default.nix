@@ -2,10 +2,10 @@
   pkgs,
   lib,
   sources,
-} @ args: {
+}@args:
+{
   packages = {
-    inherit
-      (pkgs)
+    inherit (pkgs)
       forgejo
       forgejo-cli
       forgejo-runner

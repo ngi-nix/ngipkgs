@@ -25,7 +25,7 @@ buildNpmPackage rec {
     description = "Reject local comments, remote comments and registrations based on Akismet service";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-akismet";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

@@ -2,10 +2,10 @@
   pkgs,
   lib,
   sources,
-} @ args: {
+}@args:
+{
   packages = {
-    inherit
-      (pkgs)
+    inherit (pkgs)
       scion
       scion-apps
       scion-bootstrapper

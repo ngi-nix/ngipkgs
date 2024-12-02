@@ -4,16 +4,15 @@
   options,
   pkgs,
   ...
-}: let
-  inherit
-    (builtins)
+}:
+let
+  inherit (builtins)
     map
     attrNames
     listToAttrs
     ;
 
-  inherit
-    (lib)
+  inherit (lib)
     options
     types
     modules
@@ -26,8 +25,7 @@
     generators
     ;
 
-  inherit
-    (generators)
+  inherit (generators)
     mkValueStringDefault
     ;
 
@@ -46,10 +44,9 @@
     name = "kbin-console";
     meta.mainProgram = name;
     text = ''
-      ${concatLines (mapAttrsToList (
-          name: value: "export ${name}=\"${mkValueStringDefault {} value}\""
-        )
-        cfg.settings)}
+      ${concatLines (
+        mapAttrsToList (name: value: "export ${name}=\"${mkValueStringDefault { } value}\"") cfg.settings
+      )}
 
       ${getExe php} ${cfg.package}/bin/console "''$@"
     '';
@@ -60,79 +57,82 @@
     meta.mainProgram = name;
     text = ''
       echo """
-      ${concatLines (map (
-          name: "${name}=\\\"$(<\"$CREDENTIALS_DIRECTORY/${name}\")\\\""
-        )
-        credentialIds)}
+      ${concatLines (map (name: "${name}=\\\"$(<\"$CREDENTIALS_DIRECTORY/${name}\")\\\"") credentialIds)}
       """ > /tmp/secrets.env
     '';
   };
-in {
-  options.services.kbin = with types;
-  with options; {
-    enable = mkEnableOption "Kbin";
+in
+{
+  options.services.kbin =
+    with types;
+    with options;
+    {
+      enable = mkEnableOption "Kbin";
 
-    package = mkPackageOption pkgs "kbin" {};
+      package = mkPackageOption pkgs "kbin" { };
 
-    user = mkOption {
-      type = str;
-      default = "kbin";
-      description = "User to run Kbin as.";
-    };
-
-    group = mkOption {
-      type = str;
-      default = "kbin";
-      description = "Primary group of the user running Kbin.";
-    };
-
-    domain = mkOption {
-      type = types.str;
-      default = "localhost";
-      example = "forum.example.com";
-      description = "Domain to serve on.";
-    };
-
-    settings = mkOption {
-      type = submodule {freeformType = attrsOf str;};
-      description = "Enviroment variables used to configure Kbin.";
-    };
-
-    secrets = mkOption {
-      description = "Paths to files containing secrets, keyed by the respective environment variable.";
-      type = submodule {
-        freeformType = attrsOf (nullOr path);
-
-        options = listToAttrs (map (
-            name: {
-              inherit name;
-              value = mkOption {
-                type = nullOr types.path;
-                example = "/run/secrets/kbin/${name}";
-                default = null;
-                description = "Path to a file that contains the secret `${name}`.";
-              };
-            }
-          ) [
-            "APP_SECRET"
-            "MERCURE_JWT_SECRET"
-            "OAUTH_ENCRYPTION_KEY"
-            "OAUTH_PASSPHRASE"
-            "POSTGRES_PASSWORD"
-            "RABBITMQ_PASSWORD"
-            "REDIS_PASSWORD"
-          ]);
+      user = mkOption {
+        type = str;
+        default = "kbin";
+        description = "User to run Kbin as.";
       };
-      default = {};
-    };
-  };
 
-  config = with modules;
-  with options;
+      group = mkOption {
+        type = str;
+        default = "kbin";
+        description = "Primary group of the user running Kbin.";
+      };
+
+      domain = mkOption {
+        type = types.str;
+        default = "localhost";
+        example = "forum.example.com";
+        description = "Domain to serve on.";
+      };
+
+      settings = mkOption {
+        type = submodule { freeformType = attrsOf str; };
+        description = "Enviroment variables used to configure Kbin.";
+      };
+
+      secrets = mkOption {
+        description = "Paths to files containing secrets, keyed by the respective environment variable.";
+        type = submodule {
+          freeformType = attrsOf (nullOr path);
+
+          options = listToAttrs (
+            map
+              (name: {
+                inherit name;
+                value = mkOption {
+                  type = nullOr types.path;
+                  example = "/run/secrets/kbin/${name}";
+                  default = null;
+                  description = "Path to a file that contains the secret `${name}`.";
+                };
+              })
+              [
+                "APP_SECRET"
+                "MERCURE_JWT_SECRET"
+                "OAUTH_ENCRYPTION_KEY"
+                "OAUTH_PASSPHRASE"
+                "POSTGRES_PASSWORD"
+                "RABBITMQ_PASSWORD"
+                "REDIS_PASSWORD"
+              ]
+          );
+        };
+        default = { };
+      };
+    };
+
+  config =
+    with modules;
+    with options;
     mkIf cfg.enable {
       warnings =
         optional (cfg.settings.APP_ENV == "prod" && cfg.settings.APP_DEBUG != "0")
-        "You are running kbin in production mode with debugging enabled. While this may work it is unusual. Please check your configuration.";
+          "You are running kbin in production mode with debugging enabled. While this may work it is unusual. Please check your configuration.";
 
       assertions = [
         {
@@ -141,7 +141,7 @@ in {
         }
       ];
 
-      environment.systemPackages = [kbin-console];
+      environment.systemPackages = [ kbin-console ];
 
       users = {
         users.${cfg.user} = {
@@ -149,7 +149,7 @@ in {
           createHome = false;
           group = cfg.group;
         };
-        groups.${cfg.group} = {};
+        groups.${cfg.group} = { };
       };
 
       services = {
@@ -195,83 +195,85 @@ in {
 
         nginx = {
           enable = true;
-          virtualHosts."${cfg.domain}" = let
-            securityHeaders = ''
-              add_header X-Frame-Options "DENY" always;
-              add_header X-XSS-Protection "1; mode=block" always;
-              add_header X-Content-Type-Options "nosniff" always;
-              add_header Referrer-Policy "no-referrer" always;
-              add_header X-Download-Options "noopen" always;
-              add_header X-Permitted-Cross-Domain-Policies "none" always;
-            '';
-          in {
-            root = "${cfg.package}/public";
-
-            locations = {
-              "~ ^/index\.php(/|$)".extraConfig = ''
-                default_type application/x-httpd-php;
-                fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
-                fastcgi_split_path_info ^(.+\.php)(/.*)$;
-                include ${config.services.nginx.package}/conf/fastcgi_params;
-                fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-                fastcgi_param DOCUMENT_ROOT $realpath_root;
-                internal;
+          virtualHosts."${cfg.domain}" =
+            let
+              securityHeaders = ''
+                add_header X-Frame-Options "DENY" always;
+                add_header X-XSS-Protection "1; mode=block" always;
+                add_header X-Content-Type-Options "nosniff" always;
+                add_header Referrer-Policy "no-referrer" always;
+                add_header X-Download-Options "noopen" always;
+                add_header X-Permitted-Cross-Domain-Policies "none" always;
               '';
+            in
+            {
+              root = "${cfg.package}/public";
 
-              "/" = {
-                index = "index.php";
-                extraConfig = ''
-                  try_files $uri /index.php$is_args$args;
+              locations = {
+                "~ ^/index\.php(/|$)".extraConfig = ''
+                  default_type application/x-httpd-php;
+                  fastcgi_pass unix:${config.services.phpfpm.pools.kbin.socket};
+                  fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                  include ${config.services.nginx.package}/conf/fastcgi_params;
+                  fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                  fastcgi_param DOCUMENT_ROOT $realpath_root;
+                  internal;
+                '';
+
+                "/" = {
+                  index = "index.php";
+                  extraConfig = ''
+                    try_files $uri /index.php$is_args$args;
+                  '';
+                };
+
+                "/favicon.ico".extraConfig = ''
+                  access_log off;
+                  log_not_found off;
+                '';
+
+                "/robots.txt".extraConfig = ''
+                  access_log off;
+                  log_not_found off;
+                '';
+
+                "~ ^/media/cache/resolve".extraConfig = ''
+                  expires 1M;
+                  access_log off;
+                  add_header Cache-Control "public";
+                  ${securityHeaders}
+                  try_files $uri $uri/ /index.php?$query_string;
+                '';
+
+                "~* .(js|webp|jpg|jpeg|gif|png|css|tgz|gz|rar|bz2|doc|pdf|ppt|tar|wav|bmp|rtf|swf|ico|flv|txt|woff|woff2|svg)$".extraConfig = ''
+                  expires 30d;
+                  add_header Pragma "public";
+                  add_header Cache-Control "public";
+                  ${securityHeaders}
+                '';
+
+                "~ /\\.(?!well-known).*".extraConfig = ''
+                  deny all;
                 '';
               };
 
-              "/favicon.ico".extraConfig = ''
-                access_log off;
-                log_not_found off;
-              '';
+              extraConfig = ''
+                index index.php;
 
-              "/robots.txt".extraConfig = ''
-                access_log off;
-                log_not_found off;
-              '';
+                charset utf-8;
 
-              "~ ^/media/cache/resolve".extraConfig = ''
-                expires 1M;
-                access_log off;
-                add_header Cache-Control "public";
+                # Don't leak powered-by
+                fastcgi_hide_header X-Powered-By;
+
                 ${securityHeaders}
-                try_files $uri $uri/ /index.php?$query_string;
-              '';
 
-              "~* .(js|webp|jpg|jpeg|gif|png|css|tgz|gz|rar|bz2|doc|pdf|ppt|tar|wav|bmp|rtf|swf|ico|flv|txt|woff|woff2|svg)$".extraConfig = ''
-                expires 30d;
-                add_header Pragma "public";
-                add_header Cache-Control "public";
-                ${securityHeaders}
-              '';
+                client_max_body_size 20M; # Max size of a file that a user can upload
 
-              "~ /\\.(?!well-known).*".extraConfig = ''
-                deny all;
+                location ~ \.php$ {
+                  return 404;
+                }
               '';
             };
-
-            extraConfig = ''
-              index index.php;
-
-              charset utf-8;
-
-              # Don't leak powered-by
-              fastcgi_hide_header X-Powered-By;
-
-              ${securityHeaders}
-
-              client_max_body_size 20M; # Max size of a file that a user can upload
-
-              location ~ \.php$ {
-                return 404;
-              }
-            '';
-          };
         };
 
         redis.servers."kbin" = {
@@ -332,13 +334,19 @@ in {
             LogsDirectoryMode = "0770";
           };
 
-          requires = ["postgresql.service" "redis-kbin.service"];
-          after = ["postgresql.service" "redis-kbin.service"];
+          requires = [
+            "postgresql.service"
+            "redis-kbin.service"
+          ];
+          after = [
+            "postgresql.service"
+            "redis-kbin.service"
+          ];
         };
 
         phpfpm-kbin = {
-          requires = ["kbin-migrate.service"];
-          after = ["kbin-migrate.service"];
+          requires = [ "kbin-migrate.service" ];
+          after = [ "kbin-migrate.service" ];
 
           serviceConfig = {
             ExecStartPre = getExe kbin-export-secrets;

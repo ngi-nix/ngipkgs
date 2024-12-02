@@ -22,21 +22,19 @@ python39Packages.buildPythonPackage rec {
     fetchSubmodules = false;
   };
 
-  patches = [./soc-nmigen-soc-no-implicit-arg.patch];
+  patches = [ ./soc-nmigen-soc-no-implicit-arg.patch ];
 
   postPatch = ''
     rm -r src/soc/litex
   '';
 
-  propagatedBuildInputs =
-    [
-      libresoc-c4m-jtag
-      libresoc-ieee754fpu
-      libresoc-openpower-isa
-      nmigen-soc
-      yosys
-    ]
-    ++ (with python39Packages; [cached-property]);
+  propagatedBuildInputs = [
+    libresoc-c4m-jtag
+    libresoc-ieee754fpu
+    libresoc-openpower-isa
+    nmigen-soc
+    yosys
+  ] ++ (with python39Packages; [ cached-property ]);
 
   nativeCheckInputs =
     [
@@ -70,7 +68,7 @@ python39Packages.buildPythonPackage rec {
     "src/soc/fu/mmu/test/"
   ];
 
-  pythonImportsCheck = ["soc"];
+  pythonImportsCheck = [ "soc" ];
 
   meta = with lib; {
     description = "A nmigen-based OpenPOWER multi-issue Hybrid 3D CPU-VPU-GPU";

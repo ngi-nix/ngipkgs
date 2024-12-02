@@ -37,6 +37,6 @@ python3Packages.buildPythonPackage rec {
     description = "Stylized menu system for Kivy";
     homepage = "https://github.com/kivy-garden/modernmenu";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

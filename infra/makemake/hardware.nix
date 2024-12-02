@@ -1,4 +1,5 @@
-{lib, ...}: {
+{ lib, ... }:
+{
   system.stateVersion = lib.mkDefault "23.05";
 
   networking = {
@@ -39,7 +40,10 @@
   '';
 
   boot = {
-    initrd.availableKernelModules = ["ahci" "nvme"];
-    kernelModules = ["kvm-amd"];
+    initrd.availableKernelModules = [
+      "ahci"
+      "nvme"
+    ];
+    kernelModules = [ "kvm-amd" ];
   };
 }

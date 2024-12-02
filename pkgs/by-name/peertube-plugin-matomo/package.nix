@@ -25,7 +25,7 @@ buildNpmPackage rec {
     description = "Matomo plugin that tracks page views on a PeerTube instance";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-matomo";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

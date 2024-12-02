@@ -2,7 +2,8 @@
   pkgs,
   lib,
   sources,
-} @ args: {
+}@args:
+{
   packages = {
     inherit (pkgs) rosenpass rosenpass-tools;
   };

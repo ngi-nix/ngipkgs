@@ -3,9 +3,9 @@
   lib,
   pkgs,
   ...
-}: let
-  inherit
-    (lib)
+}:
+let
+  inherit (lib)
     literalExpression
     mkEnableOption
     mkForce
@@ -19,7 +19,8 @@
   group = "liberaforms";
   default_home = "/var/lib/liberaforms";
   default_logs = "/var/log/liberaforms";
-in {
+in
+{
   options.services.liberaforms = {
     enable = mkEnableOption "LiberaForms server";
 
@@ -185,11 +186,18 @@ in {
 
     systemd.services.liberaforms = {
       description = "LiberaForms server";
-      wantedBy = ["multi-user.target"];
-      after = ["network.target" "postgresql.service"];
-      requires = ["postgresql.service"];
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "network.target"
+        "postgresql.service"
+      ];
+      requires = [ "postgresql.service" ];
       restartIfChanged = true;
-      path = with pkgs; [postgresql_14 liberaforms.env openssl];
+      path = with pkgs; [
+        postgresql_14
+        liberaforms.env
+        openssl
+      ];
 
       serviceConfig = {
         Type = "simple";
@@ -348,7 +356,7 @@ in {
       home = default_home;
       isSystemUser = true;
     };
-    users.groups.${group} = {};
+    users.groups.${group} = { };
 
     services.postgresql = mkIf cfg.enablePostgres {
       enable = true;
@@ -372,7 +380,10 @@ in {
     # Based on https://gitlab.com/liberaforms/liberaforms/-/blob/main/docs/nginx.example
 
     networking = {
-      firewall.allowedTCPPorts = mkIf cfg.enableNginx [80 443];
+      firewall.allowedTCPPorts = mkIf cfg.enableNginx [
+        80
+        443
+      ];
     };
 
     services.nginx = mkIf cfg.enableNginx {

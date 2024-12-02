@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   imports = [
     ./buildbot.nix
     ./hardware.nix
@@ -15,7 +16,10 @@
     buildMachines = [
       {
         hostName = "localhost";
-        systems = ["x86_64-linux" "i686-linux"];
+        systems = [
+          "x86_64-linux"
+          "i686-linux"
+        ];
         maxJobs = 16;
         speedFactor = 1;
         supportedFeatures = [
@@ -33,47 +37,57 @@
       options = "--delete-older-than 7d";
     };
     settings = {
-      min-free = let GiB = 1024 * 1024 * 1024; in 4 * GiB;
+      min-free =
+        let
+          GiB = 1024 * 1024 * 1024;
+        in
+        4 * GiB;
       max-jobs = lib.mkDefault 16;
       allowed-uris = "https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:";
       cores = 0;
-      experimental-features = ["nix-command" "flakes" "ca-derivations"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "ca-derivations"
+      ];
       sandbox = true;
-      trusted-users = ["remotebuild"];
+      trusted-users = [ "remotebuild" ];
     };
   };
 
   time.timeZone = "Europe/Amsterdam";
 
-  users = let
-    keys = with lib; mapAttrs (name: value: ./keys/${name}) (builtins.readDir ./keys);
-    deploy = with keys; [makemake];
-    infra = with keys; [
-      hexa-gaia
-      hexa-helix
-      julienmalka
-      vcunat
-      zimbatm
-    ];
-    ngi = with keys; [
-      fricklerhandwerk
-      erethon
-      lorenzleutgeb
-    ];
-    remotebuild = with keys; [
-      getpsyched
-    ];
-  in {
-    mutableUsers = false;
-    users.root.openssh.authorizedKeys.keyFiles = deploy ++ infra ++ ngi;
-    users.remotebuild = {
-      isNormalUser = true;
-      createHome = false;
-      group = "remotebuild";
-      openssh.authorizedKeys.keyFiles = infra ++ ngi ++ remotebuild;
+  users =
+    let
+      keys = with lib; mapAttrs (name: value: ./keys/${name}) (builtins.readDir ./keys);
+      deploy = with keys; [ makemake ];
+      infra = with keys; [
+        hexa-gaia
+        hexa-helix
+        julienmalka
+        vcunat
+        zimbatm
+      ];
+      ngi = with keys; [
+        fricklerhandwerk
+        erethon
+        lorenzleutgeb
+      ];
+      remotebuild = with keys; [
+        getpsyched
+      ];
+    in
+    {
+      mutableUsers = false;
+      users.root.openssh.authorizedKeys.keyFiles = deploy ++ infra ++ ngi;
+      users.remotebuild = {
+        isNormalUser = true;
+        createHome = false;
+        group = "remotebuild";
+        openssh.authorizedKeys.keyFiles = infra ++ ngi ++ remotebuild;
+      };
+      groups.remotebuild = { };
     };
-    groups.remotebuild = {};
-  };
 
   environment.systemPackages = with pkgs; [
     emacs
@@ -110,13 +124,19 @@
 
   networking = {
     hostId = "5240310e";
-    firewall.allowedTCPPorts = [80 443];
+    firewall.allowedTCPPorts = [
+      80
+      443
+    ];
     firewall.allowPing = true;
     firewall.logRefusedConnections = true;
   };
 
   boot.loader.grub = {
-    devices = ["/dev/nvme0n1" "/dev/nvme1n1"];
+    devices = [
+      "/dev/nvme0n1"
+      "/dev/nvme1n1"
+    ];
     copyKernels = true;
   };
 }

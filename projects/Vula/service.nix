@@ -4,9 +4,9 @@
   options,
   pkgs,
   ...
-}: let
-  inherit
-    (lib)
+}:
+let
+  inherit (lib)
     assertMsg
     getAttr
     getExe
@@ -19,8 +19,7 @@
     mkPackageOption
     recursiveUpdate
     ;
-  inherit
-    (pkgs)
+  inherit (pkgs)
     writeShellApplication
     writeTextFile
     coreutils
@@ -30,20 +29,19 @@
 
   cfg = config.services.vula;
 
-  nss-altfiles = callPackage ./nss-altfiles.nix {};
+  nss-altfiles = callPackage ./nss-altfiles.nix { };
 
   nssModuleName = "vula";
 
-  logLevelFlag =
-    getAttr
-    cfg.logLevel
-    {
-      INFO = "--info";
-      WARN = "--quiet";
-      DEBUG = "--verbose";
-    };
+  logLevelFlag = getAttr cfg.logLevel {
+    INFO = "--info";
+    WARN = "--quiet";
+    DEBUG = "--verbose";
+  };
 
-  groupsAreUnique = assertMsg (cfg.operatorsGroup != cfg.systemGroup) "The options `config.services.vula.{systemGroup,operatorsGroup}` must have different values.";
+  groupsAreUnique = assertMsg (
+    cfg.operatorsGroup != cfg.systemGroup
+  ) "The options `config.services.vula.{systemGroup,operatorsGroup}` must have different values.";
 
   commonServiceAttrs = {
     serviceConfig = {
@@ -69,12 +67,15 @@
       StandardOutput = "journal";
       Type = "dbus";
     };
-    wantedBy = ["multi-user.target"];
+    wantedBy = [ "multi-user.target" ];
   };
 
   exec-vula-tray = writeShellApplication {
     name = "exec-vula-tray";
-    runtimeInputs = [gnugrep coreutils];
+    runtimeInputs = [
+      gnugrep
+      coreutils
+    ];
     text = ''
       if groups | grep --quiet "\b${cfg.operatorsGroup}\b"; then
         ${getExe cfg.package} tray
@@ -106,11 +107,12 @@
       Icon=${cfg.package}/share/icons/vula_gui_icon.png
     '';
   };
-in {
+in
+{
   options.services.vula = {
     enable = mkEnableOption "Enables Vula, \"automatic local network encryption\". The wireguard kernel module is required.";
 
-    package = mkPackageOption pkgs "vula" {};
+    package = mkPackageOption pkgs "vula" { };
 
     userPrefix = mkOption {
       type = types.str;
@@ -137,7 +139,11 @@ in {
     };
 
     logLevel = mkOption {
-      type = types.enum ["INFO" "WARN" "DEBUG"];
+      type = types.enum [
+        "INFO"
+        "WARN"
+        "DEBUG"
+      ];
       description = "Vula daemons log level.";
       default = "INFO";
       example = "WARN";
@@ -145,11 +151,17 @@ in {
   };
 
   config = mkIf cfg.enable {
-    system.nssModules = ["${nss-altfiles}"];
-    system.nssDatabases.hosts = mkOrder 0 [nssModuleName];
+    system.nssModules = [ "${nss-altfiles}" ];
+    system.nssDatabases.hosts = mkOrder 0 [ nssModuleName ];
 
-    users.groups."${assert groupsAreUnique; cfg.systemGroup}" = {};
-    users.groups."${assert groupsAreUnique; cfg.operatorsGroup}" = {};
+    users.groups."${
+      assert groupsAreUnique;
+      cfg.systemGroup
+    }" = { };
+    users.groups."${
+      assert groupsAreUnique;
+      cfg.operatorsGroup
+    }" = { };
 
     users.users."${cfg.userPrefix}-discover" = {
       isSystemUser = true;
@@ -177,11 +189,12 @@ in {
         (writeTextFile {
           name = "vula-dbus.conf";
           destination = "/share/dbus-1/system.d/local.vula.services.conf";
-          text = import ./dbus.conf.nix {inherit (cfg) userPrefix operatorsGroup;};
+          text = import ./dbus.conf.nix { inherit (cfg) userPrefix operatorsGroup; };
         })
       ]
       ++ (map
-        (name:
+        (
+          name:
           writeTextFile {
             name = "local.vula.${name}.service";
             destination = "/share/dbus-1/system-services/local.vula.${name}.service";
@@ -192,8 +205,14 @@ in {
               User=${cfg.userPrefix}-${name}
               SystemdService=vula-${name}.service
             '';
-          })
-        ["organize" "discover" "publish"]);
+          }
+        )
+        [
+          "organize"
+          "discover"
+          "publish"
+        ]
+      );
 
     networking.firewall.allowedUDPPorts = mkIf cfg.openFirewall [
       5353 # mdns
@@ -204,7 +223,11 @@ in {
 
     systemd.services.vula-organize = recursiveUpdate commonServiceAttrs {
       description = "Vula organize service daemon";
-      after = ["network.target" "vula-discover.target" "vula-publish.target"];
+      after = [
+        "network.target"
+        "vula-discover.target"
+        "vula-publish.target"
+      ];
       serviceConfig.AmbientCapabilities = "CAP_NET_ADMIN";
       serviceConfig.BusName = "local.vula.organize";
       serviceConfig.CapabilityBoundingSet = "CAP_NET_ADMIN";
@@ -218,8 +241,8 @@ in {
 
     systemd.services.vula-discover = recursiveUpdate commonServiceAttrs {
       description = "Vula discover service daemon";
-      after = ["network.target"];
-      partOf = ["vula-discover.target"];
+      after = [ "network.target" ];
+      partOf = [ "vula-discover.target" ];
       serviceConfig.BusName = "local.vula.discover";
       serviceConfig.ExecStart = "${getExe cfg.package} ${logLevelFlag} discover";
       serviceConfig.IPAddressAllow = "multicast";
@@ -230,8 +253,8 @@ in {
 
     systemd.services.vula-publish = recursiveUpdate commonServiceAttrs {
       description = "Vula publish service daemon";
-      after = ["network.target"];
-      partOf = ["vula-publish.target"];
+      after = [ "network.target" ];
+      partOf = [ "vula-publish.target" ];
       serviceConfig.BusName = "local.vula.publish";
       serviceConfig.ExecStart = "${getExe cfg.package} ${logLevelFlag} publish";
       serviceConfig.IPAddressAllow = "multicast";
@@ -241,7 +264,7 @@ in {
     };
 
     systemd.slices.vula.description = "Slice for vula services";
-    systemd.slices.vula.before = ["slices.target"];
+    systemd.slices.vula.before = [ "slices.target" ];
     systemd.slices.vula.sliceConfig.MemoryMax = "512M";
     systemd.slices.vula.sliceConfig.TasksMax = "72";
 

@@ -2,65 +2,69 @@
   pkgs,
   lib,
   dream2nix,
-}: let
-  inherit
-    (builtins)
+}:
+let
+  inherit (builtins)
     elem
     pathExists
     readDir
     ;
 
-  inherit
-    (lib.attrsets)
+  inherit (lib.attrsets)
     concatMapAttrs
     mapAttrs
     ;
 
   baseDirectory = ./.;
 
-  packageDirectories = let
-    names = name: type:
-      if type == "directory"
-      then {${name} = baseDirectory + "/${name}";}
-      # nothing else should be kept in this directory reserved for derivations
-      else assert elem name allowedFiles; {};
-    allowedFiles = ["README.md" "default.nix"];
-  in
+  packageDirectories =
+    let
+      names =
+        name: type:
+        if type == "directory" then
+          { ${name} = baseDirectory + "/${name}"; }
+        # nothing else should be kept in this directory reserved for derivations
+        else
+          assert elem name allowedFiles;
+          { };
+      allowedFiles = [
+        "README.md"
+        "default.nix"
+      ];
+    in
     concatMapAttrs names (readDir baseDirectory);
 
-  callModule = module: let
-    evaluated = lib.evalModules {
-      specialArgs = {
-        inherit dream2nix;
-        packageSets.nixpkgs = pkgs;
+  callModule =
+    module:
+    let
+      evaluated = lib.evalModules {
+        specialArgs = {
+          inherit dream2nix;
+          packageSets.nixpkgs = pkgs;
+        };
+        modules = [
+          module
+          {
+            paths.projectRoot = ../..;
+            paths.projectRootFile = "flake.nix";
+            paths.package = module;
+            paths.lockFile = "lock.json";
+          }
+        ];
       };
-      modules = [
-        module
-        {
-          paths.projectRoot = ../..;
-          paths.projectRootFile = "flake.nix";
-          paths.package = module;
-          paths.lockFile = "lock.json";
-        }
-      ];
-    };
-  in
+    in
     evaluated.config.public;
 
-  callPackage = pkgs.newScope (
-    self // {inherit callPackage;}
-  );
+  callPackage = pkgs.newScope (self // { inherit callPackage; });
 
-  self =
-    mapAttrs
-    (
-      _: directory:
-        if pathExists (directory + "/package.nix")
-        then callPackage (directory + "/package.nix") {}
-        else if pathExists (directory + "/dream2.nix")
-        then callModule (directory + "/dream2.nix")
-        else throw "No package.nix or dream2.nix found in ${directory}"
-    )
-    packageDirectories;
+  self = mapAttrs (
+    _: directory:
+    if pathExists (directory + "/package.nix") then
+      callPackage (directory + "/package.nix") { }
+    else if pathExists (directory + "/dream2.nix") then
+      callModule (directory + "/dream2.nix")
+    else
+      throw "No package.nix or dream2.nix found in ${directory}"
+  ) packageDirectories;
 in
-  self
+self

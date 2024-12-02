@@ -7,7 +7,8 @@
   openssl,
   pkg-config,
   perl,
-}: let
+}:
+let
   version = "0.1.0";
 
   releaseDate = "2024-03-15";
@@ -19,9 +20,10 @@
     hash = "sha256-2900GArHM75IHMfN+bWFbeczKrZK/fG50ImUtiLMft4=";
   };
 
-  frontend = let
-    src = rootSrc;
-  in
+  frontend =
+    let
+      src = rootSrc;
+    in
     mkYarnPackage {
       pname = "mcaptcha-frontend";
       inherit version src;
@@ -77,9 +79,10 @@
       distPhase = "true";
     };
 
-  openapi = let
-    src = rootSrc + "/docs/openapi";
-  in
+  openapi =
+    let
+      src = rootSrc + "/docs/openapi";
+    in
     mkYarnPackage {
       pname = "mcaptcha-openapi";
       inherit version src;
@@ -110,9 +113,10 @@
       distPhase = "true";
     };
 
-  cache-bust = let
-    src = rootSrc + "/utils/cache-bust";
-  in
+  cache-bust =
+    let
+      src = rootSrc + "/utils/cache-bust";
+    in
     rustPlatform.buildRustPackage {
       inherit src;
       pname = "cache-bust";
@@ -121,9 +125,10 @@
       cargoHash = "sha256-WULS0Sn5a+Zgyl8GFP+wlVTkTJoSZk0bvTkwsMl1pGk=";
     };
 
-  mcaptcha = let
-    src = rootSrc;
-  in
+  mcaptcha =
+    let
+      src = rootSrc;
+    in
     rustPlatform.buildRustPackage {
       pname = "mcaptcha";
       inherit version src;
@@ -171,9 +176,12 @@
       # Get openssl-sys to use pkg-config
       OPENSSL_NO_VENDOR = 1;
 
-      nativeBuildInputs = [pkg-config perl];
+      nativeBuildInputs = [
+        pkg-config
+        perl
+      ];
 
-      buildInputs = [openssl];
+      buildInputs = [ openssl ];
 
       meta = {
         url = "https://mcaptcha.org/";
@@ -183,4 +191,4 @@
       };
     };
 in
-  mcaptcha
+mcaptcha

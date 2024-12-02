@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     description = "Remove video privacy settings of your choice";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-privacy-remover";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 })

@@ -2,10 +2,10 @@
   pkgs,
   sources,
   ...
-} @ args: {
+}@args:
+{
   packages = {
-    inherit
-      (pkgs)
+    inherit (pkgs)
       gnunet
       gnunet-gtk
       gnunet-messenger-cli

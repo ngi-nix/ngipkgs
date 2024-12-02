@@ -22,14 +22,17 @@ python39Packages.buildPythonPackage rec {
     rev = "fd2aaa336283cff2e46f489bf3897780cd217b8b"; # HEAD @ version date
   };
 
-  nativeBuildInputs = with python39Packages; [setuptools-scm];
-  propagatedBuildInputs = with python39Packages; [nmigen setuptools];
+  nativeBuildInputs = with python39Packages; [ setuptools-scm ];
+  propagatedBuildInputs = with python39Packages; [
+    nmigen
+    setuptools
+  ];
 
   preBuild = ''
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
   '';
 
-  nativeCheckInputs = with python39Packages; [pytestCheckHook];
+  nativeCheckInputs = with python39Packages; [ pytestCheckHook ];
 
   meta = {
     description = "Python toolbox for building complex digital hardware";

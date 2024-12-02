@@ -16,10 +16,18 @@ mkYarnPackage rec {
     hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
   };
 
-  packageResolutions = builtins.listToAttrs (builtins.map (package: {
-    name = "@symfony/${package}";
-    value = "${kbin-backend}/share/php/kbin/vendor/symfony/${package}/assets";
-  }) ["stimulus-bundle" "ux-autocomplete" "ux-chartjs"]);
+  packageResolutions = builtins.listToAttrs (
+    builtins.map
+      (package: {
+        name = "@symfony/${package}";
+        value = "${kbin-backend}/share/php/kbin/vendor/symfony/${package}/assets";
+      })
+      [
+        "stimulus-bundle"
+        "ux-autocomplete"
+        "ux-chartjs"
+      ]
+  );
 
   buildPhase = ''
     mkdir -p deps/${pname}/vendor/friendsofsymfony/jsrouting-bundle/Resources

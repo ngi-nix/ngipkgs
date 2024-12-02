@@ -1,4 +1,4 @@
 let
-  lib = import ./lib.nix {lib = {};};
+  lib = import ./lib.nix { lib = { }; };
 in
-  lib.flake-inputs
+lib.flake-inputs

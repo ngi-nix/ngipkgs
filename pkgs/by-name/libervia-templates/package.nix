@@ -16,7 +16,7 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [hatchling];
+  nativeBuildInputs = with python3Packages; [ hatchling ];
 
   # No tests, no modules to import check either
   doCheck = false;
@@ -25,6 +25,6 @@ python3Packages.buildPythonPackage rec {
     description = "Templates for Libervia XMPP client";
     homepage = "https://libervia.org";
     license = lib.licenses.agpl3Plus;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

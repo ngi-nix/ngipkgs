@@ -21,10 +21,10 @@ python39Packages.buildPythonPackage rec {
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
   '';
 
-  nativeBuildInputs = with python39Packages; [setuptools-scm];
-  propagatedBuildInputs = [nmigen-soc];
+  nativeBuildInputs = with python39Packages; [ setuptools-scm ];
+  propagatedBuildInputs = [ nmigen-soc ];
 
-  pythonImportsCheck = ["c4m.nmigen.jtag.tap"];
+  pythonImportsCheck = [ "c4m.nmigen.jtag.tap" ];
 
   meta = {
     description = "Chip4Makers nmigen JTAG implementation";

@@ -26,9 +26,20 @@ stdenv.mkDerivation (finalAttrs: rec {
     hash = "sha256-/EAAIxsfbZ7bTX4UcyehK9hP8vMyrlX08N0L0jsLrw4=";
   };
 
-  nativeBuildInputs = [meson ninja pkg-config validatePkgConfig];
+  nativeBuildInputs = [
+    meson
+    ninja
+    pkg-config
+    validatePkgConfig
+  ];
 
-  buildInputs = [check gnunet libextractor libgcrypt libsodium];
+  buildInputs = [
+    check
+    gnunet
+    libextractor
+    libgcrypt
+    libsodium
+  ];
 
   INSTALL_DIR = (placeholder "out") + "/";
 
@@ -37,6 +48,6 @@ stdenv.mkDerivation (finalAttrs: rec {
   passthru.tests.pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
 
   meta = {
-    pkgConfigModules = ["gnunetchat"];
+    pkgConfigModules = [ "gnunetchat" ];
   };
 })

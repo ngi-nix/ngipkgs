@@ -18,9 +18,9 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
-  propagatedBuildInputs = [xeddsa] ++ (with python3Packages; [typing-extensions]);
+  propagatedBuildInputs = [ xeddsa ] ++ (with python3Packages; [ typing-extensions ]);
 
   pythonImportsCheck = [
     "omemo"
@@ -41,6 +41,6 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://github.com/Syndace/python-omemo";
     changelog = "https://github.com/Syndace/python-omemo/blob/v${version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }
