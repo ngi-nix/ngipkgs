@@ -4,16 +4,18 @@
   options,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (lib) types;
   cfg = config.services.mcaptcha;
   opt = options.services.mcaptcha;
-  settingsFormat = pkgs.formats.toml {};
+  settingsFormat = pkgs.formats.toml { };
   filteredSettings = lib.attrsets.filterAttrsRecursive (_path: value: value != null) cfg.settings;
   configFile = settingsFormat.generate "mcaptcha.config.toml" filteredSettings;
-in {
+in
+{
   options.services.mcaptcha.enable = lib.mkEnableOption "mCaptcha server";
-  options.services.mcaptcha.package = lib.mkPackageOption pkgs "mcaptcha" {};
+  options.services.mcaptcha.package = lib.mkPackageOption pkgs "mcaptcha" { };
 
   options.services.mcaptcha.settings = lib.mkOption {
     type = lib.types.submodule {
@@ -201,46 +203,52 @@ in {
 
     systemd.services.mcaptcha.description = "mCaptcha: a CAPTCHA system that gives attackers a run for their money";
 
-    systemd.services.mcaptcha.script = let
-      serverCookieSecret = "export MCAPTCHA__server_COOKIE_SECRET=$(< ${cfg.server.cookieSecretFile})";
-      captchaSalt = "export MCAPTCHA_captcha_SALT=$(< ${cfg.captcha.saltFile})";
-      databaseLocalUrl = ''export DATABASE_URL="postgres:///${cfg.settings.database.name}?host=/run/postgresql"'';
-      databaseRemoteUrl = let
-        inherit (cfg.settings.database) username hostname port name;
-      in ''
-        export DATABASE_URL="postgres://${username}:$(< ${cfg.database.passwordFile})@${hostname}:${builtins.toString port}/${name}"
-      '';
-      redisLocalUrl = ''export MCAPTCHA_redis_URL="redis://${cfg.redis.host}:${builtins.toString cfg.redis.port}"'';
-      redisRemoteUrl = let
-        urlencode = lib.getExe' pkgs.urlencode "urlencode";
-      in ''
-        redis_user=$(${urlencode} -e userinfo ${lib.escapeShellArg cfg.redis.user})
-        redis_pass=$(${urlencode} -e userinfo < ${cfg.redis.passwordFile})
-        export MCAPTCHA_redis_URL="redis://$redis_user:$redis_pass@${cfg.redis.host}:${builtins.toString cfg.redis.port}"
-      '';
-      exec = "exec ${lib.getExe cfg.package}";
-    in
+    systemd.services.mcaptcha.script =
+      let
+        serverCookieSecret = "export MCAPTCHA__server_COOKIE_SECRET=$(< ${cfg.server.cookieSecretFile})";
+        captchaSalt = "export MCAPTCHA_captcha_SALT=$(< ${cfg.captcha.saltFile})";
+        databaseLocalUrl = ''export DATABASE_URL="postgres:///${cfg.settings.database.name}?host=/run/postgresql"'';
+        databaseRemoteUrl =
+          let
+            inherit (cfg.settings.database)
+              username
+              hostname
+              port
+              name
+              ;
+          in
+          ''
+            export DATABASE_URL="postgres://${username}:$(< ${cfg.database.passwordFile})@${hostname}:${builtins.toString port}/${name}"
+          '';
+        redisLocalUrl = ''export MCAPTCHA_redis_URL="redis://${cfg.redis.host}:${builtins.toString cfg.redis.port}"'';
+        redisRemoteUrl =
+          let
+            urlencode = lib.getExe' pkgs.urlencode "urlencode";
+          in
+          ''
+            redis_user=$(${urlencode} -e userinfo ${lib.escapeShellArg cfg.redis.user})
+            redis_pass=$(${urlencode} -e userinfo < ${cfg.redis.passwordFile})
+            export MCAPTCHA_redis_URL="redis://$redis_user:$redis_pass@${cfg.redis.host}:${builtins.toString cfg.redis.port}"
+          '';
+        exec = "exec ${lib.getExe cfg.package}";
+      in
       lib.concatStringsSep "\n" [
         serverCookieSecret
         captchaSalt
-        (
-          if cfg.database.createLocally
-          then databaseLocalUrl
-          else databaseRemoteUrl
-        )
-        (
-          if cfg.redis.createLocally
-          then redisLocalUrl
-          else redisRemoteUrl
-        )
+        (if cfg.database.createLocally then databaseLocalUrl else databaseRemoteUrl)
+        (if cfg.redis.createLocally then redisLocalUrl else redisRemoteUrl)
         exec
       ];
 
     systemd.services.mcaptcha.environment.MCAPTCHA_CONFIG = builtins.toString configFile;
-    systemd.services.mcaptcha.after = ["syslog.target"] ++ lib.optionals cfg.database.createLocally ["postgresql.service"];
-    systemd.services.mcaptcha.bindsTo = lib.optionals cfg.database.createLocally ["postgresql.service"];
-    systemd.services.mcaptcha.wants = ["network-online.target"];
-    systemd.services.mcaptcha.wantedBy = ["multi-user.target"];
+    systemd.services.mcaptcha.after = [
+      "syslog.target"
+    ] ++ lib.optionals cfg.database.createLocally [ "postgresql.service" ];
+    systemd.services.mcaptcha.bindsTo = lib.optionals cfg.database.createLocally [
+      "postgresql.service"
+    ];
+    systemd.services.mcaptcha.wants = [ "network-online.target" ];
+    systemd.services.mcaptcha.wantedBy = [ "multi-user.target" ];
     # Settings modeled after https://github.com/mCaptcha/mCaptcha/blob/f337ee0643d88723776e1de4e5588dfdb6c0c574/docs/DEPLOYMENT.md#6-systemd-service-configuration
     systemd.services.mcaptcha.serviceConfig.User = cfg.user;
     systemd.services.mcaptcha.serviceConfig.Type = "simple";
@@ -258,11 +266,11 @@ in {
       group = cfg.group;
     };
 
-    users.groups."${cfg.group}" = {};
+    users.groups."${cfg.group}" = { };
 
     services.postgresql = lib.mkIf cfg.database.createLocally {
       enable = true;
-      ensureDatabases = [cfg.settings.database.name];
+      ensureDatabases = [ cfg.settings.database.name ];
       ensureUsers = [
         {
           name = cfg.user;
@@ -274,7 +282,10 @@ in {
     services.redis.servers.mcaptcha = lib.mkIf cfg.redis.createLocally {
       enable = true;
       port = cfg.redis.port;
-      extraParams = ["--loadmodule" "${pkgs.mcaptcha-cache}/lib/libcache.so"];
+      extraParams = [
+        "--loadmodule"
+        "${pkgs.mcaptcha-cache}/lib/libcache.so"
+      ];
     };
   };
 }

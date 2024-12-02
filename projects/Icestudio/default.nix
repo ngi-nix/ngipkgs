@@ -1,3 +1,4 @@
-{pkgs, ...} @ args: {
-  packages = {inherit (pkgs) icestudio;};
+{ pkgs, ... }@args:
+{
+  packages = { inherit (pkgs) icestudio; };
 }

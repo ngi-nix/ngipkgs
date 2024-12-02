@@ -27,7 +27,7 @@ buildNpmPackage rec {
     description = "Auto block videos based on public blocklists";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-auto-block-videos";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

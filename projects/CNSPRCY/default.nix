@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   packages = {
     inherit (pkgs) cnsprcy;
   };

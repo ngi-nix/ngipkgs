@@ -22,14 +22,14 @@ python3Packages.buildPythonPackage rec {
       --replace-fail "setuptools<74" "setuptools"
   '';
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
   buildInputs = [
     libsodium
     libxeddsa
   ];
 
-  propagatedBuildInputs = with python3Packages; [cffi];
+  propagatedBuildInputs = with python3Packages; [ cffi ];
 
   pythonImportsCheck = [
     "xeddsa"
@@ -40,6 +40,6 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://github.com/Syndace/python-xeddsa";
     changelog = "https://github.com/Syndace/python-xeddsa/blob/v${version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

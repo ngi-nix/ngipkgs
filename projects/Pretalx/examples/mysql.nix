@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   services = {
     ngi-pretalx.database = {
       backend = "mysql";
@@ -19,7 +20,7 @@
           ensurePermissions."${config.services.ngi-pretalx.database.name}.*" = "ALL PRIVILEGES";
         }
       ];
-      ensureDatabases = [config.services.ngi-pretalx.database.name];
+      ensureDatabases = [ config.services.ngi-pretalx.database.name ];
     };
   };
 }

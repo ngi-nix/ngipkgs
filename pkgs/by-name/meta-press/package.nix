@@ -20,9 +20,9 @@ stdenv.mkDerivation (finalAttrs: {
     cd build
   '';
 
-  nativeBuildInputs = [p7zip];
+  nativeBuildInputs = [ p7zip ];
 
-  makeFlags = ["BUNDLE_NAME=firefox_addon"];
+  makeFlags = [ "BUNDLE_NAME=firefox_addon" ];
 
   # An xpi is just a renamed zip for firefox extensions
   installPhase = ''

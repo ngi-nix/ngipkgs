@@ -1,5 +1,6 @@
-{pkgs, ...} @ args: {
-  packages = {inherit (pkgs) vula;};
+{ pkgs, ... }@args:
+{
+  packages = { inherit (pkgs) vula; };
   nixos.modules.services.vula = ./service.nix;
   nixos.tests.test = import ./test.nix args;
   nixos.examples.simple = {

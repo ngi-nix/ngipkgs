@@ -1,4 +1,4 @@
-{inputs}:
+{ inputs }:
 inputs.nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
 
@@ -8,6 +8,6 @@ inputs.nixpkgs.lib.nixosSystem {
     inputs.buildbot-nix.nixosModules.buildbot-worker
     inputs.sops-nix.nixosModules.default
     ./configuration.nix
-    {nix.nixPath = ["nixpkgs=${inputs.nixpkgs}"];}
+    { nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ]; }
   ];
 }

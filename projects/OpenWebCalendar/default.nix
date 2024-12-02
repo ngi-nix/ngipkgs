@@ -3,7 +3,8 @@
   lib,
   sources,
   ...
-} @ args: {
+}@args:
+{
   packages = {
     inherit (pkgs) open-web-calendar;
   };

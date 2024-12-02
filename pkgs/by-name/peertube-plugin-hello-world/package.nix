@@ -27,7 +27,7 @@ buildNpmPackage rec {
     description = "Hello world PeerTube plugin example";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-hello-world";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

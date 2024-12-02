@@ -36,6 +36,6 @@ stdenv.mkDerivation rec {
     description = "A GUI for viewing, editing and browsing Atomic Data";
     homepage = "https://github.com/atomicdata-dev/atomic-server/tree/develop/browser";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
   };
 }

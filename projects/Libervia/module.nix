@@ -3,16 +3,21 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.programs.libervia;
-in {
+in
+{
   options.programs.libervia = {
     enable = lib.mkEnableOption "Libervia";
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [libervia-backend libervia-desktop-kivy];
+    environment.systemPackages = with pkgs; [
+      libervia-backend
+      libervia-desktop-kivy
+    ];
 
-    services.dbus.packages = with pkgs; [libervia-backend];
+    services.dbus.packages = with pkgs; [ libervia-backend ];
   };
 }

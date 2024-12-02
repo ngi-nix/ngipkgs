@@ -21,11 +21,21 @@ stdenv.mkDerivation rec {
     hash = "sha256-MtZDwWLcKVrNlNqhsT9tnT6qEpt2rR5S37UhHS232XI=";
   };
 
-  nativeBuildInputs = [cmake arpa2common arpa2cm];
+  nativeBuildInputs = [
+    cmake
+    arpa2common
+    arpa2cm
+  ];
 
-  buildInputs = [steamworks lua doxygen graphviz libuuid];
+  buildInputs = [
+    steamworks
+    lua
+    doxygen
+    graphviz
+    libuuid
+  ];
 
-  patches = [./install-dirs.patch];
+  patches = [ ./install-dirs.patch ];
 
   configurePhase = ''
     mkdir -p build

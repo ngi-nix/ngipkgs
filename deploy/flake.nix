@@ -6,34 +6,36 @@
     ngipkgs.url = "github:ngi-nix/ngipkgs";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ngipkgs,
-  }: {
-    nixosConfigurations.myMachine = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
-        ngipkgs.nixosModules.default
+  outputs =
+    {
+      self,
+      nixpkgs,
+      ngipkgs,
+    }:
+    {
+      nixosConfigurations.myMachine = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          ngipkgs.nixosModules.default
 
-        ### VULA
-        # ngipkgs.nixosModules.services.vula
-        # ../projects/Vula/example-simple.nix
-        ###
-        ### KBIN
-        # ngipkgs.nixosModules.services.kbin
-        # ../projects/Kbin/example.nix
-        ###
-        ### PEERTUBE
-        # ngipkgs.nixosModules.services.peertube
-        # ../projects/PeerTube/example.nix
-        ###
-        ### ATOMICDATA
-        # ngipkgs.nixosModules.services.atomic-server
-        # ../projects/AtomicData/example.nix
-        ###
-      ];
+          ### VULA
+          # ngipkgs.nixosModules.services.vula
+          # ../projects/Vula/example-simple.nix
+          ###
+          ### KBIN
+          # ngipkgs.nixosModules.services.kbin
+          # ../projects/Kbin/example.nix
+          ###
+          ### PEERTUBE
+          # ngipkgs.nixosModules.services.peertube
+          # ../projects/PeerTube/example.nix
+          ###
+          ### ATOMICDATA
+          # ngipkgs.nixosModules.services.atomic-server
+          # ../projects/AtomicData/example.nix
+          ###
+        ];
+      };
     };
-  };
 }

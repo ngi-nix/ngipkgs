@@ -3,7 +3,8 @@
   config,
   dream2nix,
   ...
-}: rec {
+}:
+rec {
   name = "hypercore-${version}";
   version = "10.28.11";
 
@@ -32,15 +33,16 @@
     };
   };
 
-  deps = {nixpkgs, ...}: {
-    inherit
-      (nixpkgs)
-      fetchFromGitHub
-      stdenv
-      ;
+  deps =
+    { nixpkgs, ... }:
+    {
+      inherit (nixpkgs)
+        fetchFromGitHub
+        stdenv
+        ;
 
-    npm = nixpkgs.nodejs_16.pkgs.npm;
-  };
+      npm = nixpkgs.nodejs_16.pkgs.npm;
+    };
 
   nodejs-package-lock-v3 = {
     packageLockFile = ./package-lock.json;

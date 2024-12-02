@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     description = "PeerTube dark theme";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-theme-dark";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 })

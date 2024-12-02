@@ -1,4 +1,5 @@
-{date}: {
+{ date }:
+{
   inherit date;
   title = "NGIpkgs Overview";
   lang = "en";

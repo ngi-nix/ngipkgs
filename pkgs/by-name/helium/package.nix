@@ -21,9 +21,9 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
-  propagatedBuildInputs = with python3Packages; [selenium];
+  propagatedBuildInputs = with python3Packages; [ selenium ];
 
   nativeCheckInputs =
     [
@@ -40,7 +40,8 @@ python3Packages.buildPythonPackage rec {
   ];
 
   # Selenium doesn't support testing on all setups
-  doCheck = stdenv.hostPlatform.isDarwin || (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isx86_64);
+  doCheck =
+    stdenv.hostPlatform.isDarwin || (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isx86_64);
 
   # Selenium setup
   preCheck = ''
@@ -65,6 +66,6 @@ python3Packages.buildPythonPackage rec {
     description = "Lighter web automation with Python";
     homepage = "https://github.com/mherrmann/helium";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

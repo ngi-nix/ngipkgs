@@ -38,7 +38,7 @@ python39Packages.buildPythonPackage rec {
       pytest-output-to-files
     ]);
 
-  pythonImportsCheck = ["nmutil"];
+  pythonImportsCheck = [ "nmutil" ];
 
   meta = {
     description = "A nmigen utility library";

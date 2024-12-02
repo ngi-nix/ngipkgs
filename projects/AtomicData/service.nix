@@ -4,7 +4,8 @@
   pkgs,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.services.atomic-server;
   # We need to add these for DirectoriesRS to pick up
   # Since it doesn't pick up the ones set by systemd
@@ -12,14 +13,15 @@ with lib; let
     ATOMIC_CONFIG_DIR=/var/lib/atomic-server
     ATOMIC_DATA_DIR=/var/lib/atomic-server
     XDG_CACHE_HOME=/var/cache/atomic-server
-    ${generators.toINIWithGlobalSection {} {globalSection = cfg.settings;}}
+    ${generators.toINIWithGlobalSection { } { globalSection = cfg.settings; }}
   '';
-in {
+in
+{
   options = {
     services.atomic-server = {
       enable = mkEnableOption "Enable Atomic Server";
       settings = mkOption {
-        default = {};
+        default = { };
         description = ''
           Atomic Server configuration. Refer to <https://docs.atomicdata.dev/atomicserver/installation#atomicserver-cli-options--env-vars>
           for details on supported values.
@@ -41,11 +43,11 @@ in {
       isSystemUser = true;
       group = "atomic-server";
     };
-    users.groups.atomic-server = {};
+    users.groups.atomic-server = { };
     systemd.services.atomic-server = {
       description = "Atomic Server";
-      after = ["network.target"];
-      wantedBy = ["multi-user.target"];
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         ExecStart = "${pkgs.atomic-server}/bin/atomic-server";
         User = "atomic-server";
@@ -59,10 +61,14 @@ in {
           builtins.storeDir
         ];
         CapabilityBoundingSet = "";
-        RestrictAddressFamilies = ["AF_UNIX" "AF_INET" "AF_INET6"];
+        RestrictAddressFamilies = [
+          "AF_UNIX"
+          "AF_INET"
+          "AF_INET6"
+        ];
       };
     };
   };
 
-  meta.maintainers = [];
+  meta.maintainers = [ ];
 }

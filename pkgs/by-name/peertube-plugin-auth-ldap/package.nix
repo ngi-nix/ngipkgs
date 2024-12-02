@@ -27,7 +27,7 @@ buildNpmPackage rec {
     description = "Add LDAP support to login form in PeerTube";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-auth-ldap";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

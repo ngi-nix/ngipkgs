@@ -3,7 +3,8 @@
   config,
   dream2nix,
   ...
-}: let
+}:
+let
   version = "3.1.1";
   src = config.deps.fetchFromGitLab {
     owner = "liberaforms";
@@ -11,23 +12,25 @@
     rev = "v${version}";
     hash = "sha256-RpEaO/3jje/ABdIGrnBo1sYPHpuUuDfe4uuJON9RiqY=";
   };
-in {
-  imports = [dream2nix.modules.dream2nix.pip];
+in
+{
+  imports = [ dream2nix.modules.dream2nix.pip ];
 
-  deps = {nixpkgs, ...}: {
-    inherit
-      (nixpkgs)
-      fetchFromGitLab
-      file
-      libxml2
-      libxslt
-      postgresql
-      postgresqlTestHook
-      runCommand
-      substituteAll
-      ;
-    python = nixpkgs.python311;
-  };
+  deps =
+    { nixpkgs, ... }:
+    {
+      inherit (nixpkgs)
+        fetchFromGitLab
+        file
+        libxml2
+        libxslt
+        postgresql
+        postgresqlTestHook
+        runCommand
+        substituteAll
+        ;
+      python = nixpkgs.python311;
+    };
 
   name = "liberaforms";
   inherit version;
@@ -90,7 +93,7 @@ in {
   };
 
   pip = {
-    requirementsFiles = ["${src}/requirements.txt"];
+    requirementsFiles = [ "${src}/requirements.txt" ];
     requirementsList = [
       "factory-boy"
       "faker"

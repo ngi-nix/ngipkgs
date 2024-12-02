@@ -3,24 +3,29 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   name = "peertube-plugins";
 
   nodes = {
-    server = {config, ...}: {
-      imports = [
-        sources.modules.ngipkgs
-        sources.modules.services.peertube
-        sources.examples.PeerTube.base
-      ];
+    server =
+      { config, ... }:
+      {
+        imports = [
+          sources.modules.ngipkgs
+          sources.modules.services.peertube
+          sources.examples.PeerTube.base
+        ];
 
-      boot.kernelPackages = pkgs.linuxPackages_latest;
-    };
+        boot.kernelPackages = pkgs.linuxPackages_latest;
+      };
   };
 
-  testScript = {nodes, ...}: let
-    url = "http://${nodes.server.services.peertube.localDomain}:${toString nodes.server.services.peertube.listenWeb}";
-  in
+  testScript =
+    { nodes, ... }:
+    let
+      url = "http://${nodes.server.services.peertube.localDomain}:${toString nodes.server.services.peertube.listenWeb}";
+    in
     ''
       start_all()
 
@@ -31,20 +36,18 @@
       # Eventually peertube-plugins-initial kicks in, sets up the initial state
     ''
     + (lib.strings.concatMapStringsSep "\n" (plugin: ''
-        with subtest("peertube plugin ${plugin.pname} installs"):
-            server.wait_for_console_text("Successful installation of plugin ${plugin}")
-      '')
-      nodes.server.services.peertube.plugins.plugins)
+      with subtest("peertube plugin ${plugin.pname} installs"):
+          server.wait_for_console_text("Successful installation of plugin ${plugin}")
+    '') nodes.server.services.peertube.plugins.plugins)
     + ''
 
       # peertube-plugins-initial triggers a restart and causes regular peertube-plugins to fire instead
       # Plugins should all still come up
     ''
     + (lib.strings.concatMapStringsSep "\n" (plugin: ''
-        with subtest("peertube plugin ${plugin.pname} registers"):
-            server.wait_for_console_text("Registering plugin or theme ${plugin.pname}")
-      '')
-      nodes.server.services.peertube.plugins.plugins)
+      with subtest("peertube plugin ${plugin.pname} registers"):
+          server.wait_for_console_text("Registering plugin or theme ${plugin.pname}")
+    '') nodes.server.services.peertube.plugins.plugins)
     + ''
 
       # Now wait until we can get through to the instance and trigger some initial loading

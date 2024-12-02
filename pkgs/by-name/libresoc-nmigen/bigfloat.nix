@@ -13,7 +13,7 @@ python39Packages.buildPythonPackage rec {
     hash = "sha256-WLlr3ocqylmJ0T2C66Os8qoblOIhF91yoWulkRsMDLg=";
   };
 
-  propagatedBuildInputs = [mpfr] ++ (with python39Packages; [six]);
+  propagatedBuildInputs = [ mpfr ] ++ (with python39Packages; [ six ]);
 
   meta = {
     description = "Arbitrary-precision correctly-rounded floating-point arithmetic, via MPFR.";

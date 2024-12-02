@@ -2,10 +2,12 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   storageBase = "/var/lib/peertube";
   storageDir = subdir: "${storageBase}/${subdir}/";
-in {
+in
+{
   environment = {
     # Sets the initial password of the root user to a fixed value. Make sure to change the password afterwards!
     etc."peertube-envvars".text = ''
@@ -79,18 +81,20 @@ in {
     serviceEnvironmentFile = "/etc/peertube-envvars";
   };
 
-  systemd.tmpfiles.settings = let
-    dirArgs = {
-      mode = "0700";
-      inherit (config.services.peertube) user group;
+  systemd.tmpfiles.settings =
+    let
+      dirArgs = {
+        mode = "0700";
+        inherit (config.services.peertube) user group;
+      };
+    in
+    {
+      "99-peertube-plugins-test-setup" = {
+        "${storageBase}".d = dirArgs;
+        "${storageDir "tmp"}".d = dirArgs;
+        "${storageDir "logs"}".d = dirArgs;
+        "${storageDir "cache"}".d = dirArgs;
+        "${storageDir "plugins"}".d = dirArgs;
+      };
     };
-  in {
-    "99-peertube-plugins-test-setup" = {
-      "${storageBase}".d = dirArgs;
-      "${storageDir "tmp"}".d = dirArgs;
-      "${storageDir "logs"}".d = dirArgs;
-      "${storageDir "cache"}".d = dirArgs;
-      "${storageDir "plugins"}".d = dirArgs;
-    };
-  };
 }

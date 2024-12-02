@@ -18,10 +18,10 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
   propagatedBuildInputs =
-    [xeddsa]
+    [ xeddsa ]
     ++ (with python3Packages; [
       cryptography
       pydantic
@@ -37,6 +37,6 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://github.com/Syndace/python-x3dh";
     changelog = "https://github.com/Syndace/python-x3dh/blob/v${version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

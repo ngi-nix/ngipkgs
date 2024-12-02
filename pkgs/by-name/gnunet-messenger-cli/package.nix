@@ -24,7 +24,11 @@ stdenv.mkDerivation rec {
 
   INSTALL_DIR = (placeholder "out") + "/";
 
-  nativeBuildInputs = [meson ninja pkg-config];
+  nativeBuildInputs = [
+    meson
+    ninja
+    pkg-config
+  ];
 
   buildInputs = [
     gnunet

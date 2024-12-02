@@ -16,9 +16,9 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
-  propagatedBuildInputs = with python3Packages; [urwid];
+  propagatedBuildInputs = with python3Packages; [ urwid ];
 
   # No tests
   doCheck = false;
@@ -34,6 +34,6 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://libervia.org";
     changelog = "https://repos.goffi.org/urwid-satext/file/${src.rev}/CHANGELOG";
     license = lib.licenses.lgpl3Plus;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

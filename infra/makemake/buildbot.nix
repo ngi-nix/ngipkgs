@@ -2,16 +2,23 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   domain = "buildbot.ngi.nixos.org";
   sopsPrefix = suffix: "buildbot/${suffix}";
   secret = key: config.sops.secrets.${sopsPrefix key}.path;
-in {
+in
+{
   services = {
     buildbot-nix.master = {
       inherit domain;
       enable = true;
-      admins = ["Erethon" "fricklerhandwerk" "Janik-Haag" "lorenzleutgeb"];
+      admins = [
+        "Erethon"
+        "fricklerhandwerk"
+        "Janik-Haag"
+        "lorenzleutgeb"
+      ];
       workersFile = secret "workers";
       github = {
         oauthId = "Ov23linNGNKJg5zddrwX";
@@ -47,15 +54,22 @@ in {
   };
 
   sops.secrets =
-    (builtins.listToAttrs
-      (map (key: {
+    (builtins.listToAttrs (
+      map
+        (key: {
           name = sopsPrefix key;
           value = {
             inherit key;
             sopsFile = ./secrets/buildbot.json;
           };
         })
-        ["github/oauth" "github/pat" "github/webhook" "worker"]))
+        [
+          "github/oauth"
+          "github/pat"
+          "github/webhook"
+          "worker"
+        ]
+    ))
     // {
       ${sopsPrefix "workers"} = {
         sopsFile = ./secrets/buildbot-workers.json;

@@ -27,7 +27,7 @@ buildNpmPackage rec {
     description = "Add SAML2 support to login form in PeerTube";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-auth-saml2";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

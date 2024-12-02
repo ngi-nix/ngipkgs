@@ -1,4 +1,5 @@
-{pkgs, ...} @ args: {
+{ pkgs, ... }@args:
+{
   packages = {
     inherit (pkgs) openfire;
   };

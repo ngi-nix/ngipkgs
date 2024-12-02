@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     description = "Allow admins to create custom transcoding profiles using the plugin settings";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-transcoding-profile-debug";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 })

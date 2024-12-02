@@ -27,7 +27,7 @@ buildNpmPackage rec {
     description = "Add OpenID Connect support to login form in PeerTube";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-auth-openid-connect";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 }

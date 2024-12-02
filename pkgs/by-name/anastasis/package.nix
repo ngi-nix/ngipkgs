@@ -32,7 +32,10 @@ stdenv.mkDerivation (finalAttrs: {
     patchShebangs src/cli
   '';
 
-  outputs = ["out" "configured"];
+  outputs = [
+    "out"
+    "configured"
+  ];
 
   nativeBuildInputs = [
     pkg-config # hook that adds pkg-config files of buildInputs
@@ -65,14 +68,16 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   postInstall = ''
-    wrapProgram $out/bin/anastasis-config --prefix PATH : ${lib.makeBinPath [
-      # Fix "anastasis-config-wrapped needs gnunet-config to be installed"
-      #   in src/cli/test_anastasis_reducer_backup_enter_user_attributes.sh
-      # (NB: --with-gnunet was not enough)
-      gnunet
-      # needed by $out/bin/anastasis-config during postInstallCheck
-      which
-    ]}
+    wrapProgram $out/bin/anastasis-config --prefix PATH : ${
+      lib.makeBinPath [
+        # Fix "anastasis-config-wrapped needs gnunet-config to be installed"
+        #   in src/cli/test_anastasis_reducer_backup_enter_user_attributes.sh
+        # (NB: --with-gnunet was not enough)
+        gnunet
+        # needed by $out/bin/anastasis-config during postInstallCheck
+        which
+      ]
+    }
   '';
 
   doInstallCheck = true;
@@ -87,7 +92,7 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  passthru.tests.vmTest = callPackage ./test.nix {};
+  passthru.tests.vmTest = callPackage ./test.nix { };
 
   meta = {
     description = ''

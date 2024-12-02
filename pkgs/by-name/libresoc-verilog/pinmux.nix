@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     hash = "sha256-Tux2RvcRmlpXMsHwve/+5rOyBRSThg9MVW2NGP3ZJxs=";
   };
 
-  nativeBuildInputs = [python39];
+  nativeBuildInputs = [ python39 ];
 
   buildPhase = ''
     runHook preBuild

@@ -5,9 +5,9 @@
   pkgs,
   projects,
   self,
-}: let
-  inherit
-    (builtins)
+}:
+let
+  inherit (builtins)
     any
     attrNames
     attrValues
@@ -22,8 +22,7 @@
 
   join = concatStringsSep;
 
-  inherit
-    (lib)
+  inherit (lib)
     concatLines
     flip
     foldl'
@@ -33,60 +32,72 @@
     recursiveUpdate
     ;
 
-  empty = xs: assert isList xs; xs == [];
+  empty =
+    xs:
+    assert isList xs;
+    xs == [ ];
   heading = i: text: "<h${toString i}>${text}</h${toString i}>";
 
   # Splits a compressed date up into ISO 8601
-  lastModified = let
-    sub = start: len: substring start len self.lastModifiedDate;
-  in "${sub 0 4}-${sub 4 2}-${sub 6 2}T${sub 8 2}:${sub 10 2}:${sub 12 2}Z";
+  lastModified =
+    let
+      sub = start: len: substring start len self.lastModifiedDate;
+    in
+    "${sub 0 4}-${sub 4 2}-${sub 6 2}T${sub 8 2}:${sub 10 2}:${sub 12 2}Z";
 
   version =
-    if self ? rev
-    then "[`${self.shortRev}`](https://github.com/ngi-nix/ngipkgs/tree/${self.rev})"
-    else self.dirtyRev;
+    if self ? rev then
+      "[`${self.shortRev}`](https://github.com/ngi-nix/ngipkgs/tree/${self.rev})"
+    else
+      self.dirtyRev;
 
   pick = {
-    options = project: let
-      # string comparison is faster than collecting attribute paths as lists
-      spec = attrNames (lib'.flattenAttrs "." (
-        foldl' recursiveUpdate {}
-        (mapAttrsToList (name: value: {${name} = value;}) project.nixos.modules)
-      ));
-    in
-      filter
-      (option: any ((flip hasPrefix) (join "." option.loc)) spec)
-      (attrValues options);
+    options =
+      project:
+      let
+        # string comparison is faster than collecting attribute paths as lists
+        spec = attrNames (
+          lib'.flattenAttrs "." (
+            foldl' recursiveUpdate { } (
+              mapAttrsToList (name: value: { ${name} = value; }) project.nixos.modules
+            )
+          )
+        );
+      in
+      filter (option: any ((flip hasPrefix) (join "." option.loc)) spec) (attrValues options);
     examples = project: attrValues project.nixos.examples;
     packages = project: attrValues project.packages;
   };
 
   render = {
     options = rec {
-      one = option: let
-        maybeDefault = optionalString (option ? default.text) "`${option.default.text}`";
-      in ''
-        <dt>`${join "." option.loc}`</dt>
-        <dd>
-          <table>
-            <tr>
-              <td>Description:</td>
-              <td>${lib.escapeXML option.description}</td>
-            </tr>
-            <tr>
-              <td>Type:</td>
-              <td>`${option.type}`</td>
-            </tr>
-            <tr>
-              <td>Default:</td>
-              <td>${maybeDefault}</td>
-            </tr>
-          </table>
-        </dd>
-      '';
-      many = projectOptions:
-        optionalString (!empty projectOptions)
+      one =
+        option:
+        let
+          maybeDefault = optionalString (option ? default.text) "`${option.default.text}`";
+        in
         ''
+          <dt>`${join "." option.loc}`</dt>
+          <dd>
+            <table>
+              <tr>
+                <td>Description:</td>
+                <td>${lib.escapeXML option.description}</td>
+              </tr>
+              <tr>
+                <td>Type:</td>
+                <td>`${option.type}`</td>
+              </tr>
+              <tr>
+                <td>Default:</td>
+                <td>${maybeDefault}</td>
+              </tr>
+            </table>
+          </dd>
+        '';
+      many =
+        projectOptions:
+        optionalString (!empty projectOptions) ''
           <section><details><summary>${heading 3 "Options"}</summary><dl>
           ${concatLines (map one projectOptions)}
           </dl></details></section>
@@ -105,9 +116,9 @@
           </table>
         </dd>
       '';
-      many = packages:
-        optionalString (!empty packages)
-        ''
+      many =
+        packages:
+        optionalString (!empty packages) ''
           <section><details><summary>${heading 3 "Packages"}</summary><dl>
           ${concatLines (map one packages)}
           </dl></details></section>
@@ -126,9 +137,9 @@
 
         </li>
       '';
-      many = examples:
-        optionalString (!empty examples)
-        ''
+      many =
+        examples:
+        optionalString (!empty examples) ''
           <section><details><summary>${heading 3 "Examples"}</summary><ul>
           ${concatLines (map one examples)}
           </ul></details></section>
@@ -149,9 +160,13 @@
     };
   };
 
-  metadata = pkgs.writeText "metadata.json" (toJSON (import ./metadata.nix {
-    date = lastModified;
-  }));
+  metadata = pkgs.writeText "metadata.json" (
+    toJSON (
+      import ./metadata.nix {
+        date = lastModified;
+      }
+    )
+  );
 
   content = pkgs.writeText "overview.html" ''
     ${render.projects.many projects}
@@ -160,10 +175,16 @@
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 in
-  pkgs.runCommand "overview"
+pkgs.runCommand "overview"
   {
-    nativeBuildInputs = with pkgs; [jq gnused pandoc validator-nu];
-  } ''
+    nativeBuildInputs = with pkgs; [
+      jq
+      gnused
+      pandoc
+      validator-nu
+    ];
+  }
+  ''
     mkdir -v $out
     cp -v ${./style.css} $out/style.css
 

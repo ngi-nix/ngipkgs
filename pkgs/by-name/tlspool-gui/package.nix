@@ -18,6 +18,12 @@ stdenv.mkDerivation rec {
     hash = "sha256-87AY5GxIeDvsc9jrjam1aAYK+RQwhEgt+GO4TE4d6Js=";
   };
 
-  nativeBuildInputs = [cmake arpa2common arpa2cm tlspool libsForQt5.qt5.wrapQtAppsHook];
-  buildInputs = [libsForQt5.qt5.qtbase];
+  nativeBuildInputs = [
+    cmake
+    arpa2common
+    arpa2cm
+    tlspool
+    libsForQt5.qt5.wrapQtAppsHook
+  ];
+  buildInputs = [ libsForQt5.qt5.qtbase ];
 }

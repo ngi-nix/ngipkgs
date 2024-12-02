@@ -2,7 +2,8 @@
   pkgs,
   sources,
   ...
-}: {
+}:
+{
   packages = {
     inherit (pkgs) omnom;
   };

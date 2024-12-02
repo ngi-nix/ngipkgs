@@ -7,7 +7,8 @@
   stdenvNoCC,
   symlinkJoin,
   prosody,
-}: let
+}:
+let
   details = {
     livechat = rec {
       pname = "peertube-plugin-livechat";
@@ -47,7 +48,7 @@
     description = "Provides chat system for Peertube videos";
     homepage = "https://github.com/JohnXLivingston/peertube-plugin-livechat";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 
@@ -70,8 +71,7 @@
 
     meta = {
       description = "${commonMeta.description} - generated translations";
-      inherit
-        (commonMeta)
+      inherit (commonMeta)
         homepage
         license
         maintainers
@@ -83,18 +83,18 @@
   # converse.js src is expected to be downloaded here by various scripts
   merged-src =
     runCommand "${details.livechat.pname}-src-full"
-    {
-      meta = {
-        description = "${commonMeta.description} - source with converse.js merged in";
-        platforms = lib.platforms.all;
-        inherit (commonMeta) homepage license maintainers;
-      };
-    }
-    ''
-      cp -r --no-preserve=mode,ownership ${details.livechat.src} $out
-      mkdir -p $out/vendor
-      cp -r --no-preserve=mode,ownership ${details.conversejs.src} $out/vendor/${details.conversejs.pname}-${details.conversejs.version}
-    '';
+      {
+        meta = {
+          description = "${commonMeta.description} - source with converse.js merged in";
+          platforms = lib.platforms.all;
+          inherit (commonMeta) homepage license maintainers;
+        };
+      }
+      ''
+        cp -r --no-preserve=mode,ownership ${details.livechat.src} $out
+        mkdir -p $out/vendor
+        cp -r --no-preserve=mode,ownership ${details.conversejs.src} $out/vendor/${details.conversejs.pname}-${details.conversejs.version}
+      '';
 
   # <livechat-src>/conversejs/build-conversejs.sh applies various patches to the converse.js source before attempting to build it
   # Patch the script to only applies its patches, then return the new source for separate converse.js building
@@ -136,8 +136,7 @@
 
     meta = {
       description = "${commonMeta.description} - source with merged converse.js patched";
-      inherit
-        (commonMeta)
+      inherit (commonMeta)
         homepage
         license
         maintainers
@@ -204,51 +203,50 @@
     };
   };
 in
-  buildNpmPackage rec {
-    inherit (details.livechat) pname version npmDeps;
+buildNpmPackage rec {
+  inherit (details.livechat) pname version npmDeps;
 
-    src = merged-src;
+  src = merged-src;
 
-    patches = [
-      # Change default, we don't want to bother with downloading & including a bundled prosody AppImage
-      ./9000-Default-to-using-system-installed-prosody.patch
-    ];
+  patches = [
+    # Change default, we don't want to bother with downloading & including a bundled prosody AppImage
+    ./9000-Default-to-using-system-installed-prosody.patch
+  ];
 
-    postPatch = ''
-      mkdir -p dist/client
-      cp -r --no-preserve=mode,ownership ${translations} dist/languages
-      cp -r --no-preserve=mode,ownership ${conversejs} dist/client/conversejs
+  postPatch = ''
+    mkdir -p dist/client
+    cp -r --no-preserve=mode,ownership ${translations} dist/languages
+    cp -r --no-preserve=mode,ownership ${conversejs} dist/client/conversejs
 
-      # Don't try to delete & rebuild everything when installing (either in this derivation or as a plugin in peertube)
-      # clean:light would get rid of the built conversejs
-      # build:languages & conversejs already built separately, build:prosody would try to download an AppImage
-      substituteInPlace package.json \
-        --replace-fail '"prepare": "npm run clean && npm run build",' "" \
-        --replace-fail '"build:avatars": "./build-avatars.js"' '"build:avatars": "node ./build-avatars.js"' \
-        --replace-fail '"build": "npm-run-all -s clean:light build:languages' '"build": "npm-run-all -s' \
-        --replace-fail 'build:prosodymodules build:converse build:prosody' 'build:prosodymodules'
+    # Don't try to delete & rebuild everything when installing (either in this derivation or as a plugin in peertube)
+    # clean:light would get rid of the built conversejs
+    # build:languages & conversejs already built separately, build:prosody would try to download an AppImage
+    substituteInPlace package.json \
+      --replace-fail '"prepare": "npm run clean && npm run build",' "" \
+      --replace-fail '"build:avatars": "./build-avatars.js"' '"build:avatars": "node ./build-avatars.js"' \
+      --replace-fail '"build": "npm-run-all -s clean:light build:languages' '"build": "npm-run-all -s' \
+      --replace-fail 'build:prosodymodules build:converse build:prosody' 'build:prosodymodules'
 
-      substituteInPlace conversejs/build-conversejs.sh \
-        --replace-fail '/bin/env node' 'node'
+    substituteInPlace conversejs/build-conversejs.sh \
+      --replace-fail '/bin/env node' 'node'
 
-      # We don't want to rely on a bundled AppImage version of prosody
-      substituteInPlace server/lib/settings.ts \
-        --replace-fail 'default: false' 'default: true'
+    # We don't want to rely on a bundled AppImage version of prosody
+    substituteInPlace server/lib/settings.ts \
+      --replace-fail 'default: false' 'default: true'
 
-      # Wants to run its own prosody instance
-      substituteInPlace server/lib/prosody/config.ts \
-        --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' prosody "prosody"}'" \
-        --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
-    '';
+    # Wants to run its own prosody instance
+    substituteInPlace server/lib/prosody/config.ts \
+      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' prosody "prosody"}'" \
+      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
+  '';
 
-    meta = {
-      inherit
-        (commonMeta)
-        description
-        homepage
-        license
-        maintainers
-        platforms
-        ;
-    };
-  }
+  meta = {
+    inherit (commonMeta)
+      description
+      homepage
+      license
+      maintainers
+      platforms
+      ;
+  };
+}

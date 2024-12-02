@@ -21,7 +21,7 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
   propagatedBuildInputs =
     [
@@ -44,6 +44,6 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://github.com/Syndace/python-twomemo";
     changelog = "https://github.com/Syndace/python-twomemo/blob/v${version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

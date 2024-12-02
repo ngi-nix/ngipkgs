@@ -21,11 +21,15 @@ python3Packages.buildPythonPackage rec {
     ./0001-Remove-py2-compat.patch
   ];
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
-  propagatedBuildInputs = with python3Packages; [incremental python-dateutil twisted];
+  propagatedBuildInputs = with python3Packages; [
+    incremental
+    python-dateutil
+    twisted
+  ];
 
-  nativeCheckInputs = with python3Packages; [twisted];
+  nativeCheckInputs = with python3Packages; [ twisted ];
 
   checkPhase = ''
     runHook preCheck
@@ -52,6 +56,6 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://github.com/ralphm/wokkel"; # wokkel.ik.nu is dead
     changelog = "https://github.com/ralphm/wokkel/blob/${version}/NEWS.rst";
     license = lib.licenses.mit;
-    maintainers = [];
+    maintainers = [ ];
   };
 }

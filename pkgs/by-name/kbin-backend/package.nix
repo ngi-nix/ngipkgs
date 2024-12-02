@@ -5,24 +5,33 @@
   moreutils,
   yq,
   withS3 ? false,
-}: let
-  inherit
-    (lib)
+}:
+let
+  inherit (lib)
     optionalString
     ;
 
   php = php82;
 
-  phpWithExtensions = php.withExtensions ({
-    enabled,
-    all,
-  }:
-    enabled ++ (with all; [amqp redis]));
+  phpWithExtensions = php.withExtensions (
+    {
+      enabled,
+      all,
+    }:
+    enabled
+    ++ (with all; [
+      amqp
+      redis
+    ])
+  );
 in
-  phpWithExtensions.buildComposerProject (finalAttrs: let
+phpWithExtensions.buildComposerProject (
+  finalAttrs:
+  let
     pname = "kbin";
     version = "0.0.1";
-  in {
+  in
+  {
     inherit pname version;
 
     src = fetchgit {
@@ -85,4 +94,5 @@ in
       inherit withS3;
       php = phpWithExtensions;
     };
-  })
+  }
+)

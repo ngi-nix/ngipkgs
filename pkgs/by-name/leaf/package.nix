@@ -20,5 +20,13 @@ stdenv.mkDerivation rec {
     hash = "sha256-s52gtxM+BmG7oVrB5F0ORjkb4F3fWONiOxIWdDn2P5k=";
   };
 
-  nativeBuildInputs = [cmake arpa2cm arpa2common quickder quickmem quicksasl lillydap];
+  nativeBuildInputs = [
+    cmake
+    arpa2cm
+    arpa2common
+    quickder
+    quickmem
+    quicksasl
+    lillydap
+  ];
 }

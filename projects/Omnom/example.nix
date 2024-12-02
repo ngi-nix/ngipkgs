@@ -1,4 +1,5 @@
-{...}: {
+{ ... }:
+{
   services.omnom = {
     enable = true;
     openFirewall = true;

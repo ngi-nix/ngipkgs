@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     description = "Set a custom quality for transcoding";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-transcoding-custom-quality";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
 })

@@ -17,9 +17,9 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [setuptools];
+  nativeBuildInputs = with python3Packages; [ setuptools ];
 
-  propagatedBuildInputs = [wokkel];
+  propagatedBuildInputs = [ wokkel ];
 
   # Taken from import_test.py
   pythonImportsCheck = [
@@ -36,6 +36,6 @@ python3Packages.buildPythonPackage rec {
     '';
     homepage = "https://libervia.org";
     license = lib.licenses.agpl3Plus;
-    maintainers = [];
+    maintainers = [ ];
   };
 }
