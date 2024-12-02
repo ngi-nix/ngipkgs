@@ -95,3 +95,11 @@ The results of these builds can be found at <https://buildbot.ngi.nixos.org/#/pr
 ## Contributing to NGIpkgs
 
 Please see [`CONTRIBUTING.md`](CONTRIBUTING.md)
+
+## Funding
+
+NGIpkgs is a part of Summer of Nix, an initiative supported by [NLnet](https://nlnet.nl/foundation/), with financial backing from the European Commission's [Next Generation Internet](https://ngi.eu/about/) program.
+
+[<img src="https://nlnet.nl/logo/banner.svg" alt="NLnet foundation logo" width="30%" />](https://nlnet.nl/foundation/)
+<span style="margin: 10px"></span>
+[<img src="https://nlnet.nl/image/logos/EC.svg" alt="European Commission logo" width="20%" />](https://ngi.eu/about/)
