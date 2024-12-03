@@ -7,7 +7,6 @@
   packages = {
     inherit (pkgs)
       doubleratchet
-      helium
       kivy-garden-modernmenu
       libervia-backend
       libervia-desktop-kivy
@@ -19,7 +18,6 @@
       sat-tmp
       twomemo
       urwid-satext
-      wokkel
       x3dh
       xeddsa
       ;
