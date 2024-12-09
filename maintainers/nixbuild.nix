@@ -24,7 +24,8 @@ let
 in
 {
   programs.ssh = {
-    knownHosts.${hostName}.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM";
+    knownHosts.${hostName}.publicKey =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM";
     extraConfig = ''
       Host ${hostName}
         PubkeyAcceptedKeyTypes ssh-ed25519

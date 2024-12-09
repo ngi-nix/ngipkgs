@@ -157,11 +157,13 @@ in
     users.groups."${
       assert groupsAreUnique;
       cfg.systemGroup
-    }" = { };
+    }" =
+      { };
     users.groups."${
       assert groupsAreUnique;
       cfg.operatorsGroup
-    }" = { };
+    }" =
+      { };
 
     users.users."${cfg.userPrefix}-discover" = {
       isSystemUser = true;
