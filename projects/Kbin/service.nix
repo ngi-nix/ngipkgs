@@ -245,12 +245,13 @@ in
                   try_files $uri $uri/ /index.php?$query_string;
                 '';
 
-                "~* .(js|webp|jpg|jpeg|gif|png|css|tgz|gz|rar|bz2|doc|pdf|ppt|tar|wav|bmp|rtf|swf|ico|flv|txt|woff|woff2|svg)$".extraConfig = ''
-                  expires 30d;
-                  add_header Pragma "public";
-                  add_header Cache-Control "public";
-                  ${securityHeaders}
-                '';
+                "~* .(js|webp|jpg|jpeg|gif|png|css|tgz|gz|rar|bz2|doc|pdf|ppt|tar|wav|bmp|rtf|swf|ico|flv|txt|woff|woff2|svg)$".extraConfig =
+                  ''
+                    expires 30d;
+                    add_header Pragma "public";
+                    add_header Cache-Control "public";
+                    ${securityHeaders}
+                  '';
 
                 "~ /\\.(?!well-known).*".extraConfig = ''
                   deny all;
