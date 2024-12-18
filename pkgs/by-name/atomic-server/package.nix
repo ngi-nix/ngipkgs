@@ -12,17 +12,17 @@ let
 in
 rustPlatform.buildRustPackage rec {
   pname = "atomic-server";
-  version = "0.39.0";
+  version = "0.40.0";
 
   src = fetchFromGitHub {
     owner = "atomicdata-dev";
     repo = "atomic-server";
     rev = "v${version}";
-    hash = "sha256-qqk+yliCpIHfazGY8dkW3CkIKk6paEn/EhJWLO4zgNQ=";
+    hash = "sha256-iZRKgRQL/+6RavFMWEugpd8+sWgXgE+itqak5BZe51s=";
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-gMYFCGKrlqFBVNMYofdyEFeAoltNmGKfSyLJgb5Q928=";
+  cargoHash = "sha256-Lf3IjITpfAhPAznUNZyl1WJtWxNUmySPlzvsPHl7t68=";
 
   # server/assets_tmp is the directory atomic-server's build will check for
   # compiled frontend assets to decide whether to rebuild or not
