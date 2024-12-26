@@ -1,6 +1,7 @@
 {
   lib,
   fetchgit,
+  fetchFromGitHub,
   php82,
   moreutils,
   yq,
@@ -11,7 +12,23 @@ let
     optionalString
     ;
 
-  php = php82;
+  php = php82.override {
+    packageOverrides = final: prev: {
+      extensions = prev.extensions // {
+        redis = prev.extensions.redis.overrideAttrs (
+          finalAttrs: previousAttrs: {
+            version = "6.0.2";
+            src = fetchFromGitHub {
+              repo = "phpredis";
+              owner = "phpredis";
+              rev = finalAttrs.version;
+              hash = "sha256-Ie31zak6Rqxm2+jGXWg6KN4czHe9e+190jZRQ5VoB+M=";
+            };
+          }
+        );
+      };
+    };
+  };
 
   phpWithExtensions = php.withExtensions (
     {
