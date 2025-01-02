@@ -21,6 +21,11 @@ python3Packages.buildPythonPackage rec {
     ./0001-Remove-py2-compat.patch
   ];
 
+  postPatch = ''
+    substituteInPlace wokkel/muc.py \
+      --replace-fail "twisted.python.constants" "constantly"
+  '';
+
   nativeBuildInputs = with python3Packages; [ setuptools ];
 
   propagatedBuildInputs = with python3Packages; [
