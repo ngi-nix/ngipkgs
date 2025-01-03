@@ -9,7 +9,7 @@
 }:
 python39Packages.buildPythonPackage rec {
   pname = "nmigen";
-  version = "unstable-2024-03-31";
+  version = "0-unstable-2022-09-27";
   realVersion = "0.3.dev243+g${lib.substring 0 7 src.rev}";
 
   # libresoc's nmigen fork has been renamed to https://github.com/amaranth-lang/amaranth
@@ -21,6 +21,11 @@ python39Packages.buildPythonPackage rec {
     hash = "sha256-tpcA+FFHhm4gF37Z+rB/uZopSRtAtNxU8j5IXnSGeCg=";
     rev = "29dec30f628356828aa2aa2b91ce205a570d664e"; # HEAD @ version date
   };
+
+  # https://github.com/YosysHQ/yosys/pull/4704
+  postPatch = ''
+    sed -i "s/read_ilang/read_rtlil/g" nmigen/back/*.py nmigen/vendor/*.py tests/*.py
+  '';
 
   preBuild = ''
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
