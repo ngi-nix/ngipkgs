@@ -1,6 +1,6 @@
 {
   stdenv,
-  fetchzip,
+  fetchgit,
   pkg-config,
   autoreconfHook,
   taler-exchange,
@@ -16,20 +16,24 @@
   lib,
   gnunet,
   makeWrapper,
+  jq,
+  texinfo,
   which,
   callPackage,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis";
-  version = "0.4.1";
+  version = "0.6.1";
 
-  src = fetchzip {
-    url = "mirror://gnu/anastasis/anastasis-${finalAttrs.version}.tar.gz";
-    hash = "sha256-nuNRZTzp/hlV3Eo2nQH4G3sGsws5Qy2nk3m99aY0L84=";
+  src = fetchgit {
+    url = "https://git.taler.net/anastasis.git";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-xva6tG/QR+pb/OzjakoQCUnCsbEubIXj2mFSV6XS6Uc=";
   };
 
   postPatch = ''
-    patchShebangs src/cli
+    patchShebangs contrib src/cli
+    ./contrib/gana-update.sh
   '';
 
   outputs = [
@@ -41,6 +45,8 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config # hook that adds pkg-config files of buildInputs
     autoreconfHook # hook that triggers autoreconf to get the configure script
     makeWrapper # for wrapProgram
+    jq
+    texinfo
   ];
 
   buildInputs = [
