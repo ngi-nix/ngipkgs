@@ -11,17 +11,15 @@
   pkg-config,
   stdenv,
 }:
-let
-  version = "0.9.4";
-in
-stdenv.mkDerivation {
-  inherit version;
+
+stdenv.mkDerivation (finalAttrs: {
   pname = "twister";
+  version = "0.14.0";
 
   src = fetchgit {
     url = "https://git.taler.net/twister.git";
-    rev = "v${version}";
-    hash = "sha256-QxyK0FIWlGnM9GMH7rXpM4nIDozlXyAgMbUuwNqMymo=";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-NyNULsvGEIa+cWX0WwegV9AjZj9HJkLHJrk2wOdORKs=";
   };
 
   nativeBuildInputs = [
@@ -45,4 +43,4 @@ stdenv.mkDerivation {
     description = "Fault injector for HTTP traffic.";
     license = lib.licenses.agpl3Plus;
   };
-}
+})

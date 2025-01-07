@@ -15,17 +15,15 @@
   taler-merchant,
   qrencode,
 }:
-let
-  version = "0.13.0";
-in
-stdenv.mkDerivation {
-  inherit version;
+
+stdenv.mkDerivation (finalAttrs: {
   pname = "taler-mdb";
+  version = "0.14.1";
 
   src = fetchgit {
     url = "https://git.taler.net/taler-mdb.git";
-    rev = "v${version}";
-    hash = "sha256-vc9e2fFiNvbgPY52moBVKVvrcvH0I4mxvSQK5IL7lBE=";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-QiIiEHW9yfTP6A/+sBubioe9R1mxsOrzW/u12p2en4U=";
   };
 
   nativeBuildInputs = [
@@ -53,4 +51,4 @@ stdenv.mkDerivation {
     description = "Sales integration with the Multi-Drop-Bus of Snack machines, NFC readers and QR code display.";
     license = lib.licenses.agpl3Plus;
   };
-}
+})

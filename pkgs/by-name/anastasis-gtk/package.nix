@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchzip,
+  fetchgit,
   autoreconfHook,
   makeWrapper,
   pkg-config,
@@ -24,11 +24,12 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis-gtk";
-  version = "0.4.1";
+  version = "0.6.1";
 
-  src = fetchzip {
-    url = "mirror://gnu/anastasis/anastasis-gtk-${finalAttrs.version}.tar.gz";
-    hash = "sha256-Sih6cWGSlSW1PvcHJkGloUUHRI4gXK5uOQxlyp6Efh4=";
+  src = fetchgit {
+    url = "https://git.taler.net/anastasis-gtk.git";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-Se4IB6paYNSpAvSx3GD16MsCig+JwBDrKpMt4V/vS78=";
   };
 
   nativeBuildInputs = [
@@ -62,7 +63,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   preFixup = ''
-    cp -R ${anastasis}/share/anastasis/* $out/share/anastasis
+    cp -R ${anastasis}/share/anastasis/* $out/share/anastasis-gtk
     wrapProgram $out/bin/anastasis-gtk \
       --prefix ANASTASIS_PREFIX : "$out"
   '';
