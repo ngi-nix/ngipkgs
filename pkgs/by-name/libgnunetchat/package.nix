@@ -16,14 +16,14 @@
   libextractor,
 }:
 # From https://github.com/ngi-nix/gnunet-messenger-cli/blob/main/flake.nix
-stdenv.mkDerivation (finalAttrs: rec {
+stdenv.mkDerivation (finalAttrs: {
   name = "libgnunetchat";
-  version = "0.5.0";
+  version = "0.5.0-unstable-2025-01-07";
 
   src = fetchgit {
     url = "https://git.gnunet.org/libgnunetchat";
-    rev = "v${version}";
-    hash = "sha256-/EAAIxsfbZ7bTX4UcyehK9hP8vMyrlX08N0L0jsLrw4=";
+    rev = "7ac91f3ece115e576da3f04cda0a8adb5bb32176";
+    hash = "sha256-9V3LVlWMRUjreeXAZWpZD2q/C8zQBu/Q4kX1CXsovuA=";
   };
 
   nativeBuildInputs = [
