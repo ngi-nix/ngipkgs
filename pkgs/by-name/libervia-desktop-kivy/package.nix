@@ -5,7 +5,6 @@
   gobject-introspection,
   gst_all_1,
   imagemagick,
-  kivy-garden-modernmenu,
   libervia-backend,
   libervia-media,
   wrapGAppsHook3,
@@ -53,11 +52,11 @@ python3Packages.buildPythonApplication rec {
 
   propagatedBuildInputs =
     [
-      kivy-garden-modernmenu
       libervia-backend
     ]
     ++ (with python3Packages; [
       kivy
+      kivy-garden-modernmenu
       pillow
       plyer
       pygobject3
