@@ -1,12 +1,43 @@
 {
   stdenv,
-  python3Packages,
+  python3,
   lib,
   fetchFromGitHub,
+  fetchpatch,
   firefox,
   geckodriver,
   which,
 }:
+
+let
+  python =
+    let
+      packageOverrides = self: super: {
+        selenium = super.selenium.overridePythonAttrs (old: rec {
+          version = "4.28.0";
+          src = fetchFromGitHub {
+            owner = "SeleniumHQ";
+            repo = "selenium";
+            tag = "selenium-${version}" + lib.optionalString (lib.versions.patch version != "0") "-python";
+            hash = "sha256-b5xwuZ4lcwLbGhJuEmHYrFXoaTW/M0ABdK3dvbpj8oM=";
+          };
+          patches = [
+            (fetchpatch {
+              name = "dont-build-the-selenium-manager.patch";
+              url = "https://github.com/NixOS/nixpkgs/raw/6c4fd2e7e7db0ffbd2d2653e2b046cac925cbb70/pkgs/development/python-modules/selenium/dont-build-the-selenium-manager.patch";
+              hash = "sha256-zE3laXDuDliF8q2xol8ZpA/Q7tL0clAfKIXdiHimvNc=";
+            })
+          ];
+        });
+      };
+    in
+    python3.override {
+      inherit packageOverrides;
+      self = python;
+    };
+
+  python3Packages = python.pkgs;
+in
 python3Packages.buildPythonPackage rec {
   pname = "helium";
   version = "5.1.0";
