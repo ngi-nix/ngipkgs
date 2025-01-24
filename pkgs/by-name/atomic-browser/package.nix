@@ -1,10 +1,14 @@
 {
   stdenv,
   nodejs,
-  pnpm,
+  pnpm_9,
   lib,
   atomic-server,
 }:
+
+let
+  pnpm = pnpm_9;
+in
 stdenv.mkDerivation rec {
   pname = "atomic-browser";
   inherit (atomic-server) version;
