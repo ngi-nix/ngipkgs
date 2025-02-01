@@ -100,6 +100,25 @@
     caddy = {
       enable = true;
       email = "ngi@nixos.org";
+      virtualHosts."summer.nixos.org" = {
+        extraConfig = ''
+          redir /announcements/hiring-event https://nixos.org/blog/announcements/2021/2021-07-20-hiring-event permanent
+          redir /announcements/summer-of-nix-2021-report https://nixos.org/blog/announcements/2022/2022-02-23-summer-of-nix-2021-report permanent
+          redir /assets/reports-2021.pdf https://ngi-nix.github.io/summer-of-nix/SoN-2021-report.pdf permanent
+          redir /announcements/applications-closed https://nixos.org/blog/announcements/2021/2021-06-02-applications-closed permanent
+          redir /announcements/summer-of-nix-2022 https://nixos.org/blog/announcements/2022/2022-04-04-summer-of-nix-2022 permanent
+          redir /live https://live.nixos.org permanent
+          redir / https://github.com/ngi-nix/summer-of-nix permanent
+          redir /blog https://nixos.org/blog/ permanent
+          redir /announcements https://nixos.org/blog/announcements permanent
+          redir /videos https://www.youtube.com/playlist?list=PLt4-_lkyRrOMWyp5G-m_d1wtTcbBaOxZk permanent
+          redir /videos/son2022-public-lecture-series https://www.youtube.com/playlist?list=PLt4-_lkyRrOMWyp5G-m_d1wtTcbBaOxZk permanent
+          redir /blog/callpackage-a-tool-for-the-lazy https://nix.dev/tutorials/callpackage permanent
+          redir /blog/the-rise-of-special-project-infra https://nixos.org/blog/stories/2022/the-rise-of-special-project-infra permanent
+          redir /blog/deploying-simple-jitsi-meet-server https://nixos.org/blog/stories/2022/deploying-simple-jitsi-meet-server permanent
+          redir /blog/perldivingwithnix https://nixos.org/blog/stories/2021/perldivingwithnix permanent
+        '';
+      };
     };
     openssh = {
       enable = true;
