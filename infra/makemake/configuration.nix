@@ -103,7 +103,7 @@
       virtualHosts."summer.nixos.org" = {
         extraConfig = ''
           redir /announcements/hiring-event https://nixos.org/blog/announcements/2021/2021-07-20-hiring-event permanent
-          redir /announcements/summer-of-nix-2021-report https://nixos.org/blog/announcements/2022/2022-02-23-summer-of-nix-2021-report permanent
+          redir /announcements/summer-of-nix-2021-report https://nixos.org/blog/announcements/2021/2022-02-23-summer-of-nix-2021-report permanent
           redir /assets/reports-2021.pdf https://ngi-nix.github.io/summer-of-nix/SoN-2021-report.pdf permanent
           redir /announcements/applications-closed https://nixos.org/blog/announcements/2021/2021-06-02-applications-closed permanent
           redir /announcements/summer-of-nix-2022 https://nixos.org/blog/announcements/2022/2022-04-04-summer-of-nix-2022 permanent
