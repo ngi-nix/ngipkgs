@@ -1,14 +1,10 @@
 {
-  augustebaum = {
-    email = "auguste.apple@gmail.com";
-    github = "augustebaum";
-    githubId = 52001167;
-    name = "Auguste Baum";
-  };
-  kubaneko = {
-    email = "kubanek0ondrej@gmail.com";
-    github = "kubaneko";
-    githubId = 71923533;
-    name = "Ondřej Kubánek";
-  };
+  # This file is using the same format as
+  # https://github.com/NixOS/nixpkgs/blob/master/maintainers/maintainer-list.nix
+  # <username>= {
+  #   email = "<email>";
+  #   github = "<github-handle>";
+  #   githubId = <github-id>;
+  #   name = "<real-user-name>";
+  # };
 }
