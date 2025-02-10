@@ -16,7 +16,8 @@ rustPlatform.buildRustPackage {
   pname = "cache";
   inherit version src;
 
-  cargoHash = "sha256-rBoyKDwImWmwffTV/4Q5kzlYz1x/ICvnGSez8/sEm1A=";
+  useFetchCargoVendor = true;
+  cargoHash = "sha256-uQ/Bvee21iZxot6QULaW7kRiepD5Xlg6ofFRN+bP9AM=";
 
   nativeBuildInputs = [ rustPlatform.bindgenHook ];
 

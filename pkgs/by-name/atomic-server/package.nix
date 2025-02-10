@@ -21,7 +21,8 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-qqk+yliCpIHfazGY8dkW3CkIKk6paEn/EhJWLO4zgNQ=";
   };
 
-  cargoHash = "sha256-2HZn6gs71Aw+44AqeYmelgjj9W2gZBA5Udmg3JMPP6o=";
+  useFetchCargoVendor = true;
+  cargoHash = "sha256-gMYFCGKrlqFBVNMYofdyEFeAoltNmGKfSyLJgb5Q928=";
 
   # server/assets_tmp is the directory atomic-server's build will check for
   # compiled frontend assets to decide whether to rebuild or not
