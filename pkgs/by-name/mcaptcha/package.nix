@@ -122,7 +122,8 @@ let
       pname = "cache-bust";
       inherit version;
 
-      cargoHash = "sha256-WULS0Sn5a+Zgyl8GFP+wlVTkTJoSZk0bvTkwsMl1pGk=";
+      useFetchCargoVendor = true;
+      cargoHash = "sha256-e18PJFmvUf3droMT26Q0ZCgVFCwG9y/efPFO0SlILW0=";
     };
 
   mcaptcha =
