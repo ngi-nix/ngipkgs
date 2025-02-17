@@ -205,7 +205,7 @@
                         "packages/${packageName}" = package;
                       };
                       checksForPackagePassthruTests = concatMapAttrs (passthruName: test: {
-                        "packages/${packageName}/passthru/${passthruName}" = test;
+                        "packages/${packageName}-${passthruName}" = test;
                       }) (package.passthru.tests or { });
                     in
                     checksForPackageDerivation // checksForPackagePassthruTests;
