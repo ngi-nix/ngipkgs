@@ -31,6 +31,7 @@ let
       allowedFiles = [
         "README.md"
         "default.nix"
+        "models.nix"
       ];
     in
     concatMapAttrs names (readDir baseDirectory);
