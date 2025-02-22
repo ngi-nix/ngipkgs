@@ -35,6 +35,7 @@ stdenv.mkDerivation (finalAttrs: {
   mitmCache =
     (gradle.fetchDeps {
       inherit (finalAttrs) pname;
+      pkg = finalAttrs.finalPackage;
       data = ./deps.json;
     })
     .overrideAttrs (oa: {
