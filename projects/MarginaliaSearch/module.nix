@@ -5,60 +5,88 @@
   ...
 }: let
   cfg = config.services.marginalia-search;
+  cfgOptionName = name: "services.marginalia-search.${name}";
+
+  wrappedPkg = pkgs.symlinkJoin {
+    name = "${pkgs.marginalia-search.pname}-configured-${pkgs.marginalia-search.version}";
+
+    paths = [pkgs.marginalia-search];
+
+    nativeBuildInputs = [pkgs.makeWrapper];
+
+    postBuild = ''
+      # Point it at new location
+      rm $out/bin/${pkgs.marginalia-search.meta.mainProgram}
+      makeWrapper ${lib.getExe pkgs.marginalia-search} $out/bin/${pkgs.marginalia-search.meta.mainProgram} \
+        --set-default WMSA_HOME $out/share/marginalia
+
+      # Add supplied configs
+      rm \
+        $out/share/marginalia/conf/properties/system.properties \
+        $out/share/marginalia/conf/db.properties \
+
+      ln -s ${(pkgs.formats.javaProperties {}).generate "system.properties" cfg.systemProperties} $out/share/marginalia/conf/properties/system.properties
+      ln -s ${cfg.dbPropertiesFile} $out/share/marginalia/conf/db.properties
+    '';
+
+    # Externally defined symlinks may not exist at build time (i.e. populated by secrets manager)
+    dontCheckForBrokenSymlinks = true;
+
+    inherit (pkgs.marginalia-search) meta;
+  };
 in {
   options.services.marginalia-search = {
     enable = lib.mkEnableOption ''
       Marginalia Search, a search engine for a more human, non-commercial internet
     '';
 
-    mariadb = {
-      host = lib.mkOption {
-        type = lib.types.string;
-        description = "The host where the MarioDB database that Marginalia will use is located";
-        default = "localhost";
-      };
-      user = lib.mkOption {
-        type = lib.types.string;
-        description = "The MarioDB database user Marginalia will use";
-        default = "marginalia";
-      };
-      password = lib.mkOption {
-        type = lib.types.string;
-        description = "The MarioDB database user's password Marginalia will use (THIS IS WORLD-READABLE!)";
-        default = "hunter2";
+    systemProperties = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Settings that belong in <ROOT>/conf/properties/system.properties";
+      default = {
+        crawler.userAgentString = "Mozilla/5.0 (compatible)";
+        crawler.userAgentIdentifier = "GoogleBot";
+        crawler.poolSize = 256;
+
+        log4j2.configurationFile = "log4j2-test.xml";
+
+        search.websiteUrl = "http://localhost:8080";
+
+        executor.uploadDir = "/uploads";
+        converter.sideloadThreshold = 10000;
+
+        ip-blocklist.disabled = false;
+        blacklist.disable = false;
+        flyway.disable = false;
+        control.hideMarginaliaApp = false;
+
+        zookeeper-hosts = "localhost:2181";
+
+        #storage.root = "${pkgs.marginalia-search}/share/marginalia/index-1";
+        storage.root = "/var/lib/marginalia-search/index-1";
       };
     };
 
-    zookeeper = {
-      host = lib.mkOption {
-        type = lib.types.string;
-        description = "The host where the Apache Zookeeper instance that Marginalia will use is located";
-        default = "localhost";
-      };
-      port = lib.mkOption {
-        type = lib.types.string;
-        description = "The port over which Marginalia should talk to Apache Zookeeper";
-        default = "2181";
-      };
+    dbPropertiesFile = lib.mkOption {
+      type = lib.types.string;
+      description = ''
+        Path at runtime to a Java .properties file with sensitive settings for <ROOT>/conf/db.properties.
+
+        For an example, look at run/install/db.properties.template in marginalia-search's src.
+      '';
+      default = "";
     };
   };
 
   config = lib.mkIf (cfg.enable) {
-    services.peertube.package = cfg.package.overrideAttrs (oa: {
-      # yarn can't handle npm caches, and we can't build npm packages with our yarn tooling
-      # Working on getting declarative plugin management into upstream to avoid this: https://github.com/Chocobozzz/PeerTube/issues/6428
-      postPatch =
-        (oa.postPatch or "")
-        + ''
-          substituteInPlace server/core/lib/plugins/yarn.ts \
-            --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
-        '';
-    });
+    assertions = [
+      {
+        assertion = lib.strings.stringLength cfg.dbPropertiesFile > 0;
+        message = "${cfgOptionName "dbPropertiesFile"} must not be empty (and point at a valid file, but we can't check that)";
+      }
+    ];
 
-    systemd.services = {
-      peertube-plugins-initial = null; #mkPluginService false;
-      peertube-plugins = null; #mkPluginService true;
-    };
+    environment.systemPackages = [wrappedPkg];
   };
 
   meta.maintainers = [];
