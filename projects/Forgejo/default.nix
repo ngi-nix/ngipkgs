@@ -13,7 +13,7 @@
   };
   nixos = {
     modules.services.forgejo = "${sources.inputs.nixpkgs}/nixos/modules/services/misc/forgejo.nix";
-    tests.setup = "${sources.inputs.nixpkgs}/nixos/tests/forgejo.nix";
+    tests = pkgs.nixosTests.forgejo;
     examples = null;
   };
 }
