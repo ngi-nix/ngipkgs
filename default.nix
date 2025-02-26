@@ -179,6 +179,8 @@ rec {
                 inherit pkgs;
                 inherit (pkgs) system;
               })
+            else if lib.isDerivation test then
+              test
             else
               nixosTest test
           ) (empty-if-null (project.nixos.tests or { }));
