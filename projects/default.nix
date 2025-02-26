@@ -31,8 +31,10 @@ let
       allowedFiles = [
         "README.md"
         "default.nix"
+        "models.nix"
       ];
     in
+    # TODO: use fileset and filter for `gitTracked` files
     concatMapAttrs names (readDir baseDirectory);
 in
 mapAttrs (name: directory: import directory { inherit lib pkgs sources; }) projectDirectories
