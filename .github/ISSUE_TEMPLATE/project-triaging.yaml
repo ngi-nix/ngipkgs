@@ -20,6 +20,14 @@ body:
       label: Source repository
       placeholder: "- https://github.com/foo/foobar"
   - type: textarea
+    id: metadata
+    attributes:
+      label: Metadata
+      value: |-
+        - Language/Framework:
+        - Dependency management:
+        - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
+  - type: textarea
     id: nlnet
     attributes:
       label: NLnet page(s)
@@ -35,8 +43,11 @@ body:
       label: Documentation
       value: |-
         - Usage Examples:
+          -
         - Build from source/Development:
+          -
         - Other:
+          -
   - type: textarea
     id: components
     attributes:
@@ -46,19 +57,15 @@ body:
         documentation** to this component should also be linked here.
       placeholder: |
         - CLI:
+          - foobar:
+            - documentation:
+            - examples:
+            - tests:
         - GUI:
-        - Service/daemon:
-        - Library:
+        - Services/daemons:
+        - Libraries:
         - Extensions:
         - Mobile:
-  - type: textarea
-    id: metadata
-    attributes:
-      label: Metadata
-      value: |-
-        - Language/Framework:
-        - Dependency management:
-        - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
   - type: textarea
     id: nixos
     attributes:
