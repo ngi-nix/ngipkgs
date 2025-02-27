@@ -126,7 +126,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
 ## Triaging an NGI project
 
-These are the step to take when adding a new NGI project to ngipkgs
+When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs/issues/new?template=project-triaging.yaml), it's recommended to follow the workflow below, which details which information we'd like to know about a project.
 
 1. Navigate to <https://nlnet.nl/project/>.
    In the search bar, type the project name and look for any related projects.
@@ -139,7 +139,7 @@ These are the step to take when adding a new NGI project to ngipkgs
    In the project pages, look for any `website` or `source code` links and open them.
 
 1. In the project's website, look for any tabs or buttons that lead to the documentation. You may also use your favorite search engine and look for `<PROJECT_NAME> documentation`.
-   The most relavant information we want is documentation about building the project from source or examples for using it.
+   The most relavant information we want is documentation about building the project from source and examples for using it.
    If the project has many components, it would be ideal to have this information for each one of them.
 
    ```
@@ -152,13 +152,12 @@ These are the step to take when adding a new NGI project to ngipkgs
        - https://foo.bar/docs/dev/mobile
    ```
 
-1. In the project's source repository, we'd like to know some information about what `framework` and `dependency management` tools the project uses so we can estimate the effort to package it. If possible, we'd also like to have links to Nix development environments, if they exist in the repo.
+1. In the project's source repository, we'd like to know some information about what `framework` and `dependency management` tools the project uses so we can estimate the time and effort needed to package it. If possible, we'd also like to have links to Nix development environments, if they exist in the repo.
 
    ```
-   - Framework: Django
+   - Language/Framework: Python/Django
    - Dependency management: pip
-   - Development envirnment:
-     - [default.nix, flake.nix, devenv.nix, ...](<SOURCE_REPO_LINK>)
+   - Development envirnment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
    ```
 
 1. Go to the nixpkgs search pages for [packages](https://search.nixos.org/packages) and [services](https://search.nixos.org/options?) and check if anything related to the project is already packaged.

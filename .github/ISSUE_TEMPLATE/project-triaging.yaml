@@ -26,7 +26,7 @@ body:
       description: >-
         Navigate to the [NLnet project list](https://nlnet.nl/project/) and add
         the links to related projects
-      placeholder: "- https://nlnet.nl/project/<PROJECT_NAME>"
+      placeholder: "- https://nlnet.nl/project/foobar"
     validations:
       required: true
   - type: textarea
@@ -58,8 +58,7 @@ body:
       value: |-
         - Language/Framework:
         - Dependency management:
-        - Development envirnment:
-          - [default.nix, flake.nix, devenv.nix, ...](<SOURCE_REPO_LINK>)
+        - Development envirnment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
   - type: textarea
     id: nixos
     attributes:
