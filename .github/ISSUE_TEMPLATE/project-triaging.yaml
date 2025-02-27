@@ -34,8 +34,8 @@ body:
     attributes:
       label: Documentation
       value: |-
-        - Quick start/Usage Examples:
-        - Building/Development:
+        - Usage Examples:
+        - Build from source/Development:
         - Other:
   - type: textarea
     id: components
@@ -55,11 +55,25 @@ body:
     id: metadata
     attributes:
       label: Metadata
-      placeholder: |-
-        - Framework:
+      value: |-
+        - Language/Framework:
         - Dependency management:
         - Development envirnment:
           - [default.nix, flake.nix, devenv.nix, ...](<SOURCE_REPO_LINK>)
+  - type: textarea
+    id: nixos
+    attributes:
+      label: NixOS
+      description: >-
+        Go to the nixpkgs search pages for
+        [packages](https://search.nixos.org/packages) and
+        [services](https://search.nixos.org/options?) and check if anything
+        related to the project is already packaged.
+      value: |2
+           - Packages:
+             - [<NAME>](<SOURCE_LINK>)
+           - Services:
+             - [<NAME>](<SOURCE_LINK>)
   - type: textarea
     id: extra
     attributes:
