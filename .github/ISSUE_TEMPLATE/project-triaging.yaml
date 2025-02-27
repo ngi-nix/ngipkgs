@@ -1,0 +1,32 @@
+name: Project Triaging
+description: >-
+  A template for information to look for in an NGI project's resources
+title: "<PROJECT_NAME>"
+labels:
+  - project
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Short Summary
+      description: A short description of the project (optional)
+  - type: input
+    id: website
+    attributes:
+      label: Website
+      placeholder: https://foobar.com
+  - type: textarea
+    id: source
+    attributes:
+      label: Source repository
+      placeholder: "- https://github.com/foo/foobar"
+  - type: textarea
+    id: nlnet
+    attributes:
+      label: NLnet page(s)
+      description: >-
+        Navigate to the [NLnet project list](https://nlnet.nl/project/) and add
+        the links to related projects
+      placeholder: "- https://nlnet.nl/project/<PROJECT_NAME>"
+    validations:
+      required: true
