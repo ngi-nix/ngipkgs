@@ -1,7 +1,6 @@
 name: Project Triaging
-description: >-
-  A template for information to look for in an NGI project's resources
-title: "<PROJECT_NAME>"
+description: A template for information to look for in an NGI project's resources
+title: <PROJECT_NAME>
 labels:
   - project
 body:
@@ -30,3 +29,41 @@ body:
       placeholder: "- https://nlnet.nl/project/<PROJECT_NAME>"
     validations:
       required: true
+  - type: textarea
+    id: documentation
+    attributes:
+      label: Documentation
+      value: |-
+        - Quick start/Usage Examples:
+        - Building/Development:
+        - Other:
+  - type: textarea
+    id: components
+    attributes:
+      label: Components
+      description: >-
+        Name of project component according to its type. Any specific **links or
+        documentation** to this component should also be linked here.
+      placeholder: |
+        - CLI:
+        - GUI:
+        - Service/daemon:
+        - Library:
+        - Extensions:
+        - Mobile:
+  - type: textarea
+    id: metadata
+    attributes:
+      label: Metadata
+      placeholder: |-
+        - Framework:
+        - Dependency management:
+        - Development envirnment:
+          - [default.nix, flake.nix, devenv.nix, ...](<SOURCE_REPO_LINK>)
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra Information
+      description: >-
+        Anything interesting or helpful for packaging the project like notes,
+        issues or pull requests
