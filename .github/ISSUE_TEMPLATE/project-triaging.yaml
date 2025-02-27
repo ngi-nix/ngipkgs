@@ -58,7 +58,7 @@ body:
       value: |-
         - Language/Framework:
         - Dependency management:
-        - Development envirnment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
+        - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
   - type: textarea
     id: nixos
     attributes:
