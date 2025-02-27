@@ -131,7 +131,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
 1. Navigate to <https://nlnet.nl/project/>.
    In the search bar, type the project name and look for any related projects.
 
-   ```
+   ```md
    - https://nlnet.nl/project/foobar
    - https://nlnet.nl/project/foobar-core
    ```
@@ -140,7 +140,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
 
 1. In the project's source repository, we'd like to know some information about what `framework` and `dependency management` tools the project uses so we can estimate the time and effort needed to package it. If possible, we'd also like to have links to Nix development environments, if they exist in the repo.
 
-   ```
+   ```md
    - Language/Framework: Python/Django
    - Dependency management: pip
    - Development envirnment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
@@ -150,7 +150,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
    The most relavant information we want is documentation about building the project from source and examples for using it.
    If the project has many components, it would be ideal to have this information for each one of them.
 
-   ```
+   ```md
    - Usage Examples:
      - https://foo.bar/docs/quickstart
    - Build from source/Development:
@@ -160,7 +160,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
 
 1. Go to the nixpkgs search pages for [packages](https://search.nixos.org/packages) and [services](https://search.nixos.org/options?) and check if anything related to the project is already packaged.
 
-   ```
+   ```md
    - Packages:
      - [<NAME>](<SOURCE_LINK>)
    - Services:
