@@ -49,13 +49,14 @@ body:
         - Other:
           -
   - type: textarea
-    id: components
+    id: artefacts
     attributes:
-      label: Components
+      label: Artefacts
       description: >-
-        Name of project component according to its type. Any specific **links or
-        documentation** to this component should also be linked here.
-      placeholder: |
+        Provide all project components and link any relevant documentation or
+        information you can find about them. Make sure to **remove the ones
+        that don't exist** from the following list:
+      value: |
         - CLI:
           - foobar:
             - documentation:
@@ -65,7 +66,7 @@ body:
         - Services/daemons:
         - Libraries:
         - Extensions:
-        - Mobile:
+        - Mobile Apps:
   - type: textarea
     id: nixos
     attributes:
