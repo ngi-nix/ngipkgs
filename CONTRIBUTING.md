@@ -126,7 +126,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
 ## Triaging an NGI project
 
-When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs/issues/new?template=project-triaging.yaml), it's recommended to follow the workflow below, which details which information we'd like to know about a project.
+The following information is needed to [open an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs/issues/new?template=project-triaging.yaml):
 
 1. Navigate to <https://nlnet.nl/project/>.
    In the search bar, type the project name and look for any related projects.
@@ -144,6 +144,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
    - Language/Framework: Python/Django
    - Dependency management: pip
    - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
+   ```
 
 1. In the project's website, look for any tabs or buttons that lead to the documentation. You may also use your favorite search engine and look for `<PROJECT_NAME> documentation`.
    The most important information we need are the instructions for building the project from source and examples for using it.
@@ -155,6 +156,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
    - Build from source/Development:
      - foobar-cli: https://foo.bar/docs/dev/cli
      - foobar-mobile: https://foo.bar/docs/dev/mobile
+   ```
 
 1. Go to the [nixpkgs search](https://search.nixos.org/packages) and [services search](https://search.nixos.org/options?) and check if anything related to the project is already packaged.
 
@@ -163,6 +165,7 @@ When [opening an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs
      - [<NAME>](<SOURCE_LINK>)
    - Services:
      - [<NAME>](<SOURCE_LINK>)
+   ```
 
 <!-- TODO: Add details about how to do more production-like deployments that require non-default config options. -->
 
