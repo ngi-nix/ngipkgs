@@ -9,6 +9,16 @@ body:
     attributes:
       label: Short Summary
       description: A short description of the project (optional)
+  - type: textarea
+    id: nlnet
+    attributes:
+      label: NLnet page(s)
+      description: >-
+        Navigate to the [NLnet project list](https://nlnet.nl/project/) and add
+        the links to related projects
+      placeholder: "- https://nlnet.nl/project/foobar"
+    validations:
+      required: true
   - type: input
     id: website
     attributes:
@@ -27,16 +37,6 @@ body:
         - Language/Framework:
         - Dependency management:
         - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
-  - type: textarea
-    id: nlnet
-    attributes:
-      label: NLnet page(s)
-      description: >-
-        Navigate to the [NLnet project list](https://nlnet.nl/project/) and add
-        the links to related projects
-      placeholder: "- https://nlnet.nl/project/foobar"
-    validations:
-      required: true
   - type: textarea
     id: documentation
     attributes:
@@ -70,7 +70,7 @@ body:
   - type: textarea
     id: nixos
     attributes:
-      label: NixOS
+      label: Nixpkgs/NixOS
       description: >-
         Go to the nixpkgs search pages for
         [packages](https://search.nixos.org/packages) and
