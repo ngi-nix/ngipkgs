@@ -1,0 +1,90 @@
+name: Project Triaging
+description: A template for information to look for in an NGI project's resources
+title: <PROJECT_NAME>
+labels: ["project"]
+projects: ["Nix@NGI"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Short Summary
+      description: A short description of the project (optional)
+  - type: textarea
+    id: nlnet
+    attributes:
+      label: NLnet page(s)
+      description: >-
+        Navigate to the [NLnet project list](https://nlnet.nl/project/) and add
+        the links to related projects
+      placeholder: "- https://nlnet.nl/project/foobar"
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Website
+      placeholder: https://foobar.com
+  - type: textarea
+    id: source
+    attributes:
+      label: Source repository
+      placeholder: "- https://github.com/foo/foobar"
+  - type: textarea
+    id: metadata
+    attributes:
+      label: Metadata
+      value: |-
+        - Language/Framework:
+        - Dependency management:
+        - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
+  - type: textarea
+    id: documentation
+    attributes:
+      label: Documentation
+      value: |-
+        - Usage Examples:
+          -
+        - Build from source/Development:
+          -
+        - Other:
+          -
+  - type: textarea
+    id: artefacts
+    attributes:
+      label: Artefacts
+      description: >-
+        Provide all project components and link any relevant documentation or
+        information you can find about them. Make sure to **remove the ones
+        that don't exist** from the following list:
+      value: |
+        - CLI:
+          - foobar:
+            - documentation:
+            - examples:
+            - tests:
+        - GUI:
+        - Services/daemons:
+        - Libraries:
+        - Extensions:
+        - Mobile Apps:
+  - type: textarea
+    id: nixos
+    attributes:
+      label: Nixpkgs/NixOS
+      description: >-
+        Go to the nixpkgs search pages for
+        [packages](https://search.nixos.org/packages) and
+        [services](https://search.nixos.org/options?) and check if anything
+        related to the project is already packaged.
+      value: |2
+           - Packages:
+             - [<NAME>](<SOURCE_LINK>)
+           - Services:
+             - [<NAME>](<SOURCE_LINK>)
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra Information
+      description: >-
+        Anything interesting or helpful for packaging the project like notes,
+        issues or pull requests
