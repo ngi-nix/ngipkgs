@@ -63,6 +63,8 @@ rec {
     };
   };
 
+  project-models = import ./projects/models.nix { inherit lib pkgs sources; };
+
   # TODO: find a better place for this
   metrics = with lib; {
     projects = attrNames raw-projects;
