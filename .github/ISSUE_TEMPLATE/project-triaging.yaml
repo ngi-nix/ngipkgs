@@ -1,7 +1,7 @@
 name: Project Triaging
 description: A template for information to look for in an NGI project's resources
-title: <PROJECT_NAME>
-labels: ["project"]
+title: "NGI Project: <PROJECT_NAME>"
+labels: ["NGI Project"]
 projects: ["Nix@NGI"]
 body:
   - type: textarea
