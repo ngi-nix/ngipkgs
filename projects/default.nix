@@ -2,6 +2,10 @@
   lib,
   pkgs,
   sources,
+  models ? import ./models.nix {
+    inherit lib pkgs;
+    sources = sources.inputs;
+  },
 }:
 let
   inherit (builtins)
@@ -14,6 +18,10 @@ let
     concatMapAttrs
     mapAttrs
     filterAttrs
+    ;
+
+  inherit (models)
+    project
     ;
 
   baseDirectory = ./.;
@@ -31,8 +39,12 @@ let
       allowedFiles = [
         "README.md"
         "default.nix"
+        "models.nix"
       ];
     in
+    # TODO: use fileset and filter for `gitTracked` files
     concatMapAttrs names (readDir baseDirectory);
 in
-mapAttrs (name: directory: import directory { inherit lib pkgs sources; }) projectDirectories
+mapAttrs (
+  name: directory: project (import directory { inherit lib pkgs sources; })
+) projectDirectories

@@ -13,6 +13,8 @@
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.buildbot-nix.url = "github:nix-community/buildbot-nix";
+  inputs.yants.url = "git+https://code.tvl.fyi/depot.git:/nix/yants.git";
+  inputs.yants.flake = false;
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
