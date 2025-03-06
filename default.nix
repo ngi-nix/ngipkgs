@@ -50,18 +50,61 @@ rec {
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
-  raw-projects = import ./projects {
-    inherit lib;
-    pkgs = pkgs // ngipkgs;
-    sources = {
-      inputs = sources;
-      # TODO: sops-nix is needed only for Pretalx and Rosenpass, and they can get it from `sources`
-      modules = nixos-modules // {
-        inherit sops-nix;
+  raw-projects =
+    let
+      project-inputs = {
+        inherit lib;
+        pkgs = pkgs // ngipkgs;
+        sources = {
+          inputs = sources;
+          # TODO: sops-nix is needed only for Pretalx and Rosenpass, and they can get it from `sources`
+          modules = nixos-modules // {
+            inherit sops-nix;
+          };
+          inherit examples;
+        };
       };
-      inherit examples;
-    };
-  };
+      new-project-to-old =
+        new-project:
+        let
+          empty-if-not-attrs = x: if lib.isAttrs x then x else { };
+
+          services = empty-if-not-attrs (new-project.nixos.modules.services or { });
+          programs = empty-if-not-attrs (new-project.nixos.modules.programs or { });
+
+          get = func: attrs: lib.concatMapAttrs (_: value: func value) attrs;
+
+          examples-from =
+            value:
+            lib.mapAttrs (
+              _: example:
+              if lib.isAttrs example then
+                {
+                  path = example.module;
+                  description = example.description;
+                }
+              else
+                null
+            ) (value.examples or { });
+          tests-from = value: lib.concatMapAttrs (_: example: example.tests or { }) (value.examples or { });
+        in
+        {
+          packages = { }; # NOTE: the overview expects a set
+          nixos.modules.services = lib.mapAttrs (name: value: value.module) services;
+          nixos.examples = lib.filterAttrs (_: v: v != null) (
+            (empty-if-not-attrs new-project.nixos.examples or { })
+            // get examples-from services
+            // get examples-from programs
+          );
+          nixos.tests = lib.filterAttrs (_: v: v != null) (
+            (empty-if-not-attrs new-project.nixos.tests or { })
+            // get tests-from services
+            // get tests-from programs
+          );
+        };
+      map-new-projects = projects: lib.mapAttrs (name: value: new-project-to-old value) projects;
+    in
+    import ./projects-old project-inputs // map-new-projects (import ./projects project-inputs);
 
   project-models = import ./projects/models.nix { inherit lib pkgs sources; };
 
