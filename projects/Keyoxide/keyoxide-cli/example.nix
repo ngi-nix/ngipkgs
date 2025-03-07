@@ -1,0 +1,4 @@
+{ ... }:
+{
+  services.keyoxide.enable = true;
+}
