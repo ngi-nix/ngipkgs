@@ -66,7 +66,7 @@ let
 
   exampleType = struct "example" {
     description = string;
-    module = moduleType;
+    module = absPath;
     links = optionalAttrs (option urlType);
     tests = nonEmtpyAttrs testType;
   };
