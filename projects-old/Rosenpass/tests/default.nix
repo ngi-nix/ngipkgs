@@ -59,7 +59,7 @@ in
         {
           imports = [
             sources.modules.ngipkgs
-            sources.modules.sops-nix
+            "${sources.inputs.sops-nix}/modules/sops"
           ];
 
           services.rosenpass = {
