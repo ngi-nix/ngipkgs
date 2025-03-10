@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.cryptolyzer.enable = true;
+}
