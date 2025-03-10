@@ -168,16 +168,9 @@ let
     };
   };
 
-  metadata = pkgs.writeText "metadata.json" (
-    toJSON (
-      import ./metadata.nix {
-        date = lastModified;
-      }
-    )
-  );
-
   # The top-level overview for all projects
   index = pkgs.writeText "index.html" ''
+    ${heading 1 "NGIpkgs Overview"}
     ${render.projects.many projects}
 
     <hr>
@@ -187,29 +180,46 @@ let
   # Every HTML page that we generate
   pages =
     {
-      "index.html" = index;
+      "index.html" = {
+        pagetitle = "NGIpkgs Overview";
+        html = index;
+      };
     }
     // mapAttrs' (
       name: project:
-      nameValuePair "${name}/index.html" (pkgs.writeText "index.html" (render.projects.one name project))
+      nameValuePair "${name}/index.html" {
+        pagetitle = "NGIpkgs | ${name}";
+        html = pkgs.writeText "index.html" (render.projects.one name project);
+      }
     ) projects;
 
   # Ensure that directories exist and that HTML is complete and works as a standalone file
-  writeHtmlCommand = path: content: ''
-    mkdir -p "$out/$(dirname '${path}')"
+  writeHtmlCommand =
+    path:
+    { pagetitle, html, ... }:
+    let
+      metadata = pkgs.writeText "metadata.json" (toJSON {
+        inherit pagetitle;
+        date = lastModified;
+        lang = "en";
+        dir = "ltr";
+      });
+    in
+    ''
+      mkdir -p "$out/$(dirname '${path}')"
 
-    pandoc \
-      --from=markdown+raw_html \
-      --to=html \
-      --standalone \
-      --css="/style.css" \
-      --metadata-file=${metadata} \
-      --output="$out/${path}" ${content}
+      pandoc \
+        --from=markdown+raw_html \
+        --to=html \
+        --standalone \
+        --css="/style.css" \
+        --metadata-file=${metadata} \
+        --output="$out/${path}" ${html}
 
-    sed --file=${./fixup.sed} \
-      --in-place \
-      "$out/${path}"
-  '';
+      sed --file=${./fixup.sed} \
+        --in-place \
+        "$out/${path}"
+    '';
 
 in
 pkgs.runCommand "overview"
