@@ -23,13 +23,13 @@
       module =
         { lib, pkgs, ... }:
         {
-          options = {
+          options.services.aerogramme = {
             enable = lib.mkEnableOption "Aerogramme";
             package = lib.mkPackageOption pkgs "aerogramme" { };
           };
           # TODO: add a service definition
-          # NOTE: enabling this fails with "The option `meta.broken' does not exist"
-          # meta.broken = false;
+          # FIX: figure out how to express that something doesn't work as intended yet
+          # meta.broken = true;
         };
     };
     tests = null;
