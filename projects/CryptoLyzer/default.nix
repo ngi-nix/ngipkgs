@@ -41,7 +41,7 @@
       examples.basic = {
         module = ./example.nix;
         description = "";
-        tests.basic = ./test.nix;
+        tests.basic = import ./test.nix args;
       };
 
       links = {
