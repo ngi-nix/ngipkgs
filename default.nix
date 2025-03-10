@@ -68,6 +68,7 @@ rec {
         new-project:
         let
           empty-if-not-attrs = x: if lib.isAttrs x then x else { };
+          removeNull = a: lib.filterAttrs (_: v: v != null) a;
 
           services = empty-if-not-attrs (new-project.nixos.modules.services or { });
           programs = empty-if-not-attrs (new-project.nixos.modules.programs or { });
@@ -93,12 +94,12 @@ rec {
         in
         {
           packages = { }; # NOTE: the overview expects a set
-          nixos.modules.services = lib.mapAttrs (name: value: value.module) services;
-          nixos.modules.programs = lib.mapAttrs (name: value: value.module) programs;
-          nixos.examples = lib.filterAttrs (_: v: v != null) (
+          nixos.modules.services = removeNull (lib.mapAttrs (name: value: value.module or null) services);
+          nixos.modules.programs = removeNull (lib.mapAttrs (name: value: value.module or null) programs);
+          nixos.examples = removeNull (
             get examples-from new-project.nixos // get examples-from services // get examples-from programs
           );
-          nixos.tests = lib.filterAttrs (_: v: v != null) (
+          nixos.tests = removeNull (
             get tests-from new-project.nixos // get tests-from services // get tests-from programs
           );
         };
