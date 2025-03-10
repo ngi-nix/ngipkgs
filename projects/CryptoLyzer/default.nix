@@ -34,6 +34,16 @@
             package = lib.mkPackageOption pkgs.python313Packages "cryptolyzer" { };
           };
         };
+
+      # TODO: this absolute basic example, which may show up just about
+      # anywhere, can probably extracted into a pattern with two parameters: the
+      # program module and the command to run for the smoke test
+      examples.basic = {
+        module = ./example.nix;
+        description = "";
+        tests.basic = ./test.nix;
+      };
+
       links = {
         development = {
           text = "Development environment with `pipenv`";
@@ -48,12 +58,6 @@
           url = "https://cryptolyzer.readthedocs.io/en/latest/installation/";
         };
       };
-    };
-    # TODO: this absolute basic example, which may show up just about anywhere, can probably extracted into a pattern with two parameters: the program module and the command to run for the smoke test
-    examples.basic = {
-      module = ./example.nix;
-      description = "";
-      tests.basic = ./test.nix;
     };
   };
 }
