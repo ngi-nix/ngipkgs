@@ -94,6 +94,7 @@ rec {
         {
           packages = { }; # NOTE: the overview expects a set
           nixos.modules.services = lib.mapAttrs (name: value: value.module) services;
+          nixos.modules.programs = lib.mapAttrs (name: value: value.module) programs;
           nixos.examples = lib.filterAttrs (_: v: v != null) (
             get examples-from new-project.nixos // get examples-from services // get examples-from programs
           );
