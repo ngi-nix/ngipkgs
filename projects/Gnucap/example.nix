@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.gnucap.enable = true;
+}
