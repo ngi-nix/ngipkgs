@@ -26,14 +26,7 @@
   # };
   nixos = {
     modules.programs.cryptolyzer = {
-      module =
-        { lib, pkgs, ... }:
-        {
-          options.programs.cryptolyzer = {
-            enable = lib.mkEnableOption "CryptoLyzer";
-            package = lib.mkPackageOption pkgs.python313Packages "cryptolyzer" { };
-          };
-        };
+      module = ./programs.nix;
 
       # TODO: this absolute basic example, which may show up just about
       # anywhere, can probably extracted into a pattern with two parameters: the
