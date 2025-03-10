@@ -113,7 +113,7 @@ rec {
           description = ''
             This is how you can run `foobar` in the terminal.
           '';
-          module = { ... }: { };
+          module = ./default.nix;
           links = {
             website = {
               text = "FooBar Documentation";
