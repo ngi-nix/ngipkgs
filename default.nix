@@ -48,6 +48,14 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
+  extendedNixosModules =
+    with lib;
+    [
+      nixos-modules.ngipkgs
+    ]
+    ++ attrValues nixos-modules.programs
+    ++ attrValues nixos-modules.services;
+
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   raw-projects =
