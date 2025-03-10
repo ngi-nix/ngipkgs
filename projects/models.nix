@@ -154,7 +154,7 @@ rec {
             module =
               { lib, ... }:
               {
-                enable = lib.mkEnableOption "foobar CLI";
+                options.programs.foobar-cli.enable = lib.mkEnableOption "foobar CLI";
               };
             # Each program must have at least one example.
             # Examples can be null to indicate that they're needed.
