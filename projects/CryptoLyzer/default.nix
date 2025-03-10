@@ -29,14 +29,14 @@
       module =
         { lib, pkgs, ... }:
         {
-          options = {
+          options.programs.cryptolyzer = {
             enable = lib.mkEnableOption "CryptoLyzer";
             package = lib.mkPackageOption pkgs.python313Packages "cryptolyzer" { };
           };
         };
       links = {
         development = {
-          text = "Development environemtn with `pipenv`";
+          text = "Development environment with `pipenv`";
           url = "https://cryptolyzer.readthedocs.io/en/latest/development/";
         };
         cli = {
