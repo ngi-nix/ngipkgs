@@ -23,6 +23,8 @@ in
 {
   name = "Libervia-backend";
 
+  passthru.xmppMessage = xmppMessage;
+
   nodes = {
     server =
       {
@@ -94,7 +96,7 @@ in
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.libervia
-          sources.examples.Libervia-backend.base
+          sources.examples.Libervia.backend
         ];
 
         # Need an actual logged-in user to test with

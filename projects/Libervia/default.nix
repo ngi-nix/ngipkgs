@@ -30,12 +30,23 @@
           text = "Command-line interface documentation";
           url = "https://libervia.org/__b/doc/backend/libervia-cli/index.html";
         };
+        kivy = {
+          text = "Kivy desktop client documentation";
+          url = "https://libervia.org/documentation/desktop-mobile";
+        };
       };
       module = ./module.nix;
-      examples.base = {
-        description = "Enables manually starting Libervia's backend and the use of its CLI and TUI clients.";
-        module = ./examples/base.nix;
-        tests.libervia-backend = import ./test.nix args;
+      examples = {
+        backend = {
+          description = "Enables manually starting Libervia's backend and the use of its CLI and TUI clients.";
+          module = ./examples/backend.nix;
+          tests.backend = import ./tests/backend.nix args;
+        };
+        desktop = {
+          description = "Enables the use of the Kivy desktop client for Libervia.";
+          module = ./examples/desktop.nix;
+          tests.desktop = import ./tests/desktop.nix args;
+        };
       };
     };
   };
