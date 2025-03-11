@@ -162,7 +162,7 @@ let
         projects:
         concatLines (
           mapAttrsToList (name: _: ''
-            <a href="${name}">${name}</a>
+            <a href="/project/${name}">${name}</a>
           '') projects
         );
     };
@@ -187,7 +187,7 @@ let
     }
     // mapAttrs' (
       name: project:
-      nameValuePair "${name}/index.html" {
+      nameValuePair "project/${name}/index.html" {
         pagetitle = "NGIpkgs | ${name}";
         html = pkgs.writeText "index.html" (render.projects.one name project);
       }
