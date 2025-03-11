@@ -85,6 +85,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
      ```
 
      The module will then be accessible from `nixosModules.services.some-project`.
+     Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-project) workflow and create a new issue, detailing some information about this project.
 
    - Add the module tests in `test.nix`, or under a test directory, and reference that file in `default.nix`.
      For example:
