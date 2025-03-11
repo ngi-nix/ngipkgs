@@ -66,7 +66,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
    An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
 
-1. To add a NixOS service module, start by creating a `default.nix` file in the directory `projects/some-project` where `some-project` is the project name corresponding to the last URL component in the [NLnet project listing](https://nlnet.nl/project/).
+1. To add a NixOS service module, start by creating a `default.nix` file in the directory `projects/some-project`.
 
    ```shellSession
    mkdir -p projects/some-project
@@ -80,7 +80,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
      ```nix
      nixos.modules = {
-       services.some-project = ./service.nix;
+       services.some-project.module = ./service.nix;
      };
      ```
 
@@ -93,13 +93,13 @@ Instead, write one sentence per line, as this makes it easier to review changes.
      nixos.tests.some-test = import ./test.nix args;
      ```
 
-     The module tests will then be accessible from `nixosTests.some-project`.
+     The module tests will then be accessible from `checks.<system>.some-project`.
 
    - Test the module on `x86_64-linux`.
 
      ```shellSession
      git add pkgs/by-name/some-package projects/some-project
-     nix build .#some-package.passthru.tests.some-test.driverInteractive
+     nix build .#checks.x86_64-linux.projects/some-project/nixos/tests/some-test.driverInteractive
      ./result/bin/nixos-test-driver # Start a shell
      # Once in the spawned shell, start a VM that will execute the tests
      start_all() # Run the VM
@@ -111,7 +111,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
      nix fmt projects/some-project
      ```
 
-   An existing example is [Kbin](https://github.com/ngi-nix/ngipkgs/tree/main/projects/Kbin).
+   An existing example is [AtomicData](https://github.com/ngi-nix/ngipkgs/tree/main/projects/AtomicData).
 
 1. Commit the changes and push the commits.
 
