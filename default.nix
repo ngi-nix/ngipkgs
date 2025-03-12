@@ -101,6 +101,7 @@ rec {
         in
         {
           packages = { }; # NOTE: the overview expects a set
+          metadata = new-project.metadata or { };
           nixos.modules.services = removeNull (lib.mapAttrs (name: value: value.module or null) services);
           nixos.modules.programs = removeNull (lib.mapAttrs (name: value: value.module or null) programs);
           nixos.examples = removeNull (
@@ -223,6 +224,7 @@ rec {
         # TODO: encode this in types, either yants or the module system
         project: {
           packages = empty-if-null (filterAttrs (name: value: value != null) (project.packages or { }));
+          metadata = empty-if-null (filterAttrs (name: value: value != null) (project.metadata or { }));
           nixos.modules = empty-if-null (filterAttrs (_: m: m != null) (project.nixos.modules or { }));
           nixos.examples = empty-if-null (project.nixos.examples or { });
           nixos.tests = mapAttrs (
