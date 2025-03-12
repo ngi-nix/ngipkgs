@@ -74,18 +74,6 @@
         default.nixpkgs.overlays = [ overlay ];
       } // rawNixosModules;
 
-      extendedNixosModules =
-        # TODO: clean this up
-        classic'.nixos-modules.programs
-        // classic'.nixos-modules.services
-        // {
-          inherit (classic'.nixos-modules) ngipkgs;
-        }
-        // {
-          # TODO: only one module uses this, get it from `sources` there
-          sops-nix = sops-nix.nixosModules.default;
-        };
-
       mkNixosSystem =
         config:
         nixosSystem {
@@ -107,7 +95,7 @@
             ]
             # TODO: this needs to take a different shape,
             # otherwise the transformation to obtain it is confusing
-            ++ attrValues extendedNixosModules;
+            ++ classic'.extendedNixosModules;
         };
 
       toplevel = machine: machine.config.system.build.toplevel;

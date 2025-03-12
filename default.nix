@@ -48,6 +48,16 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
+  extendedNixosModules =
+    with lib;
+    [
+      nixos-modules.ngipkgs
+      # TODO: needed for examples that use sops (like Pretalx)
+      sops-nix
+    ]
+    ++ attrValues nixos-modules.programs
+    ++ attrValues nixos-modules.services;
+
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   raw-projects =
@@ -57,10 +67,7 @@ rec {
         pkgs = pkgs // ngipkgs;
         sources = {
           inputs = sources;
-          # TODO: sops-nix is needed only for Pretalx and Rosenpass, and they can get it from `sources`
-          modules = nixos-modules // {
-            inherit sops-nix;
-          };
+          modules = nixos-modules;
           inherit examples;
         };
       };

@@ -24,7 +24,7 @@ in
           sources.examples.Pretalx.postgresql
           sources.modules.ngipkgs
           sources.modules.services.ngi-pretalx
-          sources.modules.sops-nix
+          "${sources.inputs.sops-nix}/modules/sops"
         ];
 
         sops = mkForce {
