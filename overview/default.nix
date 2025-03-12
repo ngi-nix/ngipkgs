@@ -30,6 +30,8 @@ let
     mapAttrsToList
     optionalString
     recursiveUpdate
+    mapAttrs'
+    nameValuePair
     ;
 
   empty =
@@ -146,34 +148,79 @@ let
         '';
     };
 
-    projects = rec {
+    projects = {
       one = name: project: ''
-        <section><details><summary>${heading 2 name}</summary>
+        ${heading 1 name}
         <https://nlnet.nl/project/${name}>
 
         ${render.packages.many (pick.packages project)}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
-        </details></section>
       '';
-      many = projects: concatLines (mapAttrsToList one projects);
+      # Many projects are renderes as links to their individual project sites
+      many =
+        projects:
+        concatLines (
+          mapAttrsToList (name: _: ''
+            <a href="/project/${name}">${name}</a>
+          '') projects
+        );
     };
   };
 
-  metadata = pkgs.writeText "metadata.json" (
-    toJSON (
-      import ./metadata.nix {
-        date = lastModified;
-      }
-    )
-  );
-
-  content = pkgs.writeText "overview.html" ''
+  # The top-level overview for all projects
+  index = pkgs.writeText "index.html" ''
+    ${heading 1 "NGIpkgs Overview"}
     ${render.projects.many projects}
 
     <hr>
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
+
+  # Every HTML page that we generate
+  pages =
+    {
+      "index.html" = {
+        pagetitle = "NGIpkgs Overview";
+        html = index;
+      };
+    }
+    // mapAttrs' (
+      name: project:
+      nameValuePair "project/${name}/index.html" {
+        pagetitle = "NGIpkgs | ${name}";
+        html = pkgs.writeText "index.html" (render.projects.one name project);
+      }
+    ) projects;
+
+  # Ensure that directories exist and that HTML is complete and works as a standalone file
+  writeHtmlCommand =
+    path:
+    { pagetitle, html, ... }:
+    let
+      metadata = pkgs.writeText "metadata.json" (toJSON {
+        inherit pagetitle;
+        date = lastModified;
+        lang = "en";
+        dir = "ltr";
+      });
+    in
+    ''
+      mkdir -p "$out/$(dirname '${path}')"
+
+      pandoc \
+        --from=markdown+raw_html \
+        --to=html \
+        --standalone \
+        --css="/style.css" \
+        --metadata-file=${metadata} \
+        --output="$out/${path}" ${html}
+
+      sed --file=${./fixup.sed} \
+        --in-place \
+        "$out/${path}"
+    '';
+
 in
 pkgs.runCommand "overview"
   {
@@ -184,21 +231,14 @@ pkgs.runCommand "overview"
       validator-nu
     ];
   }
-  ''
-    mkdir -v $out
-    cp -v ${./style.css} $out/style.css
+  (
+    ''
+      mkdir -v $out
+      cp -v ${./style.css} $out/style.css
+    ''
+    + (concatLines (mapAttrsToList writeHtmlCommand pages))
+    + ''
 
-    pandoc \
-      --from=markdown+raw_html \
-      --to=html \
-      --standalone \
-      --css="style.css" \
-      --metadata-file=${metadata} \
-      --output=$out/index.html ${content}
-
-    sed --file=${./fixup.sed} \
-      --in-place \
-      $out/index.html
-
-    vnu -Werror --format json $out/*.html | jq
-  ''
+      vnu -Werror --format json $out/*.html | jq
+    ''
+  )
