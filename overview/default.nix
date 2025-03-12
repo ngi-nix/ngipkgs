@@ -148,11 +148,25 @@ let
         '';
     };
 
+    subgrants = rec {
+      one = subgrant: ''
+        <li>
+          <https://nlnet.nl/project/${subgrant}>
+        </li>
+      '';
+      many =
+        subgrants:
+        optionalString (subgrants != [ ]) ''
+          <ul>
+            ${concatLines (map one subgrants)}
+          </ul>
+        '';
+    };
+
     projects = {
       one = name: project: ''
         ${heading 1 name}
-        <https://nlnet.nl/project/${name}>
-
+        ${render.subgrants.many (project.metadata.subgrants or [ ])}
         ${render.packages.many (pick.packages project)}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
