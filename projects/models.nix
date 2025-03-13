@@ -103,10 +103,12 @@ rec {
       #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
       #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
       tests = option (attrs testType);
-      modules = struct "modules" {
-        programs = optionalAttrs (option programType);
-        services = optionalAttrs (option serviceType);
-      };
+      modules = option (
+        struct "modules" {
+          programs = optionalAttrs (option programType);
+          services = optionalAttrs (option serviceType);
+        }
+      );
       # An application component may have examples using it in isolation,
       # but examples may involve multiple application components.
       # Having examples at both layers allows us to trace coverage more easily.
