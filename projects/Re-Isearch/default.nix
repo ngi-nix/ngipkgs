@@ -19,8 +19,7 @@
       examples.re-isearch = {
         module = ./example.nix;
         description = "";
-        # TODO: index and search a document (see `links.tests`)
-        tests.search-document = null;
+        tests.search-document = import ./test.nix args;
       };
       links = {
         handbook = {
