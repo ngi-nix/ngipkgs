@@ -85,6 +85,7 @@ rec {
     metadata = optionalStruct {
       summary = option string;
       subgrants = list string;
+      links = optionalAttrs (option urlType);
     };
     nixos = struct "nixos" {
       # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
