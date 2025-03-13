@@ -39,7 +39,7 @@ let
     (attrs any)
   ];
 
-  blobType = struct "blob" {
+  binaryType = struct "binary" {
     name = option string;
     data = option (either absPath drv);
   };
@@ -107,7 +107,6 @@ rec {
         programs = optionalAttrs (option programType);
         services = optionalAttrs (option serviceType);
       };
-      blobs = option (list blobType);
       # An application component may have examples using it in isolation,
       # but examples may involve multiple application components.
       # Having examples at both layers allows us to trace coverage more easily.
@@ -115,6 +114,7 @@ rec {
       # we can still reduce granularity and move all examples to the application level.
       examples = option (attrs exampleType);
     };
+    binary = optionalAttrs binaryType;
   };
 
   example = project {
@@ -177,17 +177,14 @@ rec {
           # Not set: not needed
         };
       };
-
-      blobs = [
-        {
-          name = "foobar.img";
-          data = dummyDerivation;
-        }
-        {
-          name = "foobar-boot.img";
-          data = null; # needed, not available
-        }
-      ];
+    };
+    binary = {
+      "foobar.img" = {
+        data = dummyDerivation;
+      };
+      "foobar-boot.img" = {
+        data = null; # needed, not available
+      };
     };
   };
 }
