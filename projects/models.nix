@@ -39,6 +39,11 @@ let
     (attrs any)
   ];
 
+  blobType = struct "blob" {
+    name = option string;
+    data = option (either absPath drv);
+  };
+
   # TODO: plugins are actually component *extensions* that are of component-specific type,
   #       and which compose in application-specific ways defined in the application module.
   #       we can't express that with yants, but with the module system, which gives us a bit of dependent typing.
@@ -78,6 +83,12 @@ let
   optionalAttrs = set: option (attrs set);
   nonEmtpyAttrs = t: restrict "non-empty attribute set" (a: a != { }) (attrs t);
   absPath = restrict "absolute path" (p: lib.pathExists p) (either path string);
+
+  dummyDerivation = derivation {
+    name = "myname";
+    builder = "mybuilder";
+    system = "mysystem";
+  };
 in
 rec {
   project = struct {
@@ -96,6 +107,7 @@ rec {
         programs = optionalAttrs (option programType);
         services = optionalAttrs (option serviceType);
       };
+      blobs = option (list blobType);
       # An application component may have examples using it in isolation,
       # but examples may involve multiple application components.
       # Having examples at both layers allows us to trace coverage more easily.
@@ -134,11 +146,7 @@ rec {
         # Needs to be a derivation. Error raised otherwise.
         #simple = "This will fail.";
 
-        foobar-cli = derivation {
-          name = "myname";
-          builder = "mybuilder";
-          system = "mysystem";
-        };
+        foobar-cli = dummyDerivation;
       };
       modules = {
         # Attributes not defined in the data structure are not allowed.
@@ -169,6 +177,17 @@ rec {
           # Not set: not needed
         };
       };
+
+      blobs = [
+        {
+          name = "foobar.img";
+          data = dummyDerivation;
+        }
+        {
+          name = "foobar-boot.img";
+          data = null; # needed, not available
+        }
+      ];
     };
   };
 }
