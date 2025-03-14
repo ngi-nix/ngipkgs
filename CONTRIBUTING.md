@@ -66,10 +66,17 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
    An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
 
-1. To add a NixOS service module, start by creating a `default.nix` file in the directory `projects/some-project`.
+1. Check if the project already exists in `projects/some-project`.
+   If it does not exist, you can copy the project template and edit it with relevant details:
 
    ```shellSession
-   mkdir -p projects/some-project
+   cp -r templates/project projects/some-project
+   $EDITOR projects/some-project/default.nix
+   ```
+
+1. To add a NixOS service module, start by editing the `default.nix` file in the directory `projects/some-project`.
+
+   ```shellSession
    $EDITOR projects/some-project/default.nix
    ```
 
