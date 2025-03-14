@@ -2,15 +2,15 @@
  "!comment": "This is a nixpkgs Gradle dependency lockfile. For more details, refer to the Gradle section in the nixpkgs manual.",
  "!version": 1,
  "https://artifacts.marginalia.nu/snapshots/nu": {
-  "marginalia#slop/0.0.10-20250126.140929-1/SNAPSHOT": {
-   "jar": "sha256-uTZx4al+JHL67752ATijUZyLGfDftFmgwuS2hVc/ZuY=",
-   "module": "sha256-DSyfzM9Dx73ZH3U+hZTVgmRGW1v7NLB4CvUtJzhrJJE=",
+  "marginalia#slop/0.0.10-20250311.100659-2/SNAPSHOT": {
+   "jar": "sha256-D5BgBZdkcjF6jhOsrtxPfBfrUx0cXRi2ain6pj3nRYY=",
+   "module": "sha256-b97Oc4S/nc6GghUp/mmydY8j8UBu9B/xu2dyw5WLpdo=",
    "pom": "sha256-wskEt7Dqx0g3QNAuF1Acpg2tdqkALdV1pzLKiy847nk="
   },
   "marginalia/slop/0.0.10-SNAPSHOT/maven-metadata": {
    "xml": {
     "groupId": "nu.marginalia",
-    "lastUpdated": "20250126140929"
+    "lastUpdated": "20250311100659"
    }
   }
  },
