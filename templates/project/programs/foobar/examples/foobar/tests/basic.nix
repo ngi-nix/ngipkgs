@@ -2,6 +2,7 @@
   sources,
   ...
 }:
+
 {
   name = "foobar";
 

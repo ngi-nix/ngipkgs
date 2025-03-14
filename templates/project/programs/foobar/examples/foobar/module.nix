@@ -1,4 +1,5 @@
 { ... }:
+
 {
   programs.foobar.enable = true;
 }
