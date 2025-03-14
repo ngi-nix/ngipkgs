@@ -39,6 +39,11 @@ let
     (attrs any)
   ];
 
+  binaryType = struct "binary" {
+    name = option string;
+    data = option (either absPath drv);
+  };
+
   # TODO: plugins are actually component *extensions* that are of component-specific type,
   #       and which compose in application-specific ways defined in the application module.
   #       we can't express that with yants, but with the module system, which gives us a bit of dependent typing.
@@ -78,6 +83,12 @@ let
   optionalAttrs = set: option (attrs set);
   nonEmtpyAttrs = t: restrict "non-empty attribute set" (a: a != { }) (attrs t);
   absPath = restrict "absolute path" (p: lib.pathExists p) (either path string);
+
+  dummyDerivation = derivation {
+    name = "myname";
+    builder = "mybuilder";
+    system = "mysystem";
+  };
 in
 rec {
   project = struct {
@@ -85,6 +96,7 @@ rec {
     metadata = optionalStruct {
       summary = option string;
       subgrants = list string;
+      links = optionalAttrs (option urlType);
     };
     nixos = struct "nixos" {
       # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
@@ -92,10 +104,12 @@ rec {
       #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
       #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
       tests = option (attrs testType);
-      modules = struct "modules" {
-        programs = optionalAttrs (option programType);
-        services = optionalAttrs (option serviceType);
-      };
+      modules = option (
+        struct "modules" {
+          programs = optionalAttrs (option programType);
+          services = optionalAttrs (option serviceType);
+        }
+      );
       # An application component may have examples using it in isolation,
       # but examples may involve multiple application components.
       # Having examples at both layers allows us to trace coverage more easily.
@@ -103,6 +117,7 @@ rec {
       # we can still reduce granularity and move all examples to the application level.
       examples = option (attrs exampleType);
     };
+    binary = optionalAttrs binaryType;
   };
 
   example = project {
@@ -134,11 +149,7 @@ rec {
         # Needs to be a derivation. Error raised otherwise.
         #simple = "This will fail.";
 
-        foobar-cli = derivation {
-          name = "myname";
-          builder = "mybuilder";
-          system = "mysystem";
-        };
+        foobar-cli = dummyDerivation;
       };
       modules = {
         # Attributes not defined in the data structure are not allowed.
@@ -168,6 +179,14 @@ rec {
 
           # Not set: not needed
         };
+      };
+    };
+    binary = {
+      "foobar.img" = {
+        data = dummyDerivation;
+      };
+      "foobar-boot.img" = {
+        data = null; # needed, not available
       };
     };
   };
