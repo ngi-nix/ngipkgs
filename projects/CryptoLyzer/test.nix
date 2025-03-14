@@ -22,6 +22,6 @@
     ''
       start_all()
 
-      machine.succeed("cryptolyzer --help")
+      machine.succeed("cryptolyze --help")
     '';
 }
