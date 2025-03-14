@@ -66,13 +66,16 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
    An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
 
-1. Check if the project already exists in `projects/some-project`.
-   If it does not exist, you can copy the project template and edit it with relevant details:
+1. When contributing to a project, start by checking if it has an entry in `projects/some-project`.
+   If the entry does not exist, you should copy the project template and edit it with relevant details:
 
    ```shellSession
    cp -r templates/project projects/some-project
    $EDITOR projects/some-project/default.nix
    ```
+
+   Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-project) workflow and create a new issue, detailing some information about this project.
+   This will allow you to get more familiar with the project and fill out the template more easily.
 
 1. To add a NixOS service module, start by editing the `default.nix` file in the directory `projects/some-project`.
 
@@ -92,7 +95,6 @@ Instead, write one sentence per line, as this makes it easier to review changes.
      ```
 
      The module will then be accessible from `nixosModules.services.some-project`.
-     Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-project) workflow and create a new issue, detailing some information about this project.
 
    - Add the module tests in `test.nix`, or under a test directory, and reference that file in `default.nix`.
      For example:
