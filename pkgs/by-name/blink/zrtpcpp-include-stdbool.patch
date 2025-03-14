@@ -1,0 +1,12 @@
+diff --git a/cryptcommon/ZrtpRandom.h b/cryptcommon/ZrtpRandom.h
+index ee8640a..48170cb 100644
+--- a/cryptcommon/ZrtpRandom.h
++++ b/cryptcommon/ZrtpRandom.h
+@@ -27,6 +27,7 @@
+ #include <string.h>
+ #if !(defined(_WIN32) || defined(_WIN64))
+ #include <unistd.h>
++#include <stdbool.h>
+ #endif
+ #include <stdint.h>
+ #include <sys/types.h>

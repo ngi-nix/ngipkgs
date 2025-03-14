@@ -1,0 +1,19 @@
+diff --git a/setup.py b/setup.py
+index 755fe188..f77a81ef 100755
+--- a/setup.py
++++ b/setup.py
+@@ -54,12 +54,12 @@ setup(
+     },
+ 
+     ext_modules=[
+-        Extension(name="sipsimple.core._core", sources=["sipsimple/core/_core.pyx", "sipsimple/core/_core.pxd"] + glob.glob(os.path.join("sipsimple", "core", "_core.*.pxi"))),
++        Extension(name="sipsimple.core._core", sources=["sipsimple/core/_core.pyx", "sipsimple/core/_core.pxd"] + glob.glob(os.path.join("sipsimple", "core", "_core.*.pxi")), include_dirs=["@pjsipIncludeDir@", "@zrtpcppIncludeDir@"], library_dirs=["@pjsipLibDir@", "@zrtpcppLibDir@"]),
+         Extension(name="sipsimple.util._sha1", sources=["sipsimple/util/_sha1.pyx"], depends=["sipsimple/util/_sha1.h"])
+     ],
+ 
+     cmdclass={
+-        'build_ext': PJSIP_build_ext
++        # 'build_ext': PJSIP_build_ext
+     },
+ 
+     provides=['sipsimple']
