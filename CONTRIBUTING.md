@@ -67,7 +67,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
 
 1. When contributing to a project, start by checking if it has an entry in `projects/some-project`.
-   If the entry does not exist, you should copy the project template and edit it with relevant details:
+   If the entry does not exist, copy the project template and edit it with relevant details:
 
    ```shellSession
    cp -r templates/project projects/some-project
