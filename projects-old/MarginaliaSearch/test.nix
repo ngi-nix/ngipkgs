@@ -105,6 +105,7 @@ in
 
       machine.wait_for_console_text("Listening on 127.0.0.1:7000")
 
+      machine.wait_for_x()
       machine.succeed("firefox http://127.0.0.1:7000 >&2 &")
       # Note: Firefox doesn't use a regular "-" in the window title, but "—" (Hex: 0xe2 0x80 0x94)
       machine.wait_for_window("Control Service — Mozilla Firefox")
