@@ -194,6 +194,7 @@ let
     - The package collection is far incomplete
     - Many packages lack crucial components
     - There are no instructions for getting started
+    - How software and the corresponding Nix expressions are exposed is subject to change
 
     More information about the project:
 
