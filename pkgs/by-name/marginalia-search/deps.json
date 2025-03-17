@@ -1,19 +1,6 @@
 {
  "!comment": "This is a nixpkgs Gradle dependency lockfile. For more details, refer to the Gradle section in the nixpkgs manual.",
  "!version": 1,
- "https://artifacts.marginalia.nu/snapshots/nu": {
-  "marginalia#slop/0.0.10-20250126.140929-1/SNAPSHOT": {
-   "jar": "sha256-uTZx4al+JHL67752ATijUZyLGfDftFmgwuS2hVc/ZuY=",
-   "module": "sha256-DSyfzM9Dx73ZH3U+hZTVgmRGW1v7NLB4CvUtJzhrJJE=",
-   "pom": "sha256-wskEt7Dqx0g3QNAuF1Acpg2tdqkALdV1pzLKiy847nk="
-  },
-  "marginalia/slop/0.0.10-SNAPSHOT/maven-metadata": {
-   "xml": {
-    "groupId": "nu.marginalia",
-    "lastUpdated": "20250126140929"
-   }
-  }
- },
  "https://jitpack.io": {
   "com/github/Marcono1234#gson-record-type-adapter-factory/0.3.0": {
    "jar": "sha256-JpVIgZyc5lcaxzpre6iTEFGD43cdG0HvvSaHTqEd784=",
@@ -2223,6 +2210,11 @@
    "module": "sha256-tAH9JZAeWCpSSqU0PEs54ovFbiSWHBBpvytLv87ka5M=",
    "pom": "sha256-TQMpzZ5y8kIOXKFXJMv+b/puX9KIg2FRYnEZD9w0Ltc="
   },
+  "org/junit/jupiter#junit-jupiter-api/5.10.0": {
+   "jar": "sha256-EICI/X6kao5loM5/XXWuP/eGVgZ3CgeHFfWm5XCeF9g=",
+   "module": "sha256-rlZhzTgeEJo8NXWzqy3tdHnnvdfOxKqfJtQ3iXNAl5s=",
+   "pom": "sha256-Tx3RjtVlgTdJThuDUFN5V994ExxnNYrDw/IM3vKF9xw="
+  },
   "org/junit/jupiter#junit-jupiter-api/5.8.2": {
    "jar": "sha256-GAjuh+D3GM1uJfO3WvwXlWrIo+3EjH6bq58Z+aeeOAE=",
    "module": "sha256-fpr03/9iZ6zd0VfZ4Rug1dyRszL6dLxMZZOeRReht3A=",
@@ -2232,6 +2224,11 @@
    "jar": "sha256-PjcLy7HoV/2l8LIDckEW0CsF54j6oeslGIFKzPnPtbE=",
    "module": "sha256-n5LPF5V1xN9pgpRwTRDxLozHFdaC+yDtzYrbxB/H8PQ=",
    "pom": "sha256-ap2MRpjcjGkE1qwfXRMBiqf4KESbxbjO94/BQxzgghc="
+  },
+  "org/junit/jupiter#junit-jupiter-engine/5.10.0": {
+   "jar": "sha256-V+pI5veVIAeRBlu8hrcLhM0FNnxcnyrI+SaOJxVMiKg=",
+   "module": "sha256-ahCFcpBdHtGcAtzQePNMHt6zFVX1RCF24BQYJwCFYmo=",
+   "pom": "sha256-tgBsZQiRofdWh1Z2xtj+m0FqwckRfntBg0KdnxU0crU="
   },
   "org/junit/jupiter#junit-jupiter-engine/5.8.2": {
    "jar": "sha256-dTt3Js3RWLs0ztuUwWHiKRiW9HgyoentpT2XACCoGE4=",
@@ -2243,6 +2240,21 @@
    "module": "sha256-sVnltbYmIiOP1v0oZPigEsHfbbK7JvEMqA4dIqzOLx0=",
    "pom": "sha256-qLfR7QMvuStDJY140jmwGcX1g02swIT5l4PjTD7hLL8="
   },
+  "org/junit/jupiter#junit-jupiter-params/5.10.0": {
+   "jar": "sha256-8lmnMizON1QwwiNqLcsk1KSdIgRbcjrYWviOEXBDkcI=",
+   "module": "sha256-GW9/Tv35x3OnEEwzn2AlNCuHQvz6sC+IArqAJ+0o+S4=",
+   "pom": "sha256-hJpvXnjyuDFLW10KDMymYhblwH4pWFRxJX3/CvrLELE="
+  },
+  "org/junit/jupiter#junit-jupiter/5.10.0": {
+   "jar": "sha256-jkveI+4o/EQ5dWVKeyjEEKO3jWvpa3jJmrc2lew0T3w=",
+   "module": "sha256-BXDggypUZagvBKK492Hyux4w+v4oLSowmHAV/LBQdgM=",
+   "pom": "sha256-9LAPh2BzWmAc6U0sxq0r9WpK30885g7iD1LHDa5bMxM="
+  },
+  "org/junit/platform#junit-platform-commons/1.10.0": {
+   "jar": "sha256-YIPbCMoR/KHhYJnQ3P7eAZPYCzdisnY0nYDT2lNnkbI=",
+   "module": "sha256-jLYNPfgdYG6hvj4/yuVpdlOxswPi96mCKn7RJkdF/Cc=",
+   "pom": "sha256-vkEftVMxuqETp0wRkA8HVVhasg76cMJtlQ9a4hRJALA="
+  },
   "org/junit/platform#junit-platform-commons/1.8.2": {
    "jar": "sha256-0uAV/KcTDnmvL0YI3FRBXksQtZLXczPey0saJ0wYUFA=",
    "module": "sha256-NChH0wRv6kNVlWkttPBdXwOeDh0eIE9NV1WQJVcIJiY=",
@@ -2252,6 +2264,11 @@
    "jar": "sha256-5YlLcQCUtMqvxigLiCmkOft2SQHqCuGNBu2AOIswm3o=",
    "module": "sha256-SyAzP4ruVOgwRY2B0EXrjRfcBCTTEzKNtQmpzCSZsXo=",
    "pom": "sha256-MJp9efG/577WChoXCKqovXGGHBKdIWhNaO305NnILCA="
+  },
+  "org/junit/platform#junit-platform-engine/1.10.0": {
+   "jar": "sha256-zTOO/QLuc5Zup1TgwMceGhH0r125wgA+S2E34RkVWr4=",
+   "module": "sha256-duCMg/k91SuD6IW5AJIMHcheNoaID2ZTrysiMX9N3jc=",
+   "pom": "sha256-+RGG4YGx4VrofVJ5uaKzDGLO1ROQE6NJoQu03hL6+YI="
   },
   "org/junit/platform#junit-platform-engine/1.8.2": {
    "jar": "sha256-C30AD4w+jl99a4GWSZNue5k4MU6HyPmDgFIY6ldWflk=",
@@ -2315,6 +2332,11 @@
   "org/opentest4j#opentest4j/1.2.0": {
    "jar": "sha256-WIEt5giY2Xb7ge87YtoFxmBMGP1KJJ9QRCgkefwoavI=",
    "pom": "sha256-qW5nGBbB/4gDvex0ySQfAlvfsnfaXStO4CJmQFk2+ZQ="
+  },
+  "org/opentest4j#opentest4j/1.3.0": {
+   "jar": "sha256-SOLfY2yrZWPO1k3N/4q7I1VifLI27wvzdZhoLd90Lxs=",
+   "module": "sha256-SL8dbItdyU90ZSvReQD2VN63FDUCSM9ej8onuQkMjg0=",
+   "pom": "sha256-m/fP/EEPPoNywlIleN+cpW2dQ72TfjCUhwbCMqlDs1U="
   },
   "org/ow2#ow2/1.3": {
    "pom": "sha256-USFcZ9LAaNi30vb4D1E3KgmAdd7MxEjUvde5h7qDKPs="
