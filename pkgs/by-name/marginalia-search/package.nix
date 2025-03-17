@@ -13,6 +13,14 @@
   unzip,
   which,
 }:
+let
+  slop-src = fetchFromGitHub {
+    owner = "MarginaliaSearch";
+    repo = "SlopData";
+    rev = "3277a0a0fb09cd8e86e6a2e49a7981ebdf66b4df";
+    hash = "sha256-JCbTlQt0OiYyY5bJJsu+4NW0AUSqzA7pYv2JZgidfrI=";
+  };
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "marginalia-search";
   version = "24.10.0-unstable-2025-02-15";
@@ -26,6 +34,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   patches = [
     ./2001-Make-data-path-configurable-as-well.patch
+    ./2002-Make-slop-an-in-tree-project.patch
   ];
 
   postPatch = ''
@@ -33,6 +42,8 @@ stdenv.mkDerivation (finalAttrs: {
 
     substituteInPlace code/services-application/search-service/build.gradle \
       --replace-fail "commandLine 'npx', 'tailwindcss'" "commandLine 'tailwindcss'"
+
+    cp -r --no-preserve=mode ${slop-src} third-party/slop
   '';
 
   strictDeps = true;
