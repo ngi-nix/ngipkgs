@@ -4,6 +4,26 @@ title: "NGI Project: <PROJECT_NAME>"
 labels: ["NGI Project"]
 projects: ["Nix@NGI"]
 body:
+  - type: "markdown"
+    attributes:
+      value: |
+        Replace the **`NGI Project: <PROJECT_NAME>`** template above with the correct project name, as found from searching for the project name in the [NLnet projects](http://nlnet.nl/project) page. Note that the name should be derived from the URL identifier instead of the title.
+
+        For instance, if you were triaging data for a project called `Foobar`, you might find two entries in the NLnet search page:
+        - Improving communications with Foobar
+        - Mobile app for Foobar
+
+        The URL for these pages will be something like:
+        - https://nlnet.nl/project/Foobar
+        - https://nlnet.nl/project/Foobar-mobile
+
+        Therefore, the title will be: `NGI Project: Foobar`
+
+        > [!NOTE]
+        > - This task should not exceed 1 Hour.
+        > - For a full example, please see [NGI Project: Gnucap](https://github.com/ngi-nix/ngipkgs/issues/541)
+
+        ---
   - type: textarea
     id: summary
     attributes:
@@ -13,10 +33,16 @@ body:
     id: nlnet
     attributes:
       label: NLnet page(s)
-      description: >-
-        Navigate to the [NLnet project list](https://nlnet.nl/project/) and add
-        the links to related projects
-      placeholder: "- https://nlnet.nl/project/foobar"
+      description: |
+        1. Navigate to the [NLnet project list](https://nlnet.nl/project/)
+        2. Enter the project name in the search bar
+        3. Review all the entries returned by the search
+        4. Collect the links to entries that relate to the project
+
+        For example, for a project called `Foobar`, this can be something like:
+
+          - https://nlnet.nl/project/Foobar
+          - https://nlnet.nl/project/Foobar-mobile
     validations:
       required: true
   - type: input
@@ -28,20 +54,54 @@ body:
     id: source
     attributes:
       label: Source repository
-      placeholder: "- https://github.com/foo/foobar"
-  - type: textarea
-    id: metadata
-    attributes:
-      label: Metadata
-      value: |-
-        - Language/Framework:
-        - Dependency management:
-        - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
+      description: |
+        Provide the location where the source code is hosted.
+        Additionally, include information about the programming languages, build tools used, as well as any dependency management systems in place.
+
+        For example, for a project called `Foobar`, this can be something like:
+
+          - https://github.com/foo/foobar
+            - Language/Framework: Python
+            - Dependency management: Nix
+            - Nix development environment: [default.nix](https://github.com/foo/foobar/default.nix)
+
+          - https://github.com/foo/foobar-mobile
+            - Language/Framework: Java
+            - Dependency management: Gradle
+            - Nix development environment:
+
+        > [!NOTE]
+        > Use your best judgment to gather information about the project.
+        > If you're uncertain about something, try using a search engine.
+        > If you're still unsure after that, it's okay to leave it empty and move on.
+      value: |
+        - <REPOSITORY_LINK>
+          - Language/Framework:
+          - Dependency management:
+          - Nix development environment:
   - type: textarea
     id: documentation
     attributes:
       label: Documentation
-      value: |-
+      description: |
+        On the project's website, look for tabs or buttons that lead to the documentation.
+        You can also use your favorite search engine to search for <PROJECT_NAME> documentation.
+        The key information we need includes instructions for building the project from source and usage examples.
+
+        Example for a project called `Foobar`:
+
+         - Usage Examples:
+           - https://foo.bar/docs/quickstart
+         - Build from source/Development:
+           - foobar-cli: https://foo.bar/docs/dev/cli
+           - foobar-mobile: https://foo.bar/docs/dev/mobile
+        - Other:
+           - Wiki
+           - Notes
+
+        > [!NOTE]
+        > This information might be available in the source repositories as well.
+      value: |
         - Usage Examples:
           -
         - Build from source/Development:
@@ -52,10 +112,18 @@ body:
     id: artefacts
     attributes:
       label: Artefacts
-      description: >-
-        Provide all project components and link any relevant documentation or
-        information you can find about them. Make sure to **remove the ones
-        that don't exist** from the following list:
+      description: |
+        List all project components and include links to any relevant documentation or information you can find about each one.
+
+        Example:
+
+        - CLI:
+          - foobar:
+            - documentation: https://foo.bar/docs/dev/mobile
+            - tests: https://github.com/foo/foobar/tests
+        - Mobile Apps:
+          - foobar-mobile:
+            - documentation: https://foo.bar/docs/dev/mobile
       value: |
         - CLI:
           - foobar:
@@ -71,20 +139,34 @@ body:
     id: nixos
     attributes:
       label: Nixpkgs/NixOS
-      description: >-
+      description: |
         Go to the nixpkgs search pages for
         [packages](https://search.nixos.org/packages) and
         [services](https://search.nixos.org/options?) and check if anything
         related to the project is already packaged.
-      value: |2
-           - Packages:
-             - [<NAME>](<SOURCE_LINK>)
-           - Services:
-             - [<NAME>](<SOURCE_LINK>)
+
+        For packages, copy the package name along with the source URL.
+        For services, click on the module name to reveal more details, then copy the name and the URL from the `Declared in` field.
+
+        Example:
+          - Packages:
+            - [canaille](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/ca/canaille/package.nix#L134)
+          - Services:
+            - [services.canaille](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/services/security/canaille.nix)
+
+        > [!NOTE]
+        > Similar names will be returned by the search if no exact matches are found. 
+        > The most relevant entries at the top, so if you don't see anything that's related to the project there then it's likely not packaged in nixpkgs, yet.
+        >
+        > Example: Searching for Oku (web browser) might also return Okular (document viewver), which share a similar names, but which are totally unrelated.
+      value: |
+        - Packages:
+          - [<NAME>](<SOURCE_LINK>)
+        - Services:
+          - [<NAME>](<SOURCE_LINK>)
   - type: textarea
     id: extra
     attributes:
       label: Extra Information
-      description: >-
-        Anything interesting or helpful for packaging the project like notes,
-        issues or pull requests
+      description: |
+        Anything interesting or helpful for packaging the project like notes, issues or pull requests
