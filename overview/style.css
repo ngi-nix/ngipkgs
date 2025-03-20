@@ -1,9 +1,145 @@
+/* ExtraLight */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-ExtraLight.woff2') format('woff2'),
+         url('IBMPlexSans-ExtraLight.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-ExtraLightItalic.woff2') format('woff2'),
+         url('IBMPlexSans-ExtraLightItalic.otf') format('opentype');
+    font-weight: 200;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Light.woff2') format('woff2'),
+         url('IBMPlexSans-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-LightItalic.woff2') format('woff2'),
+         url('IBMPlexSans-LightItalic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* Regular */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Regular.woff2') format('woff2'),
+         url('IBMPlexSans-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Italic.woff2') format('woff2'),
+         url('IBMPlexSans-Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Medium */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Medium.woff2') format('woff2'),
+         url('IBMPlexSans-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-MediumItalic.woff2') format('woff2'),
+         url('IBMPlexSans-MediumItalic.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-SemiBold.woff2') format('woff2'),
+         url('IBMPlexSans-SemiBold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-SemiBoldItalic.woff2') format('woff2'),
+         url('IBMPlexSans-SemiBoldItalic.otf') format('opentype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Bold.woff2') format('woff2'),
+         url('IBMPlexSans-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-BoldItalic.woff2') format('woff2'),
+         url('IBMPlexSans-BoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* Thin */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Thin.woff2') format('woff2'),
+         url('IBMPlexSans-Thin.otf') format('opentype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-ThinItalic.woff2') format('woff2'),
+         url('IBMPlexSans-ThinItalic.otf') format('opentype');
+    font-weight: 100;
+    font-style: italic;
+}
+
+/* Text */
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-Text.woff2') format('woff2'),
+         url('IBMPlexSans-Text.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('IBMPlexSans-TextItalic.woff2') format('woff2'),
+         url('IBMPlexSans-TextItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+}
+
 body {
-	font-family: sans-serif;
+    font-family: "IBM Plex Sans";
 }
 body > section {
-	padding: 0.5cm 0 0.5cm 0;
+    padding: 0.5cm 0 0.5cm 0;
 }
 details > summary > h2, details > summary > h3 {
-	display: inline;
+    display: inline;
 }

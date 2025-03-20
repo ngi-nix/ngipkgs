@@ -235,6 +235,19 @@ let
         "$out/${path}"
     '';
 
+  fonts =
+    pkgs.runCommand "fonts"
+      {
+        nativeBuildInputs = with pkgs; [ woff2 ];
+      }
+      ''
+        mkdir -vp $out
+        cp -v ${pkgs.ibm-plex}/share/fonts/opentype/IBMPlexSans-* $out/
+        for otf in $out/*.otf; do
+          woff2_compress "$otf"
+        done
+      '';
+
 in
 pkgs.runCommand "overview"
   {
@@ -247,8 +260,9 @@ pkgs.runCommand "overview"
   }
   (
     ''
-      mkdir -v $out
+      mkdir -pv $out
       cp -v ${./style.css} $out/style.css
+      ln -s ${fonts} $out/fonts
     ''
     + (concatLines (mapAttrsToList writeHtmlCommand pages))
     + ''
