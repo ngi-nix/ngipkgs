@@ -144,6 +144,12 @@ details > summary > h2, details > summary > h3 {
     display: inline;
 }
 
+h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  font-style: italic;
+}
+
 .page-width {
   max-width: 55rem;
   margin: auto;
@@ -156,5 +162,9 @@ details > summary > h2, details > summary > h3 {
 
 /* Smartphone */
 @media (max-width: 50em) {
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
 }
 
