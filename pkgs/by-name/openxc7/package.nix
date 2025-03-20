@@ -31,30 +31,46 @@ let
       ;
   };
   nextpnr-xilinx-chipdb = {
-    artix7 = callPackage ./nix/nextpnr-xilinx-chipdb.nix {
-      backend = "artix7";
-      nixpkgs = pkgs;
-      inherit nextpnr-xilinx;
-      inherit prjxray;
-    };
-    kintex7 = callPackage ./nix/nextpnr-xilinx-chipdb.nix {
-      backend = "kintex7";
-      nixpkgs = pkgs;
-      inherit nextpnr-xilinx;
-      inherit prjxray;
-    };
-    spartan7 = callPackage ./nix/nextpnr-xilinx-chipdb.nix {
-      backend = "spartan7";
-      nixpkgs = pkgs;
-      inherit nextpnr-xilinx;
-      inherit prjxray;
-    };
-    zynq7 = callPackage ./nix/nextpnr-xilinx-chipdb.nix {
-      backend = "zynq7";
-      nixpkgs = pkgs;
-      inherit nextpnr-xilinx;
-      inherit prjxray;
-    };
+    artix7 =
+      (callPackage ./nix/nextpnr-xilinx-chipdb.nix {
+        backend = "artix7";
+        nixpkgs = pkgs;
+        inherit nextpnr-xilinx;
+        inherit prjxray;
+      }).overrideAttrs
+        (oa: {
+          pname = "${oa.pname}-artix7";
+        });
+    kintex7 =
+      (callPackage ./nix/nextpnr-xilinx-chipdb.nix {
+        backend = "kintex7";
+        nixpkgs = pkgs;
+        inherit nextpnr-xilinx;
+        inherit prjxray;
+      }).overrideAttrs
+        (oa: {
+          pname = "${oa.pname}-kintex7";
+        });
+    spartan7 =
+      (callPackage ./nix/nextpnr-xilinx-chipdb.nix {
+        backend = "spartan7";
+        nixpkgs = pkgs;
+        inherit nextpnr-xilinx;
+        inherit prjxray;
+      }).overrideAttrs
+        (oa: {
+          pname = "${oa.pname}-spartan7";
+        });
+    zynq7 =
+      (callPackage ./nix/nextpnr-xilinx-chipdb.nix {
+        backend = "zynq7";
+        nixpkgs = pkgs;
+        inherit nextpnr-xilinx;
+        inherit prjxray;
+      }).overrideAttrs
+        (oa: {
+          pname = "${oa.pname}-zynq7";
+        });
   };
 
   # Adapted from upstream's flake.nix outputs.devShell
@@ -136,6 +152,20 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
+
+  passthru.packages = {
+    inherit
+      nextpnr-xilinx
+      prjxray
+      fasm
+      ;
+    inherit (nextpnr-xilinx-chipdb)
+      artix7
+      kintex7
+      spartan7
+      zynq7
+      ;
+  };
 
   meta = {
     description = "Open-source FPGA toolchain for AMD/Xilinx Series 7 chips";
