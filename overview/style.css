@@ -143,3 +143,18 @@ body > section {
 details > summary > h2, details > summary > h3 {
     display: inline;
 }
+
+.page-width {
+  max-width: 55rem;
+  margin: auto;
+  padding: 1rem 0;
+}
+
+/* Desktop */
+@media (min-width: 50em) {
+}
+
+/* Smartphone */
+@media (max-width: 50em) {
+}
+

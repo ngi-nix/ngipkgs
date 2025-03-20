@@ -163,15 +163,30 @@ let
         '';
     };
 
+    metadata = rec {
+      one =
+        metadata:
+        (optionalString (metadata ? summary) ''
+          <p>
+            ${metadata.summary}
+          </p>
+        '')
+        + (optionalString (metadata ? subgrants) ''
+          ${render.subgrants.many metadata.subgrants}
+        '');
+    };
+
     projects = {
       one = name: project: ''
-        ${heading 1 name}
-        ${render.subgrants.many (project.metadata.subgrants or [ ])}
-        ${render.packages.many (pick.packages project)}
-        ${render.options.many (pick.options project)}
-        ${render.examples.many (pick.examples project)}
+        <article class="page-width">
+          ${heading 1 name}
+          ${render.metadata.one project.metadata}
+          ${render.packages.many (pick.packages project)}
+          ${render.options.many (pick.options project)}
+          ${render.examples.many (pick.examples project)}
+        </article>
       '';
-      # Many projects are renderes as links to their individual project sites
+      # Many projects are rendered as links to their individual project sites
       many =
         projects:
         concatLines (
@@ -184,8 +199,11 @@ let
 
   # The top-level overview for all projects
   index = pkgs.writeText "index.html" ''
-    ${heading 1 "NGIpkgs Overview"}
-    ${render.projects.many projects}
+    <article class="page-width">
+      # NGIpkgs Overview
+
+      ${render.projects.many projects}
+    </article>
 
     <hr>
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
