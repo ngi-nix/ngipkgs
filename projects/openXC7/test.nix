@@ -1,9 +1,13 @@
 {
+  lib,
   sources,
   ...
 }:
 {
   name = "openxc7";
+
+  # Can't mark this broken or conditionally define the test based on openxc7
+  # availability, so stub it out in those situations
 
   nodes = {
     machine =
@@ -13,8 +17,15 @@
           sources.modules.ngipkgs
           sources.modules.programs.openxc7
           sources.examples.openXC7.openxc7
-        ];
 
+          # If openxc7 unavailable, don't pull in
+          (
+            { pkgs, lib, ... }:
+            {
+              programs.openxc7.enable = lib.mkForce (!pkgs.openxc7.meta.broken);
+            }
+          )
+        ];
         # Running OOM while building
         virtualisation.memorySize = 4096;
 
@@ -36,13 +47,18 @@
 
   testScript =
     { nodes, ... }:
-    ''
-      start_all()
+    if (nodes.machine.programs.openxc7.enable) then
+      ''
+        start_all()
 
-      # We need it writable
-      machine.succeed("cp -Lr --no-preserve=all /etc/demo-projects /root/demo-projects >&2")
+        # We need it writable
+        machine.succeed("cp -Lr --no-preserve=all /etc/demo-projects /root/demo-projects >&2")
 
-      # Build an example
-      machine.succeed("openxc7-env -c -- 'make -C /root/demo-projects/blinky-qmtech >&2'")
-    '';
+        # Build an example
+        machine.succeed("openxc7-env -c -- 'make -C /root/demo-projects/blinky-qmtech >&2'")
+      ''
+    else
+      ''
+        log.info("NOTE: This test was stubbed out, because a dependency of openXC7 is unavailable on this platform")
+      '';
 }
