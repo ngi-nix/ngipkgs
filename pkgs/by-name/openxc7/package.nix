@@ -7,6 +7,7 @@
   writeShellApplication,
   bashInteractive,
   ghdl,
+  gnat-bootstrap,
   makeWrapper,
   openfpgaloader,
   pkgs,
@@ -143,5 +144,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     license = lib.licenses.mit;
     inherit (shellScript.meta) mainProgram;
     platforms = lib.platforms.linux;
+    # ghdl -> gnat -> gnat-bootstrap only available for very specific platforms
+    # Mark broken if bootstrapping gnat is unavailable, to keep CI green
+    broken = !lib.meta.availableOn stdenvNoCC.hostPlatform gnat-bootstrap;
   };
 })
