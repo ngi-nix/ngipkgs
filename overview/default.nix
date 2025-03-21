@@ -200,12 +200,30 @@ let
   # The top-level overview for all projects
   index = pkgs.writeText "index.html" ''
     <article class="page-width">
-      # NGIpkgs Overview
+    # NGIpgks
 
-      ${render.projects.many projects}
+    NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
+
+    This service is still <strong>experimental</strong> and under heavy development.
+    Don't expect anything specific to work yet:
+
+    - The package collection is far incomplete
+    - Many packages lack crucial components
+    - There are no instructions for getting started
+    - How software and the corresponding Nix expressions are exposed is subject to change
+
+    More information about the project:
+
+    - [Source code](https://github.com/ngi-nix/ngipkgs)
+    - [Issue tracker](https://github.com/ngi-nix/summer-of-nix/issues/41)
+    - [Nix@NGI team](https://nixos.org/community/teams/ngi/)
+
+    ---
+
+    ${render.projects.many projects}
+
     </article>
 
-    <hr>
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 
@@ -213,7 +231,7 @@ let
   pages =
     {
       "index.html" = {
-        pagetitle = "NGIpkgs Overview";
+        pagetitle = "NGIpkgs software repository";
         html = index;
       };
     }
