@@ -280,7 +280,7 @@ let
       }
       ''
         mkdir -vp $out
-        cp -v ${pkgs.ibm-plex}/share/fonts/opentype/IBMPlexSans-* $out/
+        cp -v ${pkgs.ibm-plex}/share/fonts/opentype/IBMPlex{Sans,Mono}-* $out/
         for otf in $out/*.otf; do
           woff2_compress "$otf"
         done
