@@ -39,6 +39,17 @@ let
     (attrs any)
   ];
 
+  libraryType = struct "library" {
+    name = option string;
+    data = option (either absPath drv);
+  };
+
+  languageType = struct "language" {
+    extensions = struct "extensions" {
+      libraries = optionalAttrs libraryType;
+    };
+  };
+
   # TODO: plugins are actually component *extensions* that are of component-specific type,
   #       and which compose in application-specific ways defined in the application module.
   #       we can't express that with yants, but with the module system, which gives us a bit of dependent typing.
@@ -85,6 +96,7 @@ rec {
     metadata = optionalStruct {
       summary = option string;
       subgrants = list string;
+      links = optionalAttrs (option urlType);
     };
     nixos = struct "nixos" {
       # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
@@ -103,6 +115,11 @@ rec {
       # we can still reduce granularity and move all examples to the application level.
       examples = option (attrs exampleType);
     };
+
+    # better written using the module system?
+    nix = option languageType;
+    rust = option languageType;
+    python = option languageType;
   };
 
   example = project {
