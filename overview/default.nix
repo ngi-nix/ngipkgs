@@ -151,16 +151,14 @@ let
     subgrants = rec {
       one = subgrant: ''
         <li>
-          <https://nlnet.nl/project/${subgrant}>
+          [${subgrant}](https://nlnet.nl/project/${subgrant})
         </li>
       '';
-      many =
-        subgrants:
-        optionalString (subgrants != [ ]) ''
-          <ul>
-            ${concatLines (map one subgrants)}
-          </ul>
-        '';
+      many = subgrants: ''
+        <ul>
+          ${concatLines (map one subgrants)}
+        </ul>
+      '';
     };
 
     metadata = rec {
@@ -171,8 +169,12 @@ let
             ${metadata.summary}
           </p>
         '')
-        + (optionalString (metadata ? subgrants) ''
-          ${render.subgrants.many metadata.subgrants}
+        + (optionalString (metadata ? subgrants && metadata.subgrants != [ ]) ''
+          <p>
+            This project is funded through these NGI subgrants:
+
+            ${render.subgrants.many metadata.subgrants}
+          </p>
         '');
     };
 
