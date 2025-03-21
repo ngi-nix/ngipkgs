@@ -32,6 +32,8 @@ let
     recursiveUpdate
     mapAttrs'
     nameValuePair
+    take
+    drop
     ;
 
   empty =
@@ -74,34 +76,36 @@ let
   render = {
     options = rec {
       one =
-        option:
+        prefixLength: option:
         let
           maybeDefault = optionalString (option ? default.text) "`${option.default.text}`";
         in
         ''
-          <dt>`${join "." option.loc}`</dt>
-          <dd>
-            <table>
-              <tr>
-                <td>Description:</td>
-                <td>${option.description}</td>
-              </tr>
-              <tr>
-                <td>Type:</td>
-                <td>`${option.type}`</td>
-              </tr>
-              <tr>
-                <td>Default:</td>
-                <td>${maybeDefault}</td>
-              </tr>
-            </table>
+          <dt class="option-name">
+            <span class="option-prefix">${join "." (take prefixLength option.loc)}.</span><span>${join "." (drop prefixLength option.loc)}</span>
+          </dt>
+          <dd class="option-body">
+            <div class="option-description">
+            ${option.description}
+            </div>
+            <dl>
+              <dt>Type:</dt>
+              <dd class="option-type">`${option.type}`</dd>
+              <dt>Default:</dt>
+              <dd class="option-default">${maybeDefault}</dd>
+            </dl>
           </dd>
         '';
       many =
         projectOptions:
+        let
+          # The length of the attrs path that is common to all options
+          # TODO: calculate automatically
+          prefixLength = 2;
+        in
         optionalString (!empty projectOptions) ''
           <section><details><summary>${heading 3 "Options"}</summary><dl>
-          ${concatLines (map one projectOptions)}
+          ${concatLines (map (one prefixLength) projectOptions)}
           </dl></details></section>
         '';
     };
@@ -154,11 +158,13 @@ let
           [${subgrant}](https://nlnet.nl/project/${subgrant})
         </li>
       '';
-      many = subgrants: ''
-        <ul>
-          ${concatLines (map one subgrants)}
-        </ul>
-      '';
+      many =
+        subgrants:
+        optionalString (!empty subgrants) ''
+          <ul>
+            ${concatLines (map one subgrants)}
+          </ul>
+        '';
     };
 
     metadata = rec {
