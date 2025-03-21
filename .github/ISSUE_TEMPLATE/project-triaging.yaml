@@ -69,16 +69,18 @@ body:
             - Language/Framework: Java
             - Dependency management: Gradle
             - Nix development environment:
-
-        > [!NOTE]
-        > Use your best judgment to gather information about the project.
-        > If you're uncertain about something, try using a search engine.
-        > If you're still unsure after that, it's okay to leave it empty and move on.
       value: |
         - <REPOSITORY_LINK>
           - Language/Framework:
           - Dependency management:
           - Nix development environment:
+  - type: "markdown"
+    attributes:
+      value: |
+        > [!NOTE]
+        > Use your best judgment to gather information about the project.
+        > If you're uncertain about something, try using a search engine.
+        > If you're still unsure after that, it's okay to leave it empty and move on.
   - type: textarea
     id: documentation
     attributes:
@@ -98,9 +100,6 @@ body:
         - Other:
            - Wiki
            - Notes
-
-        > [!NOTE]
-        > This information might be available in the source repositories as well.
       value: |
         - Usage Examples:
           -
@@ -108,6 +107,11 @@ body:
           -
         - Other:
           -
+  - type: "markdown"
+    attributes:
+      value: |
+        > [!NOTE]
+        > This information might be available in the source repositories as well.
   - type: textarea
     id: artefacts
     attributes:
@@ -153,17 +157,19 @@ body:
             - [canaille](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/ca/canaille/package.nix#L134)
           - Services:
             - [services.canaille](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/services/security/canaille.nix)
-
-        > [!NOTE]
-        > Similar names will be returned by the search if no exact matches are found. 
-        > The most relevant entries at the top, so if you don't see anything that's related to the project there then it's likely not packaged in nixpkgs, yet.
-        >
-        > Example: Searching for Oku (web browser) might also return Okular (document viewver), which share a similar names, but which are totally unrelated.
       value: |
         - Packages:
           - [<NAME>](<SOURCE_LINK>)
         - Services:
           - [<NAME>](<SOURCE_LINK>)
+  - type: "markdown"
+    attributes:
+      value: |
+        > [!NOTE]
+        > Similar names will be returned by the search if no exact matches are found. 
+        > The most relevant entries at the top, so if you don't see anything that's related to the project there then it's likely not packaged in nixpkgs, yet.
+        >
+        > Example: Searching for Oku (web browser) might also return Okular (document viewver), which share a similar names, but which are totally unrelated.
   - type: textarea
     id: extra
     attributes:
