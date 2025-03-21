@@ -10,14 +10,14 @@ let
     licenses
     ;
 in
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "atomic-server";
   version = "0.40.0";
 
   src = fetchFromGitHub {
     owner = "atomicdata-dev";
     repo = "atomic-server";
-    rev = "v${version}";
+    rev = "v${finalAttrs.version}";
     hash = "sha256-iZRKgRQL/+6RavFMWEugpd8+sWgXgE+itqak5BZe51s=";
   };
 
@@ -42,4 +42,4 @@ rustPlatform.buildRustPackage rec {
     license = licenses.mit;
     mainProgram = "atomic-server";
   };
-}
+})
