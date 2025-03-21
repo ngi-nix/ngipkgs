@@ -15,7 +15,9 @@
       description = ''
         To enable experimental Namecoin resolution with Tor Browser, run:
 
+        ```shell-session
         TOR_ENABLE_NAMECOIN=1 tor-browser
+        ```
       '';
       path = ./examples/tor-browser-temporary.nix;
       documentation = "https://www.namecoin.org/download/#tor-browser";
