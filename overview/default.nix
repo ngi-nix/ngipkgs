@@ -84,7 +84,7 @@ let
             <table>
               <tr>
                 <td>Description:</td>
-                <td>${lib.escapeXML option.description}</td>
+                <td>${option.description}</td>
               </tr>
               <tr>
                 <td>Type:</td>
