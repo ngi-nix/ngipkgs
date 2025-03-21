@@ -21,7 +21,9 @@ let
   };
 in
 {
-  name = "libervia";
+  name = "Libervia-backend";
+
+  passthru.xmppMessage = xmppMessage;
 
   nodes = {
     server =
@@ -94,8 +96,7 @@ in
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.libervia
-          sources.examples.Libervia.base
-          # can't test Libervia/unfree, enabling unfree derivations breaks nixosTests eval
+          sources.examples.Libervia.backend
         ];
 
         # Need an actual logged-in user to test with
@@ -166,8 +167,6 @@ in
           # Small script to register our test user in prosody
           systemPackages = [
             setup-initial-libervia-user
-            pkgs.firefox
-            pkgs.xdotool
           ];
         };
       };
@@ -243,28 +242,5 @@ in
           machine.send_chars("libervia-cli message mam | tee -a ~/frontend.log\n")
           machine.wait_for_console_text("${xmppUser}> ${xmppMessage}") # first log, us sending the message to ourself
           machine.wait_for_console_text("${xmppUser}> ${xmppMessage}") # second log, us receicing the message from ourself
-
-      next_workspace()
-
-      with subtest("libervia-desktop-kivy works"):
-          # Start it
-          spawn_terminal()
-          machine.send_chars("libervia-desktop-kivy 2>&1 | tee -a ~/desktop.log\n")
-          machine.wait_for_text("Select a profile")
-          machine.send_key("alt-f10")
-
-          # Log in as alice
-          machine.succeed("sudo -su alice xdotool mousemove 518 163 click 1")
-          machine.sleep(2)
-          machine.succeed("sudo -su alice xdotool mousemove 509 721 click 1")
-          machine.wait_for_text("chat")
-
-          # Enter chat
-          machine.succeed("sudo -su alice xdotool mousemove 493 199 click 1")
-          machine.wait_for_text("Your contacts")
-
-          # Open conversation with ourselves
-          machine.succeed("sudo -su alice xdotool mousemove 80 148 click 1")
-          machine.wait_for_text("${xmppMessage}")
     '';
 }
