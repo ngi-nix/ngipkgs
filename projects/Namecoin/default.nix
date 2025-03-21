@@ -5,11 +5,11 @@
 }:
 {
   nixos = {
-    modules.services.namecoind = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/namecoind.nix";
-    modules.services.ncdns = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ncdns.nix";
-    modules.nixos.programs.electrum-nmc = null;
+    modules.services.namecoind.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/namecoind.nix";
+    modules.services.ncdns.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ncdns.nix";
+    modules.programs.electrum-nmc = null;
     # the namecoind service module does not add namecoin commands to the environment
-    modules.nixos.programs.namecoin = null;
+    modules.programs.namecoin = null;
 
     examples.tor-browser-temporary = {
       description = ''
@@ -19,22 +19,26 @@
         TOR_ENABLE_NAMECOIN=1 tor-browser
         ```
       '';
-      path = ./examples/tor-browser-temporary.nix;
-      documentation = "https://www.namecoin.org/download/#tor-browser";
+      module = ./examples/tor-browser-temporary.nix;
+      links.documentation.text = "Tor Browser";
+      links.documentation.url = "https://www.namecoin.org/download/#tor-browser";
+      tests.tor-browser-temporary = null;
     };
 
     examples.tor-browser-permanent = {
       description = ''
         It is also possible to permanently enable experimental Namecoin resolution with Tor Browser.
       '';
-      documentation = "https://www.namecoin.org/download/#tor-browser";
-      path = ./examples/tor-browser-permanent.nix;
+      links.documentation.text = "Tor Browser";
+      links.documentation.url = "https://www.namecoin.org/download/#tor-browser";
+      module = ./examples/tor-browser-permanent.nix;
+      tests.tor-browser-permanent = null;
     };
 
     tests.ncdns = "${sources.inputs.nixpkgs}/nixos/tests/ncdns.nix";
   };
 
-  subgrants = [
+  metadata.subgrants = [
     "Namecoin-ZeroNet"
     "NamecoinCore"
     "Namecoin-Electrum-NMC"
