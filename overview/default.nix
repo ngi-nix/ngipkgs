@@ -204,13 +204,13 @@ let
 
     NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
 
-    This service is still <strong>experimental</strong> and under heavy development.
-    Don't expect anything specific to work yet:
+    This service is still <strong>experimental</strong> and under active development.
+    While there’s still more to improve, we’ve made progress:
 
-    - The package collection is far incomplete
-    - Many packages lack crucial components
-    - There are no instructions for getting started
-    - How software and the corresponding Nix expressions are exposed is subject to change
+    - The package collection is steadily growing
+    - Many packages are in development, with ongoing efforts to complete their components
+    - We’re preparing instructions to make getting started as smooth as possible
+    - The way to expose our software and its Nix expressions is evolving, as we continue to refine the user experience
 
     More information about the project:
 
