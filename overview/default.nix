@@ -100,9 +100,9 @@ let
       many =
         projectOptions:
         optionalString (!empty projectOptions) ''
-          <section><details><summary>${heading 3 "Options"}</summary><dl>
+          <details><summary>Options</summary><dl>
           ${concatLines (map one projectOptions)}
-          </dl></details></section>
+          </dl></details>
         '';
     };
 
@@ -121,9 +121,9 @@ let
       many =
         packages:
         optionalString (!empty packages) ''
-          <section><details><summary>${heading 3 "Packages"}</summary><dl>
+          <details><summary>Packages</summary><dl>
           ${concatLines (map one packages)}
-          </dl></details></section>
+          </dl></details>
         '';
     };
 
@@ -142,9 +142,9 @@ let
       many =
         examples:
         optionalString (!empty examples) ''
-          <section><details><summary>${heading 3 "Examples"}</summary><ul>
+          <details><summary>Examples</summary><ul>
           ${concatLines (map one examples)}
-          </ul></details></section>
+          </ul></details>
         '';
     };
 
@@ -191,7 +191,7 @@ let
         projects:
         concatLines (
           mapAttrsToList (name: _: ''
-            <a href="/project/${name}">${name}</a>
+            <a href="./project/${name}.html">${name}</a>
           '') projects
         );
     };
@@ -237,9 +237,9 @@ let
     }
     // mapAttrs' (
       name: project:
-      nameValuePair "project/${name}/index.html" {
+      nameValuePair "project/${name}.html" {
         pagetitle = "NGIpkgs | ${name}";
-        html = pkgs.writeText "index.html" (render.projects.one name project);
+        html = pkgs.writeText "${name}.html" (render.projects.one name project);
       }
     ) projects;
 
@@ -262,7 +262,7 @@ let
         --from=markdown+raw_html \
         --to=html \
         --standalone \
-        --css="/style.css" \
+        --css="./style.css" \
         --metadata-file=${metadata} \
         --output="$out/${path}" ${html}
 
