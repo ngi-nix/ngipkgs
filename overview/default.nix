@@ -200,7 +200,7 @@ let
   # The top-level overview for all projects
   index = pkgs.writeText "index.html" ''
     <article class="page-width">
-    # NGIpgks
+    # NGIpkgs
 
     NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
 
