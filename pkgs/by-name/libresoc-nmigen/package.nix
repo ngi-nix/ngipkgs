@@ -17,6 +17,15 @@ let
             hash = "sha256-b8O/DrDWAbD6ht9M762fFN6kPtV8hAbn1gAN9SS7H5g=";
           };
         });
+        tomli = super.tomli.overridePythonAttrs (old: rec {
+          version = "2.0.1";
+          src = fetchFromGitHub {
+            owner = "hukkin";
+            repo = "tomli";
+            rev = version;
+            hash = "sha256-v0ZMrHIIaGeORwD4JiBeLthmnKZODK5odZVL0SY4etA=";
+          };
+        });
       };
     in
     python39.override {
