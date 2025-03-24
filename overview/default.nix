@@ -171,7 +171,7 @@ let
         '')
         + (optionalString (metadata ? subgrants && metadata.subgrants != [ ]) ''
           <p>
-            This project is funded through these NGI subgrants:
+            This project is funded by NLnet through these subgrants:
 
             ${render.subgrants.many metadata.subgrants}
           </p>
