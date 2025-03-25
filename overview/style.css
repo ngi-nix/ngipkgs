@@ -274,6 +274,7 @@
 
 body {
     font-family: "IBM Plex Sans";
+    padding-bottom: 25em;
 }
 body > section {
     padding: 0.5cm 0 0.5cm 0;
@@ -291,6 +292,23 @@ details > summary > h2, details > summary > h3 {
 h1 {
   font-size: 4rem;
   font-weight: 700;
+}
+
+a.heading {
+  text-decoration: none;
+  color: inherit;
+}
+
+h2:hover .anchor {
+    visibility: visible;
+    opacity: 1;
+}
+
+.anchor {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 75%;
 }
 
 .page-width {
@@ -330,7 +348,7 @@ article.project .deliverable-tag {
 
 .option-name {
   font-weight: 600;
-  font-family: "IBMPlexMono";
+  font-family: "IBM Plex Mono";
 }
 
 .option-readonly {

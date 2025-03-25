@@ -119,7 +119,13 @@
         rec {
           packages = ngipkgs // {
             overview = import ./overview {
-              inherit lib lib' self;
+              inherit
+                lib
+                lib'
+                self
+                nixpkgs
+                system
+                ;
               pkgs = pkgs // ngipkgs;
               projects = ngiProjects;
               options = optionsDoc.optionsNix;

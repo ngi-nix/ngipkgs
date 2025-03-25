@@ -2,9 +2,11 @@
   lib,
   lib',
   options,
+  nixpkgs,
   pkgs,
   projects,
   self,
+  system,
 }:
 let
   inherit (builtins)
@@ -14,6 +16,7 @@ let
     concatStringsSep
     filter
     isList
+    isInt
     readFile
     substring
     toJSON
@@ -30,17 +33,35 @@ let
     mapAttrsToList
     optionalString
     recursiveUpdate
+    filterAttrs
     mapAttrs'
     nameValuePair
     take
     drop
+    splitString
+    intersperse
     ;
 
   empty =
     xs:
     assert isList xs;
     xs == [ ];
-  heading = i: text: "<h${toString i}>${text}</h${toString i}>";
+  heading =
+    i: anchor: text:
+    assert (isInt i && i > 0);
+    if i == 1 then
+      ''
+        <h1>${text}</h1>
+      ''
+    else
+      ''
+        <a class="heading" href="#${anchor}">
+          <h${toString i} data-url="#${anchor}">
+            ${text}
+            <span class="anchor">¶</span>
+          </h${toString i}>
+        </a>
+      '';
 
   # Splits a compressed date up into ISO 8601
   lastModified =
@@ -71,7 +92,7 @@ let
         );
       in
       filter (option: any ((flip hasPrefix) (join "." option.loc)) spec) (attrValues options);
-    examples = project: attrValues project.nixos.examples;
+    examples = project: attrValues (filterAttrs (name: _: name != "demo") project.nixos.examples);
   };
 
   # This doesn't actually produce a HTML string but a Jinja2 template string
@@ -116,7 +137,8 @@ let
           prefixLength = 2;
         in
         optionalString (!empty projectOptions) ''
-          <section><details><summary>${heading 3 "Options"}</summary><dl>
+          ${heading 2 "options" "Options"}
+          <section><details><summary><code>services.cryptpad</code></summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
           </dl></details></section>
         '';
@@ -124,20 +146,17 @@ let
 
     examples = rec {
       one = example: ''
-        <li>
-
-        ${example.description}
+        <section><details><summary>${example.description}</summary>
 
         <pre><code>${readFile example.module}</code></pre>
 
-        </li>
+        </details></section>
       '';
       many =
         examples:
         optionalString (!empty examples) ''
-          <section><details><summary>${heading 3 "Examples"}</summary><ul>
+          ${heading 2 "examples" "Examples"}
           ${concatLines (map one examples)}
-          </ul></details></section>
         '';
     };
 
@@ -176,8 +195,11 @@ let
     # The indivdual page of a project
     projects.one = name: project: ''
       <article class="page-width">
-        ${heading 1 name}
+        ${heading 1 null name}
         ${render.metadata.one project.metadata}
+        ${optionalString (project.nixos.examples ? demo) (
+          render.serviceDemo.one project.nixos.examples.demo
+        )}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
       </article>
@@ -221,12 +243,67 @@ let
         '';
       many = projects: concatLines (mapAttrsToList one projects);
     };
+
+    # TODO wrap
+    demoGlue.one = exampleText: ''
+      # default.nix
+      {
+        # Aquire the latest NGIpkgs source
+        ngipkgs ? import (builtins.fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
+      }:
+      # Run a function that takes your system configuration and
+      # builds a VM start script for it
+      ngipkgs.demo (
+        # The system configuration for the demo.
+        # Feel free to play around with this section.
+        # You can use any NGIpkgs or NixOS option here.
+        ${toString (intersperse "\n " (splitString "\n" exampleText))}
+      )
+    '';
+
+    serviceDemo.one =
+      example:
+      let
+        demoSystem = import (nixpkgs + "/nixos/lib/eval-config.nix") {
+          inherit system;
+          modules = [ example.module ];
+        };
+        openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
+        # The port that is forwarded to the host so that the user can access the demo service.
+        servicePort = (builtins.head openPorts) + 10000;
+      in
+      ''
+        ${heading 2 "demo" "Run a demo deployment locally"}
+
+        <p>
+        Services utilising the NixOS module system generally only run on NixOS.
+        If you want to see a quick demo of this project, follow these steps to
+        run a preconfigured and tested KVM image on your system.
+        </p>
+
+        <ol>
+          <li><strong>Install Nix on your platform.</strong></li>
+          <li>
+            <strong>Download this Nix file on your computer.</strong> It contains some glue code
+            and the NixOS configuration that defines the demo system.
+            <pre><code>${render.demoGlue.one (readFile example.module)}</code></pre>
+          </li>
+          <li>
+            <strong>Build the VM start script</strong> defined in <code>default.nix</code> and run it
+            <pre><code>nix-build && ./result</code></pre>
+          </li>
+          <li>
+            <strong>Access the service</strong> from a browser on your host:
+            <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a>
+          </li>
+        </ol>
+      '';
   };
 
   # The top-level overview for all projects
   index = ''
     <section class="page-width">
-      ${heading 1 "NGIpkgs"}
+      ${heading 1 null "NGIpkgs"}
 
       <p>
         NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
@@ -267,26 +344,30 @@ let
     <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 
-  # Every HTML page that we generate
-  pages =
-    {
-      "index.html" = {
-        pagetitle = "NGIpkgs software repository";
-        content = index;
-        summary = ''
-          NGIpkgs is collection of software applications funded by the Next
-          Generation Internet initiative and packaged for NixOS. 
-        '';
-      };
+  # HTML project pages
+  projectPages = mapAttrs' (
+    name: project:
+    nameValuePair "project/${name}" {
+      pagetitle = "NGIpkgs | ${name}";
+      content = render.projects.one name project;
+      summary = project.metadata.summary or null;
+      demoFile =
+        if project.nixos.examples ? demo then
+          (pkgs.writeText "default.nix" (render.demoGlue.one (readFile project.nixos.examples.demo.module)))
+        else
+          null;
     }
-    // mapAttrs' (
-      name: project:
-      nameValuePair "project/${name}/index.html" {
-        pagetitle = "NGIpkgs | ${name}";
-        content = render.projects.one name project;
-        summary = project.metadata.summary or null;
-      }
-    ) projects;
+  ) projects;
+
+  # The summary page at the overview root
+  indexPage = {
+    pagetitle = "NGIpkgs software repository";
+    content = index;
+    summary = ''
+      NGIpkgs is collection of software applications funded by the Next
+      Generation Internet initiative and packaged for NixOS. 
+    '';
+  };
 
   htmlFile =
     path:
@@ -313,10 +394,15 @@ let
     '';
 
   # Ensure that directories exist and render the jinja2 template that we composed with Nix so far
-  writeHtmlCommand = path: htmlFile: ''
-    mkdir -p "$out/$(dirname '${path}')"
-    python3 ${./render-template.py} '${htmlFile}' "$out/${path}"
-  '';
+  writeProjectCommand =
+    path: page:
+    ''
+      mkdir -p "$out/${path}"
+      python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
+    ''
+    + optionalString (page.demoFile != null) ''
+      ln -s '${page.demoFile}' "$out/${path}/default.nix"
+    '';
 
   fonts =
     pkgs.runCommand "fonts"
@@ -350,8 +436,9 @@ pkgs.runCommand "overview"
       mkdir -pv $out
       cp -v ${./style.css} $out/style.css
       ln -s ${fonts} $out/fonts
+      python3 ${./render-template.py} '${htmlFile "" indexPage}' "$out/index.html"
     ''
-    + (concatLines (mapAttrsToList (path: v: writeHtmlCommand path (htmlFile path v)) pages))
+    + (concatLines (mapAttrsToList (path: page: writeProjectCommand path page) projectPages))
     + ''
 
       vnu -Werror --format json $out/*.html | jq
