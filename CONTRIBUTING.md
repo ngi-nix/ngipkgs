@@ -162,7 +162,8 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    nix build .#checks.x86_64-linux.packages/<package_name>
    ```
 
-6. The build will fail because the hashes are empty, but it will return the correct hash. Replace the empty hash with the correct hash and build again. Example:
+1. The build will fail because the hashes are empty, but it will return the correct hash.
+   Replace the empty hash with the correct hash and build again. Example:
 
    ```
    error: hash mismatch in fixed-output derivation '/nix/store/xxkj74gnza5rw5xyawzvlafbvbb76qdq-source.drv':
@@ -171,7 +172,10 @@ Instead, write one sentence per line, as this makes it easier to review changes.
                got:    sha256-oAsyv10BcmInvlZMzc/vJEJT9r+q/Rosm19EyblIDCM=
    ```
 
-7. Verify that it works, if possible (at least with `--version`)
+1. Make sure that all vendored hashes are also updated as well (e.g. cargoHash, npmDepsHash, ...)
+
+1. After the build succeeds, verify that the package works, if possible.
+   This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
 
 ## Triaging an NGI project
 
