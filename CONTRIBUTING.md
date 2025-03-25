@@ -145,7 +145,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 1. Open the package's homepage or source repository and check if a new version is available, which can be the latest release tag or the commit revision.
    This information is usually available from the `meta.homepage` attribute, but can also be found in `src` as well.
 
-1. Replace the `version` attribute in the derivation with the new version, but make sure that the package versioning fits the [nixpkgs guidelines](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#versioning).
+1. Replace the `version` attribute in the derivation with the new version, but make sure that the package versioning fits the [Nixpkgs guidelines](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#versioning).
 
 1. Replace hashes with empty strings. Example:
 
