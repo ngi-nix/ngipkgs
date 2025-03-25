@@ -6,7 +6,7 @@
 }:
 rec {
   name = "corestore-${version}";
-  version = "6.15.9";
+  version = "7.0.23";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
@@ -18,7 +18,7 @@ rec {
       owner = "holepunchto";
       repo = "corestore";
       rev = "v${version}";
-      sha256 = "sha256-18FKwP0XHoq/F8oF8BCLlul/Xb30sd0iOWuiKkzpPLI=";
+      sha256 = "sha256-oAsyv10BcmInvlZMzc/vJEJT9r+q/Rosm19EyblIDCM=";
     };
 
     doCheck = true;
@@ -41,6 +41,7 @@ rec {
         stdenv
         ;
 
+      # Update to Node.js 22
       npm = nixpkgs.nodejs_16.pkgs.npm;
     };
 
