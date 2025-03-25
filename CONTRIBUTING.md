@@ -134,6 +134,45 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    Respond to review comments, potential CI failures, and potential merge conflicts by updating the pull request.
    Always keep the pull request in a mergeable state.
 
+## How to update a package
+
+1. To update a package, open the `pkgs/by-name/some-package/package.nix` in your text editor, where `some-package` will be the package attribute name.
+
+   ```ShellSession
+   $EDITOR pkgs/by-name/some-package/package.nix
+   ```
+
+1. Open the package's homepage or source repository and check if a new version is available, which can be the latest release tag or the commit revision.
+   This information is usually available from the `meta.homepage` attribute, but can also be found in `src` as well.
+
+1. Replace the `version` attribute in the derivation with the new version, but make sure that the package versioning fits the [nixpkgs guidelines](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#versioning).
+
+1. Replace hashes with empty strings. Example:
+
+   ```nix
+   sha256 = "sha256-18FKwP0XHoq/F8oF8BCLlul/Xb30sd0iOWuiKkzpPLI=";
+     |
+     v
+   sha256 = "";
+   ```
+
+1. Build the package
+
+   ```
+   nix build .#checks.x86_64-linux.packages/<package_name>
+   ```
+
+6. The build will fail because the hashes are empty, but it will return the correct hash. Replace the empty hash with the correct hash and build again. Example:
+
+   ```
+   error: hash mismatch in fixed-output derivation '/nix/store/xxkj74gnza5rw5xyawzvlafbvbb76qdq-source.drv':
+           likely URL: https://github.com/holepunchto/corestore/archive/v7.0.23.tar.gz
+            specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+               got:    sha256-oAsyv10BcmInvlZMzc/vJEJT9r+q/Rosm19EyblIDCM=
+   ```
+
+7. Verify that it works, if possible (at least with `--version`)
+
 ## Triaging an NGI project
 
 The following information is needed to [open an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs/issues/new?template=project-triaging.yaml):
