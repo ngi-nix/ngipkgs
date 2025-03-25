@@ -1,4 +1,9 @@
-{ ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   servicePort = 9000;
   domainName = "localhost:${toString servicePort}";
