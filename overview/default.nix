@@ -14,6 +14,7 @@ let
     concatStringsSep
     filter
     isList
+    isInt
     readFile
     substring
     toJSON
@@ -40,7 +41,22 @@ let
     xs:
     assert isList xs;
     xs == [ ];
-  heading = i: text: "<h${toString i}>${text}</h${toString i}>";
+  heading =
+    i: anchor: text:
+    assert (isInt i && i > 0);
+    if i == 1 then
+      ''
+        <h1>${text}</h1>
+      ''
+    else
+      ''
+        <a class="heading" href="#${anchor}">
+          <h${toString i} data-url="#${anchor}">
+            ${text}
+            <span class="anchor">¶</span>
+          </h${toString i}>
+        </a>
+      '';
 
   # Splits a compressed date up into ISO 8601
   lastModified =
@@ -106,7 +122,8 @@ let
           prefixLength = 2;
         in
         optionalString (!empty projectOptions) ''
-          <section><details><summary>${heading 3 "Options"}</summary><dl>
+          ${heading 2 "options" "Options"}
+          <section><details><summary>`services.cryptpad`</summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
           </dl></details></section>
         '';
@@ -127,7 +144,7 @@ let
       many =
         packages:
         optionalString (!empty packages) ''
-          <section><details><summary>${heading 3 "Packages"}</summary><dl>
+          <section><details><summary>${heading 2 "packages" "Packages"}</summary><dl>
           ${concatLines (map one packages)}
           </dl></details></section>
         '';
@@ -135,20 +152,17 @@ let
 
     examples = rec {
       one = example: ''
-        <li>
-
-        ${example.description}
+        <section><details><summary>${example.description}</summary>
 
         <pre><code>${readFile example.path}</code></pre>
 
-        </li>
+        </details></section>
       '';
       many =
         examples:
         optionalString (!empty examples) ''
-          <section><details><summary>${heading 3 "Examples"}</summary><ul>
+          ${heading 2 "examples" "Examples"}
           ${concatLines (map one examples)}
-          </ul></details></section>
         '';
     };
 
@@ -187,8 +201,11 @@ let
     projects = {
       one = name: project: ''
         <article class="page-width">
-          ${heading 1 name}
+          ${heading 1 null name}
           ${render.metadata.one project.metadata}
+          ${optionalString (project.nixos.examples ? demo) (
+            render.serviceDemo.one project.nixos.examples.demo
+          )}
           ${render.packages.many (pick.packages project)}
           ${render.options.many (pick.options project)}
           ${render.examples.many (pick.examples project)}
@@ -205,6 +222,22 @@ let
           '') projects
         );
     };
+
+    serviceDemo.one = example: ''
+      ${heading 2 "demo" "Run a demo deployment locally"}
+
+      Services utilising the NixOS module system generally only run on NixOS.
+      If you want to see a quick demo of this project, follow these steps to
+      run a preconfigured and tested V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ image on your system.
+
+      1. Download the preconfigured image [h̷e̸r̶e̴]().
+      2. Install V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ on your system.
+      3. Run the V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ image
+         ```console
+         $ L̴O̷A̵D̵ ̴"̵*̵"̵,̵8̵,̴1̵
+         ```
+      4. Access the service from a browser on your host: [h̶t̵t̵p̴:̸/̷/̵c̵r̸y̸p̴t̵p̶a̶d̵.̶l̶o̶c̵a̴l̵h̷o̴s̸t̶:̶8̸0̷8̵0̴](http://cryptpad.localhost:8080)
+    '';
   };
 
   # The top-level overview for all projects
