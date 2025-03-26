@@ -23,8 +23,8 @@
     cryptpad = {
       name = "cryptpad";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/cryptpad.nix";
-      examples.basic = {
-        module = ./example.nix;
+      examples.demo = {
+        module = ./demo.nix;
         description = "Run a basic Cryptpad instance";
         # TODO: fixed in nixpkgs, enable after the flake is updated
         # tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/cryptpad.nix" args;
