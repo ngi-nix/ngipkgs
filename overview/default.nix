@@ -51,7 +51,9 @@ let
 
   version =
     if self ? rev then
-      "[`${self.shortRev}`](https://github.com/ngi-nix/ngipkgs/tree/${self.rev})"
+      ''
+        <a href="https://github.com/ngi-nix/ngipkgs/tree/${self.rev}"><code>${self.shortRev}</code></a>
+      ''
     else
       self.dirtyRev;
 
@@ -78,7 +80,7 @@ let
       one =
         prefixLength: option:
         let
-          maybeDefault = optionalString (option ? default.text) "`${option.default.text}`";
+          maybeDefault = optionalString (option ? default.text) "<code>${option.default.text}</code>";
         in
         ''
           <dt class="option-name">
@@ -90,7 +92,7 @@ let
             </div>
             <dl>
               <dt>Type:</dt>
-              <dd class="option-type">`${option.type}`</dd>
+              <dd class="option-type"><code>${option.type}</code></dd>
               <dt>Default:</dt>
               <dd class="option-default">${maybeDefault}</dd>
             </dl>
@@ -112,7 +114,7 @@ let
 
     packages = rec {
       one = package: ''
-        <dt>`${package.name}`</dt>
+        <dt><code>${package.name}</code></dt>
         <dd>
           <table>
             <tr>
@@ -137,9 +139,7 @@ let
 
         ${example.description}
 
-        ```nix
-        ${readFile example.path}
-        ```
+        <pre><code>${readFile example.path}</code></pre>
 
         </li>
       '';
@@ -155,7 +155,7 @@ let
     subgrants = rec {
       one = subgrant: ''
         <li>
-          [${subgrant}](https://nlnet.nl/project/${subgrant})
+          <a href="https://nlnet.nl/project/${subgrant}">${subgrant}</a>
         </li>
       '';
       many =
@@ -199,40 +199,57 @@ let
         projects:
         concatLines (
           mapAttrsToList (name: _: ''
-            <a href="/project/${name}">${name}</a>
+            <article>
+              <a href="/project/${name}">${name}</a>
+            </article>
           '') projects
         );
     };
   };
 
   # The top-level overview for all projects
-  index = pkgs.writeText "index.html" ''
-    <article class="page-width">
-    # NGIpgks
+  index = ''
+    <section class="page-width">
+      ${heading 1 "NGIpkgs"}
 
-    NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
+      <p>
+        NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
+      </p>
 
-    This service is still <strong>experimental</strong> and under heavy development.
-    Don't expect anything specific to work yet:
+      <p>
+        This service is still <strong>experimental</strong> and under heavy development.
+        Don't expect anything specific to work yet:
+      </p>
 
-    - The package collection is far incomplete
-    - Many packages lack crucial components
-    - There are no instructions for getting started
-    - How software and the corresponding Nix expressions are exposed is subject to change
+      <ul>
+        <li>The package collection is far incomplete</li>
+        <li>Many packages lack crucial components</li>
+        <li>There are no instructions for getting started</li>
+        <li>How software and the corresponding Nix expressions are exposed is subject to change</li>
+      </ul>
 
-    More information about the project:
+      <p>
+        More information about the project:
+      </p>
 
-    - [Source code](https://github.com/ngi-nix/ngipkgs)
-    - [Issue tracker](https://github.com/ngi-nix/summer-of-nix/issues/41)
-    - [Nix@NGI team](https://nixos.org/community/teams/ngi/)
+      <ul>
+        <li>
+          <a href="https://github.com/ngi-nix/ngipkgs">Source code</a>
+        </li>
+        <li>
+          <a href="https://github.com/ngi-nix/summer-of-nix/issues/41">Issue tracker</a>
+        </li>
+        <li>
+          <a href="https://nixos.org/community/teams/ngi/">Nix@NGI team</a>
+        </li>
+      </ul>
 
-    ---
+      <hr>
 
-    ${render.projects.many projects}
+      ${render.projects.many projects}
+    </section>
 
-    </article>
-
-    <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
+    <footer id="footer">Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 
   # Every HTML page that we generate
@@ -240,44 +257,41 @@ let
     {
       "index.html" = {
         pagetitle = "NGIpkgs software repository";
-        html = index;
+        content = index;
       };
     }
     // mapAttrs' (
       name: project:
       nameValuePair "project/${name}/index.html" {
         pagetitle = "NGIpkgs | ${name}";
-        html = pkgs.writeText "index.html" (render.projects.one name project);
+        content = render.projects.one name project;
       }
     ) projects;
 
-  # Ensure that directories exist and that HTML is complete and works as a standalone file
-  writeHtmlCommand =
-    path:
-    { pagetitle, html, ... }:
+  htmlFile =
+    { ... }@args:
     let
-      metadata = pkgs.writeText "metadata.json" (toJSON {
-        inherit pagetitle;
-        date = lastModified;
-        lang = "en";
-        dir = "ltr";
-      });
     in
-    ''
-      mkdir -p "$out/$(dirname '${path}')"
-
-      pandoc \
-        --from=markdown+raw_html \
-        --to=html \
-        --standalone \
-        --css="/style.css" \
-        --metadata-file=${metadata} \
-        --output="$out/${path}" ${html}
-
-      sed --file=${./fixup.sed} \
-        --in-place \
-        "$out/${path}"
+    pkgs.writeText "index.html" ''
+      <!DOCTYPE html>
+      <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+        <title>${args.pagetitle}</title>
+        <link rel="stylesheet" href="/style.css">
+      </head>
+      <body>
+      ${args.content}
+      </body>
+      </html>
     '';
+
+  # Ensure that directories exist and that HTML is complete and works as a standalone file
+  writeHtmlCommand = path: htmlFile: ''
+    mkdir -p "$out/$(dirname '${path}')"
+    ln -s '${htmlFile}' "$out/${path}"
+  '';
 
   fonts =
     pkgs.runCommand "fonts"
@@ -297,8 +311,6 @@ pkgs.runCommand "overview"
   {
     nativeBuildInputs = with pkgs; [
       jq
-      gnused
-      pandoc
       validator-nu
     ];
   }
@@ -308,7 +320,7 @@ pkgs.runCommand "overview"
       cp -v ${./style.css} $out/style.css
       ln -s ${fonts} $out/fonts
     ''
-    + (concatLines (mapAttrsToList writeHtmlCommand pages))
+    + (concatLines (mapAttrsToList (n: v: writeHtmlCommand n (htmlFile v)) pages))
     + ''
 
       vnu -Werror --format json $out/*.html | jq
