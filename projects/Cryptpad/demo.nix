@@ -6,20 +6,6 @@
 }:
 {
 
-  services.cryptpad = {
-    enable = true;
-    configureNginx = true;
-    settings = {
-      httpUnsafeOrigin = "https://cryptpad.localhost";
-      httpSafeOrigin = "https://cryptpad-sandbox.localhost";
-    };
-  };
-
-  services.nginx = {
-    virtualHosts."cryptpad.localhost" = {
-      enableACME = false;
-      forceSSL = false;
-    };
-  };
+  # Placeholder for eval, is supposed to be done by https://github.com/ngi-nix/ngipkgs/pull/661
 
 }
