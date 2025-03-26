@@ -5,7 +5,10 @@
 }@args:
 {
   
-
+   Packages = {
+     inherit(pkgs) omnom;
+   };
+           
    metadata = {
     summary ="Omnom is a webpage bookmarking and snapshotting service.";
        ' ';
