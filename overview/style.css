@@ -293,6 +293,23 @@ h1 {
   font-weight: 700;
 }
 
+a.heading {
+  text-decoration: none;
+  color: inherit;
+}
+
+h2:hover .anchor {
+    visibility: visible;
+    opacity: 1;
+}
+
+.anchor {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 75%;
+}
+
 .page-width {
   max-width: 55rem;
   margin: auto;

@@ -23,7 +23,11 @@
     cryptpad = {
       name = "cryptpad";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/cryptpad.nix";
-      examples.basic = null;
+      examples.demo = {
+        module = ./demo.nix;
+        description = "Deployment for demo purposes";
+        tests.demo = ./demo-test.nix;
+      };
       links = {
         admin-guide = {
           text = "Administration guide";
