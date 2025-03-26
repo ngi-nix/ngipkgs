@@ -31,6 +31,7 @@ let
     mapAttrsToList
     optionalString
     recursiveUpdate
+    filterAttrs
     mapAttrs'
     nameValuePair
     take
@@ -87,7 +88,7 @@ let
         );
       in
       filter (option: any ((flip hasPrefix) (join "." option.loc)) spec) (attrValues options);
-    examples = project: attrValues project.nixos.examples;
+    examples = project: attrValues (filterAttrs (name: _: name != "demo") project.nixos.examples);
     packages = project: attrValues project.packages;
   };
 
@@ -226,24 +227,28 @@ let
     serviceDemo.one = example: ''
       ${heading 2 "demo" "Run a demo deployment locally"}
 
-      Services utilising the NixOS module system generally only run on NixOS.
-      If you want to see a quick demo of this project, follow these steps to
-      run a preconfigured and tested V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ image on your system.
+      <p>
+        Services utilising the NixOS module system generally only run on NixOS.
+        If you want to see a quick demo of this project, follow these steps to
+        run a preconfigured and tested V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ image on your system.
+      </p>
 
-      1. Download the preconfigured image [h̷e̸r̶e̴]().
-      2. Install V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ on your system.
-      3. Run the V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ image
-         ```console
-         $ L̴O̷A̵D̵ ̴"̵*̵"̵,̵8̵,̴1̵
-         ```
-      4. Access the service from a browser on your host: [h̶t̵t̵p̴:̸/̷/̵c̵r̸y̸p̴t̵p̶a̶d̵.̶l̶o̶c̵a̴l̵h̷o̴s̸t̶:̶8̸0̷8̵0̴](http://cryptpad.localhost:8080)
+      <ol>
+        <li>Download the preconfigured image [h̷e̸r̶e̴]()</li>
+        <li>Install V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ on your system</li>
+        <li>Run the V̶I̷R̵T̷S̸O̵L̶U̷T̵I̷O̴N̷ image <pre><code>$ L̴O̷A̵D̵ ̴"̵*̵"̵,̵8̵,̴1̵</code></pre>
+        </li>
+        <li>Access the service from a browser on your host:
+          <a href="http://cryptpad.localhost:8080">h̶t̵t̵p̴:̸/̷/̵c̵r̸y̸p̴t̵p̶a̶d̵.̶l̶o̶c̵a̴l̵h̷o̴s̸t̶:̶8̸0̷8̵0̴</a>
+        </li>
+      </ol>
     '';
   };
 
   # The top-level overview for all projects
   index = ''
     <section class="page-width">
-      ${heading 1 "NGIpkgs"}
+      ${heading 1 null "NGIpkgs"}
 
       <p>
         NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
