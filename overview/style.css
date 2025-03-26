@@ -299,6 +299,34 @@ h1 {
   padding: 1rem 0;
 }
 
+article.project {
+  border: 1px solid darkgrey;
+  border-radius: 5px;
+  margin: 0.5em 0;
+  padding: 0.5em;
+}
+
+article.project h2 {
+  flex: 1;
+  margin: 0;
+}
+
+
+article.project .row {
+  display: flex;
+  flex-direction: row;
+}
+
+article.project .deliverable-tag {
+  margin-left: 0.5em;
+  height: 100%;
+  padding: 0 0.2em;
+  background: lightgrey;
+  border-radius: 0.2em;
+  font-variant: small-caps;
+  font-weight: 500;
+}
+
 .option-name {
   font-weight: 600;
   font-family: "IBM Plex Mono";
