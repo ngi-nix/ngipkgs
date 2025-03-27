@@ -80,7 +80,10 @@ let
       one =
         prefixLength: option:
         let
-          maybeDefault = optionalString (option ? default.text) "<code>${option.default.text}</code>";
+          maybeDefault = optionalString (option ? default.text) ''
+            <dt>Default:</dt>
+            <dd class="option-default"><code>${option.default.text}</code></dd>
+          '';
         in
         ''
           <dt class="option-name">
@@ -93,8 +96,7 @@ let
             <dl>
               <dt>Type:</dt>
               <dd class="option-type"><code>${option.type}</code></dd>
-              <dt>Default:</dt>
-              <dd class="option-default">${maybeDefault}</dd>
+              ${maybeDefault}
             </dl>
           </dd>
         '';
