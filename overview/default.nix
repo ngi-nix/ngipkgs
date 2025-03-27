@@ -18,6 +18,7 @@ let
     substring
     toJSON
     toString
+    replaceStrings
     ;
 
   join = concatStringsSep;
@@ -75,6 +76,11 @@ let
     packages = project: attrValues project.packages;
   };
 
+  # This doesn't actually produce a HTML string but a Jinja2 template string
+  # literal, that is then replaced by it's HTML translation at the last build
+  # step.
+  markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
+
   render = {
     options = rec {
       one =
@@ -91,7 +97,7 @@ let
           </dt>
           <dd class="option-body">
             <div class="option-description">
-            ${option.description}
+            ${markdownToHtml option.description}
             </div>
             <dl>
               <dt>Type:</dt>
@@ -289,10 +295,10 @@ let
       </html>
     '';
 
-  # Ensure that directories exist and that HTML is complete and works as a standalone file
+  # Ensure that directories exist and render the jinja2 template that we composed with Nix so far
   writeHtmlCommand = path: htmlFile: ''
     mkdir -p "$out/$(dirname '${path}')"
-    ln -s '${htmlFile}' "$out/${path}"
+    python3 ${./render-template.py} '${htmlFile}' "$out/${path}"
   '';
 
   fonts =
@@ -314,6 +320,12 @@ pkgs.runCommand "overview"
     nativeBuildInputs = with pkgs; [
       jq
       validator-nu
+      (python3.withPackages (
+        ps: with ps; [
+          jinja2
+          markdown-it-py
+        ]
+      ))
     ];
   }
   (
