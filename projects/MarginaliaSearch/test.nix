@@ -33,7 +33,7 @@ in
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.marginalia-search
-          sources.examples.MarginaliaSearch.base
+          sources.examples.MarginaliaSearch.marginalia-search
         ];
 
         # Running into memory limits with the default
