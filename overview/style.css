@@ -333,6 +333,13 @@ article.project .deliverable-tag {
   font-family: "IBM Plex Mono";
 }
 
+.option-readonly {
+  background: red;
+  color: white;
+  padding: 0 0.3em;
+  font-weight: 700;
+}
+
 .option-prefix {
   color: darkgrey;
 }

@@ -90,10 +90,14 @@ let
             <dt>Default:</dt>
             <dd class="option-default"><code>${option.default.text}</code></dd>
           '';
+          maybeReadonly = optionalString option.readOnly ''
+            <span class="option-readonly" title="This option can't be set by users">Read-only</span>
+          '';
         in
         ''
           <dt class="option-name">
             <span class="option-prefix">${join "." (take prefixLength option.loc)}.</span><span>${join "." (drop prefixLength option.loc)}</span>
+            ${maybeReadonly}
           </dt>
           <dd class="option-body">
             <div class="option-description">
