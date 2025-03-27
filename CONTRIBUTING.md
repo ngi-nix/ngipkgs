@@ -85,12 +85,12 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
    Make sure to:
 
-   - Add the module options in `service.nix`, and reference that file in `default.nix`.
+   - Add the module options in `module.nix`, and reference that file in `default.nix`.
      For example:
 
      ```nix
      nixos.modules = {
-       services.some-project.module = ./service.nix;
+       services.some-project.module = ./module.nix;
      };
      ```
 
