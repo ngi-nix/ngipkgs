@@ -15,6 +15,7 @@ let
     filter
     isList
     readFile
+    toFile
     substring
     toJSON
     toString
@@ -75,6 +76,15 @@ let
     packages = project: attrValues project.packages;
   };
 
+  # This function utilises IFD to harness the power of pandoc
+  markdownToHtml =
+    markdown:
+    readFile (
+      pkgs.runCommand "html" { nativeBuildInputs = with pkgs; [ pandoc ]; } ''
+        pandoc --from=markdown --to=html ${toFile "md" markdown} > $out
+      ''
+    );
+
   render = {
     options = rec {
       one =
@@ -91,7 +101,7 @@ let
           </dt>
           <dd class="option-body">
             <div class="option-description">
-            ${option.description}
+            ${markdownToHtml option.description}
             </div>
             <dl>
               <dt>Type:</dt>
