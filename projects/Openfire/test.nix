@@ -10,9 +10,6 @@
   # - Diable `Restrict Admin Console Access` in the `Server Settings`, else you won't be able to login.
 
   name = "openfire";
-  meta = {
-    maintainers = [ ];
-  };
 
   nodes = {
     server =
@@ -61,9 +58,11 @@
       };
   };
 
-  testScript = ''
-    start_all()
-    server.wait_for_unit("openfire-server.service")
-    server.wait_for_open_port(9090)
-  '';
+  testScript =
+    { nodes, ... }:
+    ''
+      start_all()
+      server.wait_for_unit("openfire-server.service")
+      server.wait_for_open_port(9090)
+    '';
 }
