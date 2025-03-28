@@ -324,6 +324,7 @@ article.project .deliverable-tag {
   background: lightgrey;
   border-radius: 0.2em;
   font-variant: small-caps;
+  text-transform: capitalize;
   font-weight: 500;
 }
 

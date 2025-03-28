@@ -209,16 +209,16 @@ let
       '';
       many =
         project:
-        optionalString (project.packages != { }) (one "Executable")
+        optionalString (project.packages != { }) (one "program")
         +
           # TODO is missing in the model yet
-          optionalString false (one "Library")
+          optionalString false (one "library")
         + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
-          one "Service"
+          one "service"
         )
         +
           # TODO is supposed to represent GUI apps and needs to be distinguished from CLI applications
-          optionalString false (one "Application");
+          optionalString false (one "application");
     };
 
     # The snippets for each project that are rendered on https://ngi.nixos.org
