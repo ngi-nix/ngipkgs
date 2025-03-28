@@ -18,7 +18,6 @@ let
     substring
     toJSON
     toString
-    replaceStrings
     ;
 
   join = concatStringsSep;
@@ -299,6 +298,10 @@ let
       "index.html" = {
         pagetitle = "NGIpkgs software repository";
         content = index;
+        summary = ''
+          NGIpkgs is collection of software applications funded by the Next
+          Generation Internet initiative and packaged for NixOS. 
+        '';
       };
     }
     // mapAttrs' (
@@ -306,13 +309,13 @@ let
       nameValuePair "project/${name}/index.html" {
         pagetitle = "NGIpkgs | ${name}";
         content = render.projects.one name project;
+        summary = project.metadata.summary or null;
       }
     ) projects;
 
   htmlFile =
+    path:
     { ... }@args:
-    let
-    in
     pkgs.writeText "index.html" ''
       <!DOCTYPE html>
       <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
@@ -320,6 +323,12 @@ let
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
         <title>${args.pagetitle}</title>
+        <meta property="og:title" content="${args.pagetitle}" />
+        ${optionalString (
+          args.summary != null
+        ) "<meta property=\"og:description\" content=\"${args.summary}\" />"}
+        <meta property="og:url" content="https://ngi.nixos.org/${path}" />
+        <meta property="og:type" content="website" />
         <link rel="stylesheet" href="/style.css">
       </head>
       <body>
@@ -367,7 +376,7 @@ pkgs.runCommand "overview"
       cp -v ${./style.css} $out/style.css
       ln -s ${fonts} $out/fonts
     ''
-    + (concatLines (mapAttrsToList (n: v: writeHtmlCommand n (htmlFile v)) pages))
+    + (concatLines (mapAttrsToList (path: v: writeHtmlCommand path (htmlFile path v)) pages))
     + ''
 
       vnu -Werror --format json $out/*.html | jq
