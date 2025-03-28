@@ -1,25 +1,25 @@
 { ... }:
 {
-   services.omnom = {
-      enable = true;
-      openFirewall = true;
+  services.omnom = {
+    enable = true;
+    openFirewall = true;
 
-      port = 8080;
+    port = 8080;
 
-      settings = {
-         app = {
-           disable_signup = true; #restrict CLI user-creation
-           results_per_page = 50;
-         };
-        smtp = {
-          tls = true;
-          host = "127.0.0.1";
-          port = 1025;
-          username = "testUser";
-        };
-       };
+    settings = {
+      app = {
+        disable_signup = true; # restrict CLI user-creation
+        results_per_page = 50;
+      };
+      smtp = {
+        tls = true;
+        host = "127.0.0.1";
+        port = 1025;
+        username = "testUser";
+      };
+    };
 
-      #Contains password for SMIP User
-      passwordFile = "/etc/secrets/omnom.key";
-   };
+    #Contains password for SMIP User
+    passwordFile = "/etc/secrets/omnom.key";
+  };
 }
