@@ -1,0 +1,23 @@
+From 35847b55ffc09ed883a64d59259510e62a33c29b Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Wed, 26 Mar 2025 13:37:54 +0100
+Subject: [PATCH] musl-cross-make: Use pre-downloaded sources
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 1f4aaea..21f2dee 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,5 +1,5 @@
+ 
+-SOURCES = sources
++SOURCES = @musl-cross-make-sources@
+ 
+ CONFIG_SUB_REV = 3d5db9ebe860
+ BINUTILS_VER = 2.33.1
+-- 
+2.48.1
+
