@@ -192,26 +192,56 @@ let
         '');
     };
 
-    projects = {
-      one = name: project: ''
-        <article class="page-width">
-          ${heading 1 name}
-          ${render.metadata.one project.metadata}
-          ${render.packages.many (pick.packages project)}
-          ${render.options.many (pick.options project)}
-          ${render.examples.many (pick.examples project)}
-        </article>
+    # The indivdual page of a project
+    projects.one = name: project: ''
+      <article class="page-width">
+        ${heading 1 name}
+        ${render.metadata.one project.metadata}
+        ${render.packages.many (pick.packages project)}
+        ${render.options.many (pick.options project)}
+        ${render.examples.many (pick.examples project)}
+      </article>
+    '';
+
+    deliverableTags = rec {
+      one = label: ''
+        <span class="deliverable-tag">${label}</span>
       '';
-      # Many projects are rendered as links to their individual project sites
       many =
-        projects:
-        concatLines (
-          mapAttrsToList (name: _: ''
-            <article>
-              <a href="/project/${name}">${name}</a>
-            </article>
-          '') projects
-        );
+        project:
+        optionalString (project.packages != { }) (one "program")
+        +
+          # TODO is missing in the model yet
+          optionalString false (one "library")
+        + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
+          one "service"
+        )
+        +
+          # TODO is supposed to represent GUI apps and needs to be distinguished from CLI applications
+          optionalString false (one "application");
+    };
+
+    # The snippets for each project that are rendered on https://ngi.nixos.org
+    projectSnippets = rec {
+      one =
+        name: project:
+        let
+          description = optionalString (project.metadata ? summary) ''
+            <div class="description">${project.metadata.summary}</div>
+          '';
+        in
+        ''
+          <article class="project">
+            <div class="row">
+              <h2>
+                <a href="/project/${name}">${name}</a>
+              </h2>
+              ${render.deliverableTags.many project}
+            </div>
+            ${description}
+          </article>
+        '';
+      many = projects: concatLines (mapAttrsToList one projects);
     };
   };
 
@@ -252,12 +282,11 @@ let
         </li>
       </ul>
 
-      <hr>
+    ${render.projectSnippets.many projects}
 
-      ${render.projects.many projects}
     </section>
 
-    <footer id="footer">Version: ${version}, Last Modified: ${lastModified}</footer>
+    <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
   '';
 
   # Every HTML page that we generate
