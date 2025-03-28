@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.gancio.enable = true;
+}

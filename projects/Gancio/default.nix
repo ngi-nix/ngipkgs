@@ -15,10 +15,25 @@
     ];
   };
 
-  packages = { inherit (pkgs) gancio; };
+  
   nixos = {
-    modules.services.gancio = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/gancio.nix";
-    tests.gancio = "${sources.inputs.nixpkgs}/nixos/tests/gancio.nix";
-    examples = null;
+     module.programs.gancio = {
+      module = "";
+
+
+      examples.gancio = {
+        module = "./example.nix";
+        description ="";
+        tests.basic = null;
+    
+
+    };
+
+
+    links ={
+      text ="gancio project website";
+      url="https://nlnet.nl/project/Gancio/";
+    };
+     };
   };
 }
