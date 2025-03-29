@@ -1,4 +1,6 @@
 { ... }:
 {
-  programs.gancio.enable = true;
+  programs.gancio = {
+    enable = true ;
+  };
 }

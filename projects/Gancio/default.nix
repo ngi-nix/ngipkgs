@@ -1,39 +1,24 @@
-
-  {
+{
   pkgs,
   lib,
   sources,
-  ...
 }@args:
 {
-
-   metadata = {
+  metadata = {
     summary = "Gancio Shared agenda for local communities that supports Activity";
-    subgrants = [
-      "gancio"
-      "Hex designs"
-    ];
+      subgrants = [
+        "gancio"
+        "hex designs"
+      ];
   };
-
-  
-  nixos = {
-     module.programs.gancio = {
-      module = "";
-
-
-      examples.gancio = {
-        module = "./example.nix";
-        description ="";
-        tests.basic = null;
-    
-
+  nixos.modules.programs = {
+    gancio = {
+      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/gancio.nix" ;
+      examples.gancio ={
+        module = ./example.nix ;
+        description = "" ;
+        tests.basic = null ;
+      };  
     };
-
-
-    links ={
-      text ="gancio project website";
-      url="https://nlnet.nl/project/Gancio/";
-    };
-     };
   };
-}
+} 
