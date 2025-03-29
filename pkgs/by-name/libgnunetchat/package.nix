@@ -18,7 +18,7 @@
 # From https://github.com/ngi-nix/gnunet-messenger-cli/blob/main/flake.nix
 stdenv.mkDerivation (finalAttrs: {
   name = "libgnunetchat";
-  version = "0.5.0-unstable-2025-01-07";
+  version = "0.5.3";
 
   src = fetchgit {
     url = "https://git.gnunet.org/libgnunetchat";
