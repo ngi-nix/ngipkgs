@@ -98,6 +98,49 @@
             ++ classic'.extendedNixosModules;
         };
 
+      mkNixosVM =
+        config:
+        nixosSystem {
+          modules =
+            [
+              config
+              {
+                imports = [
+                  (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
+                  (nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
+                ];
+
+                virtualisation = {
+                  memorySize = 4096;
+
+                  qemu.options = [
+                    "-cpu host"
+                    "-enable-kvm"
+                  ];
+
+                  forwardPorts = [
+                    {
+                      from = "host";
+                      host.port = 2222;
+                      guest.port = 22;
+                    }
+                  ];
+                };
+
+                nixpkgs.hostPlatform = "x86_64-linux";
+                system.stateVersion = "23.05";
+              }
+            ]
+            # TODO: this needs to take a different shape,
+            # otherwise the transformation to obtain it is confusing
+            ++ classic'.extendedNixosModules;
+        };
+
+      mkNixosAppVM = config: {
+        type = "app";
+        program = "${(mkNixosVM config).config.system.build.vm}/bin/run-nixos-vm";
+      };
+
       toplevel = machine: machine.config.system.build.toplevel;
 
       # Finally, define the system-agnostic outputs.
@@ -159,6 +202,8 @@
                   cp $build/share/doc/nixos/options.json $out/
                 '';
           };
+
+          apps.project-demos = mapAttrs (_: mkNixosAppVM) rawExamples;
 
           # buildbot executes `nix flake check`, therefore this output
           # should only contain derivations that can built within CI.
