@@ -85,12 +85,12 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
    Make sure to:
 
-   - Add the module options in `service.nix`, and reference that file in `default.nix`.
+   - Add the module options in `module.nix`, and reference that file in `default.nix`.
      For example:
 
      ```nix
      nixos.modules = {
-       services.some-project.module = ./service.nix;
+       services.some-project.module = ./module.nix;
      };
      ```
 
@@ -133,6 +133,49 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 1. Create a [pull request to NGIpkgs](https://github.com/ngi-nix/ngipkgs/pulls).
    Respond to review comments, potential CI failures, and potential merge conflicts by updating the pull request.
    Always keep the pull request in a mergeable state.
+
+## How to update a package
+
+1. To update a package, open the `pkgs/by-name/some-package/package.nix` in your text editor, where `some-package` will be the package attribute name.
+
+   ```ShellSession
+   $EDITOR pkgs/by-name/some-package/package.nix
+   ```
+
+1. Open the package's homepage or source repository and check if a new version is available, which can be the latest release tag or the commit revision.
+   This information is usually available from the `meta.homepage` attribute, but can also be found in `src` as well.
+
+1. Replace the `version` attribute in the derivation with the new version, but make sure that the package versioning fits the [Nixpkgs guidelines](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#versioning).
+
+1. Replace hashes with empty strings. Example:
+
+   ```nix
+   sha256 = "sha256-18FKwP0XHoq/F8oF8BCLlul/Xb30sd0iOWuiKkzpPLI=";
+     |
+     v
+   sha256 = "";
+   ```
+
+1. Build the package
+
+   ```
+   nix build .#checks.x86_64-linux.packages/<package_name>
+   ```
+
+1. The build will fail because the hashes are empty, but it will return the correct hash.
+   Replace the empty hash with the correct hash and build again. Example:
+
+   ```
+   error: hash mismatch in fixed-output derivation '/nix/store/xxkj74gnza5rw5xyawzvlafbvbb76qdq-source.drv':
+           likely URL: https://github.com/holepunchto/corestore/archive/v7.0.23.tar.gz
+            specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+               got:    sha256-oAsyv10BcmInvlZMzc/vJEJT9r+q/Rosm19EyblIDCM=
+   ```
+
+1. Make sure that all vendored hashes are also updated as well (e.g. cargoHash, npmDepsHash, ...)
+
+1. After the build succeeds, verify that the package works, if possible.
+   This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
 
 ## Triaging an NGI project
 
