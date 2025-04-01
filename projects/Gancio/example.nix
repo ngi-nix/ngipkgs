@@ -5,11 +5,11 @@
 {
   services.gancio = {
     enable = true;
-    package = pkgs.gancio;
     plugins = [ pkgs.gancioPlugins.telegram-bridge ];
     settings = {
       hostname = "agenda.example.org";
-      db.dialect = "postgres";
+      #postgress is available as well
+      db.dialect = "sqlite";
     };
   };
   security.acme.acceptTerms = true;
