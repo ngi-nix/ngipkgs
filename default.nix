@@ -312,24 +312,17 @@ rec {
                       "-enable-kvm"
                     ];
 
-                    forwardPorts = [
-                      # demo service
-                      {
-                        from = "host";
-                        guest.port = 9000;
-                        host.port = 9000;
-                      }
-                      # ssh
-                      {
-                        from = "host";
-                        host.port = 2222;
-                        guest.port = 22;
-                      }
-                    ];
+                    forwardPorts = map (port: {
+                      from = "host";
+                      guest.port = port;
+                      host.port = port;
+                      proto = "tcp";
+                    }) config.networking.firewall.allowedTCPPorts;
                   };
 
                   services.openssh = {
                     enable = true;
+                    ports = lib.mkDefault [ 2222 ];
                     settings = {
                       PasswordAuthentication = true;
                       PermitEmptyPasswords = "yes";
