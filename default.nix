@@ -310,12 +310,13 @@ rec {
                   ];
 
                   forwardPorts = [
-                    # TODO: does not work from the host
                     # demo service
                     {
-                      from = "host";
-                      host.port = 9000;
+                      from = "guest";
+                      guest.address = "10.0.2.15";
                       guest.port = 9000;
+                      host.address = "127.0.0.1";
+                      host.port = 9000;
                     }
                     # ssh
                     {
@@ -336,6 +337,8 @@ rec {
                 };
 
                 system.stateVersion = "25.05";
+
+                networking.firewall.enable = true;
               }
             ] ++ extendedNixosModules;
           };
