@@ -294,6 +294,10 @@ rec {
                   initialPassword = "nixos";
                 };
 
+                users.users.root = {
+                  initialPassword = "root";
+                };
+
                 virtualisation = {
                   memorySize = 4096;
                   cores = 4;
@@ -320,6 +324,15 @@ rec {
                       guest.port = 22;
                     }
                   ];
+                };
+
+                services.openssh = {
+                  enable = true;
+                  settings = {
+                    PasswordAuthentication = true;
+                    PermitEmptyPasswords = "yes";
+                    PermitRootLogin = "yes";
+                  };
                 };
 
                 system.stateVersion = "25.05";
