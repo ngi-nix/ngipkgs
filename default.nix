@@ -257,4 +257,40 @@ rec {
   shell = pkgs.mkShellNoCC {
     packages = [ ];
   };
+
+  demo-system =
+    let
+      nixosSystem =
+        args:
+        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
+          {
+            inherit lib;
+            system = null;
+          }
+          // args
+        );
+    in
+    import ./overview/demo.nix {
+      # ngipkgs = import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { };
+      ngipkgs = {
+        # TODO:
+        # `module` -> VM start script
+        # - working system
+        # - sensible defaults
+        #   - forwarding ports
+        #   - ssh
+        # ...
+        demo =
+          module:
+          nixosSystem {
+            system = "x86_64-linux";
+            modules = [
+            ];
+          };
+      };
+    };
+
+  # $ nix-build . -A demo-vm
+  # $ ./result/bin/run-nixos-vm
+  demo-vm = demo-system.config.system.build.vm;
 }
