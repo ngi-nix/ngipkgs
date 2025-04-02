@@ -336,6 +336,7 @@ rec {
       ] ++ extendedNixosModules;
     };
 
+  # TODO: find a better place for the demo file
   demo-system = import ./overview/demo.nix {
     ngipkgs.demo = demo;
   };
