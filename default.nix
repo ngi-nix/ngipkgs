@@ -277,9 +277,6 @@ rec {
         # `module` -> VM start script
         # - working system
         # - sensible defaults
-        #   - forwarding ports
-        #   - ssh
-        # ...
         demo =
           module:
           nixosSystem {
@@ -301,6 +298,14 @@ rec {
                     initialPassword = "root";
                   };
 
+                  security.sudo.wheelNeedsPassword = false;
+
+                  services.getty.autologinUser = "nixos";
+                  services.getty.helpLine = ''
+
+                    Welcome to Ngipkgs!
+                  '';
+
                   virtualisation = {
                     memorySize = 4096;
                     cores = 4;
@@ -312,6 +317,7 @@ rec {
                       "-enable-kvm"
                     ];
 
+                    # ssh + open service ports
                     forwardPorts = map (port: {
                       from = "host";
                       guest.port = port;
@@ -332,7 +338,7 @@ rec {
 
                   system.stateVersion = "25.05";
 
-                  networking.firewall.enable = true;
+                  networking.firewall.enable = false;
                 }
               )
             ] ++ extendedNixosModules;
