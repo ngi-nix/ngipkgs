@@ -10,6 +10,7 @@ ngipkgs.demo {
     enable = true;
     settings = {
       httpPort = servicePort;
+      httpAddress = "0.0.0.0";
       httpUnsafeOrigin = "http://${domainName}";
       httpSafeOrigin = "http://${domainName}";
     };

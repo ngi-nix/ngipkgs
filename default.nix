@@ -286,6 +286,7 @@ rec {
             system = "x86_64-linux";
             modules = [
               module
+              (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
               (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
               {
                 users.users.nixos = {
@@ -312,10 +313,8 @@ rec {
                   forwardPorts = [
                     # demo service
                     {
-                      from = "guest";
-                      guest.address = "10.0.2.15";
+                      from = "host";
                       guest.port = 9000;
-                      host.address = "127.0.0.1";
                       host.port = 9000;
                     }
                     # ssh
