@@ -258,7 +258,8 @@ rec {
     packages = [ ];
   };
 
-  demo-system =
+  demo =
+    module:
     let
       nixosSystem =
         args:
@@ -270,81 +271,74 @@ rec {
           // args
         );
     in
-    import ./overview/demo.nix {
-      # ngipkgs = import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { };
-      ngipkgs = {
-        # TODO:
-        # `module` -> VM start script
-        # - working system
-        # - sensible defaults
-        demo =
-          module:
-          nixosSystem {
-            system = "x86_64-linux";
-            modules = [
-              module
-              (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
-              (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
-              (
-                { config, ... }:
-                {
-                  users.users.nixos = {
-                    isNormalUser = true;
-                    extraGroups = [ "wheel" ];
-                    initialPassword = "nixos";
-                  };
+    nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        module
+        (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
+        (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
+        (
+          { config, ... }:
+          {
+            users.users.nixos = {
+              isNormalUser = true;
+              extraGroups = [ "wheel" ];
+              initialPassword = "nixos";
+            };
 
-                  users.users.root = {
-                    initialPassword = "root";
-                  };
+            users.users.root = {
+              initialPassword = "root";
+            };
 
-                  security.sudo.wheelNeedsPassword = false;
+            security.sudo.wheelNeedsPassword = false;
 
-                  services.getty.autologinUser = "nixos";
-                  services.getty.helpLine = ''
+            services.getty.autologinUser = "nixos";
+            services.getty.helpLine = ''
 
-                    Welcome to Ngipkgs!
-                  '';
+              Welcome to Ngipkgs!
+            '';
 
-                  virtualisation = {
-                    memorySize = 4096;
-                    cores = 4;
-                    graphics = false;
-                    diskImage = null;
+            virtualisation = {
+              memorySize = 4096;
+              cores = 4;
+              graphics = false;
+              diskImage = null;
 
-                    qemu.options = [
-                      "-cpu host"
-                      "-enable-kvm"
-                    ];
+              qemu.options = [
+                "-cpu host"
+                "-enable-kvm"
+              ];
 
-                    # ssh + open service ports
-                    forwardPorts = map (port: {
-                      from = "host";
-                      guest.port = port;
-                      host.port = port;
-                      proto = "tcp";
-                    }) config.networking.firewall.allowedTCPPorts;
-                  };
+              # ssh + open service ports
+              forwardPorts = map (port: {
+                from = "host";
+                guest.port = port;
+                host.port = port;
+                proto = "tcp";
+              }) config.networking.firewall.allowedTCPPorts;
+            };
 
-                  services.openssh = {
-                    enable = true;
-                    ports = lib.mkDefault [ 2222 ];
-                    settings = {
-                      PasswordAuthentication = true;
-                      PermitEmptyPasswords = "yes";
-                      PermitRootLogin = "yes";
-                    };
-                  };
+            services.openssh = {
+              enable = true;
+              ports = lib.mkDefault [ 2222 ];
+              settings = {
+                PasswordAuthentication = true;
+                PermitEmptyPasswords = "yes";
+                PermitRootLogin = "yes";
+              };
+            };
 
-                  system.stateVersion = "25.05";
+            system.stateVersion = "25.05";
 
-                  networking.firewall.enable = false;
-                }
-              )
-            ] ++ extendedNixosModules;
-          };
-      };
+            networking.firewall.enable = false;
+          }
+        )
+      ] ++ extendedNixosModules;
     };
+
+  demo-system = import ./overview/demo.nix {
+    ngipkgs.demo = demo;
+  };
 
   # $ nix-build . -A demo-vm
   # $ ./result/bin/run-nixos-vm

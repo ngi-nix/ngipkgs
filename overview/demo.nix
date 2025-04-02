@@ -1,5 +1,5 @@
 {
-  ngipkgs,
+  ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
 }:
 let
   servicePort = 9000;
