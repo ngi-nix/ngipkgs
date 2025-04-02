@@ -8,7 +8,6 @@
     summary = "Shared agenda for local communities that supports Activity Pub";
     subgrants = [
       "Gancio"
-
     ];
   };
   nixos.modules.services = {
