@@ -285,6 +285,34 @@ rec {
           nixosSystem {
             system = "x86_64-linux";
             modules = [
+              module
+              {
+                users.users.nixos = {
+                  isNormalUser = true;
+                  extraGroups = [ "wheel" ];
+                  initialPassword = "nixos";
+                };
+
+                virtualisation.vmVariant.virtualisation = {
+                  forwardPorts = [
+                    # TODO: does not work from the host
+                    # demo service
+                    {
+                      from = "host";
+                      host.port = 9000;
+                      guest.port = 9000;
+                    }
+                    # ssh
+                    {
+                      from = "host";
+                      host.port = 2222;
+                      guest.port = 22;
+                    }
+                  ];
+                };
+
+                system.stateVersion = "25.05";
+              }
             ];
           };
       };
