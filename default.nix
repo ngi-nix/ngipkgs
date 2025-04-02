@@ -288,57 +288,60 @@ rec {
               module
               (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
               (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
-              {
-                users.users.nixos = {
-                  isNormalUser = true;
-                  extraGroups = [ "wheel" ];
-                  initialPassword = "nixos";
-                };
-
-                users.users.root = {
-                  initialPassword = "root";
-                };
-
-                virtualisation = {
-                  memorySize = 4096;
-                  cores = 4;
-                  graphics = false;
-                  diskImage = null;
-
-                  qemu.options = [
-                    "-cpu host"
-                    "-enable-kvm"
-                  ];
-
-                  forwardPorts = [
-                    # demo service
-                    {
-                      from = "host";
-                      guest.port = 9000;
-                      host.port = 9000;
-                    }
-                    # ssh
-                    {
-                      from = "host";
-                      host.port = 2222;
-                      guest.port = 22;
-                    }
-                  ];
-                };
-
-                services.openssh = {
-                  enable = true;
-                  settings = {
-                    PasswordAuthentication = true;
-                    PermitEmptyPasswords = "yes";
-                    PermitRootLogin = "yes";
+              (
+                { config, ... }:
+                {
+                  users.users.nixos = {
+                    isNormalUser = true;
+                    extraGroups = [ "wheel" ];
+                    initialPassword = "nixos";
                   };
-                };
 
-                system.stateVersion = "25.05";
+                  users.users.root = {
+                    initialPassword = "root";
+                  };
 
-                networking.firewall.enable = true;
-              }
+                  virtualisation = {
+                    memorySize = 4096;
+                    cores = 4;
+                    graphics = false;
+                    diskImage = null;
+
+                    qemu.options = [
+                      "-cpu host"
+                      "-enable-kvm"
+                    ];
+
+                    forwardPorts = [
+                      # demo service
+                      {
+                        from = "host";
+                        guest.port = 9000;
+                        host.port = 9000;
+                      }
+                      # ssh
+                      {
+                        from = "host";
+                        host.port = 2222;
+                        guest.port = 22;
+                      }
+                    ];
+                  };
+
+                  services.openssh = {
+                    enable = true;
+                    settings = {
+                      PasswordAuthentication = true;
+                      PermitEmptyPasswords = "yes";
+                      PermitRootLogin = "yes";
+                    };
+                  };
+
+                  system.stateVersion = "25.05";
+
+                  networking.firewall.enable = true;
+                }
+              )
             ] ++ extendedNixosModules;
           };
       };
