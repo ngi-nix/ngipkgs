@@ -286,6 +286,7 @@ rec {
             system = "x86_64-linux";
             modules = [
               module
+              (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
               {
                 users.users.nixos = {
                   isNormalUser = true;
@@ -293,7 +294,17 @@ rec {
                   initialPassword = "nixos";
                 };
 
-                virtualisation.vmVariant.virtualisation = {
+                virtualisation = {
+                  memorySize = 4096;
+                  cores = 4;
+                  graphics = false;
+                  diskImage = null;
+
+                  qemu.options = [
+                    "-cpu host"
+                    "-enable-kvm"
+                  ];
+
                   forwardPorts = [
                     # TODO: does not work from the host
                     # demo service
@@ -313,7 +324,7 @@ rec {
 
                 system.stateVersion = "25.05";
               }
-            ];
+            ] ++ extendedNixosModules;
           };
       };
     };
