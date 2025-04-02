@@ -258,7 +258,7 @@ rec {
     packages = [ ];
   };
 
-  demo =
+  demo-system =
     module:
     let
       nixosSystem =
@@ -336,14 +336,13 @@ rec {
       ] ++ extendedNixosModules;
     };
 
-  # TODO: find a better place for the demo file
-  demo-system = import ./overview/demo.nix {
-    ngipkgs.demo = demo;
-  };
+  demo =
+    module:
+    pkgs.writeShellScript "demo-vm" ''
+      ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm
+    '';
 
-  # $ nix-build . -A demo-vm
+  # $ nix-build . -A demo-test
   # $ ./result
-  demo-vm = pkgs.writeShellScript "demo-vm" ''
-    ${demo-system.config.system.build.vm}/bin/run-nixos-vm
-  '';
+  demo-test = demo ./projects/Cryptpad/demo.nix;
 }
