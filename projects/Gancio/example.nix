@@ -11,11 +11,11 @@
       #postgress is available as well
       db.dialect = "sqlite";
     };
+    nginx = {
+      enableACME = false;
+      forceSSL = false;
+
+    };
   };
-  security.acme.acceptTerms = true;
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
-  security.acme.defaults.email = "info@cisti.org";
+
 }
