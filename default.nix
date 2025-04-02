@@ -341,6 +341,8 @@ rec {
   };
 
   # $ nix-build . -A demo-vm
-  # $ ./result/bin/run-nixos-vm
-  demo-vm = demo-system.config.system.build.vm;
+  # $ ./result
+  demo-vm = pkgs.writeShellScript "demo-vm" ''
+    ${demo-system.config.system.build.vm}/bin/run-nixos-vm
+  '';
 }
