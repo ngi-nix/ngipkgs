@@ -6,7 +6,7 @@
 }:
 rec {
   name = "hypercore-${version}";
-  version = "10.28.11";
+  version = "11.1.1";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
