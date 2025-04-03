@@ -9,22 +9,16 @@
   nodes = {
     machine =
       { ... }:
-      {
+      rec {
         imports = [
           sources.modules.ngipkgs
-          # Sources module path depends on your folder structure
-          ./module.nix
+          sources.modules.services.mox
+          sources.examples.Mox.mox
         ];
 
-        # Configure the mox service
-        services.mox = {
-          enable = true;
-          hostname = "mail.example.com";
-          user = "admin@example.com";
-        };
-
         # Allow necessary ports through the firewall
-        networking.firewall.allowedTCPPorts = [ 25 143 587 993 ];
+        networking.firewall.allowedTCPPorts = [ 25 80 143 443 587 993 ];
+        networking.firewall.allowedUDPPorts = [ 53 ];
       };
   };
 
@@ -37,7 +31,7 @@
       machine.wait_for_unit("multi-user.target")
 
       # Verify the mox-setup service has run successfully
-      # machine.wait_for_unit("mox-setup.service")
+      machine.wait_for_unit("mox-setup.service")
       
       # Verify the mox service is running
       machine.wait_for_unit("mox.service")

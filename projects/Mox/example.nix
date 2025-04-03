@@ -1,6 +1,6 @@
 { ... }:
 {
   services.mox.enable = true;
-  services.mox.hostname = "mail";
-  services.mox.user = "admin@example.ke";
+  services.mox.hostname = "localhost";
+  services.mox.user = "admin@localhost";
 }

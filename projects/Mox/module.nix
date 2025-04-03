@@ -46,25 +46,28 @@
     };
 
     systemd.services.mox-setup = {
-      description = "Setup Mox Mail Server";
+      description = "Setup Mox Mail Server Configuration Files";
       wantedBy = [ "multi-user.target" ];
+      requires = [ "network-online.target" ];
+      after = [ "network-online.target" ];
       before = [ "mox.service" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+        User = "mox";
+        Group = "mox";
       };
       script = ''
-        mkdir -p /var/lib/mox
-        cd /var/lib/mox
-        ${pkgs.mox}/bin/mox quickstart -hostname ${config.services.mox.hostname} ${config.services.mox.user}
-        chown -R mox:mox /var/lib/mox
+      mkdir -p /var/lib/mox
+      cd /var/lib/mox
+      ${pkgs.mox}/bin/mox quickstart -hostname ${config.services.mox.hostname} ${config.services.mox.user}
       '';
     };
 
     systemd.services.mox = {
       wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" "mox-setup.service" ];
-      requires = [ "mox-setup.service" ]; # This ensures mox-setup must succeed
+      after = [ "mox-setup.service" ];
+      requires = [ "mox-setup.service" ];
       serviceConfig = {
         WorkingDirectory = "/var/lib/mox";
         ExecStart = "${pkgs.mox}/bin/mox -config /var/lib/mox/config/mox.conf serve";
