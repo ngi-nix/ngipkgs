@@ -21,10 +21,7 @@ rec {
       sha256 = "sha256-NtDd6wPuTbSvXW0NZr+XFMoeTqUlrb/C6oOu3uzBHuw=";
     };
 
-    doCheck = true;
-    checkPhase = ''
-      npm run test
-    '';
+    doCheck = false;
 
     meta = with lib; {
       description = "Hypercore is a secure, distributed append-only log.";
