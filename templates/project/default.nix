@@ -28,15 +28,15 @@
     ];
   };
 
-  # NOTE: Replace `_program_name_` with the actual program name
+  # NOTE: Replace `_programName_` with the actual program name
   nixos.modules.programs = {
-    _program_name_ = {
+    _programName_ = {
       name = "program name";
-      module = ./programs/_program_name_/module.nix;
+      module = ./programs/_programName_/module.nix;
       examples.basic = {
-        module = ./programs/_program_name_/examples/basic/module.nix;
+        module = ./programs/_programName_/examples/basic/module.nix;
         description = "";
-        tests.basic = ./programs/_program_name_/examples/basic/tests/basic.nix;
+        tests.basic = ./programs/_programName_/examples/basic/tests/basic.nix;
       };
       # Add relevant links to the program, for example:
       links = {
@@ -55,15 +55,15 @@
     foobar-cli = null;
   };
 
-  # NOTE: Replace `_service_name_` with the actual service name
+  # NOTE: Replace `_serviceName_` with the actual service name
   nixos.modules.services = {
-    _service_name_ = {
+    _serviceName_ = {
       name = "service name";
-      module = ./services/_service_name_/module.nix;
+      module = ./services/_serviceName_/module.nix;
       examples.basic = {
-        module = ./services/_service_name_/examples/basic/module.nix;
+        module = ./services/_serviceName_/examples/basic/module.nix;
         description = "";
-        tests.basic = ./services/_service_name_/examples/basic/tests/basic.nix;
+        tests.basic = ./services/_serviceName_/examples/basic/tests/basic.nix;
       };
       # Add relevant links to the service, for example:
       links = {

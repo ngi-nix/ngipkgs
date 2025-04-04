@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "foobar";
+  name = "Program Name";
 
   nodes = {
     machine =
@@ -12,8 +12,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs.foobar
-          sources.examples.Foobar.foobar
+          sources.modules.services._programName_
+          sources.examples._ProjectName_._programName_
         ];
       };
   };
@@ -23,6 +23,6 @@
     ''
       start_all()
 
-      machine.succeed("foobar --help")
+      machine.succeed()
     '';
 }
