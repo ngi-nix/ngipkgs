@@ -21,7 +21,7 @@ rec {
       sha256 = "sha256-RTYeaJQ88m2be8pxuumVrDde1L5u98NeTHkZ9EN59wI=";
     };
 
-    doCheck = false;
+    doCheck = true;
     checkPhase = ''
       npm run test
     '';
