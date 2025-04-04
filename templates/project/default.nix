@@ -34,9 +34,9 @@
       name = "program name";
       module = ./programs/_programName_/module.nix;
       examples.basic = {
-        module = ./programs/_programName_/examples/basic/module.nix;
+        module = ./programs/_programName_/examples/basic.nix;
         description = "";
-        tests.basic = ./programs/_programName_/examples/basic/tests/basic.nix;
+        tests.basic = ./programs/_programName_/tests/basic.nix;
       };
       # Add relevant links to the program, for example:
       links = {
@@ -61,9 +61,9 @@
       name = "service name";
       module = ./services/_serviceName_/module.nix;
       examples.basic = {
-        module = ./services/_serviceName_/examples/basic/module.nix;
+        module = ./services/_serviceName_/examples/basic.nix;
         description = "";
-        tests.basic = ./services/_serviceName_/examples/basic/tests/basic.nix;
+        tests.basic = ./services/_serviceName_/tests/basic.nix;
       };
       # Add relevant links to the service, for example:
       links = {
