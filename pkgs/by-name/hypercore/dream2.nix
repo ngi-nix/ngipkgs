@@ -18,7 +18,7 @@ rec {
       owner = "holepunchto";
       repo = "hypercore";
       rev = "v${version}";
-      sha256 = "sha256-u8gpe0t/ljkYQYvC6H1G1IXQgr4pVdonyiYuMJ5P4lo=";
+      sha256 = "sha256-NtDd6wPuTbSvXW0NZr+XFMoeTqUlrb/C6oOu3uzBHuw=";
     };
 
     doCheck = true;
