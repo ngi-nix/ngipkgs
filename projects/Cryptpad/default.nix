@@ -25,7 +25,7 @@
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/cryptpad.nix";
       examples.demo = {
         module = ./demo.nix;
-        description = "Run a basic Cryptpad instance";
+        description = "Deployment for demo purposes";
         # TODO: fixed in nixpkgs, enable after the flake is updated
         # tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/cryptpad.nix" args;
         tests.basic = null;
