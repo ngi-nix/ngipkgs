@@ -124,6 +124,10 @@
       enable = true;
       settings.PasswordAuthentication = false;
     };
+    prometheus.exporters.node = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 
   fileSystems = {

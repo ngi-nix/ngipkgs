@@ -18,6 +18,10 @@ in
         "fricklerhandwerk"
         "Janik-Haag"
         "lorenzleutgeb"
+        "eljamm"
+        "erictapen"
+        "imincik"
+        "OPNA2608"
       ];
       workersFile = secret "workers";
       github = {

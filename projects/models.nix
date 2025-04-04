@@ -39,6 +39,11 @@ let
     (attrs any)
   ];
 
+  binaryType = struct "binary" {
+    name = option string;
+    data = option (either absPath drv);
+  };
+
   # TODO: plugins are actually component *extensions* that are of component-specific type,
   #       and which compose in application-specific ways defined in the application module.
   #       we can't express that with yants, but with the module system, which gives us a bit of dependent typing.
@@ -85,6 +90,7 @@ rec {
     metadata = optionalStruct {
       summary = option string;
       subgrants = list string;
+      links = optionalAttrs (option urlType);
     };
     nixos = struct "nixos" {
       # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
@@ -92,10 +98,12 @@ rec {
       #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
       #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
       tests = option (attrs testType);
-      modules = struct "modules" {
-        programs = optionalAttrs (option programType);
-        services = optionalAttrs (option serviceType);
-      };
+      modules = option (
+        struct "modules" {
+          programs = optionalAttrs (option programType);
+          services = optionalAttrs (option serviceType);
+        }
+      );
       # An application component may have examples using it in isolation,
       # but examples may involve multiple application components.
       # Having examples at both layers allows us to trace coverage more easily.
@@ -103,72 +111,85 @@ rec {
       # we can still reduce granularity and move all examples to the application level.
       examples = option (attrs exampleType);
     };
+    binary = optionalAttrs binaryType;
   };
 
-  example = project {
-    name = "foobar";
-    nixos = rec {
-      examples = {
-        foobar-cli = {
-          description = ''
-            This is how you can run `foobar` in the terminal.
-          '';
-          module = ./default.nix;
-          links = {
-            website = {
-              text = "FooBar Documentation";
-              url = "https://foo.bar/docs";
-            };
-          };
-          tests = {
-            # Each example must have at least one test.
-            # If the line below is commented out, an error will be raised.
-            inherit (tests) foobar-cli;
-          };
-        };
+  example =
+    let
+      dummyDerivation = derivation {
+        name = "myname";
+        builder = "mybuilder";
+        system = "mysystem";
       };
-      tests = {
-        # Set to `null`: needed, but not available
-        basic = null;
-
-        # Needs to be a derivation. Error raised otherwise.
-        #simple = "This will fail.";
-
-        foobar-cli = derivation {
-          name = "myname";
-          builder = "mybuilder";
-          system = "mysystem";
-        };
-      };
-      modules = {
-        # Attributes not defined in the data structure are not allowed.
-        # Uncommenting the line below will raise an error.
-        #hello = { };
-
-        programs = {
-          # Set to `null`: needed, but not available
-          foobar = null;
-
+    in
+    project {
+      name = "foobar";
+      nixos = rec {
+        examples = {
           foobar-cli = {
-            name = "foobar-cli";
-            module =
-              { lib, ... }:
-              {
-                options.programs.foobar-cli.enable = lib.mkEnableOption "foobar CLI";
+            description = ''
+              This is how you can run `foobar` in the terminal.
+            '';
+            module = ./default.nix;
+            links = {
+              website = {
+                text = "FooBar Documentation";
+                url = "https://foo.bar/docs";
               };
-            # Each program must have at least one example.
-            # Examples can be null to indicate that they're needed.
-            examples = {
-              inherit (examples) foobar-cli;
-
-              # needed, not available
-              foobar-tui = null;
+            };
+            tests = {
+              # Each example must have at least one test.
+              # If the line below is commented out, an error will be raised.
+              inherit (tests) foobar-cli;
             };
           };
+        };
+        tests = {
+          # Set to `null`: needed, but not available
+          basic = null;
 
-          # Not set: not needed
+          # Needs to be a derivation. Error raised otherwise.
+          #simple = "This will fail.";
+
+          foobar-cli = dummyDerivation;
+        };
+        modules = {
+          # Attributes not defined in the data structure are not allowed.
+          # Uncommenting the line below will raise an error.
+          #hello = { };
+
+          programs = {
+            # Set to `null`: needed, but not available
+            foobar = null;
+
+            foobar-cli = {
+              name = "foobar-cli";
+              module =
+                { lib, ... }:
+                {
+                  options.programs.foobar-cli.enable = lib.mkEnableOption "foobar CLI";
+                };
+              # Each program must have at least one example.
+              # Examples can be null to indicate that they're needed.
+              examples = {
+                inherit (examples) foobar-cli;
+
+                # needed, not available
+                foobar-tui = null;
+              };
+            };
+
+            # Not set: not needed
+          };
+        };
+      };
+      binary = {
+        "foobar.img" = {
+          data = dummyDerivation;
+        };
+        "foobar-boot.img" = {
+          data = null; # needed, not available
         };
       };
     };
-  };
 }
