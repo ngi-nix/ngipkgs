@@ -6,7 +6,7 @@
 }:
 rec {
   name = "hypercore-${version}";
-  version = "11.1.1";
+  version = "11.1.2";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
@@ -18,10 +18,13 @@ rec {
       owner = "holepunchto";
       repo = "hypercore";
       rev = "v${version}";
-      sha256 = "sha256-NtDd6wPuTbSvXW0NZr+XFMoeTqUlrb/C6oOu3uzBHuw=";
+      sha256 = "sha256-RTYeaJQ88m2be8pxuumVrDde1L5u98NeTHkZ9EN59wI=";
     };
 
     doCheck = false;
+    checkPhase = ''
+      npm run test
+    '';
 
     meta = with lib; {
       description = "Hypercore is a secure, distributed append-only log.";
