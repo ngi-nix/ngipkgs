@@ -257,4 +257,92 @@ rec {
   shell = pkgs.mkShellNoCC {
     packages = [ ];
   };
+
+  demo-system =
+    module:
+    let
+      nixosSystem =
+        args:
+        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
+          {
+            inherit lib;
+            system = null;
+          }
+          // args
+        );
+    in
+    nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        module
+        (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
+        (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
+        (
+          { config, ... }:
+          {
+            users.users.nixos = {
+              isNormalUser = true;
+              extraGroups = [ "wheel" ];
+              initialPassword = "nixos";
+            };
+
+            users.users.root = {
+              initialPassword = "root";
+            };
+
+            security.sudo.wheelNeedsPassword = false;
+
+            services.getty.autologinUser = "nixos";
+            services.getty.helpLine = ''
+
+              Welcome to Ngipkgs!
+            '';
+
+            virtualisation = {
+              memorySize = 4096;
+              cores = 4;
+              graphics = false;
+              diskImage = null;
+
+              qemu.options = [
+                "-cpu host"
+                "-enable-kvm"
+              ];
+
+              # ssh + open service ports
+              forwardPorts = map (port: {
+                from = "host";
+                guest.port = port;
+                host.port = port;
+                proto = "tcp";
+              }) config.networking.firewall.allowedTCPPorts;
+            };
+
+            services.openssh = {
+              enable = true;
+              ports = lib.mkDefault [ 2222 ];
+              settings = {
+                PasswordAuthentication = true;
+                PermitEmptyPasswords = "yes";
+                PermitRootLogin = "yes";
+              };
+            };
+
+            system.stateVersion = "25.05";
+
+            networking.firewall.enable = false;
+          }
+        )
+      ] ++ extendedNixosModules;
+    };
+
+  demo =
+    module:
+    pkgs.writeShellScript "demo-vm" ''
+      ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm
+    '';
+
+  # $ nix-build . -A demo-test
+  # $ ./result
+  demo-test = demo ./projects/Cryptpad/demo.nix;
 }
