@@ -1,0 +1,34 @@
+From e8dc2f2a49a10d0753ade9b097520340cfbfe7a6 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Fri, 4 Apr 2025 18:57:09 +0200
+Subject: [PATCH 2/2] heads: Adjust to binwalk 3.x
+
+Extracting to the same directory makes it error out now, because it wants to provide a symlink to the original exe
+under the same name. Just leave it at the default (extractions), and adjust the following call to the new location.
+
+--run-as doesn't seem to be recognised as an argument anymore. We can't switch to root anyway, so just drop it.
+---
+ blobs/xx30/optiplex_7010_9010.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/blobs/xx30/optiplex_7010_9010.sh b/blobs/xx30/optiplex_7010_9010.sh
+index f4cf2c28..814f0f57 100755
+--- a/blobs/xx30/optiplex_7010_9010.sh
++++ b/blobs/xx30/optiplex_7010_9010.sh
+@@ -16,11 +16,11 @@ if [[ ! -f "${output_dir}/IVB_BIOSAC_PRODUCTION.bin" ]] || [[ ! -f "${output_dir
+     cp -L --no-preserve=mode @blobsDir@/"$blobName" ./ || { echo "ERROR: Blob ${blobName} missing from blobsDir" && exit 1; }
+ 
+     #Extract binary
+-    binwalk -e O7010A29.exe -C . --run-as=root
++    binwalk -ea O7010A29.exe
+ 
+     #Extract blobs
+     #uefi-firmware-parser -e "_O7010A29.exe.extracted/65C10" -O
+-    uefi-firmware-parser -b "_O7010A29.exe.extracted/65C10" -e -o extract
++    uefi-firmware-parser -b "extractions/O7010A29.exe.extracted/65C10/decompressed.bin" -e -o extract
+ 
+     #EC
+     cp ./extract/volume-327768/file-d386beb8-4b54-4e69-94f5-06091f67e0d3/section0.raw sch5545_ecfw.bin
+-- 
+2.47.2
+

@@ -1,0 +1,22 @@
+From 6f7680606a32026849fac93ad45d883f811ed4d9 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Thu, 27 Mar 2025 16:00:31 +0100
+Subject: [PATCH] cryptsetup: Patch script interpreters
+
+---
+ tests/generate-symbols-list | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/generate-symbols-list b/tests/generate-symbols-list
+index 33a2e23..1a2f53b 100755
+--- a/tests/generate-symbols-list
++++ b/tests/generate-symbols-list
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!@bashInterpreter@
+ 
+ function fail()
+ {
+-- 
+2.47.2
+
