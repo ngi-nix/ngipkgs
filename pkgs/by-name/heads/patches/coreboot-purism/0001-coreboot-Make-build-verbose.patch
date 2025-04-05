@@ -1,0 +1,25 @@
+From be9c890af2ea0c86e347f84e329718be26f8c82a Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Fri, 4 Apr 2025 00:14:43 +0200
+Subject: [PATCH 2/2] coreboot: Make build verbose
+
+---
+ util/crossgcc/buildgcc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/util/crossgcc/buildgcc b/util/crossgcc/buildgcc
+index 63fae26a..a7b891cb 100644
+--- a/util/crossgcc/buildgcc
++++ b/util/crossgcc/buildgcc
+@@ -511,7 +511,7 @@ generic_build()
+ 		DIR="$PWD"
+ 		cd "$builddir" || exit 1
+ 		rm -f .failed
+-		"build_${package}" "$host_target" > build.log 2>&1
++		"build_${package}" "$host_target" 2>&1 | tee build.log
+ 		cd "$DIR" || exit 1
+ 		if [ ! -f "$builddir/.failed" ]; then
+ 			touch "$success";
+-- 
+2.47.2
+
