@@ -1,0 +1,22 @@
+From 14750ae12062179efdecb2e0cc439ecae8eba313 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Fri, 4 Apr 2025 14:56:28 +0200
+Subject: [PATCH] openssl: Patch script interpreters
+
+---
+ Configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Configure b/Configure
+index 5ac4b52..870aa3f 100755
+--- a/Configure
++++ b/Configure
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env perl
++#!@perlInterpreter@
+ # -*- mode: perl; -*-
+ # Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.
+ #
+-- 
+2.47.2
+

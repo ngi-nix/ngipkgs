@@ -1,0 +1,88 @@
+From 7906bcc3357d88c78694bb7eb0a5ab1365576136 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Fri, 4 Apr 2025 00:14:04 +0200
+Subject: [PATCH 1/2] coreboot: Hardcode build and host configure flags
+
+---
+ util/crossgcc/buildgcc | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/util/crossgcc/buildgcc b/util/crossgcc/buildgcc
+index a7510032..63fae26a 100644
+--- a/util/crossgcc/buildgcc
++++ b/util/crossgcc/buildgcc
+@@ -655,7 +655,7 @@ build_GMP() {
+ 
+ 	# shellcheck disable=SC2086
+ 	CC="$(hostcc host)" CXX="$(hostcxx host)" \
+-	../${GMP_DIR}/configure \
++	../${GMP_DIR}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--disable-shared \
+ 		--enable-fat \
+ 		--prefix="$TARGETDIR" \
+@@ -672,7 +672,7 @@ build_GMP() {
+ build_MPFR() {
+ 	test "$UNAME" = "Darwin" && CFLAGS="$CFLAGS -force_cpusubtype_ALL"
+ 	CC="$(hostcc host)" CXX="$(hostcxx host)" \
+-	../${MPFR_DIR}/configure \
++	../${MPFR_DIR}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--disable-shared \
+ 		--prefix="$TARGETDIR" \
+ 		--infodir="$TARGETDIR/info" \
+@@ -692,7 +692,7 @@ build_MPFR() {
+ 
+ build_MPC() {
+ 	CC="$(hostcc host)" CXX="$(hostcxx host)" \
+-	../${MPC_DIR}/configure \
++	../${MPC_DIR}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--disable-shared \
+ 		--prefix="$TARGETDIR" \
+ 		--infodir="$TARGETDIR/info" \
+@@ -723,7 +723,7 @@ build_BINUTILS() {
+ 	fi
+ 	# shellcheck disable=SC2086
+ 	CC="$(hostcc target)" CXX="$(hostcxx target)" \
+-	../binutils-${BINUTILS_VERSION}/configure \
++	../binutils-${BINUTILS_VERSION}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--prefix="$TARGETDIR" \
+ 		--target=${TARGETARCH} \
+ 		--enable-targets=${TARGETARCH}${ADDITIONALTARGET} \
+@@ -751,7 +751,7 @@ bootstrap_GCC() {
+ 		CXXFLAGS="$HOSTCFLAGS" \
+ 		CXXFLAGS_FOR_BUILD="$HOSTCFLAGS" \
+ 		CXXFLAGS_FOR_TARGET="$HOSTCFLAGS -fPIC" \
+-		../gcc-${GCC_VERSION}/configure \
++		../gcc-${GCC_VERSION}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--prefix="$TARGETDIR" \
+ 		--libexecdir="$TARGETDIR/lib" \
+ 		--enable-bootstrap \
+@@ -805,7 +805,7 @@ configure_GCC(){
+ 		CFLAGS_FOR_BUILD="$HOSTCFLAGS $CLANGFLAGS" \
+ 		CXXFLAGS="$HOSTCFLAGS $CLANGCXXFLAGS" \
+ 		CXXFLAGS_FOR_BUILD="$HOSTCFLAGS $CLANGCXXFLAGS" \
+-		../gcc-${GCC_VERSION}/configure \
++		../gcc-${GCC_VERSION}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--prefix="$TARGETDIR" \
+ 		--libexecdir="$TARGETDIR/lib" \
+ 		--target=${TARGETARCH} \
+@@ -930,7 +930,7 @@ build_LLVM() {
+ 
+ build_CMAKE() {
+ 	CC="$(hostcc host)" CXX="$(hostcxx host)" CFLAGS="$HOSTCFLAGS" \
+-	../${CMAKE_DIR}/configure \
++	../${CMAKE_DIR}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--parallel=${THREADS} \
+ 		--prefix="$TARGETDIR" || touch .failed
+ 	# shellcheck disable=SC2086
+@@ -940,7 +940,7 @@ build_CMAKE() {
+ 
+ build_NASM() {
+ 	CC="$(hostcc host)" CXX="$(hostcxx host)" CFLAGS="$HOSTCFLAGS" \
+-	../${NASM_DIR}/configure \
++	../${NASM_DIR}/configure --build=@buildConfig@ --host=@hostConfig@ \
+ 		--prefix="$TARGETDIR" || touch .failed
+ 	# shellcheck disable=SC2086
+ 	$MAKE $JOBS || touch .failed
+-- 
+2.47.2
+
