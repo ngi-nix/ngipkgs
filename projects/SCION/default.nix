@@ -16,18 +16,7 @@
       "SCION-1M"
       "SCION-geo"
     ];
-  };
-
-  nixos.modules.programs = {
-    scion = {
-      name = "scion";
-      module = ./programs/basic/module.nix;
-      examples.basic = {
-        module = ./programs/basic/examples/basic.nix;
-        description = "";
-        tests.basic = ./programs/basic/tests/basic.nix;
-      };
-      links = {
+    links = {
         docs = {
           text = "SCION Documentation";
           url = "https://docs.scion.org/en/latest/";
@@ -41,6 +30,18 @@
           url = "https://docs.scion.org/en/latest/tutorials/deploy.html#tasks-to-perform";
         };
       };
+  };
+
+  nixos.modules.programs = {
+    scion = {
+      name = "scion";
+      module = ./programs/basic/module.nix;
+      examples.basic = {
+        module = ./programs/basic/examples/basic.nix;
+        description = "";
+        tests.basic = ./programs/basic/tests/basic.nix;
+      };
+      
     };
 
   };
