@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.programs.galene;
+  cfg = config.services.galene;
 in
 {
-  options.programs.galene = {
+  options.services.galene = {
     enable = lib.mkEnableOption "galene";
   };
 }

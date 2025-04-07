@@ -1,4 +1,4 @@
 { ... }:
 {
-  programs.galene.enable = true;
+  services.galene.enable = true;
 }

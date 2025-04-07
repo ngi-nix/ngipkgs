@@ -11,10 +11,10 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.modules.services = {
     galene = {
       name = "galene";
-      module = ./module.nix;
+      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/galene.nix";
       examples.galene = {
         module = ./example.nix;
         description = "";
@@ -31,9 +31,5 @@
         };
       };
     };
-  };
-
-  # NOTE: same structure as programs
-  nixos.modules.services = {
   };
 }

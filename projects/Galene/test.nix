@@ -11,9 +11,10 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs.galene
+          sources.modules.services.galene
           sources.examples.Galene.galene
         ];
+        services.galene.insecure = true;
       };
   };
 
