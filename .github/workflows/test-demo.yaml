@@ -1,0 +1,38 @@
+name: Test VM demo
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - "archlinux:latest"
+          - "debian:12"
+          - "debian:unstable"
+          - "ubuntu:24.04"
+          - "ubuntu:24.10"
+          - "ubuntu:devel"
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v4'
+      - uses: DeterminateSystems/nix-installer-action@v12
+
+      - name: Build projects overview
+        run: nix build .#overview
+
+      - name: Run and test VM
+        run: >
+          docker run
+          --privileged
+          --volume ./result/project/Cryptpad/default.nix:/default.nix
+          --volume "$(pwd)/.github/workflows/test-demo.sh:/test-demo.sh"
+          ${{ matrix.distro }}
+          /bin/bash -c "bash /test-demo.sh ${{ matrix.distro }}"
