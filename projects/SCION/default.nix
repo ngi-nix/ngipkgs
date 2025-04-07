@@ -4,10 +4,6 @@
   sources,
 }@args:
 {
-  # NOTE:
-  # - Check `projects/models.nix` for a more detailed project structure
-  # - Each program/service must have at least one example
-  # - Set attributes to `null` to indicate that they're needed, but not available
   metadata = {
     summary = "SCION is a clean-slate Next-Generation Internet (NGI) architecture which offers a.o. multi-path and path-awareness capabilities by design.";
     subgrants = [
