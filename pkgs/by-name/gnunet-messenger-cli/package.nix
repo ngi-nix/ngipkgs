@@ -12,14 +12,15 @@
   libgnunetchat,
   ncurses,
 }:
-stdenv.mkDerivation {
+
+stdenv.mkDerivation (finalAttrs: {
   pname = "gnunet-messenger-cli";
-  version = "0.3.0-unstable-2025-01-07";
+  version = "0.3.1";
 
   src = fetchgit {
     url = "https://git.gnunet.org/messenger-cli.git";
-    rev = "ee2566bef0615c2f9937ad34c90606f6186882a8";
-    hash = "sha256-ZF6vfS9a/XTnKtiaswTTV2uoBBBYuId7n9lOgPFo+/c=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-8Iby3IZXEZJ1dqVV62xDzXx/qq7JKhVtn6ZLb697ZSw=";
   };
 
   INSTALL_DIR = (placeholder "out") + "/";
@@ -41,4 +42,4 @@ stdenv.mkDerivation {
   preInstall = "mkdir -p $out/bin";
 
   preFixup = "mv $out/bin/messenger-cli $out/bin/gnunet-messenger-cli";
-}
+})

@@ -6,7 +6,7 @@
 }:
 rec {
   name = "hyperblobs-${version}";
-  version = "2.3.3";
+  version = "2.8.0";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
@@ -18,7 +18,7 @@ rec {
       owner = "holepunchto";
       repo = "hyperblobs";
       rev = "v${version}";
-      sha256 = "sha256-ybC6X/3zluoIRcoEtUD+zi6u5OWHaRCMPimK1kznIGk=";
+      sha256 = "sha256-cj716lDyQj7IVbAmfQaKagfR1+ZYoQgOTXIn/3d+KEA=";
     };
 
     doCheck = true;
