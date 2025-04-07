@@ -44,7 +44,6 @@
 
   };
 
-  # NOTE: same structure as programs
   nixos.modules.services = {
     name = "service name";
    # module = "./services/scion/module.nix";
