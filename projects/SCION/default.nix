@@ -27,7 +27,7 @@
     #   tests.basic = ./test.nix;
       };
       links = {
-        build = {
+        docs = {
           text = "SCION Documentation";
           url = "https://docs.scion.org/en/latest/";
         };
