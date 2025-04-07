@@ -9,40 +9,62 @@
   # - Each program/service must have at least one example
   # - Set attributes to `null` to indicate that they're needed, but not available
   metadata = {
-    summary = "";
+    summary = "SCION is a clean-slate Next-Generation Internet (NGI) architecture which offers a.o. multi-path and path-awareness capabilities by design.";
     subgrants = [
-      "FooBar"
-      "FooBar-cli"
+      "SCION-proxy"
+      "SCION-router-codealignment"
+      "Verified-SCION-router"
+      "SCION-Rains"
+      "SCION-Swarm"
+      "SCION-IPFS"
+      "SCION-1M"
     ];
   };
 
   nixos.modules.programs = {
-    foobar = {
-      name = "foobar";
-      module = ./module.nix;
-      examples.foobar = {
-        module = ./example.nix;
-        description = "";
-        tests.basic = ./test.nix;
+    scion = {
+      name = "scion";
+    # module = ./module.nix;
+    # examples.foobar = {
+    #   module = ./example.nix;
+    #   description = "";
+    #   tests.basic = ./test.nix;
       };
       links = {
         build = {
-          text = "FooBar Documentation";
-          url = "https://foo.bar/build";
+          text = "SCION Documentation";
+          url = "https://docs.scion.org/en/latest/";
         };
-        test = {
-          text = "FooBar Documentation";
-          url = "https://foo.bar/test";
+        build = {
+          text = "Build from source";
+          url = "https://github.com/scionproto/scion?tab=readme-ov-file#build-from-sources";
+        };
+        tests = {
+          text = "Testing Tutorial";
+          url = "https://docs.scion.org/en/latest/tutorials/deploy.html#tasks-to-perform";
         };
       };
     };
 
-    # needed, but not available
-    foobar-cli = null;
   };
 
   # NOTE: same structure as programs
   nixos.modules.services = {
-    module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
+    name = "service name";
+   # module = "./services/scion/module.nix";
+    links = {
+        build = {
+          text = "SCION Documentation";
+          url = "https://docs.scion.org/en/latest/";
+        };
+        build = {
+          text = "Build from source";
+          url = "https://github.com/scionproto/scion?tab=readme-ov-file#build-from-sources";
+        };
+        tests = {
+          text = "Testing Tutorial";
+          url = "https://docs.scion.org/en/latest/tutorials/deploy.html#tasks-to-perform";
+        };
+      };
   };
 }
