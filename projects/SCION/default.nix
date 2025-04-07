@@ -20,7 +20,7 @@
   nixos.modules.programs = {
     scion = {
       name = "scion";
-    # module = ./module.nix;
+    module = ./programs/module.nix;
     # examples.foobar = {
     #   module = ./example.nix;
     #   description = "";
