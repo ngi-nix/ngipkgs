@@ -46,7 +46,7 @@
 
   nixos.modules.services = {
     name = "service name";
-   # module = "./services/scion/module.nix";
+   module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
     links = {
         build = {
           text = "SCION Documentation";
