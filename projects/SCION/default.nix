@@ -14,6 +14,7 @@
       "SCION-Swarm"
       "SCION-IPFS"
       "SCION-1M"
+      "SCION-geo"
     ];
   };
 
