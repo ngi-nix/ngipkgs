@@ -21,11 +21,11 @@
   nixos.modules.programs = {
     scion = {
       name = "scion";
-    module = ./programs/module.nix;
-    # examples.foobar = {
-    #   module = ./example.nix;
-    #   description = "";
-    #   tests.basic = ./test.nix;
+      module = ./programs/basic/module.nix;
+      examples.basic = {
+        module = ./programs/basic/examples/basic.nix;
+        description = "";
+        tests.basic = ./programs/basic/tests/basic.nix;
       };
       links = {
         docs = {
@@ -47,20 +47,6 @@
 
   nixos.modules.services = {
     name = "service name";
-   module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
-    links = {
-        build = {
-          text = "SCION Documentation";
-          url = "https://docs.scion.org/en/latest/";
-        };
-        build = {
-          text = "Build from source";
-          url = "https://github.com/scionproto/scion?tab=readme-ov-file#build-from-sources";
-        };
-        tests = {
-          text = "Testing Tutorial";
-          url = "https://docs.scion.org/en/latest/tutorials/deploy.html#tasks-to-perform";
-        };
-      };
+    module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
   };
 }

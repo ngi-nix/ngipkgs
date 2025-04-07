@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.scoin.enable = true;
+}
