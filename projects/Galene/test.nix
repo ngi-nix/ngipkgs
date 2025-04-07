@@ -14,7 +14,6 @@
           sources.modules.services.galene
           sources.examples.Galene.galene
         ];
-        services.galene.insecure = true;
       };
   };
 
