@@ -1,0 +1,101 @@
+name: Test VM demo
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - "archlinux:latest"
+          - "debian:12"
+          - "debian:unstable"
+          - "ubuntu:24.04"
+          - "ubuntu:24.10"
+          - "ubuntu:devel"
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v4'
+
+      # TODO: enable overview build
+      # - name: Build overview
+      #   run: nix build .#overview
+
+      # TODO: download this file from overview
+      - name: Create default.nix file
+        run: |
+          cat <<EOF >default.nix
+          {
+            ngipkgs ?
+              import
+                (fetchTarball "https://github.com/eljamm/ngipkgs/archive/init-project-demos.tar.gz")
+                { },
+          }:
+          let
+            servicePort = 9000;
+            domainName = "localhost:\${toString servicePort}";
+          in
+          ngipkgs.demo {
+            services.cryptpad = {
+              enable = true;
+              settings = {
+                httpPort = servicePort;
+                httpAddress = "0.0.0.0";
+                httpUnsafeOrigin = "http://\${domainName}";
+                httpSafeOrigin = "http://\${domainName}";
+              };
+            };
+
+            networking.firewall.allowedTCPPorts = [ servicePort ];
+            networking.firewall.allowedUDPPorts = [ servicePort ];
+          }
+          EOF
+
+      - name: Create test script
+        run: |
+          cat <<EOF >test-script.sh
+          set -euo pipefail
+
+          echo -e "\n-> Installing Nix ..."
+          if echo ${{ matrix.distro }} | grep --quiet ubuntu || echo ${{ matrix.distro }} | grep --quiet debian; then
+            apt update
+            apt install --yes curl git nix
+          elif echo ${{ matrix.distro }} | grep --quiet archlinux; then
+            pacman --sync --refresh --noconfirm curl git nix
+          else
+            echo "ERROR: Unknown distro. Exiting ..."
+            exit 1
+          fi
+
+          echo -e "\n-> Nix version ..."
+          nix --version
+
+          echo -e "\n-> Building VM ..."
+          nix-build \
+            --option binary-caches 'https://cache.nixos.org/ https://ngi.cachix.org/' \
+            --option trusted-public-keys 'cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
+            /default.nix
+
+          echo -e "\n-> Launching VM ..."
+          ./result &
+
+          echo -e "\n-> Running test ..."
+          curl --retry 10 --retry-all-errors --fail localhost:19000 | grep CryptPad
+          EOF
+          chmod +x test-script.sh
+
+      - name: Run and test VM
+        run: >
+          docker run
+          --privileged
+          --volume ./default.nix:/default.nix
+          --volume ./test-script.sh:/test-script.sh
+          ${{ matrix.distro }}
+          /bin/bash -c "/test-script.sh"
