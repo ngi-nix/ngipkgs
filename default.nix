@@ -313,14 +313,13 @@ rec {
               forwardPorts = map (port: {
                 from = "host";
                 guest.port = port;
-                host.port = port;
+                host.port = port + 10000;
                 proto = "tcp";
               }) config.networking.firewall.allowedTCPPorts;
             };
 
             services.openssh = {
               enable = true;
-              ports = lib.mkDefault [ 2222 ];
               settings = {
                 PasswordAuthentication = true;
                 PermitEmptyPasswords = "yes";
