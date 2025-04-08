@@ -302,7 +302,6 @@ rec {
               memorySize = 4096;
               cores = 4;
               graphics = false;
-              diskImage = null;
 
               qemu.options = [
                 "-cpu host"
