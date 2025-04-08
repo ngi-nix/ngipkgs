@@ -45,7 +45,10 @@
   };
 
   nixos.modules.services = {
-    name = "service name";
-    module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
+    scion = {
+      name = "scion";
+      module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
+      examples.basic = null;
+    };
   };
 }
