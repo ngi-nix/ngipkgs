@@ -6,7 +6,7 @@
 }:
 rec {
   name = "hyperswarm-${version}";
-  version = "4.7.3";
+  version = "4.11.1";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
