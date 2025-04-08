@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  services.scion.enable = true;
+  programs.scion.enable = true;
 }
