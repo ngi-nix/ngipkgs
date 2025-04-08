@@ -12,8 +12,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.scoin
-          sources.examples.SCOIN.scoin
+          sources.modules.services.scion
+          sources.examples.SCION.scion
         ];
       };
   };
