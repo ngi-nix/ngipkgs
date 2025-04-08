@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "scoin";
+  name = "scion";
 
   nodes = {
     machine =
