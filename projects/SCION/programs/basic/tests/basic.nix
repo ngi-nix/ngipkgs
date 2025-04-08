@@ -12,7 +12,7 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.scion
+          sources.modules.programs.scion
           sources.examples.SCION.scion
         ];
       };
