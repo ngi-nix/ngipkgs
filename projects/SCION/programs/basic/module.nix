@@ -8,7 +8,7 @@ let
   cfg = config.programs.basic;
 in
 {
-  options.programs.basic = {
-    enable = lib.mkEnableOption "scoin";
+  options.programs.scion = {
+    enable = lib.mkEnableOption "scion";
   };
 }
