@@ -4,21 +4,30 @@
   recutils,
   buildGoModule,
 }:
-buildGoModule {
+buildGoModule (finalAttrs: {
   pname = "taldir";
-  version = "0-unstable-2024-02-18";
+  version = "1.0.3";
 
   src = fetchgit {
     url = "https://git.taler.net/taldir.git";
-    rev = "9c5230f64d16d46c000c6d4f5842170c51b697ce";
-    hash = "sha256-Ri0R7kxP/FitBRKtrM48Cbks63mqpXsRc3r98M0sMus=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-axVQ687cGvxGEKECh3HmbTAFwI/YaCtPvtRU5bWsYYI=";
   };
+
+  vendorHash = "sha256-V/UzUS3eMKnEhgaipsHoodAlZxuEkZM/ALliU1TNuYg=";
+
+  /*
+    NOTE: regenerate the `./go.sum` file on each update:
+    ```shellSession
+      $ nix-shell -p go
+      $ git clone https://git.taler.net/taldir.git && cd taldir
+      $ go mod tidy
+    ```
+  */
 
   postPatch = ''
     cp ${./go.sum} go.sum
   '';
-
-  vendorHash = "sha256-yN8CiRK7cS4bHndOcu+/HI50PDOG+5x/t2kxlIt+5Mk=";
 
   nativeBuildInputs = [
     recutils
@@ -48,4 +57,4 @@ buildGoModule {
     description = "Directory service to resolve wallet mailboxes by messenger addresses.";
     license = lib.licenses.agpl3Plus;
   };
-}
+})

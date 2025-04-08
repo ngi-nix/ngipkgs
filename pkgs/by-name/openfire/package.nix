@@ -7,13 +7,13 @@
 }:
 maven.buildMavenPackage rec {
   pname = "openfire";
-  version = "4.9.0";
+  version = "4.9.2";
 
   src = fetchFromGitHub {
     owner = "igniterealtime";
     repo = "Openfire";
-    rev = "v${version}";
-    hash = "sha256-exZDH3wROQyw8WIQU1WZB3QoXseiSHueo3hiQrjQZGM=";
+    tag = "v${version}";
+    hash = "sha256-mnniMlLvz3Iq/MIWe/legVUVy1TIkNQzvagzgSbZ1is=";
   };
 
   mvnJdk = jdk_headless;

@@ -22,6 +22,12 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-NyNULsvGEIa+cWX0WwegV9AjZj9HJkLHJrk2wOdORKs=";
   };
 
+  postPatch = ''
+    substituteInPlace src/twister/taler-twister-service.c \
+      --replace-fail "gnunet_json" "gnunet_mhd" \
+      --replace-fail "GNUNET_JSON" "GNUNET_MHD"
+  '';
+
   nativeBuildInputs = [
     autoreconfHook
     pkg-config

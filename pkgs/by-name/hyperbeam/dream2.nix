@@ -6,7 +6,7 @@
 }:
 rec {
   name = "hyperbeam-${version}";
-  version = "3.0.1";
+  version = "3.0.2";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
@@ -18,7 +18,7 @@ rec {
       owner = "holepunchto";
       repo = "hyperbeam";
       rev = "v${version}";
-      sha256 = "sha256-2JiVJmfhhE4ntb1lTtqqi5RD44hhGGAwnc5Nw0HLBcw=";
+      sha256 = "sha256-g3eGuol3g1yfGHDSzI1wQXMxJudGCt4PHHdmtiRQS/Q=";
     };
 
     doCheck = true;
