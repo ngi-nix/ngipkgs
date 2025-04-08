@@ -223,18 +223,7 @@
             buildInputs = checks."infra/pre-commit".enabledPackages;
           };
 
-          formatter = pkgs.writeShellApplication {
-            name = "formatter";
-            text = ''
-              # shellcheck disable=all
-              shell-hook () {
-                ${checks."infra/pre-commit".shellHook}
-              }
-
-              shell-hook
-              pre-commit run --all-files
-            '';
-          };
+          formatter = classic.formatter { pre-commit = checks."infra/pre-commit"; };
         }
       );
     in
