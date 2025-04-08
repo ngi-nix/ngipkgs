@@ -75,7 +75,7 @@
       } // rawNixosModules;
 
       mkNixosSystem =
-        config:
+        classicInstance: config:
         nixosSystem {
           modules =
             [
@@ -95,7 +95,7 @@
             ]
             # TODO: this needs to take a different shape,
             # otherwise the transformation to obtain it is confusing
-            ++ classic'.extendedNixosModules;
+            ++ classicInstance.extendedNixosModules;
         };
 
       toplevel = machine: machine.config.system.build.toplevel;
@@ -104,7 +104,7 @@
       systemAgnosticOutputs = {
         nixosConfigurations =
           # TODO: remove these, noone will (or can even, realistically) use them
-          mapAttrs (_: mkNixosSystem) rawExamples // {
+          mapAttrs (_: mkNixosSystem classic') rawExamples // {
             makemake = import ./infra/makemake { inherit inputs; };
           };
 
@@ -179,7 +179,9 @@
                       }) project.nixos.tests;
 
                       checksForNixosExamples = concatMapAttrs (exampleName: example: {
-                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);
+                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (
+                          mkNixosSystem classic example.path
+                        );
                       }) project.nixos.examples;
                     in
                     checksForNixosTests // checksForNixosExamples;
