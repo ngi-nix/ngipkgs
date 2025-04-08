@@ -39,7 +39,7 @@
       examples.basic = {
         module = ./programs/basic/examples/basic.nix;
         description = "";
-        tests.basic = ./programs/basic/tests/basic.nix;
+        tests.basic = import ./programs/basic/tests/basic.nix args;
       };
       
     };
