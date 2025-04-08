@@ -6,7 +6,7 @@
 }:
 rec {
   name = "autobase";
-  version = "1.0.0-alpha.9";
+  version = "7.2.2";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
@@ -18,7 +18,7 @@ rec {
       owner = "holepunchto";
       repo = "autobase";
       rev = "v${version}";
-      sha256 = "sha256-aKs39/9GG3tRq5UBBDWcz1h64kaCt+1Cru3C4fKv5RU=";
+      sha256 = "sha256-fZjaL4mkDKEPu39gXtpMnOXaBxpiMEkDTvVYGQ9WM2Y=";
     };
 
     doCheck = true;

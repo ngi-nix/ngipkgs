@@ -3,7 +3,7 @@
   ...
 }:
 {
-  name = "foobar";
+  name = "galene";
 
   nodes = {
     machine =
@@ -11,8 +11,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs.foobar
-          sources.examples.Foobar.foobar
+          sources.modules.services.galene
+          sources.examples.Galene.galene
         ];
       };
   };
@@ -21,7 +21,5 @@
     { nodes, ... }:
     ''
       start_all()
-
-      machine.succeed("foobar --help")
     '';
 }
