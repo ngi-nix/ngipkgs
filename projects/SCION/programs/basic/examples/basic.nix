@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  services.scoin.enable = true;
+  services.scion.enable = true;
 }
