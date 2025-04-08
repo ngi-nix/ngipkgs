@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.scion
-          sources.examples.SCION.scion
+          sources.examples.SCION.basic
         ];
       };
   };
