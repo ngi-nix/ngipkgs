@@ -46,4 +46,3 @@ rec {
     packageLockFile = ./package-lock.json;
   };
 }
-
