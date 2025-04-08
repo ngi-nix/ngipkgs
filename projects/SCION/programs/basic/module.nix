@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.programs.basic;
+  cfg = config.programs.scion;
 in
 {
   options.programs.scion = {
