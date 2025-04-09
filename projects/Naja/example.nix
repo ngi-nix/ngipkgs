@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.naja.enable = true;
+}
