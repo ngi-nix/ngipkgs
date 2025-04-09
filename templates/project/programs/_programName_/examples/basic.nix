@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  services._programName_.enable = true;
+  programs._programName_.enable = true;
 }
