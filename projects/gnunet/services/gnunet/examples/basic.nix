@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.gnunet.enable = true;
+}
