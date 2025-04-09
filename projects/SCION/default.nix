@@ -17,19 +17,19 @@
       "SCION-geo"
     ];
     links = {
-        docs = {
-          text = "SCION Documentation";
-          url = "https://docs.scion.org/en/latest/";
-        };
-        build = {
-          text = "Build from source";
-          url = "https://github.com/scionproto/scion?tab=readme-ov-file#build-from-sources";
-        };
-        tests = {
-          text = "Testing Tutorial";
-          url = "https://docs.scion.org/en/latest/tutorials/deploy.html#tasks-to-perform";
-        };
+      docs = {
+        text = "SCION Documentation";
+        url = "https://docs.scion.org/en/latest/";
       };
+      build = {
+        text = "Build from source";
+        url = "https://github.com/scionproto/scion?tab=readme-ov-file#build-from-sources";
+      };
+      tests = {
+        text = "Testing Tutorial";
+        url = "https://docs.scion.org/en/latest/tutorials/deploy.html#tasks-to-perform";
+      };
+    };
   };
 
   nixos.modules.programs = {
