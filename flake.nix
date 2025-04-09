@@ -102,12 +102,6 @@
 
       # Finally, define the system-agnostic outputs.
       systemAgnosticOutputs = {
-        nixosConfigurations =
-          # TODO: remove these, noone will (or can even, realistically) use them
-          mapAttrs (_: mkNixosSystem classic') rawExamples // {
-            makemake = import ./infra/makemake { inherit inputs; };
-          };
-
         inherit nixosModules;
 
         # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
@@ -141,6 +135,10 @@
           };
         in
         rec {
+          nixosConfigurations = mapAttrs (_: mkNixosSystem classic) {
+            makemake = import ./infra/makemake { inherit inputs; };
+          };
+
           packages = ngipkgs // {
             overview = import ./overview {
               inherit lib lib' self;
@@ -212,7 +210,7 @@
                     nixfmt-rfc-style.enable = true;
                   };
                 };
-                "infra/makemake" = toplevel self.nixosConfigurations.makemake;
+                "infra/makemake" = toplevel self.nixosConfigurations.${system}.makemake;
                 "infra/overview" = self.packages.${system}.overview;
                 "infra/templates" = classic.templates.project;
               };
