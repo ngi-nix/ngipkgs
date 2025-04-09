@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs._programName_
-          sources.examples._ProjectName_._testName_  # i.e _ProjectName_.basic
+          sources.examples._ProjectName_._testName_ # i.e _ProjectName_.basic
         ];
       };
   };
