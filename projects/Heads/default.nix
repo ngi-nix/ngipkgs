@@ -42,12 +42,7 @@
       };
     };
   };
-  # TODO: Referencing `pkgs` here is currently causing eval issues all over ngipkgs.
-  # https://github.com/ngi-nix/ngipkgs/pull/773
-  # Resolve this first before enabling this.
-  /*
-    binary = lib.attrsets.mapAttrs' (
-      board: pkg: lib.attrsets.nameValuePair "${board}.rom" ({ data = "${pkg}/${pkg.passthru.romName}"; })
-    ) (lib.attrsets.filterAttrs (_: lib.attrsets.isDerivation) pkgs.heads);
-  */
+  binary = lib.attrsets.mapAttrs' (
+    board: pkg: lib.attrsets.nameValuePair "${board}.rom" ({ data = "${pkg}/${pkg.passthru.romName}"; })
+  ) (lib.attrsets.filterAttrs (_: lib.attrsets.isDerivation) pkgs.heads);
 }
