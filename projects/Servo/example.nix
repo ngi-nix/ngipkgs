@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.servo.enable = true;
+}
