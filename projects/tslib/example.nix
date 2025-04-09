@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.tslib.enable = true;
+}
