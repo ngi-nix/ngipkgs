@@ -78,10 +78,23 @@ jobs:
           nix --version
 
           echo -e "\n-> Building VM ..."
-          nix-build \
-            --option binary-caches 'https://cache.nixos.org/ https://ngi.cachix.org/' \
-            --option trusted-public-keys 'cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
-            /default.nix
+          # Use Nix version installed by Linux package manager
+          # nix-build \
+          #   --option binary-caches 'https://cache.nixos.org/ https://ngi.cachix.org/' \
+          #   --option trusted-public-keys 'cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
+          #   /default.nix
+
+          # Use more recent Nix version from Nixpkgs unstable
+          nix-shell \
+            -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz \
+            --packages nix \
+            --run \
+            " \
+              nix-build \
+                --option binary-caches 'https://cache.nixos.org/ https://ngi.cachix.org/' \
+                --option trusted-public-keys 'cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
+                /default.nix \
+            "
 
           echo -e "\n-> Launching VM ..."
           ./result &
