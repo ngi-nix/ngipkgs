@@ -3,6 +3,7 @@
   sources,
   ...
 }:
+
 {
   packages = { inherit (pkgs) flarum; };
   nixos = {
