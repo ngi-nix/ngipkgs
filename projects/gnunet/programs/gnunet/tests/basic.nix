@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "Program Name";
+  name = "gnunet";
 
   nodes = {
     machine =
@@ -12,8 +12,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs._serviceName_
-          sources.examples._ProjectName_._serviceName_
+          sources.modules.programs.gnunet
+          sources.examples.gnunet.basic
         ];
       };
   };

@@ -9,6 +9,9 @@ let
 in
 {
   options.services._serviceName_ = {
-    enable = lib.mkEnableOption "service name";
+    enable = lib.mkEnableOption "_serviceName_";
+    # replace `_package_` with the main service package, if it exists in https://search.nixos.org/packages
+    # else, remove the line below
+    package = lib.mkPackageOption pkgs "_package_" { };
   };
 }
