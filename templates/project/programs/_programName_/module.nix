@@ -9,6 +9,12 @@ let
 in
 {
   options.programs._programName_ = {
-    enable = lib.mkEnableOption "program name";
+    enable = lib.mkEnableOption "_programName_";
+  };
+
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      # put the `packages` here
+    ];
   };
 }
