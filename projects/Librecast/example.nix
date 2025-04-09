@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.librecast.enable = true;
+}
