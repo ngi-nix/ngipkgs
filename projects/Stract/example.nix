@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.stract.enable = true;
+}
