@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.inko.enable = true;
+}
