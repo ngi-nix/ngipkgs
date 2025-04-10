@@ -1,0 +1,4 @@
+{ ... }:
+{
+  services.flarum.enable = true;
+}

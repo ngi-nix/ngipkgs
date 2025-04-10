@@ -15,9 +15,9 @@
   nixos.modules.programs = {
     flarum = {
       name = "flarum";
-      module = ./programs/Flarum/module.nix;
+      module = ./module.nix;
       examples.basic = {
-        module = ./programs/Flarum/examples/basic.nix;
+        module = ./programs-example.nix;
         description = "";
         tests.basic = null;
       };
@@ -39,7 +39,7 @@
       name = "flarum";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/flarum.nix";
       examples.basic = {
-        module = ./services/Flarum/examples/basic.nix;
+        module = ./services-example.nix;
         description = "";
         tests.basic = null;
       };
