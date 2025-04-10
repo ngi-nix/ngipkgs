@@ -31,89 +31,75 @@
       ...
     }@inputs:
     let
-      classic' = import ./. { system = null; };
-      inherit (classic') lib lib';
-
-      inherit (lib)
-        attrValues
-        concatMapAttrs
-        filterAttrs
-        mapAttrs
-        recursiveUpdate
-        ;
-
-      nixosSystem =
-        args:
-        import (nixpkgs + "/nixos/lib/eval-config.nix") (
-          {
-            inherit lib;
-            system = null;
-          }
-          // args
-        );
-
-      overlay = classic'.overlays.default;
-
-      # Note that modules and examples are system-agnostic, so import them first.
-      # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
-      rawNgiProjects = classic'.projects;
-
-      rawExamples = lib'.flattenAttrs "/" (
-        mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
-      );
-
-      rawNixosModules = lib'.flattenAttrs "." (
-        lib.foldl recursiveUpdate { } (
-          attrValues (mapAttrs (_: project: project.nixos.modules) rawNgiProjects)
-        )
-      );
-
-      nixosModules = {
-        # The default module adds the default overlay on top of Nixpkgs.
-        # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-        default.nixpkgs.overlays = [ overlay ];
-      } // rawNixosModules;
-
-      mkNixosSystem =
-        classicInstance: config:
-        nixosSystem {
-          modules =
-            [
-              config
-              {
-                nixpkgs.hostPlatform = "x86_64-linux";
-                system.stateVersion = "23.05";
-
-                # The examples that the flake exports are not meant to be used/booted directly.
-                # See <https://github.com/ngi-nix/ngipkgs/issues/128> for more information.
-                boot = {
-                  initrd.enable = false;
-                  kernel.enable = false;
-                  loader.grub.enable = false;
-                };
-              }
-            ]
-            # TODO: this needs to take a different shape,
-            # otherwise the transformation to obtain it is confusing
-            ++ classicInstance.extendedNixosModules;
-        };
-
-      toplevel = machine: machine.config.system.build.toplevel;
-
-      # Finally, define the system-agnostic outputs.
-      systemAgnosticOutputs = {
-        inherit nixosModules;
-
-        # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
-        overlays.default = overlay;
-      };
-
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (
         system:
         let
           classic = import ./. { inherit system; };
+          inherit (classic) lib lib';
 
           inherit (classic) pkgs ngipkgs;
+
+          inherit (lib)
+            attrValues
+            concatMapAttrs
+            filterAttrs
+            mapAttrs
+            recursiveUpdate
+            ;
+
+          nixosSystem =
+            args:
+            import (nixpkgs + "/nixos/lib/eval-config.nix") (
+              {
+                inherit lib;
+                system = null;
+              }
+              // args
+            );
+
+          overlay = classic.overlays.default;
+
+          # Note that modules and examples are system-agnostic, so import them first.
+          # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
+          rawNgiProjects = classic.projects;
+
+          rawNixosModules = lib'.flattenAttrs "." (
+            lib.foldl recursiveUpdate { } (
+              attrValues (mapAttrs (_: project: project.nixos.modules) rawNgiProjects)
+            )
+          );
+
+          nixosModules = {
+            # The default module adds the default overlay on top of Nixpkgs.
+            # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
+            default.nixpkgs.overlays = [ overlay ];
+          } // rawNixosModules;
+
+          mkNixosSystem =
+            config:
+            nixosSystem {
+              modules =
+                [
+                  config
+                  {
+                    nixpkgs.hostPlatform = "x86_64-linux";
+                    system.stateVersion = "23.05";
+
+                    # The examples that the flake exports are not meant to be used/booted directly.
+                    # See <https://github.com/ngi-nix/ngipkgs/issues/128> for more information.
+                    boot = {
+                      initrd.enable = false;
+                      kernel.enable = false;
+                      loader.grub.enable = false;
+                    };
+                  }
+                ]
+                # TODO: this needs to take a different shape,
+                # otherwise the transformation to obtain it is confusing
+                ++ classic.extendedNixosModules;
+            };
+
+          toplevel = machine: machine.config.system.build.toplevel;
 
           ngiProjects = classic.projects;
 
@@ -135,11 +121,11 @@
           };
         in
         rec {
-          nixosConfigurations = mapAttrs (_: mkNixosSystem classic) {
+          nixosConfigurations = mapAttrs (_: mkNixosSystem) {
             makemake = import ./infra/makemake { inherit inputs; };
           };
 
-          packages = ngipkgs // {
+          packages = {
             overview = import ./overview {
               inherit lib lib' self;
               pkgs = pkgs // ngipkgs;
@@ -177,9 +163,7 @@
                       }) project.nixos.tests;
 
                       checksForNixosExamples = concatMapAttrs (exampleName: example: {
-                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (
-                          mkNixosSystem classic example.path
-                        );
+                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);
                       }) project.nixos.examples;
                     in
                     checksForNixosTests // checksForNixosExamples;
@@ -237,5 +221,5 @@
         }
       );
     in
-    eachDefaultSystemOutputs // systemAgnosticOutputs;
+    eachDefaultSystemOutputs;
 }
