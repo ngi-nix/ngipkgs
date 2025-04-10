@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "Program Name";
+  name = "Icestudio";
 
   nodes = {
     machine =
@@ -12,8 +12,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs._serviceName_
-          sources.examples._ProjectName_._exampleName_ # i.e _ProjectName_.basic
+          sources.modules.programs.icestudio
+          sources.examples.Icestudio.basic
         ];
       };
   };
