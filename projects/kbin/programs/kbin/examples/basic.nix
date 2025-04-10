@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.kbin.enable = true;
+}
