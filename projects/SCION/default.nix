@@ -48,7 +48,8 @@
     scion = {
       name = "scion";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/scion/scion.nix";
-      examples.basic = null;
+      # TODO: unbreak
+      # tests.scion = "${sources.inputs.nixpkgs}/nixos/tests/scion/freestanding-deployment/default.nix";
     };
   };
 }
