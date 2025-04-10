@@ -16,7 +16,7 @@ in
     environment.systemPackages = with pkgs; [
       scion
       scion-apps
-      scion-bootstrapper
+      # scion-bootstrapper # FIX: broken in nixpkgs
       ioq3-scion
       pan-bindings
     ];
