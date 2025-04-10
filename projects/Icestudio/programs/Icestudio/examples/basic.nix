@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.icestudio.enable = true;
+}
