@@ -22,7 +22,7 @@ in
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.kbin
-          sources.examples.Kbin.base
+          sources.examples.kbin.basic
         ];
 
         services.phpfpm.pools.kbin = {
