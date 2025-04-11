@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.forgejo.enable = true;
+}
