@@ -298,6 +298,19 @@ rec {
               Welcome to NGIpkgs!
             '';
 
+            services.openssh = {
+              enable = true;
+              settings = {
+                PasswordAuthentication = true;
+                PermitEmptyPasswords = "yes";
+                PermitRootLogin = "yes";
+              };
+            };
+
+            system.stateVersion = "25.05";
+
+            networking.firewall.enable = false;
+
             virtualisation = {
               memorySize = 4096;
               cores = 4;
@@ -316,19 +329,6 @@ rec {
                 proto = "tcp";
               }) config.networking.firewall.allowedTCPPorts;
             };
-
-            services.openssh = {
-              enable = true;
-              settings = {
-                PasswordAuthentication = true;
-                PermitEmptyPasswords = "yes";
-                PermitRootLogin = "yes";
-              };
-            };
-
-            system.stateVersion = "25.05";
-
-            networking.firewall.enable = false;
           }
         )
       ] ++ extendedNixosModules;
