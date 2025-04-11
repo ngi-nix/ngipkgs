@@ -295,7 +295,7 @@ rec {
             services.getty.autologinUser = "nixos";
             services.getty.helpLine = ''
 
-              Welcome to Ngipkgs!
+              Welcome to NGIpkgs!
             '';
 
             virtualisation = {
