@@ -5,13 +5,15 @@ It is the basis of an ecosystem of exceptionally powerful tools.
 Nixpkgs is [the largest, most up-to-date software repository in the world][repology].
 NixOS is a Linux distribution that can be configured fully declaratively, with unmatched flexibility.
 
-Many software projects funded by the [Next Generation Internet] (NGI) initiative of the European Commission through the [NLnet Foundation] are not mature enough to distribute through Nixpkgs, or cannot be included in Nixpkgs for technical reasons.
-This repository makes such projects available as
+This repository makes software projects which are funded by the [Next Generation Internet] (NGI) initiative of the European Commission through the [NLnet Foundation] available as
 
-- Package recipes compatible with [Nixpkgs]
 - Configuration modules compatible with [NixOS]
+- Package recipes compatible with [Nixpkgs]
 
 and provides automatically tested example NixOS configurations.
+
+> [!TIP]
+> View NGI software packaged for NixOS on <https://ngi.nixos.org>.
 
 NGIpkgs was created as part of [Summer of Nix], organised by the [NixOS Foundation].
 
@@ -33,7 +35,12 @@ This is what you can do with software from NGIpkgs:
 
 In order to do that:
 - [Install Nix on Linux or WSL](https://nix.dev/install-nix)
-- [Enable the flakes experimental feature](https://wiki.nixos.org/wiki/Flakes)
+
+> [!WARNING]
+> End-user instructions are not available yet, and even simple workflows may not work as intended.
+> This is currently work in progress.
+>
+> You need to be proficient enough with the Nix langauge and NixOS to read the code and set up an environment where you can experiment with deploying and running the applications provided in this repository.
 
 It will help you to go more quickly if you learn to:
 - [Read the Nix language](https://nix.dev/tutorials/nix-language)
@@ -45,40 +52,47 @@ It will help you to go more quickly if you learn to:
 
 ## Structure of NGIpkgs
 
-The software in NGIpkgs can be divided into two broad categories: Nix packages, and NixOS modules.
+The each piece of software in NGIpkgs is called a *project*.
+Each project may consist of multiple packaging artefacts:
+- NixOS configuration modules for adding application components to a NixOS system
+- Exampes for configuring these modules
+- Tests to ensure the modules and examples work as intended
+- Libraries for various progrmaming languages that can be composed with Nixpkgs package recipes
+- Links to upstream documentation for using the application or maintaing or extending the NixOS packaging
 
 ```
 .
-├── flake.nix
+├── README.md            # this file
+├── default.nix          # collection of project configuration modules (and some helper tooling)
+├── projects
+│   ├── default.nix      # aggregates all projects
+│   ├── models.nix       # data model for packaging artefacts
+│   ├── <project-name>
+│   │   ├── default.nix  # packaging artefacts for a project
+│   …   └── …            # other files for implementing a project package
 ├── pkgs
 │   └── by-name
-│       └── …            # directories of packages
-├── projects
-│   ├── <project-name>   # names matching those at https://nlnet.nl/project
-│   │   ├── default.nix  # project definition
-│   │   └── …            # files of the project (e.g. NixOS module, configuration, tests, etc.)
-│   └── default.nix      # imports all projects 
-├── README.md            # this file
+│       └── …            # directories with Nixpkgs-compatible package recipes
+├── flake.nix            # CI setup
 └── …
 ```
 
-Nix packages can theoretically be built and run on any operating system that runs Nix.
-The output of building a Nix package is often a library or executable, including its dependencies.
-In NGIpkgs, these packages are all contained in [the `pkgs` directory](./pkgs).
-For simple package definitions, we use `pkgs/by-name/<pname>/package.nix`, inspired by [Nix RFC 140].
+NixOS modules can be integrated into a NixOS configuration.
+Many of them expose options for configuring one or more [systemd](https://systemd.io) services that are designed to run on NixOS.
+These modules are ready to be deployed to a NixOS system running in a container, virtual machine, or on a physical machine.
 
-[Nix RFC 140]: https://github.com/NixOS/rfcs/blob/c8569f6719356009204133cd00d92010889ed56d/rfcs/0140-simple-package-paths.md
+Example configurations found in the corresponding per-project directory are a good starting point for anyone interested in using these modules, and can be expected to work because they are automatically tested in continuous integration.
+
+Nixpkgs-style package recipes can in principle be built on any operating system supported by Nix.
+The output of building such a recipe is often a library or executable, including its dependencies.
+In NGIpkgs, these recipes are maintained in [the `pkgs` directory](./pkgs).
 
 Corresponding to [projects funded by NGI through NLnet](https://nlnet.nl/project/) there are per-project subdirectories within [the `projects` directory](./projects).
-These per-project directories contain a `default.nix` which
-- Picks packages associated with the project from those defined in `pkgs` and Nixpkgs,
-- Exposes NixOS modules, tests, and configurations which are also contained in the per-project directory,
-- May contain additional metadata about the project.
-
-NixOS modules are components that can be easily integrated into a NixOS configuration.
-Many of them represent services that map to one or more systemd services that are designed to run on NixOS.
-These modules are ready to be deployed to a NixOS system, such as a container, virtual machine, or physical machine.
-Example configurations found in the corresponding per-project directory are a good starting point for anyone interested in using these modules, and are sure to work because they are also used for testing.
+Each of these sub-directories contain a `default.nix` which
+- Picks packages associated with the project from those defined in [`pkgs`](./pkgs) and [Nixpkgs],
+- Exposes NixOS modules, tests, and configurations which are also maintained in the per-project directory,
+- May contain additional metadata about the project
+- Follows [the data model for packaging artefacts](./projects/models.nix)
 
 ## Continuous builds of packages with Buildbot
 
@@ -87,14 +101,16 @@ The results of these builds can be found at <https://buildbot.ngi.nixos.org/#/pr
 
 ## Reasoning for creation of the NGIpkgs monorepo
 
-- Users can discover NGI projects on an [overview page](https://ngi-nix.github.io/ngipkgs/) and use them immediately.
-- Many software packages are research projects that would not make sense to distribute through Nixpkgs.
-- The developers get a unified code structure, CI & CD tooling, and a common pull request and issue tracker which facilitates reviews.
-- The funding organizations get an overview of the packaging situation.
+- Users can discover NGI projects on an [overview page](https://ngi.nixos.org) and use them immediately.
+- Many software packages are research projects that would not (yet) make sense to distribute through Nixpkgs or NixOS.
+- The funding organisations get an overview of the packaging situation.
+- Maintainers of the NGI software collection can experiment with code architecture and user experience without interfering with upstream NixOS development or having to deal with stricter stability requirements.
+
+Our intention is to eventually bring innovations to Nixpkgs and NixOS once they are proven to work well and there is a realistic migration path that won't break upstream contributors' and users' workflows.
 
 ## Contributing to NGIpkgs
 
-Please see [`CONTRIBUTING.md`](CONTRIBUTING.md)
+Please see [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## Acknowledgements
 
