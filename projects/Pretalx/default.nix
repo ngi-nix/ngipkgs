@@ -1,34 +1,40 @@
 {
-  pkgs,
   lib,
+  pkgs,
   sources,
 }@args:
+
 {
-  packages = {
-    inherit (pkgs) pretalxFull;
+  metadata = {
+    summary = "Open source tooling for events and conferences";
+    subgrants = [
+      "Pretalx"
+    ];
   };
 
-  nixos = {
-    modules.services.ngi-pretalx = ./service.nix;
-    tests.pretalx = import ./test args;
+  nixos.modules.services.ngi-pretalx = {
+    module = ./service.nix;
     examples = {
       base = {
-        path = ./examples/base.nix;
+        module = ./examples/base.nix;
         description = ''
           Basic configuration for Pretalx, incl. secret management with SOPS, excl. database settings.
         '';
+        tests.pretalx = import ./test args;
       };
       postgresql = {
-        path = ./examples/postgresql.nix;
+        module = ./examples/postgresql.nix;
         description = ''
           Supplementary to `base.nix`, adds database configuration for PostgreSQL.
         '';
+        tests.pretalx = import ./test args;
       };
       mysql = {
-        path = ./examples/mysql.nix;
+        module = ./examples/mysql.nix;
         description = ''
           Supplementary to `base.nix`, adds database configuration for MySQL.
         '';
+        tests.pretalx = import ./test args;
       };
     };
   };
