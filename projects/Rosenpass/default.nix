@@ -37,7 +37,6 @@
         description = "";
         tests.basic = import ./programs/basic/tests/basic.nix args;
       };
-
     };
   };
 
