@@ -11,6 +11,7 @@
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
   sops-nix = import "${sources.sops-nix}/modules/sops";
+  pre-commit-hooks = import sources.pre-commit-hooks;
 in
 rec {
   inherit
@@ -132,6 +133,33 @@ rec {
     in
     # fake derivation for flake check
     pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
+
+  pre-commit-hook = pre-commit-hooks.run {
+    src = ./.;
+    hooks = {
+      actionlint.enable = true;
+      nixfmt-rfc-style.enable = true;
+      actionlint.package = pkgs.actionlint;
+      nixfmt-rfc-style.package = pkgs.nixfmt-rfc-style;
+    };
+  };
+
+  formatter =
+    {
+      pre-commit ? pre-commit-hook,
+    }:
+    pkgs.writeShellApplication {
+      name = "formatter";
+      text = ''
+        # shellcheck disable=all
+        shell-hook () {
+          ${pre-commit.shellHook}
+        }
+
+        shell-hook
+        pre-commit run --all-files
+      '';
+    };
 
   # TODO: find a better place for this
   metrics = with lib; {
