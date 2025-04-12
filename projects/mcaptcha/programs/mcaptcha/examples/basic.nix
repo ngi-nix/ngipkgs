@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.mcaptcha.enable = true;
+}
