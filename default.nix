@@ -337,7 +337,7 @@ rec {
   demo =
     module:
     pkgs.writeShellScript "demo-vm" ''
-      ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm
+      exec ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm "$@"
     '';
 
   # $ nix-build . -A demo-test
