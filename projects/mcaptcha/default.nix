@@ -62,18 +62,23 @@
       # inside a `module.nix` file, but we can't do both at the same time.
       #
       module = ./services/mcaptcha/module.nix;
-      examples = {
-        bringService = {
-          description = "use a database and other services running on a different node";
-          module = ./services/mcaptcha/examples/basic.nix;
-          tests.bringService = import ./services/mcaptcha/tests/bring-your-own-services.nix args;
-        };
-        createLocally = {
-          description = "use a database and other services running on the same node";
-          module = ./services/mcaptcha/examples/basic.nix;
-          tests.createLocally = import ./services/mcaptcha/tests/create-locally.nix args;
-        };
+      examples.basic = {
+        module = ./services/mcaptcha/examples/basic.nix;
+        description = "Basic example of mCaptcha service.";
+        tests.basic = import ./services/mcaptcha/tests/basic.nix args;
       };
+      # examples = {
+      #   bringService = {
+      #     description = "use a database and other services running on a different node";
+      #     module = ./services/mcaptcha/examples/basic.nix;
+      #     tests.bringService = import ./services/mcaptcha/tests/bring-your-own-services.nix args;
+      #   };
+      #   createLocally = {
+      #     description = "use a database and other services running on the same node";
+      #     module = ./services/mcaptcha/examples/basic.nix;
+      #     tests.createLocally = import ./services/mcaptcha/tests/create-locally.nix args;
+      #   };
+      # };
       links = {
         setup = {
           text = "Development setup";
