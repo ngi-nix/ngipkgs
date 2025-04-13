@@ -44,12 +44,11 @@
     rosenpass = {
       name = "rosenpass";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/rosenpass.nix";
-      # tests.with-sops = import ./tests args;
-      # tests.without-sops = "${sources.inputs.nixpkgs}/nixos/tests/rosenpass.nix";
       examples.basic = {
         module = ./services/basic/examples/basic.nix;
         description = "";
-        tests.basic = import ./services/basic/tests/basic.nix args;
+        tests.with-sops = import ./tests args;
+        tests.without-sops = "${sources.inputs.nixpkgs}/nixos/tests/rosenpass.nix";
       };
     };
   };
