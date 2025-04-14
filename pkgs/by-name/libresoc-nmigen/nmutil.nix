@@ -1,13 +1,13 @@
 {
   lib,
   fetchFromLibresoc,
-  python39Packages,
+  python3Packages,
   symbiyosys,
   yices,
   nmigen,
   pytest-output-to-files,
 }:
-python39Packages.buildPythonPackage {
+python3Packages.buildPythonPackage {
   pname = "libresoc-nmutil"; # Libre-SOC's bespoke fork
   version = "0-unstable-2022-11-16";
 
@@ -27,7 +27,7 @@ python39Packages.buildPythonPackage {
       symbiyosys
       yices
     ]
-    ++ (with python39Packages; [
+    ++ (with python3Packages; [
       pyvcd
     ]);
 
@@ -37,7 +37,7 @@ python39Packages.buildPythonPackage {
       symbiyosys
       yices
     ]
-    ++ (with python39Packages; [
+    ++ (with python3Packages; [
       pytestCheckHook
       pytest-xdist
       pytest-output-to-files

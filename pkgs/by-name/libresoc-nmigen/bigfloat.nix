@@ -1,10 +1,10 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromGitHub,
   mpfr,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "bigfloat";
   version = "0.4.0";
   pyproject = true;
@@ -16,12 +16,12 @@ python39Packages.buildPythonPackage rec {
     hash = "sha256-HgbwA0YksF/LDiD8WrcQZKilU6J94zSkgIyR+UUf+do=";
   };
 
-  build-system = with python39Packages; [
+  build-system = with python3Packages; [
     cython
     setuptools
   ];
 
-  propagatedBuildInputs = [ mpfr ] ++ (with python39Packages; [ six ]);
+  propagatedBuildInputs = [ mpfr ] ++ (with python3Packages; [ six ]);
 
   meta = {
     description = "Arbitrary-precision correctly-rounded floating-point arithmetic, via MPFR.";

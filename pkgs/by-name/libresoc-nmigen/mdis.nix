@@ -1,9 +1,9 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchPypi,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "mdis";
   version = "0.5.1";
 

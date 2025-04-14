@@ -1,6 +1,6 @@
 {
   lib,
-  python39,
+  python3,
   fetchFromLibresoc,
   pkgsCross,
   writeShellApplication,
@@ -12,8 +12,8 @@
   mdis,
 }:
 let
-  python = python39;
-  pythonPackages = python39.pkgs;
+  python = python3;
+  pythonPackages = python3.pkgs;
 in
 pythonPackages.buildPythonPackage rec {
   name = "libresoc-openpower-isa";

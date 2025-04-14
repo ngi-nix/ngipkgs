@@ -1,12 +1,12 @@
 {
   lib,
   fetchFromLibresoc,
-  python39,
-  python39Packages,
+  python3,
+  python3Packages,
   nmigen-soc,
   nmigen,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "c4m-jtag";
   version = "unstable-2024-03-31";
   realVersion = "0.3.dev243+g${lib.substring 0 7 src.rev}";
@@ -21,7 +21,7 @@ python39Packages.buildPythonPackage rec {
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
   '';
 
-  nativeBuildInputs = with python39Packages; [ setuptools-scm ];
+  nativeBuildInputs = with python3Packages; [ setuptools-scm ];
   propagatedBuildInputs = [ nmigen-soc ];
 
   pythonImportsCheck = [ "c4m.nmigen.jtag.tap" ];

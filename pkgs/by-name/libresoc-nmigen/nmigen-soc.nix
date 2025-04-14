@@ -1,10 +1,10 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromGitLab,
   nmigen,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "nmigen-soc";
   version = "unstable-2024-03-31";
   # python setup.py --version
@@ -22,8 +22,8 @@ python39Packages.buildPythonPackage rec {
     rev = "fd2aaa336283cff2e46f489bf3897780cd217b8b"; # HEAD @ version date
   };
 
-  nativeBuildInputs = with python39Packages; [ setuptools-scm ];
-  propagatedBuildInputs = with python39Packages; [
+  nativeBuildInputs = with python3Packages; [ setuptools-scm ];
+  propagatedBuildInputs = with python3Packages; [
     nmigen
     setuptools
   ];
@@ -32,7 +32,7 @@ python39Packages.buildPythonPackage rec {
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
   '';
 
-  nativeCheckInputs = with python39Packages; [ pytestCheckHook ];
+  nativeCheckInputs = with python3Packages; [ pytestCheckHook ];
 
   meta = {
     description = "Python toolbox for building complex digital hardware";
