@@ -42,7 +42,7 @@ let
   inherit (lib) fetchFromLibresoc;
 
   libresoc-c4m-jtag = callPackage ./libresoc-c4m-jtag.nix {
-    inherit fetchFromLibresoc nmigen nmigen-soc;
+    inherit fetchFromLibresoc nmigen-soc modgrammar;
   };
   libresoc-ieee754fpu = callPackage ./ieee754fpu.nix {
     inherit
@@ -75,6 +75,7 @@ let
     inherit fetchFromLibresoc;
   };
   pytest-output-to-files = callPackage ./pytest-output-to-files.nix { inherit fetchFromLibresoc; };
+  modgrammar = callPackage ./modgrammar.nix { };
 in
 callPackage ./soc.nix {
   inherit

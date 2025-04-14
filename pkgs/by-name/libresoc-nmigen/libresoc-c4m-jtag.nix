@@ -1,10 +1,9 @@
 {
   lib,
   fetchFromLibresoc,
-  python3,
   python3Packages,
   nmigen-soc,
-  nmigen,
+  modgrammar,
 }:
 python3Packages.buildPythonPackage rec {
   pname = "c4m-jtag";
@@ -23,7 +22,10 @@ python3Packages.buildPythonPackage rec {
   '';
 
   nativeBuildInputs = with python3Packages; [ setuptools-scm ];
-  propagatedBuildInputs = [ nmigen-soc ];
+  propagatedBuildInputs = [
+    nmigen-soc
+    modgrammar
+  ];
 
   pythonImportsCheck = [ "c4m.nmigen.jtag.tap" ];
 
