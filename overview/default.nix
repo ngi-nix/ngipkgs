@@ -207,10 +207,10 @@ let
     This service is still <strong>experimental</strong> and under active development.
     Don't expect anything specific to work yet:
 
-    - The package collection is steadily growing
-    - Many packages are in development, with ongoing efforts to complete their components
-    - We’re preparing instructions to make getting started as smooth as possible
-    - The way to expose our software and its Nix expressions is evolving, as we continue to refine the user experience
+    - The package collection is far incomplete
+    - Many packages lack crucial components
+    - There are no instructions for getting started
+    - How software and the corresponding Nix expressions are exposed is subject to change
 
     More information about the project:
 
