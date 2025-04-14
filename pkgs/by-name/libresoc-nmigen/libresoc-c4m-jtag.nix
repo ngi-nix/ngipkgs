@@ -10,6 +10,7 @@ python3Packages.buildPythonPackage rec {
   pname = "c4m-jtag";
   version = "unstable-2024-03-31";
   realVersion = "0.3.dev243+g${lib.substring 0 7 src.rev}";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;

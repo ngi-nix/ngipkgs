@@ -6,6 +6,7 @@
 python3Packages.pyelftools.overrideAttrs (_: rec {
   name = "pyelftools";
   version = "unstable-2024-03-31";
+  pyproject = true;
 
   # upstream Libre-SOC uses a mirror,
   # and while this would be best handled as github.com/Libre-SOC-mirrors copy,
