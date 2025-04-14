@@ -9,6 +9,7 @@ python3Packages.buildPythonPackage rec {
   version = "unstable-2024-03-31";
   # python setup.py --version
   realVersion = "0.1.dev243+g${lib.substring 0 7 src.rev}";
+  pyproject = true;
 
   # NOTE(jleightcap): libresoc's nmigen-soc fork has been renamed to https://github.com/amaranth-lang/amaranth-soc.
   # suffers from the same rename issue as the previous commit with renaming issue as nmigen/amaranth

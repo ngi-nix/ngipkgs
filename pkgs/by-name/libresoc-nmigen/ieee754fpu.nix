@@ -11,7 +11,8 @@
 }:
 python3Packages.buildPythonPackage rec {
   pname = "ieee754fpu";
-  version = "unstable-2024-03-31";
+  version = "0-unstable-2024-03-31";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;
@@ -22,6 +23,10 @@ python3Packages.buildPythonPackage rec {
   prePatch = ''
     touch ./src/ieee754/part{,_ass,_cat,_repl}/__init__.py
   '';
+
+  build-system = with python3Packages; [
+    setuptools
+  ];
 
   propagatedBuildInputs = [ nmutil ];
 

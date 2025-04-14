@@ -14,6 +14,7 @@ python3Packages.buildPythonPackage rec {
   name = "soc";
   pname = name;
   version = "unstable-2024-03-31";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;

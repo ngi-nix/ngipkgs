@@ -10,6 +10,7 @@
 python3Packages.buildPythonPackage {
   pname = "libresoc-nmutil"; # Libre-SOC's bespoke fork
   version = "0-unstable-2022-11-16";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     pname = "nmutil";
@@ -21,6 +22,10 @@ python3Packages.buildPythonPackage {
   postPatch = ''
     sed -i "s/read_ilang/read_rtlil/g" build/lib/nmutil/*.py src/nmutil/*.py
   '';
+
+  build-system = with python3Packages; [
+    setuptools
+  ];
 
   propagatedNativeBuildInputs =
     [

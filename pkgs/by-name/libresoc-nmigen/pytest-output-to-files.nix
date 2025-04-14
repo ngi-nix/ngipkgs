@@ -6,6 +6,7 @@
 python3Packages.buildPythonPackage rec {
   pname = "pytest-output-to-files";
   version = "unstable-2024-03-31";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;
@@ -13,6 +14,7 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-ES8zZ9s6wGcqw60NoN4tZf/Dq/sBvl+UDYrXuOgfMxI=";
   };
 
+  build-system = with python3Packages; [ setuptools ];
   nativeCheckInputs = with python3Packages; [ pytestCheckHook ];
 
   meta = {

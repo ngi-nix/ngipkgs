@@ -18,7 +18,8 @@ in
 pythonPackages.buildPythonPackage rec {
   name = "libresoc-openpower-isa";
   pname = "openpower-isa";
-  version = "unstable-2024-03-31";
+  version = "0-unstable-2024-03-31";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;
@@ -50,6 +51,10 @@ pythonPackages.buildPythonPackage rec {
     ./prefixed-openpower-isa-tools.patch
   ];
 
+  build-system = with pythonPackages; [
+    setuptools
+  ];
+
   # Native is the build machine architecture (e.g. x86_64 linux)
   # This will run a python emulator of the target architecture, which is PowerPC for this project
   # The assembler has to run on native but target PowerPC assembly
@@ -68,6 +73,10 @@ pythonPackages.buildPythonPackage rec {
       ply
       pygdbmi
     ]);
+
+  pythonRelaxDeps = [
+    "pygdbmi"
+  ];
 
   # TODO: potential upstream work
   postInstall =
