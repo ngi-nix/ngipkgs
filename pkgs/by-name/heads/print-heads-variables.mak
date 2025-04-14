@@ -2,6 +2,7 @@
 
 BOARD ?= qemu-coreboot-fbwhiptail-tpm1
 CONFIG := $(src)/boards/$(BOARD)/$(BOARD).config
+pwd := $(src)
 
 VARS_OLD := $(.VARIABLES)
 
