@@ -249,7 +249,6 @@ let
   };
 
   # The top-level overview for all projects
-
   index = ''
     <section class="page-width">
       ${heading 1 "NGIpkgs"}
