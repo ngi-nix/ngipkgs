@@ -62,7 +62,7 @@ in
                 -vga std \
                 -m 256M \
                 -serial stdio \
-                --bios /etc/qemu-coreboot-fbwhiptail-tpm1-hotp.rom \
+                --bios /etc/heads/qemu-coreboot-fbwhiptail-tpm1-hotp.rom \
                 -object rng-random,filename=/dev/urandom,id=rng0 \
                 -device virtio-rng-pci,rng=rng0 \
                 -netdev user,id=u1 -device e1000,netdev=u1 \
