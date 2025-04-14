@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
 
   buildPhase = ''
     runHook preBuild
-    python3.9 src/pinmux_generator.py -v -s ls180 -o ls180
+    python3 src/pinmux_generator.py -v -s ls180 -o ls180
     runHook postBuild
   '';
 
