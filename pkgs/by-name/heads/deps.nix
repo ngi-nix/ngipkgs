@@ -45,6 +45,20 @@
     "t430-maximized"
     "t480-hotp-maximized"
     "t480-maximized"
+    "UNMAINTAINED_kgpe-d16_server"
+    "UNMAINTAINED_kgpe-d16_server-whiptail"
+    "UNMAINTAINED_kgpe-d16_workstation"
+    "UNMAINTAINED_kgpe-d16_workstation-usb_keyboard"
+    "UNTESTED_nitropad-ns50"
+    "UNTESTED_t440p-hotp-maximized"
+    "UNTESTED_t440p-maximized"
+    "UNTESTED_t530-hotp-maximized"
+    "UNTESTED_t530-maximized"
+    "UNTESTED_talos-2"
+    "UNTESTED_w541-hotp-maximized"
+    "UNTESTED_w541-maximized"
+    "UNTESTED_z220-cmt-hotp-maximized"
+    "UNTESTED_z220-cmt-maximized"
     "w530-hotp-maximized"
     "w530-maximized"
     "x220-hotp-maximized"
@@ -287,6 +301,11 @@
       name = "linux-6.1.8.tar.xz";
       url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.8.tar.xz";
       hash = "sha256-tgu1Ori6NwonBFSxHpPUGvKRJvxyvW7eUXZz4uV7gW0=";
+    }
+    {
+      name = "linux-6.6.16.tar.xz";
+      url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.16.tar.xz";
+      hash = "sha256-sh1XlaO+rU8RKRZCMiL6qKD1GeQgHfND4+uI3J5KqjA=";
     }
     {
       name = "LVM2.2.03.23.tgz";

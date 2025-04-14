@@ -50,7 +50,7 @@ while IFS= read -r -d "" boardPath; do
     src="$srcDir" \
     BOARD="$boardName" \
   >> "$tmpDir"/board-"$boardName".txt
-done < <(find "$srcDir"/boards -mindepth 1 -maxdepth 1 -not -name 'UNTESTED*' -and -not -name 'UNMAINTAINED*' -print0 | sort -z)
+done < <(find "$srcDir"/boards -mindepth 1 -maxdepth 1 -print0 | sort -z)
 cat "$tmpDir"/board-* | sort | uniq > "$tmpDir"/all.txt
 
 # Functions to make some things less redundant
@@ -174,14 +174,22 @@ while IFS= read -r packageVersion; do
 
   # Modules are only differenciated by having _repo values, need to sort those out
   if grep -w "^${package}_repo =" "$tmpDir"/all.txt > /dev/null; then
-    echo "Skipping non-package: ${package}"
+    echo "Skipping non-package module: ${package}"
+    continue
+  fi
+
+  # Special case: linux_patch_version is not a package - it overrides the version part when looking up the patches for
+  # the corresponding kernel build, for example to only apply some patches for specific platform
+  # (Example: openpower boards fetch the linux-${version} srcs, but apply patches from linux-${version}-openpower)
+  if [ "$package" == "linux_patch" ]; then
+    echo "Skipping non-package entry: ${package}"
     continue
   fi
 
   # coreboot-blobs entries for coreboot modules are invalid
   if [[ "$package" == coreboot-blobs-* ]]; then
     if grep -w "^coreboot-${package#"coreboot-blobs-"}_repo =" "$tmpDir"/all.txt > /dev/null; then
-      echo "Skipping because corresponding coreboot version is a module: ${package}"
+      echo "Skipping non-existent coreboot-blobs package (corresponding coreboot version is a module): ${package}"
       continue
     fi
   fi
@@ -196,86 +204,103 @@ while IFS= read -r packageVersion; do
 
   echo "Handling package: ${package}"
 
-  archiveName="$(grep -w "^${package}_tar =" "$tmpDir"/all.txt | cut -d' ' -f3-)"
-  archiveUrl="$(grep -w "^${package}_url =" "$tmpDir"/all.txt | cut -d' ' -f3-)"
+  # Linux kernel packages all have the same variable name, importing a different board may define different values
+  # Check how many matches we have, iterate through them
 
-  # Download url from qrencode's website url is currently borked, get it from the internet archive
-  if [ "$package" = "qrencode" ]; then
-    archiveVersion="$(grep -w "^${package}_version =" "$tmpDir"/all.txt | cut -d' ' -f3-)"
-    archiveUrl="https://web.archive.org/web/20240910005455/https://fukuchi.org/works/qrencode/qrencode-${archiveVersion}.tar.gz"
-  fi
+  while IFS= read -r archiveName; do
+    archiveUrl="$(grep -w "^${package}_url =" "$tmpDir"/all.txt | cut -d' ' -f3-)"
 
-  # nix-prefetch-url doesn't give the hash in SRI format :(
-  archiveHash="$(getSriHash "$archiveUrl")"
-
-  addPackageDefinition "$archiveName" "$archiveUrl" "$archiveHash" "$packagesTmpFile"
-
-  # If coreboot package, get corresponding crossgcc packages
-  if [[ "$package" == coreboot-* && "$package" != coreboot-blobs-* ]]; then
-    archiveLocation="$(nix-prefetch-url "$archiveUrl" "$archiveHash" --type sha256 --print-path | tail -n1)"
-    corebootSrcTmp="$(mktemp -d -p "$tmpDir")"
-    xzcat "$archiveLocation" | tar -C "$corebootSrcTmp" -xf-
-
-    corebootSrc="$(find "$corebootSrcTmp" -path '*/util/crossgcc/buildgcc' | sort | head -n1)"
-    corebootSrc="${corebootSrc%"/util/crossgcc/buildgcc"}"
-
-    collectCorebootCrossgccDeps "$package" "$corebootSrc" "$crossgccTmpFile"
-  fi
-
-  # If musl-cross-make, get corresponding musl-cross-make packages
-  if [ "$package" = "musl-cross-make" ]; then
-    archiveLocation="$(nix-prefetch-url "$archiveUrl" "$archiveHash" --type sha256 --print-path | tail -n1)"
-    muslCrossMakeSrcTmp="$(mktemp -d -p "$tmpDir")"
-    gunzip -ck "$archiveLocation" | tar -C "$muslCrossMakeSrcTmp" -xf-
-
-    muslCrossMakeSrc="$(find "$muslCrossMakeSrcTmp" -maxdepth 2 -name "Makefile" | sort | head -n1)"
-    muslCrossMakeSrc="${muslCrossMakeSrc%"/Makefile"}"
-
-    make -f ${printMuslCrossMakeVariablesMakefile} \
-      src="$muslCrossMakeSrc" \
-    | sort | uniq >> "$tmpDir"/musl-cross-make.txt
-
-    # config.sub has entirely different format
-    {
-      echo "Handling musl-cross-make package: CONFIG_SUB"
-
-      configSubVersion="$(grep -w "^CONFIG_SUB_REV =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
-      configSubUrl="https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=${configSubVersion}"
-
-      # nix-prefetch-url doesn't give the hash in SRI format :(
-      # Need to override name, contains illegal ";"
-      configSubHashRaw="$(nix-prefetch-url "$configSubUrl" --type sha256 --name "config.sub")"
-      configSubHash="$(nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$configSubHashRaw")"
-
-      addPackageDefinition "config.sub" "$configSubUrl" "$configSubHash" "$muslCrossMakeTmpFile"
-    }
-
-    while IFS= read -r muslCrossMakeDepVersion; do
-      muslCrossMakeDep="$(basename "$muslCrossMakeDepVersion" "_VER")"
-
-      echo "Handling musl-cross-make package: ${muslCrossMakeDep}"
-
-      muslCrossMakeDepVer="$(grep -w "^${muslCrossMakeDep}_VER =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
-      muslCrossMakeDepSite="$(grep -w "^${muslCrossMakeDep}_SITE =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
-      muslCrossMakeDepArchive="$(basename "$(find "$muslCrossMakeSrc"/hashes -name "${muslCrossMakeDep@L}-${muslCrossMakeDepVer}.*" | sort | head -n1)" ".sha1")"
-
-      if [[ "$muslCrossMakeDep" == "LINUX" && "$muslCrossMakeDepVer" == headers-* ]]; then
-        # Linux headers live at different site
-        muslCrossMakeDepSite="$(grep -w "^${muslCrossMakeDep}_HEADERS_SITE =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
-      elif [[ "$muslCrossMakeDep" == "GCC" ]]; then
-        # GCCs (except *really* old ones) live in separate subdirs
-        muslCrossMakeDepSite="${muslCrossMakeDepSite}/gcc-${muslCrossMakeDepVer}"
+    # If there are multiple URLs for packages with this name, take the one that has the archiveName.
+    # TODO: Handle situations:
+    # - Multiple URLs, none contain the archiveName
+    # - Multiple URLs,multiple contain the archiveName
+    if [ "$(echo "${archiveUrl}" | wc -l)" -ne 1 ]; then
+      if [[ "$(echo "${archiveUrl}" | grep "${archiveName}$")" != "" && "$(echo "${archiveUrl}" | grep -c "${archiveName}$")" -eq 1 ]]; then
+        archiveUrl="$(echo "${archiveUrl}" | grep "${archiveName}$")"
+      else
+        echo "Cannot handle multi-URL situation: Failed to find exactly one ${archiveName} in: ${archiveUrl}" >&2
+        exit 1
       fi
+    fi
 
-      muslCrossMakeDepUrl="${muslCrossMakeDepSite}/${muslCrossMakeDepArchive}"
+    # Download url from qrencode's website url is currently borked, get it from the internet archive
+    if [ "$package" = "qrencode" ]; then
+      archiveVersion="$(grep -w "^${package}_version =" "$tmpDir"/all.txt | cut -d' ' -f3-)"
+      archiveUrl="https://web.archive.org/web/20240910005455/https://fukuchi.org/works/qrencode/qrencode-${archiveVersion}.tar.gz"
+    fi
 
-      # nix-prefetch-url doesn't give the hash in SRI format :(
-      muslCrossMakeDepHash="$(getSriHash "$muslCrossMakeDepUrl")"
+    # nix-prefetch-url doesn't give the hash in SRI format :(
+    archiveHash="$(getSriHash "$archiveUrl")"
 
-      addPackageDefinition "$muslCrossMakeDepArchive" "$muslCrossMakeDepUrl" "$muslCrossMakeDepHash" "$muslCrossMakeTmpFile"
-    done < <(grep -wo '^.*_VER' "$tmpDir"/musl-cross-make.txt)
-  fi
-done < <(grep -wo '^.*_version' "$tmpDir"/all.txt)
+    addPackageDefinition "$archiveName" "$archiveUrl" "$archiveHash" "$packagesTmpFile"
+
+    # If coreboot package, get corresponding crossgcc packages
+    if [[ "$package" == coreboot-* && "$package" != coreboot-blobs-* ]]; then
+      archiveLocation="$(nix-prefetch-url "$archiveUrl" "$archiveHash" --type sha256 --print-path | tail -n1)"
+      corebootSrcTmp="$(mktemp -d -p "$tmpDir")"
+      xzcat "$archiveLocation" | tar -C "$corebootSrcTmp" -xf-
+
+      corebootSrc="$(find "$corebootSrcTmp" -path '*/util/crossgcc/buildgcc' | sort | head -n1)"
+      corebootSrc="${corebootSrc%"/util/crossgcc/buildgcc"}"
+
+      collectCorebootCrossgccDeps "$package" "$corebootSrc" "$crossgccTmpFile"
+    fi
+
+    # If musl-cross-make, get corresponding musl-cross-make packages
+    if [ "$package" = "musl-cross-make" ]; then
+      archiveLocation="$(nix-prefetch-url "$archiveUrl" "$archiveHash" --type sha256 --print-path | tail -n1)"
+      muslCrossMakeSrcTmp="$(mktemp -d -p "$tmpDir")"
+      gunzip -ck "$archiveLocation" | tar -C "$muslCrossMakeSrcTmp" -xf-
+
+      muslCrossMakeSrc="$(find "$muslCrossMakeSrcTmp" -maxdepth 2 -name "Makefile" | sort | head -n1)"
+      muslCrossMakeSrc="${muslCrossMakeSrc%"/Makefile"}"
+
+      make -f ${printMuslCrossMakeVariablesMakefile} \
+        src="$muslCrossMakeSrc" \
+      | sort | uniq >> "$tmpDir"/musl-cross-make.txt
+
+      # config.sub has entirely different format
+      {
+        echo "Handling musl-cross-make package: CONFIG_SUB"
+
+        configSubVersion="$(grep -w "^CONFIG_SUB_REV =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
+        configSubUrl="https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=${configSubVersion}"
+
+        # nix-prefetch-url doesn't give the hash in SRI format :(
+        # Need to override name, contains illegal ";"
+        configSubHashRaw="$(nix-prefetch-url "$configSubUrl" --type sha256 --name "config.sub")"
+        configSubHash="$(nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$configSubHashRaw")"
+
+        addPackageDefinition "config.sub" "$configSubUrl" "$configSubHash" "$muslCrossMakeTmpFile"
+      }
+
+      while IFS= read -r muslCrossMakeDepVersion; do
+        muslCrossMakeDep="$(basename "$muslCrossMakeDepVersion" "_VER")"
+
+        echo "Handling musl-cross-make package: ${muslCrossMakeDep}"
+
+        muslCrossMakeDepVer="$(grep -w "^${muslCrossMakeDep}_VER =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
+        muslCrossMakeDepSite="$(grep -w "^${muslCrossMakeDep}_SITE =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
+        muslCrossMakeDepArchive="$(basename "$(find "$muslCrossMakeSrc"/hashes -name "${muslCrossMakeDep@L}-${muslCrossMakeDepVer}.*" | sort | head -n1)" ".sha1")"
+
+        if [[ "$muslCrossMakeDep" == "LINUX" && "$muslCrossMakeDepVer" == headers-* ]]; then
+          # Linux headers live at different site
+          muslCrossMakeDepSite="$(grep -w "^${muslCrossMakeDep}_HEADERS_SITE =" "$tmpDir"/musl-cross-make.txt | cut -d' ' -f3-)"
+        elif [[ "$muslCrossMakeDep" == "GCC" ]]; then
+          # GCCs (except *really* old ones) live in separate subdirs
+          muslCrossMakeDepSite="${muslCrossMakeDepSite}/gcc-${muslCrossMakeDepVer}"
+        fi
+
+        muslCrossMakeDepUrl="${muslCrossMakeDepSite}/${muslCrossMakeDepArchive}"
+
+        # nix-prefetch-url doesn't give the hash in SRI format :(
+        muslCrossMakeDepHash="$(getSriHash "$muslCrossMakeDepUrl")"
+
+        addPackageDefinition "$muslCrossMakeDepArchive" "$muslCrossMakeDepUrl" "$muslCrossMakeDepHash" "$muslCrossMakeTmpFile"
+      done < <(grep -wo '^.*_VER' "$tmpDir"/musl-cross-make.txt)
+    fi
+  done < <(grep -w "^${package}_tar =" "$tmpDir"/all.txt | cut -d' ' -f3-)
+done < <(grep -wo '^.*_version' "$tmpDir"/all.txt | uniq)
 
 echo "]" >> "$boardsTmpFile"
 echo "]" >> "$modulesTmpFile"
