@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.nitrokey.enable = true;
+}

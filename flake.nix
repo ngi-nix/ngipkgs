@@ -212,8 +212,7 @@
                 };
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
-                # fake derivation for flake check
-                "infra/templates" = pkgs.writeText "dummy" (lib.strings.toJSON classic'.templates.project);
+                "infra/templates" = classic.templates.project;
               };
             in
             checksForInfrastructure // checksForAllProjects // checksForAllPackages;

@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.scion.enable = true;
+}

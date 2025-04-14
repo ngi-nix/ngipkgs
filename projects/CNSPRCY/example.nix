@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.cnsprcy.enable = true;
+}

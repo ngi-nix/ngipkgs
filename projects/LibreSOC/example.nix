@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.libresoc.enable = true;
+}
