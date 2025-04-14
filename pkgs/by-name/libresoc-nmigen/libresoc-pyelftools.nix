@@ -1,9 +1,9 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromGitHub,
 }:
-python39Packages.pyelftools.overrideAttrs (_: rec {
+python3Packages.pyelftools.overrideAttrs (_: rec {
   name = "pyelftools";
   version = "unstable-2024-03-31";
 

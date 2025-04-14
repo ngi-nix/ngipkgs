@@ -1,7 +1,7 @@
 {
   newScope,
   fetchFromGitHub,
-  python39,
+  python3,
 }:
 let
   python =
@@ -28,14 +28,14 @@ let
         });
       };
     in
-    python39.override {
+    python3.override {
       inherit packageOverrides;
       self = python;
     };
 
   callPackage = newScope {
-    python39 = python;
-    python39Packages = python.pkgs;
+    python3 = python;
+    python3Packages = python.pkgs;
   };
 
   lib = callPackage ./lib.nix { };

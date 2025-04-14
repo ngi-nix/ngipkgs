@@ -1,6 +1,6 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromLibresoc,
   yosys,
   libresoc-c4m-jtag,
@@ -10,7 +10,7 @@
   power-instruction-analyzer,
   pytest-output-to-files,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   name = "soc";
   pname = name;
   version = "unstable-2024-03-31";
@@ -34,14 +34,14 @@ python39Packages.buildPythonPackage rec {
     libresoc-openpower-isa
     nmigen-soc
     yosys
-  ] ++ (with python39Packages; [ cached-property ]);
+  ] ++ (with python3Packages; [ cached-property ]);
 
   nativeCheckInputs =
     [
       power-instruction-analyzer
       pytest-output-to-files
     ]
-    ++ (with python39Packages; [
+    ++ (with python3Packages; [
       pytest-xdist
       pytestCheckHook
     ]);

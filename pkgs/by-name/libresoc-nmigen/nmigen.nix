@@ -2,12 +2,12 @@
   lib,
   fetchFromGitLab,
   git,
-  python39Packages,
+  python3Packages,
   symbiyosys,
   yices,
   yosys,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "nmigen";
   version = "0-unstable-2022-09-27";
   realVersion = "0.3.dev243+g${lib.substring 0 7 src.rev}";
@@ -31,11 +31,11 @@ python39Packages.buildPythonPackage rec {
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
   '';
 
-  nativeBuildInputs = [ git ] ++ (with python39Packages; [ setuptools-scm ]);
+  nativeBuildInputs = [ git ] ++ (with python3Packages; [ setuptools-scm ]);
 
   propagatedBuildInputs =
     [ yosys ]
-    ++ (with python39Packages; [
+    ++ (with python3Packages; [
       jinja2
       pyvcd
     ]);
@@ -44,7 +44,7 @@ python39Packages.buildPythonPackage rec {
     symbiyosys
     yices
     yosys
-  ] ++ (with python39Packages; [ pytestCheckHook ]);
+  ] ++ (with python3Packages; [ pytestCheckHook ]);
 
   # TODO: upstream nixpkgs Amaranth package uses a patch for Python >3.8 compatibility in setuptools:
   # https://github.com/amaranth-lang/amaranth/commit/64771a065a280fa683c1e6692383bec4f59f20fa.patch

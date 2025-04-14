@@ -1,9 +1,9 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromGitHub,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "sfpy";
   version = "0.6.0";
   pyproject = true;
@@ -21,7 +21,7 @@ python39Packages.buildPythonPackage rec {
       --replace-fail "make pic" "make"
   '';
 
-  build-system = with python39Packages; [
+  build-system = with python3Packages; [
     cython_0
     setuptools
   ];
