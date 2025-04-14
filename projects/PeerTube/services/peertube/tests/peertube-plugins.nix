@@ -14,7 +14,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.peertube
-          sources.examples.PeerTube.base
+          sources.examples.PeerTube.basic
         ];
 
         boot.kernelPackages = pkgs.linuxPackages_latest;
