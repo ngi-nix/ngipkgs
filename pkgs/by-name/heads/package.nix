@@ -415,6 +415,15 @@ let
         broken = board == "librem_l1um";
       };
     });
+
+  generateBoards =
+    allowedBoards:
+    lib.attrsets.listToAttrs (
+      lib.lists.map (board: {
+        name = "${board}";
+        value = generic board;
+      }) (lib.lists.intersectLists deps.boards allowedBoards)
+    );
 in
 lib.makeScope newScope (
   self:
@@ -426,10 +435,8 @@ lib.makeScope newScope (
       "qemu-coreboot-fbwhiptail-tpm1-hotp"
     ];
   in
-  lib.attrsets.listToAttrs (
-    lib.lists.map (board: {
-      name = "${board}";
-      value = generic board;
-    }) (lib.lists.intersectLists deps.boards allowedBoards)
-  )
+  {
+    inherit allowedBoards generateBoards;
+  }
+  // generateBoards allowedBoards
 )
