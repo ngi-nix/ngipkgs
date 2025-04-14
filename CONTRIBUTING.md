@@ -247,3 +247,7 @@ The following information is needed to [open an issue for a new NGI project](htt
 <!-- TODO: Add details about how to do more production-like deployments that require non-default config options. -->
 
 <!-- TODO: How to import all of NGIpkgs as an input to an existing NixOS configuration, in order to deploy a service alongside other services on the same virtual or physical machine. -->
+
+## Asking for help
+
+Please ask questions on the [public NGIpkgs Matrix room](https://matrix.to/#/#ngipkgs:matrix.org).
