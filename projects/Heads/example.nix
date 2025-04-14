@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.heads.enable = true;
+}

@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.dokieli.enable = true;
+}

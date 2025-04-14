@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.arcan.enable = true;
+}

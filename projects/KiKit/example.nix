@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.kikit.enable = true;
+}

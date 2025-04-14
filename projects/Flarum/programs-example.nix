@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.flarum.enable = true;
+}
