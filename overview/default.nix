@@ -258,7 +258,7 @@ let
       </p>
 
       <p>
-        This service is still <strong>experimental</strong> and under heavy development.
+        This service is still <strong>experimental</strong> and under active development.
         Don't expect anything specific to work yet:
       </p>
 
