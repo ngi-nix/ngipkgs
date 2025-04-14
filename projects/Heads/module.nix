@@ -11,7 +11,7 @@ in
   # Note: Heads produces ROM images intended to be flashed onto real hardware.
   # This module only exists to expose the build images at fixed locations.
   options.programs.heads = {
-    enable = lib.options.mkEnableOption "symlinking of the selected Heads boards' ROMs under /etc/heads";
+    enable = lib.options.mkEnableOption "symlinking of the selected Heads boards' ROMs under /etc/heads/\${board}.rom";
     boards = lib.options.mkOption {
       description = ''
         Heads board targets that should be built & symlinked.
