@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  services._serviceName_.enable = true;
+  services.rosenpass.enable = true;
 }
