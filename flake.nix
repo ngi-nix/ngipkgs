@@ -58,9 +58,7 @@
       # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
       rawNgiProjects = classic'.projects;
 
-      rawExamples = lib'.flattenAttrs "/" (
-        mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
-      );
+      rawExamples = lib'.flattenAttrs "/" classic'.examples;
 
       rawNixosModules = lib'.flattenAttrs "." (
         lib.foldl recursiveUpdate { } (
@@ -179,7 +177,7 @@
                       }) project.nixos.tests;
 
                       checksForNixosExamples = concatMapAttrs (exampleName: example: {
-                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);
+                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.module);
                       }) project.nixos.examples;
                     in
                     checksForNixosTests // checksForNixosExamples;
