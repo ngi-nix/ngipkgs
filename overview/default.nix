@@ -150,7 +150,7 @@ let
 
         ${example.description}
 
-        <pre><code>${readFile example.path}</code></pre>
+        <pre><code>${readFile example.module}</code></pre>
 
         </li>
       '';
