@@ -25,7 +25,6 @@ in
       imports = [
         sources.modules.ngipkgs
         sources.modules.services.mcaptcha
-        sources.examples.mcaptcha.basic
       ];
 
       services.mcaptcha.enable = true;
