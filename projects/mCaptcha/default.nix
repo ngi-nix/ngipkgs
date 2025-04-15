@@ -46,5 +46,4 @@
 
   nixos.tests.bring-your-own-services = import ./services/mcaptcha/tests/bring-your-own-services.nix args;
   nixos.tests.create-locally = import ./services/mcaptcha/tests/create-locally.nix args;
-  nixos.tests.basic = import ./services/mcaptcha/tests/basic.nix args;
 }
