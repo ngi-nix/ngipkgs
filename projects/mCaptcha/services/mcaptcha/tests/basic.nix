@@ -13,7 +13,6 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.mcaptcha
-          sources.examples.mcaptcha.basic
         ];
       };
   };
