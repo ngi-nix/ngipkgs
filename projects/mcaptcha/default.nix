@@ -5,10 +5,6 @@
 }@args:
 
 {
-  # NOTE:
-  # - Each program/service must have at least one example
-  # - Set attributes to `null` to indicate that they're needed, but not available
-  # - Remove comments that are only relevant to the template when using it
   metadata = {
     summary = "mCaptcha is a backend component for a CAPTCHA system designed to provide a seamless user experience without unnecessary complexity.";
     subgrants = [
