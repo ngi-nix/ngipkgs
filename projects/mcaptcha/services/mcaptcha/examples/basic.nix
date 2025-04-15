@@ -1,5 +1,0 @@
-{ ... }:
-
-{
-  services.mcaptcha.enable = true;
-}
