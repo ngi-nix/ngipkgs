@@ -5,12 +5,8 @@
 }@args:
 
 {
-  # NOTE:
-  # - Each program/service must have at least one example
-  # - Set attributes to `null` to indicate that they're needed, but not available
-  # - Remove comments that are only relevant to the template when using it
   metadata = {
-    summary = "mCaptcha is a backend component for a CAPTCHA system designed to provide a seamless user experience without unnecessary complexity.";
+    summary = "Privacy-friendly Proof of Work (PoW) based CAPTCHA system";
     subgrants = [
       "mCaptcha"
     ];
@@ -30,23 +26,7 @@
     mcaptcha = {
       name = "mcaptcha";
       module = ./services/mcaptcha/module.nix;
-      examples.basic = {
-        module = ./services/mcaptcha/examples/basic.nix;
-        description = "Basic example of mCaptcha service.";
-        tests.basic = import ./services/mcaptcha/tests/basic.nix args;
-      };
-      # examples = {
-      #   bringService = {
-      #     description = "use a database and other services running on a different node";
-      #     module = ./services/mcaptcha/examples/basic.nix;
-      #     tests.bringService = import ./services/mcaptcha/tests/bring-your-own-services.nix args;
-      #   };
-      #   createLocally = {
-      #     description = "use a database and other services running on the same node";
-      #     module = ./services/mcaptcha/examples/basic.nix;
-      #     tests.createLocally = import ./services/mcaptcha/tests/create-locally.nix args;
-      #   };
-      # };
+      examples.basic = null;
       links = {
         setup = {
           text = "Development setup";
@@ -63,4 +43,8 @@
       };
     };
   };
+
+  nixos.tests.bring-your-own-services = import ./services/mcaptcha/tests/bring-your-own-services.nix args;
+  nixos.tests.create-locally = import ./services/mcaptcha/tests/create-locally.nix args;
+  nixos.tests.basic = import ./services/mcaptcha/tests/basic.nix args;
 }
