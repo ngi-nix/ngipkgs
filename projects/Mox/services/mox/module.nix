@@ -13,6 +13,7 @@ in
       # NOTE: The module uses contextual generated config files for the mox server.
       #       This is currently the most reproducible way to get mox running. However, it might
       #       be possible to use a declarative approach when the sconf config file is supported.
+      #       If addition configuration is needed, please edit the file and restert the service.
 
       enable = lib.mkEnableOption "Mox";
       package = lib.mkPackageOption pkgs "mox" { };
@@ -35,6 +36,21 @@ in
         type = lib.types.str;
         description = "*Required* Email user as (user@domain) to be created.";
       };
+      openPorts = lib.mkOption {
+        type = lib.types.listOf lib.types.int;
+        default = [
+          25
+          80
+          143
+          443
+        ];
+        description = "Ports to be opened for the Mox Mail Server";
+      };
+      openFirewall = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Open firewall for Mox Mail Server";
+      };
     };
   };
 
@@ -42,6 +58,12 @@ in
     environment.systemPackages = [
       cfg.package
     ];
+
+    networking.firewall = lib.mkIf cfg.openFirewall {
+      enable = true;
+      allowedTCPPorts = cfg.openPorts;
+      allowedUDPPorts = [ 53 ];
+    };
 
     users.users.mox = {
       isSystemUser = true;
