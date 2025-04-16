@@ -1,37 +1,9 @@
 {
   newScope,
-  fetchFromGitHub,
   python3,
 }:
 let
-  python =
-    let
-      packageOverrides = self: super: {
-        setuptools = super.setuptools.overridePythonAttrs (old: rec {
-          version = "75.1.1";
-
-          src = fetchFromGitHub {
-            owner = "pypa";
-            repo = "setuptools";
-            rev = "refs/tags/v${version}";
-            hash = "sha256-b8O/DrDWAbD6ht9M762fFN6kPtV8hAbn1gAN9SS7H5g=";
-          };
-        });
-        tomli = super.tomli.overridePythonAttrs (old: rec {
-          version = "2.0.1";
-          src = fetchFromGitHub {
-            owner = "hukkin";
-            repo = "tomli";
-            rev = version;
-            hash = "sha256-v0ZMrHIIaGeORwD4JiBeLthmnKZODK5odZVL0SY4etA=";
-          };
-        });
-      };
-    in
-    python3.override {
-      inherit packageOverrides;
-      self = python;
-    };
+  python = python3;
 
   callPackage = newScope {
     python3 = python;
