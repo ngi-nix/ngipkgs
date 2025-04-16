@@ -94,6 +94,7 @@ python3Packages.buildPythonApplication rec {
     "treq"
     "miniupnpc"
     "pyopenssl"
+    "rich"
   ];
 
   propagatedBuildInputs =
