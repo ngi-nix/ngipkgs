@@ -24,13 +24,6 @@
           nameserver 127.0.0.1
         '';
 
-        networking.firewall.allowedTCPPorts = [
-          25 # SMTP
-          80 # HTTP
-          143 # IMAP
-          443 # HTTPS
-        ];
-        networking.firewall.allowedUDPPorts = [ 53 ];
         networking.nameservers = [ "127.0.0.1" ];
         networking.hosts = {
           "127.0.0.1" = [
