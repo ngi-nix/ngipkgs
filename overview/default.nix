@@ -72,7 +72,6 @@ let
       in
       filter (option: any ((flip hasPrefix) (join "." option.loc)) spec) (attrValues options);
     examples = project: attrValues project.nixos.examples;
-    packages = project: attrValues project.packages;
   };
 
   # This doesn't actually produce a HTML string but a Jinja2 template string
@@ -119,27 +118,6 @@ let
         optionalString (!empty projectOptions) ''
           <section><details><summary>${heading 3 "Options"}</summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
-          </dl></details></section>
-        '';
-    };
-
-    packages = rec {
-      one = package: ''
-        <dt><code>${package.name}</code></dt>
-        <dd>
-          <table>
-            <tr>
-              <td>Version:</td>
-              <td>${package.version}</td>
-            </tr>
-          </table>
-        </dd>
-      '';
-      many =
-        packages:
-        optionalString (!empty packages) ''
-          <section><details><summary>${heading 3 "Packages"}</summary><dl>
-          ${concatLines (map one packages)}
           </dl></details></section>
         '';
     };
@@ -200,7 +178,6 @@ let
       <article class="page-width">
         ${heading 1 name}
         ${render.metadata.one project.metadata}
-        ${render.packages.many (pick.packages project)}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
       </article>
@@ -212,10 +189,8 @@ let
       '';
       many =
         project:
-        optionalString (project.packages != { }) (one "program")
-        +
-          # TODO is missing in the model yet
-          optionalString false (one "library")
+        # TODO is missing in the model yet
+        optionalString false (one "library")
         + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
           one "service"
         )
