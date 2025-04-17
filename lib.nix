@@ -1,4 +1,7 @@
-{ lib }:
+{
+  lib,
+  options ? null,
+}:
 rec {
   # Take an attrset of arbitrary nesting and make it flat
   # by concatenating the nested names with the given separator.
@@ -268,4 +271,20 @@ rec {
       }
     else
       throw "flake-inputs: lock file '${lockFilePath}' has unsupported version ${toString lockFile.version}";
+
+  # get nixos module's store path from the option string
+  moduleLocFromOptionString =
+    opt:
+    let
+      locList = lib.splitString "." opt;
+      optAttrs = lib.getAttrFromPath locList options;
+      # FIXME: maybe getting the first option is not a good idea
+      # some option's first attribute could be a submodule
+      # might be better to fold over the list to get the file
+      # try access the `type` field and check of `_type` is "option-type"
+      fstAttr = lib.traceVal (lib.head (lib.attrsToList optAttrs)).value;
+    in
+    # FIXME: if the accessed option iis a submodule
+    # this field will not be in the attrset
+    lib.head fstAttr.files;
 }
