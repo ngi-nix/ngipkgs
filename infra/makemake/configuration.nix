@@ -119,6 +119,16 @@
           redir /blog/perldivingwithnix https://nixos.org/blog/stories/2021/perldivingwithnix permanent
         '';
       };
+      virtualHosts."cryptpad.ngi.nixos.org" = {
+        extraConfig = ''
+          reverse_proxy 127.0.0.1:3000
+        '';
+      };
+      virtualHosts."cryptpad-sandbox.ngi.nixos.org" = {
+        extraConfig = ''
+          reverse_proxy 127.0.0.1:3000
+        '';
+      };
     };
     openssh = {
       enable = true;
@@ -142,6 +152,35 @@
     "/postgres" = {
       device = "rpool/postgres";
       fsType = "zfs";
+    };
+  };
+
+  services.cryptpad = {
+    enable = true;
+    settings = {
+      adminKeys = [ "[ngi-admin@cryptpad.ngi.nixos.org/Ui7gtoWnofGwBr3blP3a0SIZ2eWa+DP9C76+xCdWR28=]" ];
+      httpUnsafeOrigin = "https://cryptpad.ngi.nixos.org";
+      httpSafeOrigin = "https://cryptpad-sandbox.ngi.nixos.org/";
+      httpAddress = "127.0.0.1";
+      httpPort = 3000;
+      adminEmail = "ngi@nixos.org";
+      defaultStorageLimit = 1024 * 1024 * 1024;
+      maxUploadSize = 100 * 1024 * 1024;
+      filePath = "./datastore/";
+      archivePath = "./data/archive";
+      pinPath = "./data/pins";
+      taskPath = "./data/tasks";
+      blockPath = "./block";
+      blobPath = "./blob";
+      blobStagingPath = "./data/blobstage";
+      logPath = "./data/logs";
+      logLevel = "info";
+      logFeedback = false;
+      verbose = false;
+      blockDailyCheck = true;
+      removeDonateButton = true;
+      disableAnonymousStore = true;
+      disableCrowdfundingMessages = true;
     };
   };
 
