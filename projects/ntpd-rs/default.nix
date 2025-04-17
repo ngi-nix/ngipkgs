@@ -26,13 +26,10 @@
     ntpd-rs = {
       name = "ntpd-rs";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ntp/ntpd-rs.nix";
-      examples.basic = {
-        module = ./services/ntpd-rs/examples/basic.nix;
-        description = ''
-          Example config for ntpd-rs options is available in tests.
-        '';
-        tests.ntpd-rs = "${sources.inputs.nixpkgs}/nixos/tests/ntpd-rs.nix";
-      };
+      examples.basic = null;
+      # See https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/tests/ntpd-rs.nix for examples
     };
   };
+
+  nixos.tests.ntpd-rs = "${sources.inputs.nixpkgs}/nixos/tests/ntpd-rs.nix";
 }
