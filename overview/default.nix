@@ -148,7 +148,7 @@ let
       one = example: ''
         <section><details><summary>${example.description}</summary>
 
-        <pre><code>${readFile example.module}</code></pre>
+        {{ include_code("nix", "${example.module}")}}
 
         </details></section>
       '';
@@ -279,7 +279,7 @@ let
           <li>
             <strong>Download this Nix file on your computer.</strong> It contains some glue code
             and the NixOS configuration that defines the demo system.
-            {{ include_code("nix", "default.nix") }}
+            {{ include_code("nix", "default.nix", relative_path=True) }}
           </li>
           <li>
             <strong>Build the VM start script</strong> defined in <code>default.nix</code> and run it
