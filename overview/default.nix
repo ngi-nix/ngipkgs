@@ -13,6 +13,7 @@ let
     any
     attrNames
     attrValues
+    getAttr
     concatStringsSep
     filter
     isList
@@ -198,7 +199,7 @@ let
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
         ${optionalString (project.nixos.examples ? demo) (
-          render.serviceDemo.one project.nixos.examples.demo
+          render.serviceDemo.one project.nixos.modules.services project.nixos.examples.demo
         )}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
@@ -255,11 +256,11 @@ let
     '';
 
     serviceDemo.one =
-      example:
+      services: example:
       let
         demoSystem = import (nixpkgs + "/nixos/lib/eval-config.nix") {
           inherit system;
-          modules = [ example.module ];
+          modules = (attrValues services) ++ [ example.module ];
         };
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
