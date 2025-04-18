@@ -24,14 +24,11 @@
       self,
       nixpkgs,
       flake-utils,
-      sops-nix,
       pre-commit-hooks,
-      dream2nix,
-      buildbot-nix,
       ...
     }@inputs:
     let
-      classic' = import ./. { system = null; };
+      classic' = (import ./. { }).ngipkgs;
       inherit (classic') lib lib';
 
       inherit (lib)
@@ -39,7 +36,6 @@
         concatMapAttrs
         filterAttrs
         mapAttrs
-        recursiveUpdate
         ;
 
       nixosSystem =
@@ -51,26 +47,6 @@
           }
           // args
         );
-
-      overlay = classic'.overlays.default;
-
-      # Note that modules and examples are system-agnostic, so import them first.
-      # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
-      rawNgiProjects = classic'.projects;
-
-      rawExamples = lib'.flattenAttrs "/" classic'.examples;
-
-      rawNixosModules = lib'.flattenAttrs "." (
-        lib.foldl recursiveUpdate { } (
-          attrValues (mapAttrs (_: project: project.nixos.modules) rawNgiProjects)
-        )
-      );
-
-      nixosModules = {
-        # The default module adds the default overlay on top of Nixpkgs.
-        # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-        default.nixpkgs.overlays = [ overlay ];
-      } // rawNixosModules;
 
       mkNixosSystem =
         config:
@@ -102,24 +78,35 @@
       systemAgnosticOutputs = {
         nixosConfigurations =
           # TODO: remove these, noone will (or can even, realistically) use them
-          mapAttrs (_: mkNixosSystem) rawExamples // {
+          mapAttrs (_: mkNixosSystem) classic'.examples // {
             makemake = import ./infra/makemake { inherit inputs; };
           };
 
-        inherit nixosModules;
-
-        # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
-        overlays.default = overlay;
+        inherit (classic') nixosModules;
       };
 
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (
         system:
         let
-          classic = import ./. { inherit system; };
+          classic = (import ./. { }).nixpkgs { inherit system; };
 
           inherit (classic) pkgs ngipkgs;
 
           ngiProjects = classic.projects;
+
+          overlay = classic.overlays.default;
+
+          rawNixosModules = (import ./lib.nix { inherit lib; }).flattenAttrs "." (
+            lib.foldl lib.recursiveUpdate { } (
+              lib.attrValues (lib.mapAttrs (_: project: project.nixos.modules) ngiProjects)
+            )
+          );
+
+          nixosModules = {
+            # The default module adds the default overlay on top of Nixpkgs.
+            # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
+            default.nixpkgs.overlays = [ overlay ];
+          } // rawNixosModules;
 
           optionsDoc = pkgs.nixosOptionsDoc {
             options =
@@ -139,6 +126,9 @@
           };
         in
         rec {
+          # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
+          overlays.default = overlay;
+
           packages = ngipkgs // {
             overview = import ./overview {
               inherit lib lib' self;
