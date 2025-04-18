@@ -247,15 +247,9 @@ let
     demoGlue.one = exampleText: ''
       # default.nix
       {
-        # Aquire the latest NGIpkgs source
-        ngipkgs ? import (builtins.fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
+        ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
       }:
-      # Run a function that takes your system configuration and
-      # builds a VM start script for it
       ngipkgs.demo (
-        # The system configuration for the demo.
-        # Feel free to play around with this section.
-        # You can use any NGIpkgs or NixOS option here.
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
       )
     '';
