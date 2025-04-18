@@ -248,7 +248,7 @@ let
     demoGlue.one = exampleText: ''
       # default.nix
       {
-        ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
+        ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/${self.rev or "main"}") { },
       }:
       ngipkgs.demo (
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
