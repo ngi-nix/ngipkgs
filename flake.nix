@@ -197,7 +197,8 @@
 
           devShells.default = pkgs.mkShell {
             inherit (checks."infra/pre-commit") shellHook;
-            buildInputs = checks."infra/pre-commit".enabledPackages;
+            # TODO use devmode
+            buildInputs = checks."infra/pre-commit".enabledPackages ++ [ pkgs.darkhttpd ];
           };
 
           formatter = pkgs.writeShellApplication {

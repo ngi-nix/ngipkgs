@@ -279,7 +279,7 @@ let
           <li>
             <strong>Download this Nix file on your computer.</strong> It contains some glue code
             and the NixOS configuration that defines the demo system.
-            <pre><code>${render.demoGlue.one (readFile example.module)}</code></pre>
+            {{ include_code("nix", "default.nix") }}
           </li>
           <li>
             <strong>Build the VM start script</strong> defined in <code>default.nix</code> and run it
@@ -392,10 +392,14 @@ let
     path: page:
     ''
       mkdir -p "$out/${path}"
-      python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
     ''
     + optionalString (page.demoFile != null) ''
-      ln -s '${page.demoFile}' "$out/${path}/default.nix"
+      cp '${page.demoFile}' "$out/${path}/default.nix"
+      chmod +w "$out/${path}/default.nix"
+      nixfmt "$out/${path}/default.nix"
+    ''
+    + ''
+      python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
     '';
 
   fonts =
@@ -411,6 +415,12 @@ let
         done
       '';
 
+  highlightingCss =
+    pkgs.runCommand "pygments-css-rules.css" { nativeBuildInputs = [ pkgs.python3Packages.pygments ]; }
+      ''
+        pygmentize -S default -f html -a .code > $out
+      '';
+
 in
 pkgs.runCommand "overview"
   {
@@ -421,14 +431,16 @@ pkgs.runCommand "overview"
         ps: with ps; [
           jinja2
           markdown-it-py
+          pygments
         ]
       ))
+      nixfmt-rfc-style
     ];
   }
   (
     ''
       mkdir -pv $out
-      cp -v ${./style.css} $out/style.css
+      cat ${./style.css} ${highlightingCss} > $out/style.css
       ln -s ${fonts} $out/fonts
       python3 ${./render-template.py} '${htmlFile "" indexPage}' "$out/index.html"
     ''
