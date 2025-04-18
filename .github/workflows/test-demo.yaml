@@ -1,0 +1,68 @@
+name: Test VM demo
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - "archlinux:latest"
+          - "debian:12"
+          - "debian:unstable"
+          - "ubuntu:24.04"
+          - "ubuntu:24.10"
+          - "ubuntu:devel"
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v4'
+
+      # TODO: enable overview build
+      # - name: Build overview
+      #   run: nix build .#overview
+
+      # TODO: download this file from overview
+      - name: Create default.nix file
+        run: |
+          cat <<EOF >default.nix
+          {
+            ngipkgs ?
+              import
+                (fetchTarball "https://github.com/eljamm/ngipkgs/archive/init-project-demos.tar.gz")
+                { },
+          }:
+          let
+            servicePort = 9000;
+            domainName = "localhost:\${toString servicePort}";
+          in
+          ngipkgs.demo {
+            services.cryptpad = {
+              enable = true;
+              settings = {
+                httpPort = servicePort;
+                httpAddress = "0.0.0.0";
+                httpUnsafeOrigin = "http://\${domainName}";
+                httpSafeOrigin = "http://\${domainName}";
+              };
+            };
+
+            networking.firewall.allowedTCPPorts = [ servicePort ];
+            networking.firewall.allowedUDPPorts = [ servicePort ];
+          }
+          EOF
+
+      - name: Run and test VM
+        run: >
+          docker run
+          --privileged
+          --volume ./default.nix:/default.nix
+          --volume $(pwd)/.github/workflows/test-demo.sh:/test-demo.sh
+          ${{ matrix.distro }}
+          /bin/bash -c "bash /test-demo.sh ${{ matrix.distro }}"
