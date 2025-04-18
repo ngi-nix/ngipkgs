@@ -328,7 +328,6 @@ in
       formatter = pkgs.writeShellApplication {
         name = "formatter";
         runtimeInputs = [
-          pkgs.pre-commit
           treefmt
         ];
         text = ''
@@ -338,7 +337,7 @@ in
           }
 
           shell-hook
-          pre-commit run --all-files
+          treefmt
         '';
       };
 
