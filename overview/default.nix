@@ -282,8 +282,8 @@ let
             {{ include_code("nix", "default.nix", relative_path=True) }}
           </li>
           <li>
-            <strong>Build the VM start script</strong> defined in <code>default.nix</code> and run it
-            <pre><code>nix-build && ./result</code></pre>.
+            <strong>Build the VM start script</strong> defined in <code>default.nix</code> and run it:
+            <pre><code>nix-build && ./result</code></pre>
             Building <strong>will</strong> take a while.
           </li>
           <li>
