@@ -20,9 +20,19 @@ rec {
     sources
     ;
 
+  # memoized here to prevent re-evaluation
+  inherit
+    ((import "${sources.nixpkgs}/nixos/lib" { inherit lib; }).evalModules {
+      modules = [
+        ({ config._module.check = false; })
+      ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+    })
+    options
+    ;
+
   # TODO: we should be exporting our custom functions as `lib`, but refactoring
   # this to use `pkgs.lib` everywhere is a lot of movement
-  lib' = import ./lib.nix { inherit lib; };
+  lib' = import ./lib.nix { inherit lib options; };
 
   overlays.default =
     final: prev:
