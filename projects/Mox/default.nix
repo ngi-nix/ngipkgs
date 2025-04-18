@@ -29,12 +29,6 @@
         description = "";
         tests.basic = import ./programs/mox/tests/basic.nix args;
       };
-      links = {
-        build = {
-          text = "Mox source";
-          url = "https://github.com/mjl-/mox";
-        };
-      };
     };
   };
 

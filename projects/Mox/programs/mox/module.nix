@@ -8,7 +8,7 @@ let
   cfg = config.programs.mox;
 in
 {
-  options.programs._programName_ = {
+  options.programs.mox = {
     enable = lib.mkEnableOption "mox";
   };
 
