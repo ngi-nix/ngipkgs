@@ -7,8 +7,10 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+  inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
+  inputs.git-hooks.url = "github:fricklerhandwerk/git-hooks";
+  inputs.git-hooks.flake = false;
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -24,7 +26,7 @@
       self,
       nixpkgs,
       flake-utils,
-      pre-commit-hooks,
+      # pre-commit-hooks,
       ...
     }@inputs:
     let
@@ -191,13 +193,13 @@
                 concatMapAttrs checksForPackage nonBrokenPackages;
 
               checksForInfrastructure = {
-                "infra/pre-commit" = pre-commit-hooks.lib.${system}.run {
-                  src = ./.;
-                  hooks = {
-                    actionlint.enable = true;
-                    nixfmt-rfc-style.enable = true;
-                  };
-                };
+                # "infra/pre-commit" = pre-commit-hooks.lib.${system}.run {
+                #   src = ./.;
+                #   hooks = {
+                #     actionlint.enable = true;
+                #     nixfmt-rfc-style.enable = true;
+                #   };
+                # };
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
                 "infra/templates" = classic.templates.project;
