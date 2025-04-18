@@ -1,5 +1,7 @@
 {
-  sources ? (import ./flake-compat.nix { root = ./.; }).inputs,
+  sources ? import (fetchTarball "https://github.com/fricklerhandwerk/flake-inputs/tarball/main") {
+    root = ./.;
+  },
   system ? builtins.currentSystem,
   pkgs ? import sources.nixpkgs {
     config = { };
