@@ -26,7 +26,6 @@
       self,
       nixpkgs,
       flake-utils,
-      # pre-commit-hooks,
       ...
     }@inputs:
     let
@@ -193,13 +192,7 @@
                 concatMapAttrs checksForPackage nonBrokenPackages;
 
               checksForInfrastructure = {
-                # "infra/pre-commit" = pre-commit-hooks.lib.${system}.run {
-                #   src = ./.;
-                #   hooks = {
-                #     actionlint.enable = true;
-                #     nixfmt-rfc-style.enable = true;
-                #   };
-                # };
+                "infra/pre-commit" = classic.pre-commit-hook;
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
                 "infra/templates" = classic.templates.project;
@@ -209,21 +202,10 @@
 
           devShells.default = pkgs.mkShell {
             inherit (checks."infra/pre-commit") shellHook;
-            buildInputs = checks."infra/pre-commit".enabledPackages;
+            buildInputs = checks."infra/pre-commit".nativeBuildInputs;
           };
 
-          formatter = pkgs.writeShellApplication {
-            name = "formatter";
-            text = ''
-              # shellcheck disable=all
-              shell-hook () {
-                ${checks."infra/pre-commit".shellHook}
-              }
-
-              shell-hook
-              pre-commit run --all-files
-            '';
-          };
+          inherit (classic) formatter;
         }
       );
     in

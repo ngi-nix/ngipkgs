@@ -6,7 +6,7 @@ in
   dream2nix ? sources.dream2nix,
   sops-nix ? sources.sops-nix,
   git-hooks ? sources.git-hooks,
-  treefmt-nix ? import sources.treefmt-nix,
+  treefmt-nix ? sources.treefmt-nix,
 }:
 let
   self = import ./. { };
@@ -29,8 +29,8 @@ in
       pkgs = import nixpkgs nixpkgs-config;
       dream2nix' = (import dream2nix).overrideInputs { inherit (sources) nixpkgs; };
       sops-nix' = import "${sops-nix}/modules/sops";
-      git-hooks' = import sources.git-hooks { };
-      treefmt-nix' = import sources.treefmt-nix { };
+      git-hooks' = import git-hooks { inherit system; };
+      treefmt-nix' = import treefmt-nix;
     in
     rec {
       inherit pkgs;
@@ -310,30 +310,19 @@ in
           }
         ) raw-projects;
 
-      pre-commit-hook =
-        let
-          hook = pkgs.writeShellApplication {
-            name = "pre-commit-hook";
-            runtimeInputs = with pkgs; [
-              git
-              nixfmt-rfc-style
-              actionlint
-            ];
-            text = ''
-              for f in $(git diff --name-only --cached); do
-                nixfmt "$f"
-                actionlint "$f"
-              done
-            '';
-          };
-        in
-        with git-hooks'.lib.git-hooks;
-        pre-commit (wrap.abort-on-change hook);
-
-      treefmt = treefmt-nix.mkWrapper pkgs {
+      treefmt = treefmt-nix'.mkWrapper pkgs {
         projectRootFile = "flake.nix";
         programs.nixfmt.enable = true;
         programs.actionlint.enable = true;
+      };
+
+      pre-commit-hook = pkgs.mkShellNoCC {
+        packages = [
+          treefmt
+        ];
+        shellHook = ''
+          ${with git-hooks'.lib.git-hooks; pre-commit (wrap.abort-on-change treefmt)}
+        '';
       };
 
       formatter = pkgs.writeShellApplication {
@@ -345,7 +334,7 @@ in
         text = ''
           # shellcheck disable=all
           shell-hook () {
-            ${pre-commit-hook}
+            ${pre-commit-hook.shellHook}
           }
 
           shell-hook
@@ -355,11 +344,8 @@ in
 
       shell = pkgs.mkShellNoCC {
         packages = [
-          treefmt
+          formatter
         ];
-        shellHook = ''
-          ${with git-hooks'.lib.git-hooks; pre-commit (wrap.abort-on-change treefmt)}
-        '';
       };
     };
 
@@ -400,6 +386,8 @@ in
     nixos-modules
     metrics
     metrics-count
+    treefmt
+    pre-commit-hook
     ;
   inherit (self.ngipkgs)
     rawNixosModules
