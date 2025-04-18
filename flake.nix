@@ -31,7 +31,10 @@
       ...
     }@inputs:
     let
-      classic' = import ./. { system = null; };
+      classic' = import ./. {
+        sources = inputs;
+        system = null;
+      };
       inherit (classic') lib lib';
 
       inherit (lib)
@@ -115,7 +118,10 @@
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (
         system:
         let
-          classic = import ./. { inherit system; };
+          classic = import ./. {
+            sources = inputs;
+            inherit system;
+          };
 
           inherit (classic) pkgs ngipkgs;
 
