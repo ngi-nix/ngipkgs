@@ -283,6 +283,7 @@ body > section {
 code, pre {
   font-family: "IBM Plex Mono";
   background: #eee;
+  overflow-x: auto;
 }
 
 details > summary > h2, details > summary > h3 {

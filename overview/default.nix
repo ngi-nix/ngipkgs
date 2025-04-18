@@ -244,7 +244,6 @@ let
       many = projects: concatLines (mapAttrsToList one projects);
     };
 
-    # TODO wrap
     demoGlue.one = exampleText: ''
       # default.nix
       {
