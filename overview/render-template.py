@@ -11,8 +11,10 @@ jinja2_template_file = sys.argv[1]
 output_file = sys.argv[2]
 
 # Include code from a file and highlight it in HTML
-def include_code(language, file_path):
-  with open(os.path.dirname(output_file) + "/" + file_path) as file:
+def include_code(language, file_path, relative_path=False):
+  if relative_path:
+    file_path = os.path.dirname(output_file) + "/" + file_path
+  with open(file_path) as file:
     code = file.read()
     try:
         lexer = get_lexer_by_name(language, stripall=True)
