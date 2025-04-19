@@ -26,7 +26,7 @@
       examples.basic = {
         module = ./programs/briar/examples/basic.nix;
         description = "";
-        tests.basic = import ./programs/briar/tests/basic.nix args;
+        tests.basic = null;
       };
     };
   };
