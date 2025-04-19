@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.briar.enable = true;
+}
