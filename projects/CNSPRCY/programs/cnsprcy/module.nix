@@ -1,7 +1,7 @@
 {
+  config,
   lib,
   pkgs,
-  config,
   ...
 }:
 let
@@ -10,10 +10,11 @@ in
 {
   options.programs.cnsprcy = {
     enable = lib.mkEnableOption "cnsprcy";
-    package = lib.mkPackageOption pkgs "cnsprcy" { };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package ];
+    environment.systemPackages = with pkgs; [
+      cnsprcy
+    ];
   };
 }
