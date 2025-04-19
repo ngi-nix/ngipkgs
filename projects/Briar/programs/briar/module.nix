@@ -13,8 +13,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      briar-desktop
-    ];
+    environment.systemPackages =
+      with pkgs;
+      lib.optionals (lib.meta.availableOn stdenv.hostPlatform briar-desktop) [
+        briar-desktop
+      ];
   };
+
 }
