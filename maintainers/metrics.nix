@@ -3,8 +3,19 @@
   ngipkgs,
   raw-projects,
 }:
+let
+  inherit (lib)
+    attrNames
+    concatMap
+    attrValues
+    filterAttrs
+    mapAttrs
+    count
+    optionalAttrs
+    ;
+in
 rec {
-  metrics = with lib; {
+  metrics = {
     projects = attrNames raw-projects;
     in-ngipkgs = attrNames ngipkgs;
     derivations = concatMap (p: attrNames p.packages) (attrValues raw-projects);
@@ -41,35 +52,33 @@ rec {
     );
   };
 
-  metrics-count = with lib; mapAttrs (name: value: count (_: true) value) metrics;
+  metrics-count = mapAttrs (name: value: count (_: true) value) metrics;
 
-  project-metrics =
-    with lib;
-    mapAttrs (
-      _: p:
-      {
-        derivations = count (_: true) (attrNames p.packages);
-      }
-      // optionalAttrs (p ? nixos) {
-        nixos =
-          {
-            tests = if p.nixos.tests == null then 0 else count (_: true) (attrNames p.nixos.tests);
-            examples = if p.nixos.examples == null then 0 else count (_: true) (attrNames p.nixos.examples);
-          }
-          // optionalAttrs (p ? nixos.modules.services) {
-            services =
-              if p.nixos.modules.services == null then
-                0
-              else
-                count (_: true) (attrNames p.nixos.modules.services);
-          }
-          // optionalAttrs (p ? nixos.modules.programs) {
-            programs =
-              if p.nixos.modules.programs == null then
-                0
-              else
-                count (_: true) (attrNames p.nixos.modules.programs);
-          };
-      }
-    ) raw-projects;
+  project-metrics = mapAttrs (
+    _: p:
+    {
+      derivations = count (_: true) (attrNames p.packages);
+    }
+    // optionalAttrs (p ? nixos) {
+      nixos =
+        {
+          tests = if p.nixos.tests == null then 0 else count (_: true) (attrNames p.nixos.tests);
+          examples = if p.nixos.examples == null then 0 else count (_: true) (attrNames p.nixos.examples);
+        }
+        // optionalAttrs (p ? nixos.modules.services) {
+          services =
+            if p.nixos.modules.services == null then
+              0
+            else
+              count (_: true) (attrNames p.nixos.modules.services);
+        }
+        // optionalAttrs (p ? nixos.modules.programs) {
+          programs =
+            if p.nixos.modules.programs == null then
+              0
+            else
+              count (_: true) (attrNames p.nixos.modules.programs);
+        };
+    }
+  ) raw-projects;
 }
