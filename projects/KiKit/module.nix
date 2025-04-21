@@ -14,10 +14,9 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # FIX: enable on next flake update
-      # kikit
-      # kicadAddons.kikit
-      # kicadAddons.kikit-library
+      kikit
+      kicadAddons.kikit
+      kicadAddons.kikit-library
     ];
   };
 }
