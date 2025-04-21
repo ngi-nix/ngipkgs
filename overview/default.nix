@@ -13,7 +13,6 @@ let
     any
     attrNames
     attrValues
-    getAttr
     concatStringsSep
     filter
     isList
