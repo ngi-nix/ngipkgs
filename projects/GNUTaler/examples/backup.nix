@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.taler.enable = true;
+}
