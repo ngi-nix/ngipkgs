@@ -234,11 +234,7 @@ The following information is needed to [open an issue for a new NGI project](htt
 1. Check that the code is valid by running the test locally:
 
    ```
-   # examples
-   $ nix build .#checks.x86_64-linux.projects/<project_name>/nixos/examples/<example_name>
-   
-   # tests
-   $ nix build .#checks.x86_64-linux.projects/<project_name>/nixos/tests/<test_name>
+   nix build .#checks.x86_64-linux.projects/<project_name>/nixos/tests/<test_name>
    ```
 
 1. Run the Nix code formatter with `nix fmt`
