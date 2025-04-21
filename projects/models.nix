@@ -24,6 +24,13 @@ let
     any
     ;
 
+  subgrantType = struct "subgrant" {
+    Commons = option (list string);
+    Core = option (list string);
+    Entrust = option (list string);
+    Review = option (list string);
+  };
+
   urlType = struct "URL" {
     # link text
     text = string;
@@ -89,7 +96,8 @@ rec {
     name = option string;
     metadata = optionalStruct {
       summary = option string;
-      subgrants = list string;
+      # TODO: convert all subgrants to `subgrantType` and document how to find and structure them
+      subgrants = either (list string) subgrantType;
       links = optionalAttrs (option urlType);
     };
     nixos = struct "nixos" {
