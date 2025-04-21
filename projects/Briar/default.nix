@@ -12,7 +12,7 @@
       "Briar-beyond-Android"
     ];
     links = {
-      exampleLink = {
+      website = {
         text = "Briar project website";
         url = "https://briarproject.org/";
       };
@@ -30,5 +30,4 @@
       };
     };
   };
-
 }

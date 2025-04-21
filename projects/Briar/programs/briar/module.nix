@@ -19,5 +19,4 @@ in
         briar-desktop
       ];
   };
-
 }
