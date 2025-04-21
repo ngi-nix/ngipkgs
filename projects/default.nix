@@ -40,10 +40,57 @@ let
         "README.md"
         "default.nix"
         "models.nix"
+        "test.nix"
       ];
     in
     # TODO: use fileset and filter for `gitTracked` files
     concatMapAttrs names (readDir baseDirectory);
+
+  projects =
+    with lib;
+    let
+      nixosTest = import ./test.nix { inherit lib pkgs; };
+      empty-if-null = x: if x != null then x else { };
+      filter-map =
+        attrs: input:
+        lib.pipe attrs [
+          (lib.concatMapAttrs (_: value: value."${input}" or { }))
+          (lib.filterAttrs (_: v: v != null))
+        ];
+
+      hydrate =
+        # we use fields to track state of completion.
+        # - `null` means "expected but missing"
+        # - not set means "not applicable"
+        # TODO: encode this in types, either yants or the module system
+        project: rec {
+          metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
+          nixos.modules.services = filterAttrs (_: m: m != null) (
+            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
+          );
+          nixos.modules.programs = filterAttrs (_: m: m != null) (
+            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.programs or { }
+          );
+          # TODO: access examples for services and programs separately?
+          nixos.examples = empty-if-null (
+            (filter-map (project.nixos.modules.services or { }) "examples")
+            // (filter-map (project.nixos.modules.programs or { }) "examples")
+          );
+          nixos.tests = mapAttrs (
+            _: test:
+            if lib.isString test then
+              (import test {
+                inherit pkgs;
+                inherit (pkgs) system;
+              })
+            else if lib.isDerivation test then
+              test
+            else
+              nixosTest test
+          ) (filter-map (project.nixos or { }) "tests" // (filter-map (nixos.examples or { }) "tests"));
+        };
+    in
+    mapAttrs (name: project: hydrate project) raw-projects;
 in
 mapAttrs (
   name: directory: project (import directory { inherit lib pkgs sources; })
