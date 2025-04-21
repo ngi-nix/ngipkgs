@@ -49,6 +49,8 @@ let
   projects =
     with lib;
     let
+      inherit (lib.modules) evalModules;
+
       nixosTest = import ./test.nix { inherit lib pkgs; };
       empty-if-null = x: if x != null then x else { };
       filter-map =
