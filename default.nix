@@ -78,7 +78,8 @@ rec {
   templates.project =
     let
       project-metadata =
-        (project-models.project (import ./templates/project { inherit lib pkgs sources; })).metadata;
+        (project-models.project (import ./maintainers/templates/project { inherit lib pkgs sources; }))
+        .metadata;
     in
     # fake derivation for flake check
     pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
