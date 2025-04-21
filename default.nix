@@ -134,10 +134,10 @@ rec {
             lib.mapAttrs (name: value: value.module or null) project.nixos.modules.programs or { }
           );
           # TODO: access examples for services and programs separately?
-          nixos.examples = empty-if-null (
-            (filter-map (project.nixos.modules.services or { }) "examples")
+          nixos.examples =
+            (empty-if-null (project.nixos.examples or { }))
             // (filter-map (project.nixos.modules.programs or { }) "examples")
-          );
+            // (filter-map (project.nixos.modules.services or { }) "examples");
           nixos.tests = mapAttrs (
             _: test:
             if lib.isString test then
@@ -149,7 +149,7 @@ rec {
               test
             else
               nixosTest test
-          ) (filter-map (project.nixos or { }) "tests" // (filter-map (nixos.examples or { }) "tests"));
+          ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
         };
     in
     mapAttrs (name: project: hydrate project) raw-projects;
