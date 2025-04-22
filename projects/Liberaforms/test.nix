@@ -13,16 +13,8 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.liberaforms
+          sources.examples.Liberaforms.basic
         ];
-
-        services.liberaforms = {
-          enable = true;
-          enablePostgres = true;
-          enableNginx = true;
-          domain = "localhost";
-        };
-
-        time.timeZone = "Europe/Paris";
       };
   };
 

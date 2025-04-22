@@ -16,8 +16,10 @@
 
   nixos.modules.services.liberaforms = {
     module = ./service.nix;
-    examples.basic = null;
+    examples.basic = {
+      module = ./example.nix;
+      description = "";
+      tests.liberaforms = import ./test.nix args;
+    };
   };
-
-  nixos.tests.liberaforms = import ./test.nix args;
 }
