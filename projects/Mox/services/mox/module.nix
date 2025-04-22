@@ -6,6 +6,15 @@
 }:
 let
   cfg = config.services.mox;
+  mkOptionalPort =
+    name:
+    lib.mkOption {
+      description = ''
+        The ${name} port. Set to null if we should leave it unset.
+      '';
+      type = lib.types.nullOr lib.types.port;
+      default = null;
+    };
 in
 {
   options = {
@@ -13,9 +22,9 @@ in
       # NOTE: The module uses contextual generated config files for the mox server.
       #       This is currently the most reproducible way to get mox running. However, it might
       #       be possible to use a declarative approach when the sconf config file is supported.
-      #       If addition configuration is needed, please edit the file and restert the service.
+      #       If addition configuration is needed, please edit the file and restart the service.
 
-      enable = lib.mkEnableOption "Mox";
+      enable = lib.mkEnableOption "Mox server";
       package = lib.mkPackageOption pkgs "mox" { };
       configFile = lib.mkOption {
         type = lib.types.str;
@@ -36,20 +45,15 @@ in
         type = lib.types.str;
         description = "*Required* Email user as (user@domain) to be created.";
       };
-      openPorts = lib.mkOption {
-        type = lib.types.listOf lib.types.int;
-        default = [
-          25
-          80
-          143
-          443
-        ];
-        description = "Ports to be opened for the Mox Mail Server";
+      ports = {
+        http = mkOptionalPort "http";
+        https = mkOptionalPort "https";
+        smtp = mkOptionalPort "smtp";
       };
       openFirewall = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = "Open firewall for Mox Mail Server";
+        description = "Open firewall for the ports defined in `ports`";
       };
     };
   };
@@ -61,7 +65,13 @@ in
 
     networking.firewall = lib.mkIf cfg.openFirewall {
       enable = true;
-      allowedTCPPorts = cfg.openPorts;
+      allowedTCPPorts =
+        with lib;
+        (
+          optional (cfg.ports.http != null) cfg.ports.http
+          ++ optional (cfg.ports.https != null) cfg.ports.https
+          ++ optional (cfg.ports.smtp != null) cfg.ports.smtp
+        );
       allowedUDPPorts = [ 53 ];
     };
 
