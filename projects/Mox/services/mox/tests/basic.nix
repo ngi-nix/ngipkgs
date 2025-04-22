@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.mox
-          sources.examples.Mox.mox
+          sources.examples.Mox.basic
         ];
 
         environment.systemPackages = with pkgs; [
@@ -53,7 +53,6 @@
               "\"com.\" redirect"
             ];
             local-data = [
-              "\"mail.example.com. IN A 127.0.0.1\""
               "\"com. IN NS localhost\""
               "\"localhost. IN A 127.0.0.1\""
             ];
