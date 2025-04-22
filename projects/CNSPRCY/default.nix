@@ -27,4 +27,14 @@
       tests.basic = import ./programs/cnsprcy/tests/basic.nix args;
     };
   };
+
+  nixos.modules.services.cnsprcy = {
+    name = "cnsprcy";
+    module = ./services/cnsprcy/module.nix;
+    examples.basic = {
+      module = ./services/cnsprcy/examples/basic.nix;
+      description = "";
+      tests.basic = import ./services/cnsprcy/tests/basic.nix args;
+    };
+  };
 }
