@@ -88,19 +88,6 @@ rec {
     with lib;
     mapAttrs (_: project: mapAttrs (_: example: example.module) project.nixos.examples) projects;
 
-  nixos-modules =
-    with lib;
-    # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
-    {
-      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-      ngipkgs =
-        { ... }:
-        {
-          nixpkgs.overlays = [ overlays.default ];
-        };
-    }
-    // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
-
   ngipkgs-modules = lib.flatten (
     lib.mapAttrsToList (
       _: project:
@@ -117,25 +104,33 @@ rec {
   # TODO: cleanup
   nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules = [
-    (
-      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-      { ... }:
-      {
-        nixpkgs.overlays = [ overlays.default ];
-      }
-    )
+    # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+    {
+      nixpkgs.overlays = [ overlays.default ];
+    }
     # TODO: needed for examples that use sops (like Pretalx)
     sops-nix
   ] ++ ngipkgs-modules;
+
   evaluated-modules = lib.evalModules {
     modules =
       [
         {
           nixpkgs.hostPlatform = { inherit system; };
+
+          networking = {
+            domain = "invalid";
+            hostName = "options";
+          };
+
+          system.stateVersion = "23.05";
         }
       ]
       ++ nixosModules
       ++ extendedNixosModules;
+    specialArgs = {
+      modulesPath = "${sources.nixpkgs}/nixos/modules";
+    };
   };
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
@@ -148,7 +143,7 @@ rec {
         pkgs = pkgs // ngipkgs;
         sources = {
           inputs = sources;
-          modules = nixos-modules;
+          modules = ngipkgs-modules;
           inherit examples;
         };
       })

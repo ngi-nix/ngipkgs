@@ -95,25 +95,12 @@
             inherit system;
           };
 
-          inherit (classic) pkgs ngipkgs;
+          inherit (classic) pkgs ngipkgs evaluated-modules;
 
           ngiProjects = classic.projects;
 
           optionsDoc = pkgs.nixosOptionsDoc {
-            options =
-              (nixosSystem {
-                inherit system;
-                modules = [
-                  {
-                    networking = {
-                      domain = "invalid";
-                      hostName = "options";
-                    };
-
-                    system.stateVersion = "23.05";
-                  }
-                ] ++ attrValues nixosModules;
-              }).options;
+            inherit (evaluated-modules) options;
           };
         in
         rec {
