@@ -47,7 +47,6 @@ let
     concatMapAttrs names (readDir baseDirectory);
 
   projects =
-    with lib;
     let
       inherit (lib.modules) evalModules;
 
@@ -93,7 +92,14 @@ let
         };
     in
     mapAttrs (name: project: hydrate project) raw-projects;
+
+  raw-projects = mapAttrs (
+    name: directory: project (import directory { inherit lib pkgs sources; })
+  ) projectDirectories;
 in
-mapAttrs (
-  name: directory: project (import directory { inherit lib pkgs sources; })
-) projectDirectories
+{
+  inherit
+    projects
+    raw-projects
+    ;
+}

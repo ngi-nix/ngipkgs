@@ -113,15 +113,17 @@ rec {
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
-  raw-projects = import ./projects {
-    inherit lib;
-    pkgs = pkgs // ngipkgs;
-    sources = {
-      inputs = sources;
-      modules = nixos-modules;
-      inherit examples;
-    };
-  };
+  # TODO: cleanup
+  projects =
+    (import ./projects {
+      inherit lib;
+      pkgs = pkgs // ngipkgs;
+      sources = {
+        inputs = sources;
+        modules = nixos-modules;
+        inherit examples;
+      };
+    }).projects;
 
   project-models = import ./projects/models.nix { inherit lib pkgs sources; };
 
