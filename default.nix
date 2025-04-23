@@ -88,20 +88,33 @@ rec {
     with lib;
     mapAttrs (_: project: mapAttrs (_: example: example.module) project.nixos.examples) projects;
 
-  # TODO: cleanup
-  ngipkgsModules = lib.flatten (
-    lib.mapAttrsToList (
-      _: project:
-      builtins.attrValues (
-        lib.filterAttrs (_: m: m != { }) (
-          lib.recursiveUpdate (lib.mapAttrs (_: value: value.module or { })
-            project.nixos.modules.services or { }
-          ) (lib.mapAttrs (_: value: value.module or { }) project.nixos.modules.programs or { })
-        )
-      )
-    ) raw-projects
+  # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
+  ngipkgs-modules = {
+    # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+    ngipkgs =
+      { ... }:
+      {
+        nixpkgs.overlays = [ overlays.default ];
+      };
+    services = lib.foldl lib.recursiveUpdate { } (
+      map (
+        project: (lib.mapAttrs (_: value: value.module or null) project.nixos.modules.services or { })
+      ) (lib.attrValues raw-projects)
+    );
+    programs = lib.foldl lib.recursiveUpdate { } (
+      map (
+        project: (lib.mapAttrs (_: value: value.module or null) project.nixos.modules.programs or { })
+      ) (lib.attrValues raw-projects)
+    );
+  };
+
+  ngipkgsModules = lib.filter (m: m != null) (
+    lib.mapAttrsToList (name: value: value) ngipkgs-modules.services
+    ++ lib.mapAttrsToList (name: value: value) ngipkgs-modules.programs
   );
+
   nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+
   extendedNixosModules =
     [
       # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
@@ -142,7 +155,7 @@ rec {
         pkgs = pkgs // ngipkgs;
         sources = {
           inputs = sources;
-          modules = ngipkgsModules;
+          modules = ngipkgs-modules;
           inherit examples;
         };
       })
