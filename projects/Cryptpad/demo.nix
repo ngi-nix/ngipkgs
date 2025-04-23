@@ -1,18 +1,14 @@
-{ ... }:
-let
-  servicePort = 9000;
-  domainName = "localhost:${toString servicePort}";
-in
+{ config, ... }:
 {
   services.cryptpad = {
     enable = true;
+    openPorts = true;
+
     settings = {
-      httpPort = servicePort;
-      httpUnsafeOrigin = "http://${domainName}";
-      httpSafeOrigin = "http://${domainName}";
+      httpPort = 9000;
+      httpAddress = "0.0.0.0";
+      httpUnsafeOrigin = "http://localhost:${toString config.services.cryptpad.settings.httpPort}";
+      httpSafeOrigin = "http://localhost:${toString config.services.cryptpad.settings.httpPort}";
     };
   };
-
-  networking.firewall.allowedTCPPorts = [ servicePort ];
-  networking.firewall.allowedUDPPorts = [ servicePort ];
 }

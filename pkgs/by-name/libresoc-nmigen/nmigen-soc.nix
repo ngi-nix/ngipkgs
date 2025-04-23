@@ -1,14 +1,15 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromGitLab,
   nmigen,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "nmigen-soc";
   version = "unstable-2024-03-31";
   # python setup.py --version
   realVersion = "0.1.dev243+g${lib.substring 0 7 src.rev}";
+  pyproject = true;
 
   # NOTE(jleightcap): libresoc's nmigen-soc fork has been renamed to https://github.com/amaranth-lang/amaranth-soc.
   # suffers from the same rename issue as the previous commit with renaming issue as nmigen/amaranth
@@ -22,8 +23,8 @@ python39Packages.buildPythonPackage rec {
     rev = "fd2aaa336283cff2e46f489bf3897780cd217b8b"; # HEAD @ version date
   };
 
-  nativeBuildInputs = with python39Packages; [ setuptools-scm ];
-  propagatedBuildInputs = with python39Packages; [
+  nativeBuildInputs = with python3Packages; [ setuptools-scm ];
+  propagatedBuildInputs = with python3Packages; [
     nmigen
     setuptools
   ];
@@ -32,7 +33,7 @@ python39Packages.buildPythonPackage rec {
     export SETUPTOOLS_SCM_PRETEND_VERSION="${realVersion}"
   '';
 
-  nativeCheckInputs = with python39Packages; [ pytestCheckHook ];
+  nativeCheckInputs = with python3Packages; [ pytestCheckHook ];
 
   meta = {
     description = "Python toolbox for building complex digital hardware";

@@ -10,7 +10,7 @@ let
 in
 rustPlatform.buildRustPackage {
   pname = "wireguard-rs";
-  version = "unstable-2021-01-13";
+  version = "0-unstable-2021-01-13";
 
   src = fetchgit {
     url = "https://git.zx2c4.com/wireguard-rs";
@@ -21,6 +21,8 @@ rustPlatform.buildRustPackage {
   cargoLock.lockFile = ./Cargo.lock;
 
   postPatch = ''
+    substituteInPlace Cargo.toml \
+      --replace-fail 'pnet = "^0.27"' 'pnet = "^0.29"'
     cp ${./Cargo.lock} Cargo.lock
   '';
 

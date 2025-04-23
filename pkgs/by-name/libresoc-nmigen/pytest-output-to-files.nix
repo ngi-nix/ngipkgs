@@ -1,11 +1,12 @@
 {
   lib,
   fetchFromLibresoc,
-  python39Packages,
+  python3Packages,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "pytest-output-to-files";
   version = "unstable-2024-03-31";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;
@@ -13,7 +14,8 @@ python39Packages.buildPythonPackage rec {
     hash = "sha256-ES8zZ9s6wGcqw60NoN4tZf/Dq/sBvl+UDYrXuOgfMxI=";
   };
 
-  nativeCheckInputs = with python39Packages; [ pytestCheckHook ];
+  build-system = with python3Packages; [ setuptools ];
+  nativeCheckInputs = with python3Packages; [ pytestCheckHook ];
 
   meta = {
     description = "A pytest plugin that shortens test output with the full output stored in files";

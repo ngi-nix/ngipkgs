@@ -1,7 +1,7 @@
 {
   stdenv,
   fetchFromLibresoc,
-  python39,
+  python3,
 }:
 stdenv.mkDerivation rec {
   name = "libresoc-pinmux";
@@ -13,11 +13,11 @@ stdenv.mkDerivation rec {
     hash = "sha256-Tux2RvcRmlpXMsHwve/+5rOyBRSThg9MVW2NGP3ZJxs=";
   };
 
-  nativeBuildInputs = [ python39 ];
+  nativeBuildInputs = [ python3 ];
 
   buildPhase = ''
     runHook preBuild
-    python3.9 src/pinmux_generator.py -v -s ls180 -o ls180
+    python3 src/pinmux_generator.py -v -s ls180 -o ls180
     runHook postBuild
   '';
 

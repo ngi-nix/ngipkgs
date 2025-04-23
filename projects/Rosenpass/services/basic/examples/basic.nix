@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.rosenpass.enable = true;
+}

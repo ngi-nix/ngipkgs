@@ -1,6 +1,6 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   fetchFromLibresoc,
   bigfloat,
   sfpy,
@@ -9,9 +9,10 @@
   nmigen,
   pytest-output-to-files,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "ieee754fpu";
-  version = "unstable-2024-03-31";
+  version = "0-unstable-2024-03-31";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;
@@ -23,6 +24,10 @@ python39Packages.buildPythonPackage rec {
     touch ./src/ieee754/part{,_ass,_cat,_repl}/__init__.py
   '';
 
+  build-system = with python3Packages; [
+    setuptools
+  ];
+
   propagatedBuildInputs = [ nmutil ];
 
   nativeCheckInputs =
@@ -33,7 +38,7 @@ python39Packages.buildPythonPackage rec {
       sfpy
       bigfloat
     ]
-    ++ (with python39Packages; [
+    ++ (with python3Packages; [
       pytestCheckHook
       pytest-xdist
     ]);

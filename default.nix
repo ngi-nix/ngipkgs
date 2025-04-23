@@ -1,5 +1,7 @@
 {
-  sources ? (import ./flake-compat.nix { root = ./.; }).inputs,
+  sources ? import (fetchTarball "https://github.com/fricklerhandwerk/flake-inputs/tarball/main") {
+    root = ./.;
+  },
   system ? builtins.currentSystem,
   pkgs ? import sources.nixpkgs {
     config = { };
@@ -22,7 +24,19 @@ rec {
 
   # TODO: we should be exporting our custom functions as `lib`, but refactoring
   # this to use `pkgs.lib` everywhere is a lot of movement
-  lib' = import ./lib.nix { inherit lib; };
+  lib' = {
+    # Take an attrset of arbitrary nesting and make it flat
+    # by concatenating the nested names with the given separator.
+    flattenAttrs =
+      separator:
+      let
+        f = path: lib.concatMapAttrs (flatten path);
+        flatten =
+          path: name: value:
+          if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
+      in
+      f "";
+  };
 
   overlays.default =
     final: prev:
@@ -33,7 +47,7 @@ rec {
 
   examples =
     with lib;
-    mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) projects;
+    mapAttrs (_: project: mapAttrs (_: example: example.module) project.nixos.examples) projects;
 
   nixos-modules =
     with lib;
@@ -60,143 +74,27 @@ rec {
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
-  raw-projects =
-    let
-      project-inputs = {
-        inherit lib;
-        pkgs = pkgs // ngipkgs;
-        sources = {
-          inputs = sources;
-          modules = nixos-modules;
-          inherit examples;
-        };
-      };
-      new-project-to-old =
-        new-project:
-        let
-          empty-if-not-attrs = x: if lib.isAttrs x then x else { };
-          removeNull = a: lib.filterAttrs (_: v: v != null) a;
-
-          services = empty-if-not-attrs (new-project.nixos.modules.services or { });
-          programs = empty-if-not-attrs (new-project.nixos.modules.programs or { });
-
-          get = func: attrs: lib.concatMapAttrs (_: value: func value) attrs;
-
-          examples-from =
-            value:
-            if (value ? examples) && (lib.isAttrs value.examples) then
-              lib.mapAttrs (
-                _: example:
-                if lib.isAttrs example then
-                  {
-                    path = example.module;
-                    description = example.description;
-                  }
-                else
-                  null
-              ) value.examples
-            else
-              { };
-          tests-from =
-            value:
-            if (value ? tests) && (lib.isAttrs value.tests) then
-              value.tests
-            else if (value ? examples) && (lib.isAttrs value.examples) then
-              lib.concatMapAttrs (_: example: example.tests or { }) value.examples
-            else
-              { };
-        in
-        {
-          packages = { }; # NOTE: the overview expects a set
-          metadata = new-project.metadata or { };
-          nixos.modules.services = removeNull (lib.mapAttrs (name: value: value.module or null) services);
-          nixos.modules.programs = removeNull (lib.mapAttrs (name: value: value.module or null) programs);
-          nixos.examples = removeNull (
-            examples-from new-project.nixos // get examples-from services // get examples-from programs
-          );
-          nixos.tests = removeNull (
-            tests-from new-project.nixos // get tests-from services // get tests-from programs
-          );
-        };
-      map-new-projects = projects: lib.mapAttrs (name: value: new-project-to-old value) projects;
-    in
-    import ./projects-old project-inputs // map-new-projects (import ./projects project-inputs);
+  raw-projects = import ./projects {
+    inherit lib;
+    pkgs = pkgs // ngipkgs;
+    sources = {
+      inputs = sources;
+      modules = nixos-modules;
+      inherit examples;
+    };
+  };
 
   project-models = import ./projects/models.nix { inherit lib pkgs sources; };
 
-  templates.project = project-models.project (
-    import ./templates/project { inherit lib pkgs sources; }
-  );
-
-  # TODO: find a better place for this
-  metrics = with lib; {
-    projects = attrNames raw-projects;
-    in-ngipkgs = attrNames ngipkgs;
-    derivations = concatMap (p: attrNames p.packages) (attrValues raw-projects);
-    with-services = attrNames (
-      filterAttrs (name: p: p ? nixos.modules.services && p.nixos.modules.services != null) raw-projects
-    );
-    missing-services = attrNames (
-      filterAttrs (name: p: p ? nixos.modules.services && p.nixos.modules.services == null) raw-projects
-    );
-    services = concatMap attrNames (
-      concatMap (p: attrValues p.nixos.modules) (
-        attrValues (
-          filterAttrs (name: p: p ? nixos.modules.services && p.nixos.modules.services != null) raw-projects
-        )
-      )
-    );
-    with-tests = attrNames (
-      filterAttrs (name: p: p ? nixos.tests && p.nixos.tests != null) raw-projects
-    );
-    missing-tests = attrNames (
-      filterAttrs (name: p: p ? nixos.tests && p.nixos.tests == null) raw-projects
-    );
-    tests = concatMap (p: attrNames p.nixos.tests) (
-      attrValues (filterAttrs (name: p: p ? nixos.tests && p.nixos.tests != null) raw-projects)
-    );
-    with-examples = attrNames (
-      filterAttrs (name: p: p ? nixos.examples && p.nixos.examples != null) raw-projects
-    );
-    missing-examples = attrNames (
-      filterAttrs (name: p: p ? nixos.examples && p.nixos.examples == null) raw-projects
-    );
-    examples = concatMap (p: attrNames p.nixos.examples) (
-      attrValues (filterAttrs (name: p: p ? nixos.examples && p.nixos.examples != null) raw-projects)
-    );
-  };
-
-  metrics-count = with lib; mapAttrs (name: value: count (_: true) value) metrics;
-
-  project-metrics =
-    with lib;
-    mapAttrs (
-      _: p:
-      {
-        derivations = count (_: true) (attrNames p.packages);
-      }
-      // optionalAttrs (p ? nixos) {
-        nixos =
-          {
-            tests = if p.nixos.tests == null then 0 else count (_: true) (attrNames p.nixos.tests);
-            examples = if p.nixos.examples == null then 0 else count (_: true) (attrNames p.nixos.examples);
-          }
-          // optionalAttrs (p ? nixos.modules.services) {
-            services =
-              if p.nixos.modules.services == null then
-                0
-              else
-                count (_: true) (attrNames p.nixos.modules.services);
-          }
-          // optionalAttrs (p ? nixos.modules.programs) {
-            programs =
-              if p.nixos.modules.programs == null then
-                0
-              else
-                count (_: true) (attrNames p.nixos.modules.programs);
-          };
-      }
-    ) raw-projects;
+  # we mainly care about the types being checked
+  templates.project =
+    let
+      project-metadata =
+        (project-models.project (import ./maintainers/templates/project { inherit lib pkgs sources; }))
+        .metadata;
+    in
+    # fake derivation for flake check
+    pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
 
   # TODO: find a better place for this
   projects =
@@ -227,17 +125,31 @@ rec {
         pkgs.nixosTest (debugging // test);
 
       empty-if-null = x: if x != null then x else { };
+      filter-map =
+        attrs: input:
+        lib.pipe attrs [
+          (lib.concatMapAttrs (_: value: value."${input}" or { }))
+          (lib.filterAttrs (_: v: v != null))
+        ];
 
       hydrate =
         # we use fields to track state of completion.
         # - `null` means "expected but missing"
         # - not set means "not applicable"
         # TODO: encode this in types, either yants or the module system
-        project: {
-          packages = empty-if-null (filterAttrs (name: value: value != null) (project.packages or { }));
-          metadata = empty-if-null (filterAttrs (name: value: value != null) (project.metadata or { }));
-          nixos.modules = empty-if-null (filterAttrs (_: m: m != null) (project.nixos.modules or { }));
-          nixos.examples = empty-if-null (project.nixos.examples or { });
+        project: rec {
+          metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
+          nixos.modules.services = filterAttrs (_: m: m != null) (
+            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
+          );
+          nixos.modules.programs = filterAttrs (_: m: m != null) (
+            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.programs or { }
+          );
+          # TODO: access examples for services and programs separately?
+          nixos.examples =
+            (empty-if-null (project.nixos.examples or { }))
+            // (filter-map (project.nixos.modules.programs or { }) "examples")
+            // (filter-map (project.nixos.modules.services or { }) "examples");
           nixos.tests = mapAttrs (
             _: test:
             if lib.isString test then
@@ -249,12 +161,21 @@ rec {
               test
             else
               nixosTest test
-          ) (empty-if-null (project.nixos.tests or { }));
+          ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
         };
     in
     mapAttrs (name: project: hydrate project) raw-projects;
 
   shell = pkgs.mkShellNoCC {
     packages = [ ];
+  };
+
+  demo = import ./overview/demo {
+    inherit
+      lib
+      pkgs
+      sources
+      extendedNixosModules
+      ;
   };
 }

@@ -70,7 +70,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    If the entry does not exist, copy the project template and edit it with relevant details:
 
    ```shellSession
-   cp -r templates/project projects/some-project
+   cp -r maintainers/templates/project projects/some-project
    $EDITOR projects/some-project/default.nix
    ```
 
@@ -225,7 +225,7 @@ The following information is needed to [open an issue for a new NGI project](htt
 1. Copy the project template to the projects directory:
 
    ```
-   cp -r templates/project projects/<project_name>
+   cp -r maintainers/templates/project projects/<project_name>
    ```
 
 1. Search for `NGI Project: <project_name>` in the [Ngipkgs issues](https://github.com/ngi-nix/ngipkgs/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22NGI%20Project%22) page.
@@ -234,11 +234,7 @@ The following information is needed to [open an issue for a new NGI project](htt
 1. Check that the code is valid by running the test locally:
 
    ```
-   # examples
-   $ nix build .#checks.x86_64-linux.projects/<project_name>/nixos/examples/<example_name>
-   
-   # tests
-   $ nix build .#checks.x86_64-linux.projects/<project_name>/nixos/tests/<test_name>
+   nix build .#checks.x86_64-linux.projects/<project_name>/nixos/tests/<test_name>
    ```
 
 1. Run the Nix code formatter with `nix fmt`
@@ -247,3 +243,7 @@ The following information is needed to [open an issue for a new NGI project](htt
 <!-- TODO: Add details about how to do more production-like deployments that require non-default config options. -->
 
 <!-- TODO: How to import all of NGIpkgs as an input to an existing NixOS configuration, in order to deploy a service alongside other services on the same virtual or physical machine. -->
+
+## Asking for help
+
+Please ask questions on the [public NGIpkgs Matrix room](https://matrix.to/#/#ngipkgs:matrix.org).

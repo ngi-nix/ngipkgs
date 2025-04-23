@@ -1,48 +1,20 @@
 {
   newScope,
-  fetchFromGitHub,
-  python39,
+  python3,
 }:
 let
-  python =
-    let
-      packageOverrides = self: super: {
-        setuptools = super.setuptools.overridePythonAttrs (old: rec {
-          version = "75.1.1";
-
-          src = fetchFromGitHub {
-            owner = "pypa";
-            repo = "setuptools";
-            rev = "refs/tags/v${version}";
-            hash = "sha256-b8O/DrDWAbD6ht9M762fFN6kPtV8hAbn1gAN9SS7H5g=";
-          };
-        });
-        tomli = super.tomli.overridePythonAttrs (old: rec {
-          version = "2.0.1";
-          src = fetchFromGitHub {
-            owner = "hukkin";
-            repo = "tomli";
-            rev = version;
-            hash = "sha256-v0ZMrHIIaGeORwD4JiBeLthmnKZODK5odZVL0SY4etA=";
-          };
-        });
-      };
-    in
-    python39.override {
-      inherit packageOverrides;
-      self = python;
-    };
+  python = python3;
 
   callPackage = newScope {
-    python39 = python;
-    python39Packages = python.pkgs;
+    python3 = python;
+    python3Packages = python.pkgs;
   };
 
   lib = callPackage ./lib.nix { };
   inherit (lib) fetchFromLibresoc;
 
   libresoc-c4m-jtag = callPackage ./libresoc-c4m-jtag.nix {
-    inherit fetchFromLibresoc nmigen nmigen-soc;
+    inherit fetchFromLibresoc nmigen-soc modgrammar;
   };
   libresoc-ieee754fpu = callPackage ./ieee754fpu.nix {
     inherit
@@ -75,6 +47,7 @@ let
     inherit fetchFromLibresoc;
   };
   pytest-output-to-files = callPackage ./pytest-output-to-files.nix { inherit fetchFromLibresoc; };
+  modgrammar = callPackage ./modgrammar.nix { };
 in
 callPackage ./soc.nix {
   inherit

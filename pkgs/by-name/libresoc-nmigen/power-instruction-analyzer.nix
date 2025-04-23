@@ -1,13 +1,13 @@
 {
   lib,
-  python39Packages,
+  python3Packages,
   rustPlatform,
   fetchFromLibresoc,
 }:
-python39Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage rec {
   pname = "power-instruction-analyzer";
   version = "0.2.0";
-  format = "pyproject";
+  pyproject = true;
 
   src = fetchFromLibresoc {
     inherit pname;

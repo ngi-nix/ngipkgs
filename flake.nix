@@ -31,7 +31,10 @@
       ...
     }@inputs:
     let
-      classic' = import ./. { system = null; };
+      classic' = import ./. {
+        sources = inputs;
+        system = null;
+      };
       inherit (classic') lib lib';
 
       inherit (lib)
@@ -58,10 +61,6 @@
       # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
       rawNgiProjects = classic'.projects;
 
-      rawExamples = lib'.flattenAttrs "/" (
-        mapAttrs (_: project: mapAttrs (_: example: example.path) project.nixos.examples) rawNgiProjects
-      );
-
       rawNixosModules = lib'.flattenAttrs "." (
         lib.foldl recursiveUpdate { } (
           attrValues (mapAttrs (_: project: project.nixos.modules) rawNgiProjects)
@@ -74,39 +73,13 @@
         default.nixpkgs.overlays = [ overlay ];
       } // rawNixosModules;
 
-      mkNixosSystem =
-        config:
-        nixosSystem {
-          modules =
-            [
-              config
-              {
-                nixpkgs.hostPlatform = "x86_64-linux";
-                system.stateVersion = "23.05";
-
-                # The examples that the flake exports are not meant to be used/booted directly.
-                # See <https://github.com/ngi-nix/ngipkgs/issues/128> for more information.
-                boot = {
-                  initrd.enable = false;
-                  kernel.enable = false;
-                  loader.grub.enable = false;
-                };
-              }
-            ]
-            # TODO: this needs to take a different shape,
-            # otherwise the transformation to obtain it is confusing
-            ++ classic'.extendedNixosModules;
-        };
-
       toplevel = machine: machine.config.system.build.toplevel;
 
       # Finally, define the system-agnostic outputs.
       systemAgnosticOutputs = {
-        nixosConfigurations =
-          # TODO: remove these, noone will (or can even, realistically) use them
-          mapAttrs (_: mkNixosSystem) rawExamples // {
-            makemake = import ./infra/makemake { inherit inputs; };
-          };
+        nixosConfigurations = {
+          makemake = import ./infra/makemake { inherit inputs; };
+        };
 
         inherit nixosModules;
 
@@ -117,7 +90,10 @@
       eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (
         system:
         let
-          classic = import ./. { inherit system; };
+          classic = import ./. {
+            sources = inputs;
+            inherit system;
+          };
 
           inherit (classic) pkgs ngipkgs;
 
@@ -177,12 +153,8 @@
                       checksForNixosTests = concatMapAttrs (testName: test: {
                         "projects/${projectName}/nixos/tests/${testName}" = test;
                       }) project.nixos.tests;
-
-                      checksForNixosExamples = concatMapAttrs (exampleName: example: {
-                        "projects/${projectName}/nixos/examples/${exampleName}" = toplevel (mkNixosSystem example.path);
-                      }) project.nixos.examples;
                     in
-                    checksForNixosTests // checksForNixosExamples;
+                    checksForNixosTests;
                 in
                 concatMapAttrs checksForProject classic.projects;
 
@@ -212,8 +184,7 @@
                 };
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
-                # fake derivation for flake check
-                "infra/templates" = pkgs.writeText "dummy" (lib.strings.toJSON classic'.templates.project);
+                "infra/templates" = classic.templates.project;
               };
             in
             checksForInfrastructure // checksForAllProjects // checksForAllPackages;
