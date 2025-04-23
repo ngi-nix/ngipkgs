@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "cnsprcy";
+  name = "cnsprcy-server";
 
   nodes = {
     machine =
@@ -24,5 +24,6 @@
       start_all()
 
       machine.succeed("cnspr --help")
+      machine.fail("uname -a")
     '';
 }
