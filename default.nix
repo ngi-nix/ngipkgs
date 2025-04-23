@@ -101,6 +101,15 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
+  # TODO: refactor and handle attrs inside
+  ngipkgs-modules = lib.flatten (
+    lib.mapAttrsToList (
+      _: project:
+      (lib.mapAttrsToList (_: value: value.module or { }) project.nixos.modules.services or { })
+      ++ (lib.mapAttrsToList (_: value: value.module or { }) project.nixos.modules.programs or { })
+    ) raw-projects
+  );
+
   # TODO: cleanup
   nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules =
@@ -126,16 +135,21 @@ rec {
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   # TODO: cleanup
-  projects =
-    (import ./projects {
-      inherit lib;
-      pkgs = pkgs // ngipkgs;
-      sources = {
-        inputs = sources;
-        modules = nixos-modules;
-        inherit examples;
-      };
-    }).projects;
+  inherit
+    (
+      (import ./projects {
+        inherit lib;
+        pkgs = pkgs // ngipkgs;
+        sources = {
+          inputs = sources;
+          modules = nixos-modules;
+          inherit examples;
+        };
+      })
+    )
+    raw-projects
+    projects
+    ;
 
   project-models = import ./projects/models.nix { inherit lib pkgs sources; };
 

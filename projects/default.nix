@@ -66,11 +66,7 @@ let
         # TODO: encode this in types, either yants or the module system
         project: rec {
           metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
-          nixos.modules.test = evalModules {
-            modules =
-              (lib.mapAttrsToList (_: value: value.module or { }) project.nixos.modules.services or { })
-              ++ (lib.mapAttrsToList (_: value: value.module or { }) project.nixos.modules.projects or { });
-          };
+          # TODO: remove
           nixos.modules.services = filterAttrs (_: m: m != null) (
             lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
           );
