@@ -101,6 +101,8 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
+  # TODO: cleanup
+  nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules =
     with lib;
     [
@@ -110,6 +112,16 @@ rec {
     ]
     ++ attrValues nixos-modules.programs
     ++ attrValues nixos-modules.services;
+  evaluated-modules = lib.evalModules {
+    modules =
+      [
+        {
+          nixpkgs.hostPlatform = { inherit system; };
+        }
+      ]
+      ++ nixosModules
+      ++ extendedNixosModules;
+  };
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
