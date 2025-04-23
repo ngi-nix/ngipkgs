@@ -116,15 +116,17 @@ rec {
 
   # TODO: cleanup
   nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
-  extendedNixosModules =
-    with lib;
-    [
-      nixos-modules.ngipkgs
-      # TODO: needed for examples that use sops (like Pretalx)
-      sops-nix
-    ]
-    ++ attrValues nixos-modules.programs
-    ++ attrValues nixos-modules.services;
+  extendedNixosModules = [
+    (
+      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+      { ... }:
+      {
+        nixpkgs.overlays = [ overlays.default ];
+      }
+    )
+    # TODO: needed for examples that use sops (like Pretalx)
+    sops-nix
+  ] ++ ngipkgs-modules;
   evaluated-modules = lib.evalModules {
     modules =
       [
