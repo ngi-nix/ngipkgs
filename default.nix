@@ -101,12 +101,16 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
-  # TODO: refactor and handle attrs inside
   ngipkgs-modules = lib.flatten (
     lib.mapAttrsToList (
       _: project:
-      (lib.mapAttrsToList (_: value: value.module or { }) project.nixos.modules.services or { })
-      ++ (lib.mapAttrsToList (_: value: value.module or { }) project.nixos.modules.programs or { })
+      builtins.attrValues (
+        lib.filterAttrs (_: m: m != { }) (
+          lib.recursiveUpdate (lib.mapAttrs (_: value: value.module or { })
+            project.nixos.modules.services or { }
+          ) (lib.mapAttrs (_: value: value.module or { }) project.nixos.modules.programs or { })
+        )
+      )
     ) raw-projects
   );
 
