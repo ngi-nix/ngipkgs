@@ -89,24 +89,23 @@ rec {
     mapAttrs (_: project: mapAttrs (_: example: example.module) project.nixos.examples) projects;
 
   # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
-  ngipkgs-modules = {
-    # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-    ngipkgs =
-      { ... }:
-      {
-        nixpkgs.overlays = [ overlays.default ];
-      };
-    services = lib.foldl lib.recursiveUpdate { } (
-      map (
-        project: (lib.mapAttrs (_: value: value.module or null) project.nixos.modules.services or { })
-      ) (lib.attrValues raw-projects)
+  ngipkgs-modules =
+    {
+      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+      ngipkgs =
+        { ... }:
+        {
+          nixpkgs.overlays = [ overlays.default ];
+        };
+    }
+    // lib.genAttrs [ "services" "programs" ] (
+      name:
+      lib.foldl lib.recursiveUpdate { } (
+        map (
+          project: (lib.mapAttrs (_: value: value.module or null) project.nixos.modules.${name} or { })
+        ) (lib.attrValues raw-projects)
+      )
     );
-    programs = lib.foldl lib.recursiveUpdate { } (
-      map (
-        project: (lib.mapAttrs (_: value: value.module or null) project.nixos.modules.programs or { })
-      ) (lib.attrValues raw-projects)
-    );
-  };
 
   ngipkgsModules = lib.filter (m: m != null) (
     lib.mapAttrsToList (name: value: value) ngipkgs-modules.services
