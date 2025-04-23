@@ -45,16 +45,6 @@
         recursiveUpdate
         ;
 
-      nixosSystem =
-        args:
-        import (nixpkgs + "/nixos/lib/eval-config.nix") (
-          {
-            inherit lib;
-            system = null;
-          }
-          // args
-        );
-
       overlay = classic'.overlays.default;
 
       # Note that modules and examples are system-agnostic, so import them first.

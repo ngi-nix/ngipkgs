@@ -48,8 +48,6 @@ let
 
   projects =
     let
-      inherit (lib.modules) evalModules;
-
       nixosTest = import ./test.nix { inherit lib pkgs; };
       empty-if-null = x: if x != null then x else { };
       filter-map =
@@ -66,7 +64,7 @@ let
         # TODO: encode this in types, either yants or the module system
         project: rec {
           metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
-          # TODO: remove
+          # TODO: use the evaluated modules in the overview and remove these
           nixos.modules.services = filterAttrs (_: m: m != null) (
             lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
           );

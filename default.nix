@@ -88,7 +88,8 @@ rec {
     with lib;
     mapAttrs (_: project: mapAttrs (_: example: example.module) project.nixos.examples) projects;
 
-  ngipkgs-modules = lib.flatten (
+  # TODO: cleanup
+  ngipkgsModules = lib.flatten (
     lib.mapAttrsToList (
       _: project:
       builtins.attrValues (
@@ -100,34 +101,32 @@ rec {
       )
     ) raw-projects
   );
-
-  # TODO: cleanup
   nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
-  extendedNixosModules = [
-    # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-    {
-      nixpkgs.overlays = [ overlays.default ];
-    }
-    # TODO: needed for examples that use sops (like Pretalx)
-    sops-nix
-  ] ++ ngipkgs-modules;
+  extendedNixosModules =
+    [
+      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+      {
+        nixpkgs.overlays = [ overlays.default ];
+      }
+      # TODO: needed for examples that use sops (like Pretalx)
+      sops-nix
+    ]
+    ++ nixosModules
+    ++ ngipkgsModules;
 
   evaluated-modules = lib.evalModules {
-    modules =
-      [
-        {
-          nixpkgs.hostPlatform = { inherit system; };
+    modules = [
+      {
+        nixpkgs.hostPlatform = { inherit system; };
 
-          networking = {
-            domain = "invalid";
-            hostName = "options";
-          };
+        networking = {
+          domain = "invalid";
+          hostName = "options";
+        };
 
-          system.stateVersion = "23.05";
-        }
-      ]
-      ++ nixosModules
-      ++ extendedNixosModules;
+        system.stateVersion = "23.05";
+      }
+    ] ++ extendedNixosModules;
     specialArgs = {
       modulesPath = "${sources.nixpkgs}/nixos/modules";
     };
@@ -143,7 +142,7 @@ rec {
         pkgs = pkgs // ngipkgs;
         sources = {
           inputs = sources;
-          modules = ngipkgs-modules;
+          modules = ngipkgsModules;
           inherit examples;
         };
       })
