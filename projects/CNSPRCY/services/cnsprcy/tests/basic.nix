@@ -12,10 +12,9 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs.cnsprcy
-          sources.examples.CNSPRCY.basic 
+          sources.modules.services.cnsprcy
+          sources.examples.CNSPRCY.basic
         ];
-	
       };
   };
 

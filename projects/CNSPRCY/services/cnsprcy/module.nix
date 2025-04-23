@@ -12,12 +12,13 @@ in
     enable = lib.mkEnableOption "cnsprcy";
   };
 
-#  config = mIf cfg.enable {
-#
-#    systemd.services.cnsprcy = {
-#      script = ''
-#        ${pkgs.cnsprcy}/bin/cnspr serve
-#      ''
-#    }
-#  };
+  config = lib.mkIf cfg.enable {
+
+    systemd.services.cnsprcy = {
+      script = ''
+        ${pkgs.cnsprcy}/bin/cnspr serve
+      '';
+    };
+
+  };
 }

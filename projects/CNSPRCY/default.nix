@@ -20,6 +20,7 @@
 
   # https://git.sr.ht/~xaos/cnsprcy/tree/master/item/src/config.rs
   nixos.modules.programs.cnsprcy = {
+    name = "cnsprcy";
     module = ./programs/cnsprcy/module.nix;
     examples.basic = {
       module = ./programs/cnsprcy/examples/basic.nix;
