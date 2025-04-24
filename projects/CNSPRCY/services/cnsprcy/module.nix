@@ -25,8 +25,8 @@ in
 
     systemd.services.cnsprcy = {
       description = "CNSPRCY service";
-      wantedBy = ["multi-user.target"];
-      after = ["network.target"];
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
       preStart = "${pkgs.cnsprcy}/bin/cnspr config init";
       serviceConfig = {
         ExecStart = "${pkgs.cnsprcy}/bin/cnspr serve";
