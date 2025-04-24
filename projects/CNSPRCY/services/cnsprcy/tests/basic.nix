@@ -23,6 +23,7 @@
     ''
       start_all()
 
+      machine.wait_for_unit("cnsprcy.service")
       machine.succeed("cnspr --help")
     '';
 }
