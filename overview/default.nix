@@ -271,8 +271,8 @@ let
         <ol>
           <li><strong>Install Nix on your platform.</strong></li>
           <li>
-            <strong>Download this Nix file on your computer.</strong> It contains some glue code
-            and the NixOS configuration that defines the demo system.
+            <strong>Download this Nix file to your computer.</strong>
+            It contains some glue code and the NixOS configuration that defines the demo system.
             {{ include_code("nix", "default.nix", relative_path=True) }}
           </li>
           <li>
