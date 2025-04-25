@@ -119,7 +119,13 @@
         rec {
           packages = ngipkgs // {
             overview = import ./overview {
-              inherit lib lib' self;
+              inherit
+                lib
+                lib'
+                self
+                nixpkgs
+                system
+                ;
               pkgs = pkgs // ngipkgs;
               projects = ngiProjects;
               options = optionsDoc.optionsNix;
@@ -191,7 +197,8 @@
 
           devShells.default = pkgs.mkShell {
             inherit (checks."infra/pre-commit") shellHook;
-            buildInputs = checks."infra/pre-commit".enabledPackages;
+            # TODO use devmode
+            buildInputs = checks."infra/pre-commit".enabledPackages ++ [ pkgs.darkhttpd ];
           };
 
           formatter = pkgs.writeShellApplication {
