@@ -272,7 +272,8 @@ let
           <li><strong>Install Nix on your platform.</strong></li>
           <li>
             <strong>Download this Nix file to your computer.</strong>
-            It contains some glue code and the NixOS configuration that defines the demo system.
+            It obtains the NGIpkgs source code and declares a basic service configuration
+            to be run in a virtual machine.
             {{ include_code("nix", "default.nix", relative_path=True) }}
           </li>
           <li>
