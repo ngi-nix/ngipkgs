@@ -24,5 +24,6 @@
 
       machine.wait_for_unit("cryptpad.service")
       machine.wait_for_unit("nginx.service")
+      machine.succeed("curl --fail https://localhost:9000")
     '';
 }
