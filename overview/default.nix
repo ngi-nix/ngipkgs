@@ -268,12 +268,6 @@ let
       ''
         ${heading 2 "demo" "Run a demo deployment locally"}
 
-        <p>
-        Services utilising the NixOS module system generally only run on NixOS.
-        If you want to see a quick demo of this project, follow these steps to
-        run a preconfigured and tested KVM image on your system.
-        </p>
-
         <ol>
           <li><strong>Install Nix on your platform.</strong></li>
           <li>
