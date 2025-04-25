@@ -247,7 +247,7 @@ let
     demoGlue.one = exampleText: ''
       # default.nix
       {
-        ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/${self.rev or "main"}") { },
+        ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
       }:
       ngipkgs.demo (
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
@@ -277,12 +277,12 @@ let
             {{ include_code("nix", "default.nix", relative_path=True) }}
           </li>
           <li>
-            <strong>Build the VM start script</strong> defined in <code>default.nix</code> and run it:
+            <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and run it:
             <pre><code>nix-build && ./result</code></pre>
             Building <strong>will</strong> take a while.
           </li>
           <li>
-            <strong>Access the service</strong> from a browser on your host:
+            <strong>Access the service</strong> with a web browser:
             <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a>
           </li>
         </ol>
