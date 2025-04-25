@@ -58,7 +58,7 @@ let
         <a class="heading" href="#${anchor}">
           <h${toString i} data-url="#${anchor}">
             ${text}
-            <span class="anchor">¶</span>
+            <span class="anchor"/>
           </h${toString i}>
         </a>
       '';

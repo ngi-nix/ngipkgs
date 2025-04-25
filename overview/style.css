@@ -310,6 +310,7 @@ h2:hover .anchor {
     opacity: 0;
     transition: opacity 0.3s ease;
     font-size: 75%;
+    content: "¶";
 }
 
 .page-width {
