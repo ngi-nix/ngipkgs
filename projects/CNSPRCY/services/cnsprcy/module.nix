@@ -36,22 +36,19 @@ in
       cnsprcy
     ];
 
-    # then in test: set interfaces, add "peers" or whatever, and try and send a msg? 
-
     users.users."${cfg.user}" = {
       isSystemUser = true;
       group = cfg.group;
 
       # CNSPRCY looks for the user home to initialize its data directory
-      # at $HOME/.local/share/cnsprcy
-      createHome = true;
+      # at $HOME/.local/share/cnsprcy, but systemd.tmpfiles needs to create
+      # the dir otherwise permissions won't be set correctly.
       home = "${libDir}";
+      useDefaultShell = true;
     };
     users.groups."${cfg.group}" = { };
 
     systemd.tmpfiles.rules = [
-      # `cnspr config init` seems to expect the datadir at $HOME/.local/share/cnsprcy for now
-      # also i couldnt get this to work with user/group set to cnsprcy - it always set to root
       "d ${libDir}/.local/share/cnsprcy 0700 ${cfg.user} ${cfg.group} -"
       "d ${libDir}/.local/share/cnsprcy/handlers 0700 ${cfg.user} ${cfg.group} -"
     ];
@@ -60,20 +57,13 @@ in
       description = "CNSPRCY service";
       wantedBy = [ "multi-user.target" ];
       after = [ "nss-user-lookup.target" ];
-      preStart = ''
-        whoami
-        printf 'n\n${cfg.hostname}\ny\n' | ${pkgs.cnsprcy}/bin/cnspr config init 
-        mkdir ${libDir}/.local/share/cnsprcy/handlers
-      '';
+      preStart = "printf 'n\n${cfg.hostname}\ny\n' | ${pkgs.cnsprcy}/bin/cnspr config init";
       serviceConfig = {
         ExecStart = "${pkgs.cnsprcy}/bin/cnspr serve";
         Restart = "on-failure";
         User = "${cfg.user}";
         Group = "${cfg.group}";
       };
-     # environment = {
-     #   CNSPRCY_CFG = "${libDir}/cnsprcy.tml";
-     # };
     };
 
   };

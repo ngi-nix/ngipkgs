@@ -11,20 +11,19 @@
       "CNSPRCY"
     ];
     links = {
-      exampleLink = {
-        text = "Title";
-        url = "<URL>";
+      source = {
+        text = "CNSPRCY source code";
+        url = "https://git.sr.ht/~xaos/cnsprcy";
       };
     };
   };
 
-  # https://git.sr.ht/~xaos/cnsprcy/tree/master/item/src/config.rs
   nixos.modules.programs.cnsprcy = {
     name = "cnsprcy";
     module = ./programs/cnsprcy/module.nix;
     examples.basic = {
       module = ./programs/cnsprcy/examples/basic.nix;
-      description = "";
+      description = "Checks for cnspr executible";
       tests.basic = import ./programs/cnsprcy/tests/basic.nix args;
     };
   };
@@ -34,7 +33,7 @@
     module = ./services/cnsprcy/module.nix;
     examples.basic = {
       module = ./services/cnsprcy/examples/basic.nix;
-      description = "";
+      description = "Checks that cnsprcy systemd service is running";
       tests.basic = import ./services/cnsprcy/tests/basic.nix args;
     };
   };
