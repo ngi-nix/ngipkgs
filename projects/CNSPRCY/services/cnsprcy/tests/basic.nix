@@ -24,7 +24,7 @@
       start_all()
 
       machine.wait_for_unit("cnsprcy.service")
-      machine.succeed("cnspr --help")
-      machine.succeed("cnspr status")
+      machine.succeed("su cnsprcy -c 'cnspr --help'")
+      machine.succeed("su cnsprcy -c 'cnspr status'")
     '';
 }
