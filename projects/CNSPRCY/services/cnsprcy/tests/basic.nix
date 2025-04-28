@@ -6,7 +6,7 @@
   name = "cnsprcy-server";
 
   nodes = {
-    machine1 = 
+    machine1 =
       { ... }:
       {
         imports = [
