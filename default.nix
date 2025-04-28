@@ -36,6 +36,45 @@ rec {
           if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
       in
       f "";
+
+    # get the path of NixOS module from string
+    # example:
+    # lib'.moduleLocFromOptionString "services.ntpd-rs"
+    # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
+    moduleLocFromOptionString =
+      let
+        inherit
+          (lib.evalModules {
+            class = "nixos";
+            specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
+            modules = [
+              ({
+                config = {
+                  _module.check = false;
+                  nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                };
+              })
+            ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+          })
+          options
+          ;
+      in
+      opt:
+      let
+        locList = lib.splitString "." opt;
+        optAttrs = lib.getAttrFromPath locList options;
+
+        # collect all file paths from all options
+        collectFiles =
+          attrs:
+          let
+            # get value of `files` attr or empty list
+            getFiles =
+              attr: if attr.value ? files && builtins.isList attr.value.files then attr.value.files else [ ];
+          in
+          lib.concatMap getFiles (lib.attrsToList attrs);
+      in
+      lib.head (collectFiles optAttrs);
   };
 
   overlays.default =
