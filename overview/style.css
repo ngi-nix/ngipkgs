@@ -286,6 +286,42 @@ code, pre {
   overflow-x: auto;
 }
 
+.code-block {
+  position: relative;
+}
+
+.code-buttons {
+  position: absolute;
+  top: 0.5em;
+  right: 1em;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  background-color: transparent;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  border: solid 1px gray;
+  background-color: gray;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.button.download {
+  background-color: green;
+}
+
+.button:hover {
+  background-color: darkgrey;
+}
+
+.button.download:hover {
+  background-color: darkgreen;
+}
+
 details > summary > h2, details > summary > h3 {
     display: inline;
 }

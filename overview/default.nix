@@ -101,6 +101,16 @@ let
   markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
 
   render = {
+    # A code snippet that is both copyable and downloadable as a file
+    codeFile.one = filename: ''
+      <div class="code-block">
+        {{ include_code("nix", "${filename}", relative_path=True) }}
+        <div class="code-buttons">
+          <a class="button download" href="${filename}" download>Download</a>
+          <button class="button" onclick="copyToClipboard(this, '${filename}')">Copy</button>
+        </div>
+      </div>
+    '';
     options = rec {
       one =
         prefixLength: option:
@@ -274,7 +284,7 @@ let
             <strong>Download this Nix file to your computer.</strong>
             It obtains the NGIpkgs source code and declares a basic service configuration
             to be run in a virtual machine.
-            {{ include_code("nix", "default.nix", relative_path=True) }}
+            ${render.codeFile.one "default.nix"}
           </li>
           <li>
             <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and run it:
@@ -377,7 +387,19 @@ let
         <link rel="stylesheet" href="/style.css">
       </head>
       <body>
-      ${args.content}
+        ${args.content}
+        <script>
+          async function copyToClipboard(button, url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error("Failed to fetch file: " + response.statusText);
+            }
+            const textContent = await response.text();
+            await navigator.clipboard.writeText(textContent);
+            button.textContent = "Copied ✓";
+            setTimeout(() => button.textContent = "Copy", 2000);
+          }
+        </script>
       </body>
       </html>
     '';
