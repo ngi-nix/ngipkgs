@@ -35,7 +35,7 @@
         sources = inputs;
         system = null;
       };
-      inherit (classic') lib lib';
+      inherit (classic') lib extension;
 
       inherit (lib)
         attrValues
@@ -61,7 +61,7 @@
       # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
       rawNgiProjects = classic'.projects;
 
-      rawNixosModules = lib'.flattenAttrs "." (
+      rawNixosModules = lib.flattenAttrs "." (
         lib.foldl recursiveUpdate { } (
           attrValues (mapAttrs (_: project: project.nixos.modules) rawNgiProjects)
         )
@@ -77,6 +77,8 @@
 
       # Finally, define the system-agnostic outputs.
       systemAgnosticOutputs = {
+        lib = extension;
+
         nixosConfigurations = {
           makemake = import ./infra/makemake { inherit inputs; };
         };
@@ -121,7 +123,6 @@
             overview = import ./overview {
               inherit
                 lib
-                lib'
                 self
                 nixpkgs
                 system

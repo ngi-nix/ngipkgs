@@ -13,18 +13,8 @@
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
   sops-nix = import "${sources.sops-nix}/modules/sops";
-in
-rec {
-  inherit
-    lib
-    pkgs
-    system
-    sources
-    ;
 
-  # TODO: we should be exporting our custom functions as `lib`, but refactoring
-  # this to use `pkgs.lib` everywhere is a lot of movement
-  lib' = {
+  extension = {
     # Take an attrset of arbitrary nesting and make it flat
     # by concatenating the nested names with the given separator.
     flattenAttrs =
@@ -39,7 +29,7 @@ rec {
 
     # get the path of NixOS module from string
     # example:
-    # lib'.moduleLocFromOptionString "services.ntpd-rs"
+    # moduleLocFromOptionString "services.ntpd-rs"
     # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
     moduleLocFromOptionString =
       let
@@ -76,6 +66,19 @@ rec {
       in
       lib.head (collectFiles optAttrs);
   };
+
+  # extended = lib.extend (_: _: extension);
+  extended = lib // extension;
+in
+rec {
+  lib = extended;
+  inherit extension;
+
+  inherit
+    pkgs
+    system
+    sources
+    ;
 
   overlays.default =
     final: prev:
