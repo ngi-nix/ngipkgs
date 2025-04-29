@@ -310,11 +310,19 @@ code, pre {
   font-size: 0.8rem;
 }
 
+.button.copy:before {
+  content: "⿻";
+}
+
+.button.download:before {
+  content: "⭳";
+}
+
 .button.download {
   background-color: green;
 }
 
-.button:hover {
+.button.copy:hover {
   background-color: darkgrey;
 }
 

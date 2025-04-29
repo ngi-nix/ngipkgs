@@ -114,17 +114,15 @@ let
           {{ include_code("${language}", "${filename}" ${optionalString relative ", relative_path=True"}) }}
           <div class="code-buttons">
             ${optionalString downloadable ''
-              <a class="button download" href="${filename}" download>⭳ Download</a>
+              <a class="button download" href="${filename}" download>Download</a>
             ''}
-            <button
-              class="button"
-              onclick="copyToClipboard(this, '${filename}')">
+            <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
                 ${optionalString (!relative) ''
                   <script type="application/json">
                     ${toJSON (readFile filename)}
                   </script>
                 ''}
-                ⿻ Copy
+                Copy
             </button>
           </div>
         </div>
