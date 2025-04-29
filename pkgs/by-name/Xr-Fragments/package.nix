@@ -1,14 +1,14 @@
 {
+  lib,
   stdenv,
   fetchgit,
-  haxe,
   nodejs,
   yarn,
+  haxe,
   makeWrapper,
-  lib,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "xrfragment";
   version = "0.5.2";
 
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
     hash = "sha256-19zfnV7pVAAdft/KrXX4xbb3EgLw+M5SoEGXcKHR2kg=";
   };
 
-  buildInputs = [
+  nativeBuildInputs = [
     haxe
     nodejs
     yarn
@@ -27,15 +27,17 @@ stdenv.mkDerivation rec {
 
   buildPhase = ''
     runHook preBuild
-
-    # build command
-
+     haxe build.hxml
     runHook postBuild
   '';
 
   installPhase = ''
+    runHook preInstall
+
     mkdir -p $out/dist
     cp -r dist/* $out/dist/
+
+    runHook postInstall
   '';
 
   meta = {
@@ -43,4 +45,4 @@ stdenv.mkDerivation rec {
     homepage = "https://codeberg.org/coderofsalvation/xrfragment";
     license = lib.licenses.gpl3;
   };
-}
+})
