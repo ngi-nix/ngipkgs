@@ -41,7 +41,9 @@ let
               ({
                 config = {
                   _module.check = false;
-                  nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                  # remove it when separate nixpkgs: https://github.com/ngi-nix/ngipkgs/pull/968#discussion_r2067929098
+                  # nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                  nixpkgs.hostPlatform = builtins.currentSystem or "x86_64-linux";
                 };
               })
             ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
@@ -67,8 +69,7 @@ let
       lib.head (collectFiles optAttrs);
   };
 
-  # extended = lib.extend (_: _: extension);
-  extended = lib // extension;
+  extended = lib.extend (_: _: extension);
 in
 rec {
   lib = extended;

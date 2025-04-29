@@ -15,7 +15,7 @@
   nixos.modules.services = {
     misskey = {
       name = "Misskey";
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/misskey.nix";
+      module = lib.moduleLocFromOptionString "services.misskey";
       examples.basic = {
         module = ./services/misskey/examples/basic.nix;
         description = "";
