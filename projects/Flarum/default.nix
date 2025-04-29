@@ -37,7 +37,7 @@
   nixos.modules.services = {
     flarum = {
       name = "flarum";
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/flarum.nix";
+      module = lib.moduleLocFromOptionString "services.flarum";
       examples.basic = {
         module = ./services-example.nix;
         description = "";

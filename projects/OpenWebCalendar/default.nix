@@ -8,7 +8,7 @@
   metadata.subgrants = [ "OpenWebCalendar" ];
   nixos.modules.services.open-web-calendar = {
     name = "open-web-calendar";
-    module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/open-web-calendar.nix";
+    module = lib.moduleLocFromOptionString "services.open-web-calendar";
     examples.basic = null;
     links = {
       development = {
