@@ -4,7 +4,6 @@ in
 import ./. {
   inherit (default)
     lib
-    lib'
     system
     projects
     ;
