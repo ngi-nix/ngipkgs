@@ -6,28 +6,15 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "taldir";
-  version = "1.0.3";
+  version = "1.0.5";
 
   src = fetchgit {
     url = "https://git.taler.net/taldir.git";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-axVQ687cGvxGEKECh3HmbTAFwI/YaCtPvtRU5bWsYYI=";
+    hash = "sha256-ZKNkMV0IV6E+yCQeabGXpIQclx1S4YEgFn4whGXTaks=";
   };
 
-  vendorHash = "sha256-V/UzUS3eMKnEhgaipsHoodAlZxuEkZM/ALliU1TNuYg=";
-
-  /*
-    NOTE: regenerate the `./go.sum` file on each update:
-    ```shellSession
-      $ nix-shell -p go
-      $ git clone https://git.taler.net/taldir.git && cd taldir
-      $ go mod tidy
-    ```
-  */
-
-  postPatch = ''
-    cp ${./go.sum} go.sum
-  '';
+  vendorHash = "sha256-QCwakJTpRP7VT69EzQeInCCGBuNu3WsNCytnQcBdKQw=";
 
   nativeBuildInputs = [
     recutils
