@@ -124,7 +124,7 @@ let
                     ${toJSON (readFile filename)}
                   </script>
                 ''}
-                📋 Copy
+                ⿻ Copy
             </button>
           </div>
         </div>
