@@ -18,6 +18,7 @@ let
     concatMapAttrs
     mapAttrs
     filterAttrs
+    filterAttrsRecursive
     ;
 
   inherit (models)
@@ -63,14 +64,14 @@ let
         # - not set means "not applicable"
         # TODO: encode this in types, either yants or the module system
         project: rec {
-          metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
+          metadata = project.metadata or { };
           # TODO: use the evaluated modules in the overview and remove these
-          nixos.modules.services = filterAttrs (_: m: m != null) (
-            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
-          );
-          nixos.modules.programs = filterAttrs (_: m: m != null) (
-            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.programs or { }
-          );
+          nixos.modules.services = lib.mapAttrs (
+            name: value: value.module or null
+          ) project.nixos.modules.services or { };
+          nixos.modules.programs = lib.mapAttrs (
+            name: value: value.module or null
+          ) project.nixos.modules.programs or { };
           # TODO: access examples for services and programs separately?
           nixos.examples =
             (empty-if-null (project.nixos.examples or { }))
@@ -90,7 +91,7 @@ let
           ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
         };
     in
-    mapAttrs (name: project: hydrate project) raw-projects;
+    filterAttrsRecursive (n: v: v != null) (mapAttrs (name: project: hydrate project) raw-projects);
 
   raw-projects = mapAttrs (
     name: directory: project (import directory { inherit lib pkgs sources; })
