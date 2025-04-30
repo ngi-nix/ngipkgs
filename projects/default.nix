@@ -51,12 +51,7 @@ let
     let
       nixosTest = import ./test.nix { inherit lib pkgs; };
       empty-if-null = x: if x != null then x else { };
-      filter-map =
-        attrs: input:
-        lib.pipe attrs [
-          (lib.concatMapAttrs (_: value: value."${input}" or { }))
-          (lib.filterAttrs (_: v: v != null))
-        ];
+      concat-map = attrs: input: lib.concatMapAttrs (_: value: value."${input}" or { }) attrs;
 
       hydrate =
         # we use fields to track state of completion.
@@ -75,8 +70,8 @@ let
           # TODO: access examples for services and programs separately?
           nixos.examples =
             (empty-if-null (project.nixos.examples or { }))
-            // (filter-map (project.nixos.modules.programs or { }) "examples")
-            // (filter-map (project.nixos.modules.services or { }) "examples");
+            // (concat-map (project.nixos.modules.programs or { }) "examples")
+            // (concat-map (project.nixos.modules.services or { }) "examples");
           nixos.tests = mapAttrs (
             _: test:
             if lib.isString test then
@@ -88,7 +83,7 @@ let
               test
             else
               nixosTest test
-          ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
+          ) ((empty-if-null project.nixos.tests or { }) // (concat-map (nixos.examples or { }) "tests"));
         };
     in
     filterAttrsRecursive (n: v: v != null) (mapAttrs (name: project: hydrate project) raw-projects);
