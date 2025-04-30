@@ -101,6 +101,32 @@ let
   markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
 
   render = {
+    # A code snippet that is copyable and optionally downloadable
+    codeSnippet.one =
+      {
+        filename,
+        language ? "nix",
+        relative ? false,
+        downloadable ? false,
+      }:
+      ''
+        <div class="code-block">
+          {{ include_code("${language}", "${filename}" ${optionalString relative ", relative_path=True"}) }}
+          <div class="code-buttons">
+            ${optionalString downloadable ''
+              <a class="button download" href="${filename}" download>Download</a>
+            ''}
+            <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
+                ${optionalString (!relative) ''
+                  <script type="application/json">
+                    ${toJSON (readFile filename)}
+                  </script>
+                ''}
+                Copy
+            </button>
+          </div>
+        </div>
+      '';
     options = rec {
       one =
         prefixLength: option:
@@ -148,7 +174,7 @@ let
       one = example: ''
         <section><details><summary>${example.description}</summary>
 
-        {{ include_code("nix", "${example.module}")}}
+        ${render.codeSnippet.one { filename = example.module; }}
 
         </details></section>
       '';
@@ -274,7 +300,11 @@ let
             <strong>Download this Nix file to your computer.</strong>
             It obtains the NGIpkgs source code and declares a basic service configuration
             to be run in a virtual machine.
-            {{ include_code("nix", "default.nix", relative_path=True) }}
+            ${render.codeSnippet.one {
+              filename = "default.nix";
+              relative = true;
+              downloadable = true;
+            }}
           </li>
           <li>
             <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and run it:
@@ -377,7 +407,26 @@ let
         <link rel="stylesheet" href="/style.css">
       </head>
       <body>
-      ${args.content}
+        ${args.content}
+        <script>
+          async function copyToClipboard(button, url) {
+            let code;
+            const firstChild = Array.from(button.children).find(child => child.tagName === "SCRIPT");
+            if (firstChild) {
+              // JSON is just used for string escaping
+              code = JSON.parse(firstChild.textContent);
+            } else {
+              const response = await fetch(url);
+              if (!response.ok) {
+                throw new Error("Failed to fetch file: " + response.statusText);
+              }
+              code = await response.text();
+            }
+            await navigator.clipboard.writeText(code);
+            button.textContent = "Copied ✓";
+            setTimeout(() => button.textContent = "Copy", 2000);
+          }
+        </script>
       </body>
       </html>
     '';
