@@ -81,6 +81,8 @@ let
               })
             else if lib.isDerivation test then
               test
+            else if builtins.isNull test then
+              null # will be filtered, later
             else
               nixosTest test
           ) ((empty-if-null project.nixos.tests or { }) // (concat-map (nixos.examples or { }) "tests"));
