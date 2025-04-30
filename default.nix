@@ -42,27 +42,10 @@ rec {
     # lib'.moduleLocFromOptionString "services.ntpd-rs"
     # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
     moduleLocFromOptionString =
-      let
-        inherit
-          (lib.evalModules {
-            class = "nixos";
-            specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
-            modules = [
-              ({
-                config = {
-                  _module.check = false;
-                  nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
-                };
-              })
-            ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
-          })
-          options
-          ;
-      in
       opt:
       let
         locList = lib.splitString "." opt;
-        optAttrs = lib.getAttrFromPath locList options;
+        optAttrs = lib.getAttrFromPath locList evaluated-modules.options;
 
         # collect all file paths from all options
         collectFiles =
