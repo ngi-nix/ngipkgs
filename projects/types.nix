@@ -77,4 +77,43 @@ in
   #       and even languages: libraries are just extensions of compilers.
   # TODO: implement this, now that we're using the module system
   plugin = with types; anything;
+
+  nonEmtpyAttrs =
+    elemType:
+    with types;
+    (
+      (attrsOf elemType)
+      // {
+        name = "nonEmtpyAttrs";
+        description = "non-empty attribute set";
+        check = x: lib.isAttrs x && x != { };
+      }
+    );
+
+  example =
+    with types;
+    submodule {
+      options = {
+        module = mkOption {
+          description = "the example must be a NixOS module in a file";
+          type = pathInStore;
+        };
+        description = mkOption {
+          description = "description of the example, ideally with further instructions on how to use it";
+          type = nullOr str;
+          default = null;
+        };
+        tests = mkOption {
+          description = "at least one test for the example";
+          type = nonEmtpyAttrs test;
+        };
+        links = mkOption {
+          description = "links to related resources";
+          type = attrsOf link;
+          default = { };
+        };
+      };
+    };
+
+  test = with types; nullOr (either deferredModule package);
 }
