@@ -6,11 +6,12 @@
 }:
 let
   cfg = config.services.cnsprcy;
-  libDir = "/var/lib/cnsprcy";
+  stateDir = "/var/lib/cnsprcy";
 in
 {
   options.services.cnsprcy = {
     enable = lib.mkEnableOption "cnsprcy";
+    package = lib.mkPackageOption pkgs "cnsprcy" { };
 
     hostname = lib.mkOption {
       type = lib.types.str;
@@ -32,9 +33,7 @@ in
 
   config = lib.mkIf cfg.enable {
 
-    environment.systemPackages = with pkgs; [
-      cnsprcy
-    ];
+    environment.systemPackages = [ cfg.package ];
 
     users.users."${cfg.user}" = {
       isSystemUser = true;
@@ -43,14 +42,14 @@ in
       # CNSPRCY looks for the user home to initialize its data directory
       # at $HOME/.local/share/cnsprcy, but systemd.tmpfiles needs to create
       # the dir otherwise permissions won't be set correctly.
-      home = "${libDir}";
+      home = "${stateDir}";
       useDefaultShell = true;
     };
     users.groups."${cfg.group}" = { };
 
     systemd.tmpfiles.rules = [
-      "d ${libDir}/.local/share/cnsprcy 0700 ${cfg.user} ${cfg.group} -"
-      "d ${libDir}/.local/share/cnsprcy/handlers 0700 ${cfg.user} ${cfg.group} -"
+      "d ${stateDir}/.local/share/cnsprcy 0700 ${cfg.user} ${cfg.group} -"
+      "d ${stateDir}/.local/share/cnsprcy/handlers 0700 ${cfg.user} ${cfg.group} -"
     ];
 
     systemd.services.cnsprcy = {

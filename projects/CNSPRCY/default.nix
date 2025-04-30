@@ -23,7 +23,7 @@
     module = ./programs/cnsprcy/module.nix;
     examples.basic = {
       module = ./programs/cnsprcy/examples/basic.nix;
-      description = "Checks for cnspr executible";
+      description = "Checks for cnspr executable";
       tests.basic = import ./programs/cnsprcy/tests/basic.nix args;
     };
   };
