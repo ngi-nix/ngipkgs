@@ -9,7 +9,7 @@ let
     ;
 in
 {
-  subgrantType =
+  subgrant =
     with types;
     submodule {
       options = lib.genAttrs [ "Commons" "Core" "Entrust" "Review" ] (
