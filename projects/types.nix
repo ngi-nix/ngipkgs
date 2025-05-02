@@ -9,5 +9,15 @@ let
     ;
 in
 {
-
+  subgrantType =
+    with types;
+    submodule {
+      options = lib.genAttrs [ "Commons" "Core" "Entrust" "Review" ] (
+        name:
+        mkOption {
+          type = listOf str;
+          default = [ ];
+        }
+      );
+    };
 }
