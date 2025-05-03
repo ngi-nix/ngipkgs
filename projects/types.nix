@@ -23,6 +23,7 @@ in
           (
             name:
             mkOption {
+              description = "subgrants under the ${name} fund";
               type = listOf str;
               default = [ ];
             }
@@ -105,7 +106,7 @@ in
         };
         tests = mkOption {
           description = "at least one test for the example";
-          type = nonEmtpyAttrs test;
+          type = nonEmtpyAttrs (nullOr test);
         };
         links = mkOption {
           description = "links to related resources";
@@ -115,5 +116,35 @@ in
       };
     };
 
-  test = with types; nullOr (either deferredModule package);
+  # TODO: make use of modular services https://github.com/NixOS/nixpkgs/pull/372170
+  service =
+    with types;
+    submodule (
+      { name, ... }:
+      {
+        options = {
+          name = mkOption {
+            type = nullOr str;
+            default = name;
+          };
+          module = mkOption {
+            type = moduleType;
+          };
+          examples = mkOption {
+            type = nullOr (attrsOf (nullOr example));
+            default = null;
+          };
+          extensions = mkOption {
+            type = nullOr (attrsOf (nullOr plugin));
+            default = null;
+          };
+          links = mkOption {
+            type = attrsOf link;
+            default = { };
+          };
+        };
+      };
+    };
+
+  test = with types; either deferredModule package;
 }
