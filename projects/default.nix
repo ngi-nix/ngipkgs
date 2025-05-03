@@ -36,11 +36,17 @@ let
         else
           assert elem name allowedFiles;
           { };
-      allowedFiles = [
-        "README.md"
-        "default.nix"
-        "models.nix"
-      ];
+      allowedFiles =
+        [
+          "README.md"
+          "default.nix"
+          "models.nix"
+        ]
+        # TODO: remove after fully migrating types to the module system
+        ++ [
+          "default-module.nix"
+          "types.nix"
+        ];
     in
     # TODO: use fileset and filter for `gitTracked` files
     concatMapAttrs names (readDir baseDirectory);
