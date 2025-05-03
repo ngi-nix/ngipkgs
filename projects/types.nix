@@ -23,6 +23,7 @@ in
           (
             name:
             mkOption {
+              description = "subgrants under the ${name} fund";
               type = listOf str;
               default = [ ];
             }
@@ -105,7 +106,7 @@ in
         };
         tests = mkOption {
           description = "at least one test for the example";
-          type = nonEmtpyAttrs test;
+          type = nonEmtpyAttrs (nullOr test);
         };
         links = mkOption {
           description = "links to related resources";
@@ -115,5 +116,5 @@ in
       };
     };
 
-  test = with types; nullOr (either deferredModule package);
+  test = with types; either deferredModule package;
 }
