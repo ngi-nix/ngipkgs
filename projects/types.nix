@@ -143,8 +143,8 @@ in
             default = { };
           };
         };
-      };
-    };
+      }
+    );
 
   test = with types; either deferredModule package;
 }
