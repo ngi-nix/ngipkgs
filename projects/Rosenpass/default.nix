@@ -28,7 +28,7 @@
     };
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     rosenpass = {
       name = "rosenpass";
       module = ./programs/basic/module.nix;
@@ -40,7 +40,7 @@
     };
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     rosenpass = {
       name = "rosenpass";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/rosenpass.nix";

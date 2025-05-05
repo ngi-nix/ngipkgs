@@ -12,7 +12,7 @@
   ];
 
   nixos = {
-    modules.programs.gnucap = {
+    programs.gnucap = {
       module = ./programs.nix;
 
       examples.gnucap = {

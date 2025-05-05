@@ -1,7 +1,7 @@
 { pkgs, ... }@args:
 {
   nixos = {
-    modules.services.atomic-server = {
+    services.atomic-server = {
       module = ./service.nix;
       examples.base = {
         module = ./example.nix;

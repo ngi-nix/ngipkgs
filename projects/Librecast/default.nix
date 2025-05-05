@@ -14,7 +14,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     librecast = {
       module = ./module.nix;
       examples.basic = {

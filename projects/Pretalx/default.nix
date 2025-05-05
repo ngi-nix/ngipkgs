@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.services.ngi-pretalx = {
+  nixos.services.ngi-pretalx = {
     module = ./service.nix;
     examples = {
       base = {

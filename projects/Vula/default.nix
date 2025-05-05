@@ -13,7 +13,7 @@
     ];
   };
 
-  nixos.modules.services.vula = {
+  nixos.services.vula = {
     module = ./service.nix;
     examples.simple = {
       module = ./example-simple.nix;

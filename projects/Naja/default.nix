@@ -13,7 +13,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     naja = {
       module = ./module.nix;
       examples.basic = {

@@ -87,9 +87,7 @@ let
         # string comparison is faster than collecting attribute paths as lists
         spec = attrNames (
           lib'.flattenAttrs "." (
-            foldl' recursiveUpdate { } (
-              mapAttrsToList (name: value: { ${name} = value; }) project.nixos.modules
-            )
+            foldl' recursiveUpdate { } (mapAttrsToList (name: value: { ${name} = value; }) project.nixos)
           )
         );
       in
@@ -229,7 +227,7 @@ let
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
         ${optionalString (project.nixos.examples ? demo) (
-          render.serviceDemo.one project.nixos.modules.services project.nixos.examples.demo
+          render.serviceDemo.one project.nixos.services project.nixos.examples.demo
         )}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
@@ -244,9 +242,7 @@ let
         name: project:
         # TODO is missing in the model yet
         optionalString false (one name "library")
-        + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
-          one name "service"
-        )
+        + optionalString (project.nixos ? services && project.nixos.services != { }) (one name "service")
         + optionalString (project.nixos.examples ? demo) (one name "demo")
         +
           # TODO is supposed to represent GUI apps and needs to be distinguished from CLI applications

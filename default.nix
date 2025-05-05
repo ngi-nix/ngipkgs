@@ -23,8 +23,7 @@ rec {
     ;
 
   rawNixosModules = lib'.flattenAttrs "." (
-    with lib;
-    foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos.modules) projects))
+    with lib; foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos) projects))
   );
 
   nixosModules = {
@@ -139,7 +138,7 @@ rec {
           nixpkgs.overlays = [ overlays.default ];
         };
     }
-    // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
+    // foldl recursiveUpdate { } (map (project: project.nixos) (attrValues projects));
 
   extendedNixosModules =
     with lib;
@@ -207,17 +206,17 @@ rec {
         # TODO: encode this in types, either yants or the module system
         project: rec {
           metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
-          nixos.modules.services = filterAttrs (_: m: m != null) (
-            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
+          nixos.services = filterAttrs (_: m: m != null) (
+            lib.mapAttrs (name: value: value.module or null) project.nixos.services or { }
           );
-          nixos.modules.programs = filterAttrs (_: m: m != null) (
-            lib.mapAttrs (name: value: value.module or null) project.nixos.modules.programs or { }
+          nixos.programs = filterAttrs (_: m: m != null) (
+            lib.mapAttrs (name: value: value.module or null) project.nixos.programs or { }
           );
           # TODO: access examples for services and programs separately?
           nixos.examples =
             (empty-if-null (project.nixos.examples or { }))
-            // (filter-map (project.nixos.modules.programs or { }) "examples")
-            // (filter-map (project.nixos.modules.services or { }) "examples");
+            // (filter-map (project.nixos.programs or { }) "examples")
+            // (filter-map (project.nixos.services or { }) "examples");
           nixos.tests = mapAttrs (
             _: test:
             if lib.isString test then

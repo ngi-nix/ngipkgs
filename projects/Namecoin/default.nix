@@ -5,11 +5,11 @@
 }:
 {
   nixos = {
-    modules.services.namecoind.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/namecoind.nix";
-    modules.services.ncdns.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ncdns.nix";
-    modules.programs.electrum-nmc = null;
+    services.namecoind.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/namecoind.nix";
+    services.ncdns.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ncdns.nix";
+    programs.electrum-nmc = null;
     # the namecoind service module does not add namecoin commands to the environment
-    modules.programs.namecoin = null;
+    programs.namecoin = null;
 
     examples.tor-browser-temporary = {
       description = ''

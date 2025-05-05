@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     canaille = {
       name = "Canaille";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/security/canaille.nix";

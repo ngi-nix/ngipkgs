@@ -13,7 +13,7 @@
     ];
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     proximity-matcher = {
       name = "proximity-matcher";
       module = ./module.nix;

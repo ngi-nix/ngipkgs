@@ -13,7 +13,7 @@
       "Re-Isearch-Vector"
     ];
   };
-  nixos.modules.programs = {
+  nixos.programs = {
     re-isearch = {
       module = ./module.nix;
       examples.re-isearch = {

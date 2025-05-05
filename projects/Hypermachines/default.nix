@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     Hypermachines = {
       name = "Hypermachines";
       module = ./programs/Hypermachines/module.nix;

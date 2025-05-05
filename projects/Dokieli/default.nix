@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     dokieli = {
       module = ./module.nix;
       examples.basic = {

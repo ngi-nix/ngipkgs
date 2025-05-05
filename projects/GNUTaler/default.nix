@@ -24,7 +24,7 @@
     };
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     taler = {
       module = ./program.nix;
       examples.backup = {
@@ -41,7 +41,7 @@
     };
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     taler = {
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/finance/taler/module.nix";
       examples.basic = {
