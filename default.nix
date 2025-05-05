@@ -123,25 +123,6 @@ rec {
     };
   };
 
-  # TODO: remove after migrating to modules
-  # ===
-
-  raw-projects-modules = import ./projects/default-module.nix {
-    inherit lib;
-    pkgs = pkgs // ngipkgs;
-    sources = {
-      inputs = sources;
-      modules = nixos-modules;
-      inherit examples;
-    };
-  };
-
-  # TODO: delete the file after migrating to modules
-  projects-modules = make-projects raw-projects-modules.config.projects;
-
-  # TODO:
-  # ===
-
   project-models = import ./projects/models.nix { inherit lib pkgs sources; };
 
   # we mainly care about the types being checked
@@ -225,7 +206,7 @@ rec {
     in
     mapAttrs (name: project: hydrate project) projects;
 
-  projects = make-projects raw-projects;
+  projects = make-projects raw-projects.config.projects;
 
   shell = pkgs.mkShellNoCC {
     packages = [ ];
