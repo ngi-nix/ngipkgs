@@ -163,6 +163,27 @@ rec {
     };
   };
 
+  projects = make-projects raw-projects;
+
+  # TODO: remove after migrating to modules
+  # ===
+
+  raw-projects-new = import ./projects/default-module.nix {
+    inherit lib;
+    pkgs = pkgs // ngipkgs;
+    sources = {
+      inputs = sources;
+      modules = nixos-modules;
+      inherit examples;
+    };
+  };
+
+  # TODO: delete the file after migrating to modules
+  projects-new = make-projects raw-projects-new.config.projects;
+
+  # TODO:
+  # ===
+
   project-models = import ./projects/models.nix { inherit lib pkgs sources; };
 
   # we mainly care about the types being checked
@@ -176,7 +197,8 @@ rec {
     pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
 
   # TODO: find a better place for this
-  projects =
+  make-projects =
+    projects:
     with lib;
     let
       nixosTest =
@@ -243,7 +265,7 @@ rec {
           ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
         };
     in
-    mapAttrs (name: project: hydrate project) raw-projects;
+    mapAttrs (name: project: hydrate project) projects;
 
   shell = pkgs.mkShellNoCC {
     packages = [

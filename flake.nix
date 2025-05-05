@@ -79,18 +79,36 @@
         in
         rec {
           packages = ngipkgs // {
-            overview = import ./overview {
-              inherit
-                lib
-                lib'
-                self
-                nixpkgs
-                system
-                ;
-              pkgs = pkgs // ngipkgs;
-              projects = ngiProjects;
-              options = optionsDoc.optionsNix;
-            };
+            overview =
+              let
+                overview-new = import ./overview {
+                  inherit
+                    lib
+                    lib'
+                    self
+                    nixpkgs
+                    system
+                    ;
+                  pkgs = pkgs // ngipkgs;
+                  projects = classic.projects-new;
+                  options = optionsDoc.optionsNix;
+                };
+                overview-old = import ./overview {
+                  inherit
+                    lib
+                    lib'
+                    self
+                    nixpkgs
+                    system
+                    ;
+                  pkgs = pkgs // ngipkgs;
+                  projects = ngiProjects;
+                  options = optionsDoc.optionsNix;
+                };
+              in
+              # TODO: switch to overview-new
+              assert overview-old == overview-new;
+              overview-old;
 
             options =
               pkgs.runCommand "options.json"
