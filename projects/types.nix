@@ -97,7 +97,7 @@ rec {
       options = {
         module = mkOption {
           description = "the example must be a NixOS module in a file";
-          type = pathInStore;
+          type = deferredModule;
         };
         description = mkOption {
           description = "description of the example, ideally with further instructions on how to use it";
@@ -151,7 +151,7 @@ rec {
             default = name;
           };
           module = mkOption {
-            type = moduleType;
+            type = deferredModule;
           };
           examples = mkOption {
             type = nullOr (attrsOf (nullOr example));
