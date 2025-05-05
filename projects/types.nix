@@ -8,7 +8,7 @@ let
     mkOption
     ;
 in
-{
+rec {
   subgrant =
     with types;
     submodule {
