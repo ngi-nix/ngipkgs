@@ -24,7 +24,6 @@
           sources.modules.services.cnsprcy
           sources.examples.CNSPRCY.basic
         ];
-        services.cnsprcy.hostname = "machine2";
         networking.firewall.enable = false;
       };
   };

@@ -16,7 +16,7 @@ in
     hostname = lib.mkOption {
       type = lib.types.str;
       description = "Hostname of CNSPRCY server";
-      default = "machine1";
+      default = builtins.getEnv "HOSTNAME";
     };
 
     user = lib.mkOption {
