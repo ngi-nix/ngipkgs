@@ -49,6 +49,7 @@
         module = ./demo.nix;
         description = "Deployment for demo purposes";
         tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/cryptpad.nix" args;
+        tests.demo = import ./demo-test.nix args;
       };
       links = {
         admin-guide = {
