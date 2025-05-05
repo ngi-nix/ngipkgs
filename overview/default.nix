@@ -1,3 +1,4 @@
+# NOTE: run a live overview watcher by executing `devmode`, inside a nix shell
 {
   lib,
   lib',
