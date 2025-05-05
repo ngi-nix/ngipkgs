@@ -22,44 +22,9 @@ rec {
     sources
     ;
 
-  rawNixosModules = lib'.flattenAttrs "." (
-    with lib; foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos) projects))
-  );
-
-  nixosModules = {
-    # The default module adds the default overlay on top of Nixpkgs.
-    # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-    default.nixpkgs.overlays = [ overlays.default ];
-  } // rawNixosModules;
-
-  optionsDoc =
-    let
-      nixosSystem =
-        args:
-        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
-          {
-            inherit lib;
-            system = null;
-          }
-          // args
-        );
-    in
-    pkgs.nixosOptionsDoc {
-      options =
-        (nixosSystem {
-          inherit system;
-          modules = [
-            {
-              networking = {
-                domain = "invalid";
-                hostName = "options";
-              };
-
-              system.stateVersion = "23.05";
-            }
-          ] ++ lib.attrValues nixosModules;
-        }).options;
-    };
+  optionsDoc = pkgs.nixosOptionsDoc {
+    inherit (evaluated-modules) options;
+  };
 
   # TODO: we should be exporting our custom functions as `lib`, but refactoring
   # this to use `pkgs.lib` everywhere is a lot of movement
@@ -161,15 +126,60 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos) (attrValues projects));
 
+  ngipkgsModules = lib.filter (m: m != null) (
+    lib.mapAttrsToList (name: value: value) nixos-modules.services
+    ++ lib.mapAttrsToList (name: value: value) nixos-modules.programs
+  );
+
+  nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules =
-    with lib;
     [
-      nixos-modules.ngipkgs
+      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+      {
+        nixpkgs.overlays = [ overlays.default ];
+      }
       # TODO: needed for examples that use sops (like Pretalx)
       sops-nix
     ]
-    ++ attrValues nixos-modules.programs
-    ++ attrValues nixos-modules.services;
+    ++ ngipkgsModules
+    ++ nixosModules;
+
+  # recursively evaluates each attribute for all projects
+  check-projects = lib'.evalAttrsRecursive evaluated-modules.config.projects;
+
+  evaluated-modules = lib.evalModules {
+    class = "nixos";
+    modules = [
+      raw-projects
+      {
+        nixpkgs.hostPlatform = { inherit system; };
+        _module.check = true;
+
+        networking = {
+          domain = "invalid";
+          hostName = "options";
+        };
+
+        # The examples that the flake exports are not meant to be used/booted directly.
+        # See <https://github.com/ngi-nix/ngipkgs/issues/128> for more information.
+        fileSystems."/".device = "/dev/null";
+        boot.loader.grub.enable = false;
+
+        # faster eval time
+        documentation.nixos.enable = false;
+        documentation.man.generateCaches = false;
+
+        # TODO: missing module descriptions
+        documentation.nixos.options.warningsAreErrors = false;
+        documentation.enable = false;
+
+        system.stateVersion = "23.05";
+      }
+    ] ++ extendedNixosModules;
+    specialArgs = {
+      modulesPath = "${sources.nixpkgs}/nixos/modules";
+    };
+  };
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
