@@ -15,7 +15,7 @@
   };
   nixos = {
     modules.services.mastodon = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/mastodon.nix";
+      module = lib.moduleLocFromOptionString "services.mastodon";
       examples.basic = null;
     };
     tests = {

@@ -1,6 +1,5 @@
 {
   lib,
-  lib',
   options,
   nixpkgs,
   pkgs,
@@ -85,7 +84,7 @@ let
       let
         # string comparison is faster than collecting attribute paths as lists
         spec = attrNames (
-          lib'.flattenAttrs "." (
+          lib.flattenAttrs "." (
             foldl' recursiveUpdate { } (
               mapAttrsToList (name: value: { ${name} = value; }) project.nixos.modules
             )

@@ -25,7 +25,7 @@
   nixos.modules.services = {
     ntpd-rs = {
       name = "ntpd-rs";
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ntp/ntpd-rs.nix";
+      module = lib.moduleLocFromOptionString "services.ntpd-rs";
       examples.basic = null;
       # See https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/tests/ntpd-rs.nix for examples
     };
