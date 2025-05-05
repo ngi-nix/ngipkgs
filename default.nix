@@ -163,20 +163,9 @@ rec {
     };
   };
 
-  project-models = import ./projects/models.nix { inherit lib pkgs sources; };
-
-  # we mainly care about the types being checked
-  templates.project =
-    let
-      project-metadata =
-        (project-models.project (import ./maintainers/templates/project { inherit lib pkgs sources; }))
-        .metadata;
-    in
-    # fake derivation for flake check
-    pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
-
   # TODO: find a better place for this
-  projects =
+  make-projects =
+    projects:
     with lib;
     let
       nixosTest =
@@ -243,7 +232,9 @@ rec {
           ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
         };
     in
-    mapAttrs (name: project: hydrate project) raw-projects;
+    mapAttrs (name: project: hydrate project) projects;
+
+  projects = make-projects raw-projects.config.projects;
 
   shell = pkgs.mkShellNoCC {
     packages = [
