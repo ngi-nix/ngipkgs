@@ -240,6 +240,19 @@ The following information is needed to [open an issue for a new NGI project](htt
 1. Run the Nix code formatter with `nix fmt`
 1. Commit your changes and [create a new PR](#how-to-create-pull-requests-to-ngipkgs)
 
+## Running and testing the overview locally
+
+1. To run a local version of the overview, enter a development shell with:
+
+   ```
+   nix-shell -A shell
+   ```
+
+2. Execute the `devmode` command.
+3. The overview will automatically open in your default browser.
+
+If you make any changes to the overview while running `devmode`, the server will automatically be reloaded with the new contents in a few seconds, after you save.
+
 <!-- TODO: Add details about how to do more production-like deployments that require non-default config options. -->
 
 <!-- TODO: How to import all of NGIpkgs as an input to an existing NixOS configuration, in order to deploy a service alongside other services on the same virtual or physical machine. -->

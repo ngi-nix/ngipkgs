@@ -6,7 +6,7 @@
 }:
 rec {
   name = "hyperswarm-${version}";
-  version = "4.7.3";
+  version = "4.11.1";
 
   imports = [
     dream2nix.modules.dream2nix.nodejs-package-lock-v3
@@ -18,7 +18,7 @@ rec {
       owner = "holepunchto";
       repo = "hyperswarm";
       rev = "v${version}";
-      sha256 = "sha256-VjRPTsgkc2179ZRS2wAtXlf20jmaPbtyrwcFgG7+N5A=";
+      sha256 = "1rvyh6xnymhhz2hwk0n5bi0r4j4s703gxd7671x16sz8jykkcnzf";
     };
 
     # We don't know why tests only fail on CI

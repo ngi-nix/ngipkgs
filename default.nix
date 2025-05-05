@@ -22,9 +22,100 @@ rec {
     sources
     ;
 
+  rawNixosModules = lib'.flattenAttrs "." (
+    with lib;
+    foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos.modules) projects))
+  );
+
+  nixosModules = {
+    # The default module adds the default overlay on top of Nixpkgs.
+    # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
+    default.nixpkgs.overlays = [ overlays.default ];
+  } // rawNixosModules;
+
+  optionsDoc =
+    let
+      nixosSystem =
+        args:
+        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
+          {
+            inherit lib;
+            system = null;
+          }
+          // args
+        );
+    in
+    pkgs.nixosOptionsDoc {
+      options =
+        (nixosSystem {
+          inherit system;
+          modules = [
+            {
+              networking = {
+                domain = "invalid";
+                hostName = "options";
+              };
+
+              system.stateVersion = "23.05";
+            }
+          ] ++ lib.attrValues nixosModules;
+        }).options;
+    };
+
   # TODO: we should be exporting our custom functions as `lib`, but refactoring
   # this to use `pkgs.lib` everywhere is a lot of movement
-  lib' = import ./lib.nix { inherit lib; };
+  lib' = {
+    # Take an attrset of arbitrary nesting and make it flat
+    # by concatenating the nested names with the given separator.
+    flattenAttrs =
+      separator:
+      let
+        f = path: lib.concatMapAttrs (flatten path);
+        flatten =
+          path: name: value:
+          if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
+      in
+      f "";
+
+    # get the path of NixOS module from string
+    # example:
+    # lib'.moduleLocFromOptionString "services.ntpd-rs"
+    # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
+    moduleLocFromOptionString =
+      let
+        inherit
+          (lib.evalModules {
+            class = "nixos";
+            specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
+            modules = [
+              ({
+                config = {
+                  _module.check = false;
+                  nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                };
+              })
+            ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+          })
+          options
+          ;
+      in
+      opt:
+      let
+        locList = lib.splitString "." opt;
+        optAttrs = lib.getAttrFromPath locList options;
+
+        # collect all file paths from all options
+        collectFiles =
+          attrs:
+          let
+            # get value of `files` attr or empty list
+            getFiles =
+              attr: if attr.value ? files && builtins.isList attr.value.files then attr.value.files else [ ];
+          in
+          lib.concatMap getFiles (lib.attrsToList attrs);
+      in
+      lib.head (collectFiles optAttrs);
+  };
 
   overlays.default =
     final: prev:
@@ -134,10 +225,10 @@ rec {
             lib.mapAttrs (name: value: value.module or null) project.nixos.modules.programs or { }
           );
           # TODO: access examples for services and programs separately?
-          nixos.examples = empty-if-null (
-            (filter-map (project.nixos.modules.services or { }) "examples")
+          nixos.examples =
+            (empty-if-null (project.nixos.examples or { }))
             // (filter-map (project.nixos.modules.programs or { }) "examples")
-          );
+            // (filter-map (project.nixos.modules.services or { }) "examples");
           nixos.tests = mapAttrs (
             _: test:
             if lib.isString test then
@@ -149,98 +240,26 @@ rec {
               test
             else
               nixosTest test
-          ) (filter-map (project.nixos or { }) "tests" // (filter-map (nixos.examples or { }) "tests"));
+          ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
         };
     in
     mapAttrs (name: project: hydrate project) raw-projects;
 
   shell = pkgs.mkShellNoCC {
-    packages = [ ];
+    packages = [
+      # live overview watcher
+      (pkgs.devmode.override {
+        buildArgs = "${toString ./overview/devmode.nix} --show-trace";
+      })
+    ];
   };
 
-  demo-system =
-    module:
-    let
-      nixosSystem =
-        args:
-        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
-          {
-            inherit lib;
-            system = null;
-          }
-          // args
-        );
-    in
-    nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        module
-        (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
-        (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
-        (
-          { config, ... }:
-          {
-            users.users.nixos = {
-              isNormalUser = true;
-              extraGroups = [ "wheel" ];
-              initialPassword = "nixos";
-            };
-
-            users.users.root = {
-              initialPassword = "root";
-            };
-
-            security.sudo.wheelNeedsPassword = false;
-
-            services.getty.autologinUser = "nixos";
-            services.getty.helpLine = ''
-
-              Welcome to NGIpkgs!
-            '';
-
-            services.openssh = {
-              enable = true;
-              settings = {
-                PasswordAuthentication = true;
-                PermitEmptyPasswords = "yes";
-                PermitRootLogin = "yes";
-              };
-            };
-
-            system.stateVersion = "25.05";
-
-            networking.firewall.enable = false;
-
-            virtualisation = {
-              memorySize = 4096;
-              cores = 4;
-              graphics = false;
-
-              qemu.options = [
-                "-cpu host"
-                "-enable-kvm"
-              ];
-
-              # ssh + open service ports
-              forwardPorts = map (port: {
-                from = "host";
-                guest.port = port;
-                host.port = port + 10000;
-                proto = "tcp";
-              }) config.networking.firewall.allowedTCPPorts;
-            };
-          }
-        )
-      ] ++ extendedNixosModules;
-    };
-
-  demo =
-    module:
-    pkgs.writeShellScript "demo-vm" ''
-      exec ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm "$@"
-    '';
-
-  # $ nix-build . -A demo-test
-  # $ ./result
-  demo-test = demo ./projects/Cryptpad/demo.nix;
+  demo = import ./overview/demo {
+    inherit
+      lib
+      pkgs
+      sources
+      extendedNixosModules
+      ;
+  };
 }

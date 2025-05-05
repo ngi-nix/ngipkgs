@@ -274,6 +274,7 @@
 
 body {
     font-family: "IBM Plex Sans";
+    padding-bottom: 25em;
 }
 body > section {
     padding: 0.5cm 0 0.5cm 0;
@@ -282,6 +283,51 @@ body > section {
 code, pre {
   font-family: "IBM Plex Mono";
   background: #eee;
+  overflow-x: auto;
+}
+
+.code-block {
+  position: relative;
+}
+
+.code-buttons {
+  position: absolute;
+  top: 0.5em;
+  right: 1em;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  background-color: transparent;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  border: solid 1px gray;
+  background-color: gray;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.button.copy:before {
+  content: "⿻";
+}
+
+.button.download:before {
+  content: "⭳";
+}
+
+.button.download {
+  background-color: green;
+}
+
+.button.copy:hover {
+  background-color: darkgrey;
+}
+
+.button.download:hover {
+  background-color: darkgreen;
 }
 
 details > summary > h2, details > summary > h3 {
@@ -291,6 +337,24 @@ details > summary > h2, details > summary > h3 {
 h1 {
   font-size: 4rem;
   font-weight: 700;
+}
+
+a.heading {
+  text-decoration: none;
+  color: inherit;
+}
+
+h2:hover .anchor {
+    visibility: visible;
+    opacity: 1;
+}
+
+.anchor {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 75%;
+    content: "¶";
 }
 
 .page-width {
@@ -330,7 +394,7 @@ article.project .deliverable-tag {
 
 .option-name {
   font-weight: 600;
-  font-family: "IBMPlexMono";
+  font-family: "IBM Plex Mono";
 }
 
 .option-readonly {
