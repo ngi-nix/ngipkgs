@@ -163,18 +163,6 @@ rec {
     };
   };
 
-  project-models = import ./projects/models.nix { inherit lib pkgs sources; };
-
-  # we mainly care about the types being checked
-  templates.project =
-    let
-      project-metadata =
-        (project-models.project (import ./maintainers/templates/project { inherit lib pkgs sources; }))
-        .metadata;
-    in
-    # fake derivation for flake check
-    pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
-
   # TODO: find a better place for this
   make-projects =
     projects:

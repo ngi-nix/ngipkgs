@@ -149,7 +149,6 @@
                 };
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
-                "infra/templates" = classic.templates.project;
               };
             in
             checksForInfrastructure // checksForAllProjects // checksForAllPackages;
