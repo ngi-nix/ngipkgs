@@ -246,7 +246,12 @@ rec {
     mapAttrs (name: project: hydrate project) raw-projects;
 
   shell = pkgs.mkShellNoCC {
-    packages = [ ];
+    packages = [
+      # live overview watcher
+      (pkgs.devmode.override {
+        buildArgs = "${toString ./overview/devmode.nix} --show-trace";
+      })
+    ];
   };
 
   demo = import ./overview/demo {
