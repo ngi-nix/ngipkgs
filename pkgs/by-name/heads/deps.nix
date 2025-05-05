@@ -669,7 +669,7 @@
       {
         name = "coreboot-crossgcc-acpica-unix2-20220331.tar.gz";
         url = "https://acpica.org/sites/acpica/files/acpica-unix2-20220331.tar.gz";
-        hash = "sha256-ZAk3FYK/z0Tar10KmVe+H2EX1Ttp/0hAIkBJXMV4Wjg=";
+        hash = "sha256-CG1rZYX1Zndob+2K9rC1upOuwYC0HSKFobdM0CtY8ko=";
       }
       {
         name = "coreboot-crossgcc-llvm-14.0.6.src.tar.xz";
