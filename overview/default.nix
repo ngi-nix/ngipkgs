@@ -10,6 +10,7 @@
 }:
 let
   inherit (builtins)
+    head
     any
     attrNames
     attrValues
@@ -159,12 +160,13 @@ let
         projectOptions:
         let
           # The length of the attrs path that is common to all options
-          # TODO: calculate automatically
+          # TODO: calculate dynamically
           prefixLength = 2;
+          commonPrefix = take prefixLength (head projectOptions).loc;
         in
         optionalString (!empty projectOptions) ''
           ${heading 2 "options" "Options"}
-          <section><details><summary><code>services.cryptpad</code></summary><dl>
+          <section><details><summary><code>${join "." commonPrefix}</code></summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
           </dl></details></section>
         '';
