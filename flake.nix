@@ -131,6 +131,25 @@
               options = optionsDoc.optionsNix;
             };
 
+            # TODO: remove after switching to the module system
+            overview-comparison =
+              let
+                overview-modules = import ./overview {
+                  inherit
+                    lib
+                    lib'
+                    self
+                    nixpkgs
+                    system
+                    ;
+                  pkgs = pkgs // ngipkgs;
+                  projects = classic.projects-modules;
+                  options = optionsDoc.optionsNix;
+                };
+              in
+              assert packages.overview == overview-modules;
+              overview-modules;
+
             options =
               pkgs.runCommand "options.json"
                 {
