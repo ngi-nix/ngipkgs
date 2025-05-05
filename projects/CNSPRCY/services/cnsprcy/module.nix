@@ -56,7 +56,11 @@ in
       description = "CNSPRCY service";
       wantedBy = [ "multi-user.target" ];
       after = [ "nss-user-lookup.target" ];
+
+      # Runs interactive config initialization to set machine name, generate
+      # conspirator keys and initial CNSPRCY db
       preStart = "printf 'n\n${cfg.hostname}\ny\n' | ${pkgs.cnsprcy}/bin/cnspr config init";
+
       serviceConfig = {
         ExecStart = "${pkgs.cnsprcy}/bin/cnspr serve";
         Restart = "on-failure";
