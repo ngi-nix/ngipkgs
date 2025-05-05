@@ -46,6 +46,9 @@ let
 
             services.openssh = {
               enable = true;
+              ports = [
+                10022
+              ];
               settings = {
                 PasswordAuthentication = true;
                 PermitEmptyPasswords = "yes";
@@ -71,7 +74,7 @@ let
               forwardPorts = map (port: {
                 from = "host";
                 guest.port = port;
-                host.port = port + 10000;
+                host.port = port;
                 proto = "tcp";
               }) config.networking.firewall.allowedTCPPorts;
             };
