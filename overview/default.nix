@@ -295,7 +295,7 @@ let
         };
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
-        servicePort = (builtins.head openPorts) + 10000;
+        servicePort = (builtins.head openPorts);
       in
       ''
         ${heading 2 "demo" "Run a demo deployment locally"}
