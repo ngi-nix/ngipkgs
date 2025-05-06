@@ -87,7 +87,17 @@ let
         # string comparison is faster than collecting attribute paths as lists
         spec = attrNames (
           lib'.flattenAttrs "." (
-            foldl' recursiveUpdate { } (mapAttrsToList (name: value: { ${name} = value; }) project.nixos)
+            foldl' recursiveUpdate { } (
+              mapAttrsToList (name: value: { ${name} = value; }) (
+                project.nixos
+                # FIX: tests cause `flattenAttrs` to fail for some reason
+                # https://buildbot.ngi.nixos.org/#/builders/196/builds/1651
+                // {
+                  tests = { };
+                  examples.tests = { };
+                }
+              )
+            )
           )
         );
       in
