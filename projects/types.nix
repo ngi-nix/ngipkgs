@@ -119,25 +119,32 @@ rec {
   # TODO: port modular services to programs
   program =
     with types;
-    submodule {
-      options = {
-        module = mkOption {
-          type = deferredModule;
+    submodule (
+      { name, ... }:
+      {
+        options = {
+          name = mkOption {
+            type = with types; nullOr str;
+            default = name;
+          };
+          module = mkOption {
+            type = deferredModule;
+          };
+          examples = mkOption {
+            type = attrsOf (nullOr example);
+            default = { };
+          };
+          extensions = mkOption {
+            type = attrsOf (nullOr plugin);
+            default = { };
+          };
+          links = mkOption {
+            type = attrsOf link;
+            default = { };
+          };
         };
-        examples = mkOption {
-          type = attrsOf (nullOr example);
-          default = { };
-        };
-        extensions = mkOption {
-          type = attrsOf (nullOr plugin);
-          default = { };
-        };
-        links = mkOption {
-          type = attrsOf link;
-          default = { };
-        };
-      };
-    };
+      }
+    );
 
   # TODO: make use of modular services https://github.com/NixOS/nixpkgs/pull/372170
   service =
