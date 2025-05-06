@@ -54,6 +54,7 @@ in
               name = mkOption {
                 type = with types; nullOr str;
                 default = name;
+                description = ""; # TODO:
               };
               metadata = mkOption {
                 type =
@@ -63,23 +64,28 @@ in
                       summary = mkOption {
                         type = nullOr str;
                         default = null;
+                        description = ""; # TODO:
                       };
                       # TODO: convert all subgrants to `subgrant`, remove listOf
                       subgrants = mkOption {
                         type = either (listOf str) types'.subgrant;
                         default = null;
+                        description = ""; # TODO:
                       };
                       links = mkOption {
                         type = attrsOf types'.link;
                         default = { };
+                        description = ""; # TODO:
                       };
                     };
                   });
                 default = null;
+                description = ""; # TODO:
               };
               binary = mkOption {
                 type = with types; attrsOf types'.binary;
                 default = { };
+                description = ""; # TODO:
               };
               nixos = mkOption {
                 type =
@@ -89,10 +95,12 @@ in
                       services = mkOption {
                         type = nullOr (attrsOf (nullOr types'.service));
                         default = null;
+                        description = ""; # TODO:
                       };
                       programs = mkOption {
                         type = nullOr (attrsOf (nullOr types'.program));
                         default = null;
+                        description = ""; # TODO:
                       };
                       # An application component may have examples using it in isolation,
                       # but examples may involve multiple application components.
@@ -102,6 +110,7 @@ in
                       examples = mkOption {
                         type = nullOr (attrsOf types'.example);
                         default = null;
+                        description = ""; # TODO:
                       };
                       # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
                       #       But reality is such that most NixOS tests aren't based on self-contained, minimal examples, or if they are they can't be extracted easily.
@@ -110,14 +119,17 @@ in
                       tests = mkOption {
                         type = nullOr (attrsOf types'.test);
                         default = null;
+                        description = ""; # TODO:
                       };
                     };
                   };
+                description = ""; # TODO:
               };
             };
           }
         )
       );
+    description = ""; # TODO:
   };
 
   config.projects = mapAttrs (

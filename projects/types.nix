@@ -49,6 +49,7 @@ rec {
           # TODO: add syntax checking
           url = mkOption {
             type = str;
+            description = ""; # TODO:
           };
         };
       }
@@ -63,10 +64,12 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = ""; # TODO:
           };
           data = mkOption {
             type = nullOr (either path package);
             default = null;
+            description = ""; # TODO:
           };
         };
       }
@@ -123,18 +126,22 @@ rec {
       options = {
         module = mkOption {
           type = deferredModule;
+          description = ""; # TODO:
         };
         examples = mkOption {
           type = attrsOf (nullOr example);
           default = { };
+          description = ""; # TODO:
         };
         extensions = mkOption {
           type = attrsOf (nullOr plugin);
           default = { };
+          description = ""; # TODO:
         };
         links = mkOption {
           type = attrsOf link;
           default = { };
+          description = ""; # TODO:
         };
       };
     };
@@ -149,21 +156,26 @@ rec {
           name = mkOption {
             type = nullOr str;
             default = name;
+            description = ""; # TODO:
           };
           module = mkOption {
             type = deferredModule;
+            description = ""; # TODO:
           };
           examples = mkOption {
             type = nullOr (attrsOf (nullOr example));
             default = null;
+            description = ""; # TODO:
           };
           extensions = mkOption {
             type = nullOr (attrsOf (nullOr plugin));
             default = null;
+            description = ""; # TODO:
           };
           links = mkOption {
             type = attrsOf link;
             default = { };
+            description = ""; # TODO:
           };
         };
       }
