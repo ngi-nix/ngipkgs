@@ -118,14 +118,16 @@ let
             ${optionalString downloadable ''
               <a class="button download" href="${filename}" download>Download</a>
             ''}
-            <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
-                ${optionalString (!relative) ''
-                  <script type="application/json">
-                    ${toJSON (readFile filename)}
-                  </script>
-                ''}
-                Copy
-            </button>
+            <template scripted>
+              <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
+                  ${optionalString (!relative) ''
+                    <script type="application/json">
+                      ${toJSON (readFile filename)}
+                    </script>
+                  ''}
+                  Copy
+              </button>
+            </template>
           </div>
         </div>
       '';
@@ -413,6 +415,14 @@ let
       <body>
         ${args.content}
         <script>
+          // On document load, put all elements into the DOM that can be used with JS only
+          document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("template[scripted]").forEach(template => {
+                const content = template.content;
+                template.replaceWith(content);
+              });
+          });
+
           async function copyToClipboard(button, url) {
             let code;
             const firstChild = Array.from(button.children).find(child => child.tagName === "SCRIPT");
