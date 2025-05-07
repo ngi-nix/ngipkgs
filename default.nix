@@ -76,6 +76,27 @@ rec {
       in
       f "";
 
+    # Recursively evaluate attributes for an attribute set.
+    # Coupled with an evaluated nixos configuration, this presents an efficient
+    # way for checking module types.
+    evalAttrsRecursive =
+      attrs:
+      lib.mapAttrsRecursive (
+        n: v:
+        if lib.isList v then
+          map (
+            i:
+            # if eval fails
+            if !(builtins.tryEval i).success then
+              # recursively recurse into attrsets
+              if lib.isAttrs i then lib'.evalAttrsRecursive i else (builtins.tryEval i).success
+            else
+              (builtins.tryEval i).success
+          ) v
+        else
+          (builtins.tryEval v).success
+      ) attrs;
+
     # get the path of NixOS module from string
     # example:
     # lib'.moduleLocFromOptionString "services.ntpd-rs"
