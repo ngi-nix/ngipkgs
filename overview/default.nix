@@ -1,3 +1,4 @@
+# NOTE: run a live overview watcher by executing `devmode`, inside a nix shell
 {
   lib,
   lib',
@@ -10,6 +11,7 @@
 }:
 let
   inherit (builtins)
+    head
     any
     attrNames
     attrValues
@@ -56,7 +58,7 @@ let
     else
       ''
         <a class="heading" href="#${anchor}">
-          <h${toString i} data-url="#${anchor}">
+          <h${toString i} id="${anchor}">
             ${text}
             <span class="anchor"/>
           </h${toString i}>
@@ -116,14 +118,16 @@ let
             ${optionalString downloadable ''
               <a class="button download" href="${filename}" download>Download</a>
             ''}
-            <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
-                ${optionalString (!relative) ''
-                  <script type="application/json">
-                    ${toJSON (readFile filename)}
-                  </script>
-                ''}
-                Copy
-            </button>
+            <template scripted>
+              <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
+                  ${optionalString (!relative) ''
+                    <script type="application/json">
+                      ${toJSON (readFile filename)}
+                    </script>
+                  ''}
+                  Copy
+              </button>
+            </template>
           </div>
         </div>
       '';
@@ -159,12 +163,13 @@ let
         projectOptions:
         let
           # The length of the attrs path that is common to all options
-          # TODO: calculate automatically
+          # TODO: calculate dynamically
           prefixLength = 2;
+          commonPrefix = take prefixLength (head projectOptions).loc;
         in
         optionalString (!empty projectOptions) ''
-          ${heading 2 "options" "Options"}
-          <section><details><summary><code>services.cryptpad</code></summary><dl>
+          ${heading 2 "service" "Options"}
+          <section><details><summary><code>${join "." commonPrefix}</code></summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
           </dl></details></section>
         '';
@@ -232,19 +237,20 @@ let
     '';
 
     deliverableTags = rec {
-      one = label: ''
-        <span class="deliverable-tag">${label}</span>
+      one = name: label: ''
+        <a href="/project/${name}#${label}" class="deliverable-tag">${label}</a>
       '';
       many =
-        project:
+        name: project:
         # TODO is missing in the model yet
-        optionalString false (one "library")
+        optionalString false (one name "library")
         + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
-          one "service"
+          one name "service"
         )
+        + optionalString (project.nixos.examples ? demo) (one name "demo")
         +
           # TODO is supposed to represent GUI apps and needs to be distinguished from CLI applications
-          optionalString false (one "application");
+          optionalString false (one name "application");
     };
 
     # The snippets for each project that are rendered on https://ngi.nixos.org
@@ -262,7 +268,7 @@ let
               <h2>
                 <a href="/project/${name}">${name}</a>
               </h2>
-              ${render.deliverableTags.many project}
+              ${render.deliverableTags.many name project}
             </div>
             ${description}
           </article>
@@ -409,6 +415,14 @@ let
       <body>
         ${args.content}
         <script>
+          // On document load, put all elements into the DOM that can be used with JS only
+          document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("template[scripted]").forEach(template => {
+                const content = template.content;
+                template.replaceWith(content);
+              });
+          });
+
           async function copyToClipboard(button, url) {
             let code;
             const firstChild = Array.from(button.children).find(child => child.tagName === "SCRIPT");
