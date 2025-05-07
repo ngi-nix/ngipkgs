@@ -11,7 +11,7 @@
     ];
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     galene = {
       name = "galene";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/galene.nix";

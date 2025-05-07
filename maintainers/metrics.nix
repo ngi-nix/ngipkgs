@@ -20,16 +20,14 @@ rec {
     in-ngipkgs = attrNames ngipkgs;
     derivations = concatMap (p: attrNames p.packages) (attrValues raw-projects);
     with-services = attrNames (
-      filterAttrs (name: p: p ? nixos.modules.services && p.nixos.modules.services != null) raw-projects
+      filterAttrs (name: p: p ? nixos.services && p.nixos.services != null) raw-projects
     );
     missing-services = attrNames (
-      filterAttrs (name: p: p ? nixos.modules.services && p.nixos.modules.services == null) raw-projects
+      filterAttrs (name: p: p ? nixos.services && p.nixos.services == null) raw-projects
     );
     services = concatMap attrNames (
-      concatMap (p: attrValues p.nixos.modules) (
-        attrValues (
-          filterAttrs (name: p: p ? nixos.modules.services && p.nixos.modules.services != null) raw-projects
-        )
+      concatMap (p: attrValues p.nixos) (
+        attrValues (filterAttrs (name: p: p ? nixos.services && p.nixos.services != null) raw-projects)
       )
     );
     with-tests = attrNames (
@@ -65,19 +63,11 @@ rec {
           tests = if p.nixos.tests == null then 0 else count (_: true) (attrNames p.nixos.tests);
           examples = if p.nixos.examples == null then 0 else count (_: true) (attrNames p.nixos.examples);
         }
-        // optionalAttrs (p ? nixos.modules.services) {
-          services =
-            if p.nixos.modules.services == null then
-              0
-            else
-              count (_: true) (attrNames p.nixos.modules.services);
+        // optionalAttrs (p ? nixos.services) {
+          services = if p.nixos.services == null then 0 else count (_: true) (attrNames p.nixos.services);
         }
-        // optionalAttrs (p ? nixos.modules.programs) {
-          programs =
-            if p.nixos.modules.programs == null then
-              0
-            else
-              count (_: true) (attrNames p.nixos.modules.programs);
+        // optionalAttrs (p ? nixos.programs) {
+          programs = if p.nixos.programs == null then 0 else count (_: true) (attrNames p.nixos.programs);
         };
     }
   ) raw-projects;

@@ -14,7 +14,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     arcan = {
       name = "arcan";
       module = ./module.nix;

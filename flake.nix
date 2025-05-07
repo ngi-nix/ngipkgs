@@ -13,8 +13,6 @@
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.buildbot-nix.url = "github:nix-community/buildbot-nix";
-  inputs.yants.url = "git+https://code.tvl.fyi/depot.git:/nix/yants.git";
-  inputs.yants.flake = false;
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
@@ -47,10 +45,6 @@
 
       overlay = classic'.overlays.default;
 
-      # Note that modules and examples are system-agnostic, so import them first.
-      # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
-      rawNgiProjects = classic'.projects;
-
       toplevel = machine: machine.config.system.build.toplevel;
 
       # Finally, define the system-agnostic outputs.
@@ -59,7 +53,7 @@
           makemake = import ./infra/makemake { inherit inputs; };
         };
 
-        inherit (classic') nixosModules;
+        nixosModules = classic'.ngipkgsModules;
 
         # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
         overlays.default = overlay;
@@ -120,8 +114,13 @@
                       checksForNixosTests = concatMapAttrs (testName: test: {
                         "projects/${projectName}/nixos/tests/${testName}" = test;
                       }) project.nixos.tests;
+                      checksForNixosTypes = {
+                        "projects/${projectName}/nixos/check" = pkgs.writeText "${projectName}-eval-check" (
+                          lib.strings.toJSON classic.check-projects.${projectName}
+                        );
+                      };
                     in
-                    checksForNixosTests;
+                    checksForNixosTests // checksForNixosTypes;
                 in
                 concatMapAttrs checksForProject classic.projects;
 
@@ -151,7 +150,6 @@
                 };
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
-                "infra/templates" = classic.templates.project;
               };
             in
             checksForInfrastructure // checksForAllProjects // checksForAllPackages;

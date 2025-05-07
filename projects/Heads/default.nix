@@ -14,7 +14,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     heads = {
       name = "heads";
       module = ./module.nix;

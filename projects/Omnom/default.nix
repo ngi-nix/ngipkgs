@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     omnom = {
       # https://github.com/asciimoo/omnom/blob/master/config/config.go
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/misc/omnom.nix";

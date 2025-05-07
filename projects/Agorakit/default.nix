@@ -11,7 +11,7 @@
   };
 
   nixos = {
-    modules.services.agorakit = {
+    services.agorakit = {
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/agorakit.nix";
       examples.basic = null;
     };

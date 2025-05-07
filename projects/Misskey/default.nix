@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     misskey = {
       name = "Misskey";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/misskey.nix";

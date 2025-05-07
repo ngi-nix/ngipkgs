@@ -5,7 +5,7 @@
 }@args:
 {
   nixos = {
-    modules.services.aerogramme = {
+    services.aerogramme = {
       links = {
         config = {
           text = "Configuration reference";

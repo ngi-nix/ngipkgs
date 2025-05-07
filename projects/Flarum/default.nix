@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     flarum = {
       name = "flarum";
       module = ./module.nix;
@@ -34,7 +34,7 @@
     };
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     flarum = {
       name = "flarum";
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/flarum.nix";

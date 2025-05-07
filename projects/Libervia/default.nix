@@ -16,7 +16,7 @@
     ];
   };
   nixos = {
-    modules.programs.libervia = {
+    programs.libervia = {
       links = {
         config = {
           text = "libervia.conf file reference";

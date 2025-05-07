@@ -19,7 +19,7 @@
     };
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     briar = {
       name = "briar";
       module = ./programs/briar/module.nix;

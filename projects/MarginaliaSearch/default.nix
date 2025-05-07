@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     marginalia-search = {
       name = "marginalia-search";
       module = ./module.nix;

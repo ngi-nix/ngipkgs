@@ -14,7 +14,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     meta-presses = {
       module = ./module.nix;
       examples.basic = {

@@ -19,7 +19,7 @@
       "CryptPadForms"
     ];
   };
-  nixos.modules.services = {
+  nixos.services = {
     cryptpad = {
       name = "cryptpad";
       module =

@@ -21,7 +21,7 @@
     };
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     pixelfed = {
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/pixelfed.nix";
       examples.basic = {

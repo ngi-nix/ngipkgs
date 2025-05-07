@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     dmt-core = {
       module = ./module.nix;
       examples.basic = {

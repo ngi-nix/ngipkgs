@@ -10,7 +10,7 @@
     ];
   };
 
-  nixos.modules.programs.alive2 = {
+  nixos.programs.alive2 = {
     module = ./module.nix;
     examples.basic = {
       module = ./example.nix;

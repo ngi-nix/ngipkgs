@@ -19,7 +19,7 @@
     };
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     forgejo = {
       module = ./program/module.nix;
       examples.basic = {
@@ -30,7 +30,7 @@
     };
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     forgejo = {
       module = "${sources.inputs.nixpkgs}/nixos/modules/services/misc/forgejo.nix";
       examples.basic = null;

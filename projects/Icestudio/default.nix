@@ -18,7 +18,7 @@
     };
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     icestudio = {
       name = "icestudio";
       module = ./programs/Icestudio/module.nix;

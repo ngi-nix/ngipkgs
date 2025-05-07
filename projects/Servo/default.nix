@@ -18,7 +18,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     servo = {
       module = ./module.nix;
       examples.basic = {

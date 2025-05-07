@@ -8,7 +8,7 @@ let
     mkOption
     ;
 in
-{
+rec {
   subgrant =
     with types;
     submodule {
@@ -49,6 +49,7 @@ in
           # TODO: add syntax checking
           url = mkOption {
             type = str;
+            description = ""; # TODO:
           };
         };
       }
@@ -63,10 +64,12 @@ in
           name = mkOption {
             type = str;
             default = name;
+            description = ""; # TODO:
           };
           data = mkOption {
             type = nullOr (either path package);
             default = null;
+            description = ""; # TODO:
           };
         };
       }
@@ -97,7 +100,7 @@ in
       options = {
         module = mkOption {
           description = "the example must be a NixOS module in a file";
-          type = pathInStore;
+          type = deferredModule;
         };
         description = mkOption {
           description = "description of the example, ideally with further instructions on how to use it";
@@ -119,25 +122,37 @@ in
   # TODO: port modular services to programs
   program =
     with types;
-    submodule {
-      options = {
-        module = mkOption {
-          type = deferredModule;
+    submodule (
+      { name, ... }:
+      {
+        options = {
+          name = mkOption {
+            type = with types; nullOr str;
+            default = name;
+            description = ""; # TODO:
+          };
+          module = mkOption {
+            type = deferredModule;
+            description = ""; # TODO:
+          };
+          examples = mkOption {
+            type = attrsOf (nullOr example);
+            default = { };
+            description = ""; # TODO:
+          };
+          extensions = mkOption {
+            type = attrsOf (nullOr plugin);
+            default = { };
+            description = ""; # TODO:
+          };
+          links = mkOption {
+            type = attrsOf link;
+            default = { };
+            description = ""; # TODO:
+          };
         };
-        examples = mkOption {
-          type = attrsOf (nullOr example);
-          default = { };
-        };
-        extensions = mkOption {
-          type = attrsOf (nullOr plugin);
-          default = { };
-        };
-        links = mkOption {
-          type = attrsOf link;
-          default = { };
-        };
-      };
-    };
+      }
+    );
 
   # TODO: make use of modular services https://github.com/NixOS/nixpkgs/pull/372170
   service =
@@ -149,21 +164,26 @@ in
           name = mkOption {
             type = nullOr str;
             default = name;
+            description = ""; # TODO:
           };
           module = mkOption {
-            type = moduleType;
+            type = deferredModule;
+            description = ""; # TODO:
           };
           examples = mkOption {
             type = nullOr (attrsOf (nullOr example));
             default = null;
+            description = ""; # TODO:
           };
           extensions = mkOption {
             type = nullOr (attrsOf (nullOr plugin));
             default = null;
+            description = ""; # TODO:
           };
           links = mkOption {
             type = attrsOf link;
             default = { };
+            description = ""; # TODO:
           };
         };
       }

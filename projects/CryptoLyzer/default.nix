@@ -25,7 +25,7 @@
   #   };
   # };
   nixos = {
-    modules.programs.cryptolyzer = {
+    programs.cryptolyzer = {
       module =
         {
           config,

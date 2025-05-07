@@ -12,7 +12,7 @@
     ];
   };
 
-  nixos.modules.programs = {
+  nixos.programs = {
     mitmproxy = {
       module = ./module.nix;
       examples.basic = {

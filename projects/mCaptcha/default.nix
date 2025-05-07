@@ -22,7 +22,7 @@
     };
   };
 
-  nixos.modules.services = {
+  nixos.services = {
     mcaptcha = {
       name = "mcaptcha";
       module = ./services/mcaptcha/module.nix;
