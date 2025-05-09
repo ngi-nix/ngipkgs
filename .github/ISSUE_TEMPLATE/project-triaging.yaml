@@ -150,6 +150,45 @@ body:
         - Extensions:
         - Mobile Apps:
   - type: textarea
+    id: ngipkgs
+    attributes:
+      label: NGIpkgs
+      description: |
+        There are 2 main places where you may find any previous NGIpkgs packaging for the project:
+        - The [ngipkgs/projects](https://github.com/ngi-nix/ngipkgs/tree/main/projects) and [pkgs/by-name](https://github.com/ngi-nix/ngipkgs/tree/main/pkgs/by-name) directories
+        - **Non-archived** repositories in the [ngi-nix](https://github.com/orgs/ngi-nix/repositories?language=&q=archived%3Afalse+&sort=&type=all) organisation
+
+        For each of these locations, please go and search for the project name and note any results in the format below.
+
+        For example, for `Liberaforms`, we have:
+          - ngi-nix
+            - https://github.com/ngi-nix/liberaforms-flake
+          - Packages:
+            - https://github.com/ngi-nix/ngipkgs/tree/main/pkgs/by-name/liberaforms
+          - Services:
+            - https://github.com/ngi-nix/ngipkgs/tree/main/projects/Liberaforms/service.nix
+          - Programs:
+            - N/A
+          - Examples:
+            - https://github.com/ngi-nix/ngipkgs/tree/main/projects/Liberaforms/example.nix
+          - Tests:
+            - https://github.com/ngi-nix/ngipkgs/tree/main/projects/Liberaforms/test.nix
+
+        <br>
+      value: |
+        - ngi-nix repository
+          - [<NAME>](<SOURCE_LINK>)
+        - Packages:
+          - [<NAME>](<SOURCE_LINK>)
+        - Services:
+          - [<NAME>](<SOURCE_LINK>)
+        - Programs:
+          - [<NAME>](<SOURCE_LINK>)
+        - Examples:
+          - [<NAME>](<SOURCE_LINK>)
+        - Tests:
+          - [<NAME>](<SOURCE_LINK>)
+  - type: textarea
     id: nixos
     attributes:
       label: Nixpkgs/NixOS
