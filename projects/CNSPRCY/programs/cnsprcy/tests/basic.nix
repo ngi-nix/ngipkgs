@@ -2,6 +2,7 @@
   sources,
   ...
 }:
+
 {
   name = "cnsprcy";
 
@@ -12,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.cnsprcy
-          sources.examples.CNSPRCY.cnsprcy
+          sources.examples.CNSPRCY.basic
         ];
       };
   };
