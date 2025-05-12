@@ -321,6 +321,11 @@ let
             }}
           </li>
           <li>
+            <strong>Configure Nix binary substituters:</strong>
+              <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
+              <pre><code>export NIX_CONFIG</code></pre>
+          </li>
+          <li>
             <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and <strong>run it</strong>:
             <ul>
               <li>Arch Linux, Debian Sid, Ubuntu 25.04 (Nix >= 2.24)</li>
