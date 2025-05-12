@@ -1,5 +1,7 @@
 name: Test VM demo
 
+permissions: {}
+
 on:
   push:
     branches: [ main ]
@@ -23,7 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: 'actions/checkout@v4'
-      - uses: DeterminateSystems/nix-installer-action@v12
+        with: { persist-credentials: false }
+
+      - uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3  #v17
 
       - name: Build projects overview
         run: nix build .#overview
