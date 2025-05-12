@@ -305,9 +305,9 @@ let
             <strong>Install Nix on your platform:</strong>
             <ul>
               <li>Arch Linux</li>
-                <pre><code>pacman --sync --refresh --noconfirm curl git nix</code></pre>
+                <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
               <li>Debian/Ubuntu</li>
-                <pre><code>apt install --yes curl git nix</code></pre>
+                <pre><code>apt install --yes curl git jq nix</code></pre>
             </ul>
           </li>
           <li>
@@ -321,9 +321,14 @@ let
             }}
           </li>
           <li>
-            <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and run it:
-            <pre><code>nix-build && ./result</code></pre>
-            Building <strong>will</strong> take a while.
+            <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and <strong>run it</strong>:
+            <ul>
+              <li>Arch Linux, Debian Sid, Ubuntu 25.04 (Nix >= 2.24)</li>
+                <pre><code>nix-build ./default.nix && ./result</code></pre>
+              <li>Debian 12, Ubuntu 24.04/24.10 (Nix < 2.24)</li>
+                <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
+                <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
+            </ul>
           </li>
           <li>
             <strong>Access the service</strong> with a web browser:
