@@ -301,9 +301,17 @@ let
         ${heading 2 "demo" "Run a demo deployment locally"}
 
         <ol>
-          <li><strong>Install Nix on your platform.</strong></li>
           <li>
-            <strong>Download this Nix file to your computer.</strong>
+            <strong>Install Nix on your platform:</strong>
+            <ul>
+              <li>Arch Linux</li>
+                <pre><code>pacman --sync --refresh --noconfirm curl git nix</code></pre>
+              <li>Debian/Ubuntu</li>
+                <pre><code>apt install --yes curl git nix</code></pre>
+            </ul>
+          </li>
+          <li>
+            <strong>Download following Nix file to your computer.</strong><br />
             It obtains the NGIpkgs source code and declares a basic service configuration
             to be run in a virtual machine.
             ${render.codeSnippet.one {
