@@ -336,7 +336,7 @@ let
             </ul>
           </li>
           <li>
-            <strong>Access the service</strong> with a web browser:
+            <strong>Access the service</strong> with a web browser at
             <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a>
           </li>
         </ol>
