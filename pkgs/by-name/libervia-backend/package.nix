@@ -1,12 +1,7 @@
 {
-  stdenv,
-  python3Packages,
   lib,
-  fetchFromGitHub,
+  python3Packages,
   fetchhg,
-  fetchPypi,
-  cmake,
-  doubleratchet,
   firefox,
   geckodriver,
   gobject-introspection,
@@ -15,8 +10,6 @@
   libervia-media,
   libervia-templates,
   libnice,
-  libsodium,
-  libxeddsa,
   oldmemo,
   omemo,
   sat-tmp,
@@ -25,9 +18,6 @@
   which,
   wokkel,
   wrapGAppsHook3,
-  writeScript,
-  x3dh,
-  xeddsa,
 }:
 python3Packages.buildPythonApplication rec {
   pname = "libervia-backend";
