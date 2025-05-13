@@ -1,8 +1,7 @@
 {
-  python3Packages,
   lib,
+  python3Packages,
   fetchFromGitHub,
-  xeddsa,
 }:
 python3Packages.buildPythonPackage rec {
   pname = "x3dh";
@@ -12,21 +11,20 @@ python3Packages.buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-x3dh";
-    rev = "refs/tags/v${version}";
+    tag = "v${version}";
     hash = "sha256-/hC1Kze4yBOlgbWJcGddcYty9fqwZ08Lyi0IiqSDibI=";
   };
 
-  strictDeps = true;
+  build-system = with python3Packages; [
+    setuptools
+  ];
 
-  nativeBuildInputs = with python3Packages; [ setuptools ];
-
-  propagatedBuildInputs =
-    [ xeddsa ]
-    ++ (with python3Packages; [
-      cryptography
-      pydantic
-      typing-extensions
-    ]);
+  dependencies = with python3Packages; [
+    cryptography
+    pydantic
+    typing-extensions
+    xeddsa
+  ];
 
   pythonImportsCheck = [
     "x3dh"

@@ -1,10 +1,9 @@
 {
-  python3Packages,
   lib,
   fetchFromGitHub,
-  xeddsa,
+  python3Packages,
 }:
-python3Packages.buildPythonPackage rec {
+python3Packages.buildPythonApplication rec {
   pname = "omemo";
   version = "1.2.0";
   pyproject = true;
@@ -12,15 +11,19 @@ python3Packages.buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-omemo";
-    rev = "refs/tags/v${version}";
+    tag = "v${version}";
     hash = "sha256-egb4UFoF/gS3LKutArnJSXxDYH/xyBLOxWec98rOT9Y=";
   };
 
-  strictDeps = true;
+  build-system = with python3Packages; [
+    setuptools
+    wheel
+  ];
 
-  nativeBuildInputs = with python3Packages; [ setuptools ];
-
-  propagatedBuildInputs = [ xeddsa ] ++ (with python3Packages; [ typing-extensions ]);
+  dependencies = with python3Packages; [
+    typing-extensions
+    xeddsa
+  ];
 
   pythonImportsCheck = [
     "omemo"

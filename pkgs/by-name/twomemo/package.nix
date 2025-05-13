@@ -1,11 +1,10 @@
 {
-  python3Packages,
   lib,
+  python3Packages,
   fetchFromGitHub,
   doubleratchet,
   omemo,
   x3dh,
-  xeddsa,
 }:
 python3Packages.buildPythonPackage rec {
   pname = "twomemo";
@@ -15,24 +14,24 @@ python3Packages.buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "Syndace";
     repo = "python-twomemo";
-    rev = "refs/tags/v${version}";
+    tag = "v${version}";
     hash = "sha256-jkazeFdNK0iB76oyHbQu+TLaGz+SH/30CmqXk0K6Sy8=";
   };
 
-  strictDeps = true;
+  build-system = with python3Packages; [
+    setuptools
+  ];
 
-  nativeBuildInputs = with python3Packages; [ setuptools ];
-
-  propagatedBuildInputs =
+  dependencies =
     [
       doubleratchet
       omemo
       x3dh
-      xeddsa
     ]
     ++ (with python3Packages; [
       protobuf
       typing-extensions
+      xeddsa
     ]);
 
   pythonImportsCheck = [
