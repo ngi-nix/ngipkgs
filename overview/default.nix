@@ -302,42 +302,50 @@ let
 
         <ol>
           <li>
-            <strong>Install Nix on your platform:</strong>
-            <ul>
-              <li>Arch Linux</li>
-                <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
-              <li>Debian/Ubuntu</li>
-                <pre><code>apt install --yes curl git jq nix</code></pre>
-            </ul>
+            <details>
+            <summary><strong>Install Nix</strong></summary>
+              <ul>
+                <li>Arch Linux</li>
+                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
+                <li>Debian/Ubuntu</li>
+                  <pre><code>apt install --yes curl git jq nix</code></pre>
+              </ul>
+            </details>
           </li>
           <li>
-            <strong>Download following Nix file to your computer.</strong><br />
-            It obtains the NGIpkgs source code and declares a basic service configuration
-            to be run in a virtual machine.
-            ${render.codeSnippet.one {
-              filename = "default.nix";
-              relative = true;
-              downloadable = true;
-            }}
+            <details>
+            <summary><strong>Download a configuration file</strong></summary>
+              ${render.codeSnippet.one {
+                filename = "default.nix";
+                relative = true;
+                downloadable = true;
+              }}
+            </details>
           </li>
           <li>
-            <strong>Configure Nix binary substituters:</strong>
+            <details>
+            <summary><strong>Enable binary substituters</strong></summary>
               <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
               <pre><code>export NIX_CONFIG</code></pre>
+            </details>
           </li>
           <li>
-            <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and <strong>run it</strong>:
-            <ul>
-              <li>Arch Linux, Debian Sid, Ubuntu 25.04 (Nix >= 2.24)</li>
-                <pre><code>nix-build ./default.nix && ./result</code></pre>
-              <li>Debian 12, Ubuntu 24.04/24.10 (Nix < 2.24)</li>
-                <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
-                <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
-            </ul>
+            <details>
+            <summary><strong>Build and run a virtual machine</strong></summary>
+              <ul>
+                <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
+                  <pre><code>nix-build ./default.nix && ./result</code></pre>
+                <li>Debian 12 and Ubuntu 24.04/24.10</li>
+                  <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
+                  <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
+              </ul>
+            </details>
           </li>
           <li>
-            <strong>Access the service</strong> with a web browser at
-            <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a>
+            <details>
+            <summary><strong>Access the service</strong></summary>
+              Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
+            </details>
           </li>
         </ol>
       '';
