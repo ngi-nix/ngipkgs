@@ -33,10 +33,16 @@ jobs:
         run: nix build .#overview
 
       - name: Run and test VM
+        env:
+          DISTRO: ${{ matrix.distro }}
+          NIX_CONFIG: |
+            extra-substituters = https://ngi.cachix.org/
+            extra-trusted-public-keys = ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw=
         run: >
           docker run
           --privileged
           --volume ./result/project/Cryptpad/default.nix:/default.nix
           --volume "$(pwd):/ngipkgs"
-          ${{ matrix.distro }}
-          /bin/bash -c "bash /ngipkgs/.github/workflows/test-demo.sh ${{ matrix.distro }}"
+          -e DISTRO="$DISTRO"
+          "$DISTRO"
+          /bin/bash -c "bash /ngipkgs/.github/workflows/test-demo.sh"
