@@ -13,8 +13,6 @@
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.buildbot-nix.url = "github:nix-community/buildbot-nix";
-  inputs.yants.url = "git+https://code.tvl.fyi/depot.git:/nix/yants.git";
-  inputs.yants.flake = false;
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
@@ -79,6 +77,7 @@
         in
         rec {
           packages = ngipkgs // {
+            # TODO: collapse when the migration to modules is complete
             overview =
               let
                 overview-new = import ./overview {
@@ -93,22 +92,8 @@
                   projects = classic.projects-new;
                   options = optionsDoc.optionsNix;
                 };
-                overview-old = import ./overview {
-                  inherit
-                    lib
-                    lib'
-                    self
-                    nixpkgs
-                    system
-                    ;
-                  pkgs = pkgs // ngipkgs;
-                  projects = ngiProjects;
-                  options = optionsDoc.optionsNix;
-                };
               in
-              # TODO: switch to overview-new
-              assert overview-old == overview-new;
-              overview-old;
+              overview-new;
 
             options =
               pkgs.runCommand "options.json"
@@ -169,7 +154,6 @@
                 };
                 "infra/makemake" = toplevel self.nixosConfigurations.makemake;
                 "infra/overview" = self.packages.${system}.overview;
-                "infra/templates" = classic.templates.project;
               };
             in
             checksForInfrastructure // checksForAllProjects // checksForAllPackages;
