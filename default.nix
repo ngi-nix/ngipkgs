@@ -153,21 +153,6 @@ rec {
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
-  raw-projects = import ./projects {
-    inherit lib;
-    pkgs = pkgs // ngipkgs;
-    sources = {
-      inputs = sources;
-      modules = nixos-modules;
-      inherit examples;
-    };
-  };
-
-  projects = make-projects raw-projects;
-
-  # TODO: remove after migrating to modules
-  # ===
-
   raw-projects-new = import ./projects/default-module.nix {
     inherit lib;
     pkgs = pkgs // ngipkgs;
@@ -178,23 +163,8 @@ rec {
     };
   };
 
-  # TODO: delete the file after migrating to modules
   projects-new = make-projects raw-projects-new.config.projects;
-
-  # TODO:
-  # ===
-
-  project-models = import ./projects/models.nix { inherit lib pkgs sources; };
-
-  # we mainly care about the types being checked
-  templates.project =
-    let
-      project-metadata =
-        (project-models.project (import ./maintainers/templates/project { inherit lib pkgs sources; }))
-        .metadata;
-    in
-    # fake derivation for flake check
-    pkgs.writeText "dummy" (lib.strings.toJSON project-metadata);
+  projects = projects-new;
 
   # TODO: find a better place for this
   make-projects =
