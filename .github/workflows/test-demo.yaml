@@ -37,6 +37,6 @@ jobs:
           docker run
           --privileged
           --volume ./result/project/Cryptpad/default.nix:/default.nix
-          --volume "$(pwd)/.github/workflows/test-demo.sh:/test-demo.sh"
+          --volume "$(pwd):/ngipkgs"
           ${{ matrix.distro }}
-          /bin/bash -c "bash /test-demo.sh ${{ matrix.distro }}"
+          /bin/bash -c "bash /ngipkgs/.github/workflows/test-demo.sh ${{ matrix.distro }}"
