@@ -161,6 +161,7 @@ rec {
 
         system.stateVersion = "23.05";
       }
+      ./overview/demo/shell.nix
       raw-projects # for checks
     ] ++ extendedNixosModules;
     specialArgs = {
@@ -273,4 +274,9 @@ rec {
       extendedNixosModules
       ;
   };
+
+  inherit (demo)
+    demo-vm
+    demo-shell
+    ;
 }

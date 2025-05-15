@@ -268,7 +268,7 @@ let
       {
         ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
       }:
-      ngipkgs.demo (
+      ngipkgs.demo-vm (
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
       )
     '';

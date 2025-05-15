@@ -23,14 +23,18 @@ let
         module
         (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
         (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
+        ./shell.nix
         ./vm
       ] ++ extendedNixosModules;
+      specialArgs = { inherit sources; };
     };
-
-  demo =
+in
+{
+  demo-vm =
     module:
     pkgs.writeShellScript "demo-vm" ''
       exec ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm "$@"
     '';
-in
-demo
+
+  demo-shell = module: (demo-system module).config.shells.bash.activate;
+}
