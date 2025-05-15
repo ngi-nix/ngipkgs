@@ -228,11 +228,11 @@ let
       <article class="page-width">
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
+        ${render.options.many (pick.options project)}
+        ${render.examples.many (pick.examples project)}
         ${optionalString (project.nixos.examples ? demo) (
           render.serviceDemo.one project.nixos.modules.services project.nixos.examples.demo
         )}
-        ${render.options.many (pick.options project)}
-        ${render.examples.many (pick.examples project)}
       </article>
     '';
 
@@ -298,40 +298,35 @@ let
         servicePort = (builtins.head openPorts);
       in
       ''
-        ${heading 2 "demo" "Run a demo deployment locally"}
+        ${heading 2 "demo" "Demo"}
+        <details>
+        <summary>Run service in a VM</summary>
 
         <ol>
           <li>
-            <details>
-            <summary><strong>Install Nix</strong></summary>
+            <strong>Install Nix</strong>
               <ul>
                 <li>Arch Linux</li>
                   <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
                 <li>Debian/Ubuntu</li>
                   <pre><code>apt install --yes curl git jq nix</code></pre>
               </ul>
-            </details>
           </li>
           <li>
-            <details>
-            <summary><strong>Download a configuration file</strong></summary>
+            <strong>Download a configuration file</strong>
               ${render.codeSnippet.one {
                 filename = "default.nix";
                 relative = true;
                 downloadable = true;
               }}
-            </details>
           </li>
           <li>
-            <details>
-            <summary><strong>Enable binary substituters</strong></summary>
+            <strong>Enable binary substituters</strong>
               <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
               <pre><code>export NIX_CONFIG</code></pre>
-            </details>
           </li>
           <li>
-            <details>
-            <summary><strong>Build and run a virtual machine</strong></summary>
+            <strong>Build and run a virtual machine</strong>
               <ul>
                 <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
                   <pre><code>nix-build ./default.nix && ./result</code></pre>
@@ -339,15 +334,13 @@ let
                   <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
                   <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
               </ul>
-            </details>
           </li>
           <li>
-            <details>
-            <summary><strong>Access the service</strong></summary>
+            <strong>Access the service</strong><br />
               Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
-            </details>
           </li>
         </ol>
+        </details>
       '';
   };
 
