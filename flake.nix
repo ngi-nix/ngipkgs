@@ -77,23 +77,18 @@
         in
         rec {
           packages = ngipkgs // {
-            # TODO: collapse when the migration to modules is complete
-            overview =
-              let
-                overview-new = import ./overview {
-                  inherit
-                    lib
-                    lib'
-                    self
-                    nixpkgs
-                    system
-                    ;
-                  pkgs = pkgs // ngipkgs;
-                  projects = classic.projects-new;
-                  options = optionsDoc.optionsNix;
-                };
-              in
-              overview-new;
+            overview = import ./overview {
+              inherit
+                lib
+                lib'
+                self
+                nixpkgs
+                system
+                ;
+              pkgs = pkgs // ngipkgs;
+              projects = classic.projects;
+              options = optionsDoc.optionsNix;
+            };
 
             options =
               pkgs.runCommand "options.json"
