@@ -322,7 +322,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-              <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
+              <pre><code>NIX_CONFIG='extra-substituters = https://ngi.cachix.org/'$'\n'''extra-trusted-public-keys = ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
               <pre><code>export NIX_CONFIG</code></pre>
           </li>
           <li>
