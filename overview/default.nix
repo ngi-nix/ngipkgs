@@ -27,6 +27,9 @@ let
 
   join = concatStringsSep;
 
+  eval = module: (lib.evalModules { modules = [ module ]; }).config;
+  inherit (lib) mkOption types;
+
   inherit (lib)
     concatLines
     flip
@@ -236,45 +239,29 @@ let
       </article>
     '';
 
-    deliverableTags = rec {
-      one = name: label: ''
-        <a href="/project/${name}#${label}" class="deliverable-tag">${label}</a>
-      '';
-      many =
-        name: project:
-        # TODO is missing in the model yet
-        optionalString false (one name "library")
-        + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
-          one name "service"
-        )
-        + optionalString (project.nixos.examples ? demo) (one name "demo")
-        +
-          # TODO is supposed to represent GUI apps and needs to be distinguished from CLI applications
-          optionalString false (one name "application");
-    };
-
     # The snippets for each project that are rendered on https://ngi.nixos.org
-    projectSnippets = rec {
-      one =
-        name: project:
-        let
-          description = optionalString (project.metadata ? summary) ''
-            <div class="description">${project.metadata.summary}</div>
-          '';
-        in
-        ''
-          <article class="project">
-            <div class="row">
-              <h2>
-                <a href="/project/${name}">${name}</a>
-              </h2>
-              ${render.deliverableTags.many name project}
-            </div>
-            ${description}
-          </article>
-        '';
-      many = projects: concatLines (mapAttrsToList one projects);
-    };
+    projectSnippets =
+      projects:
+      eval {
+        options = {
+          projects = mkOption {
+            type = with types; attrsOf (submodule ./content-types/project-list-item.nix);
+            default = lib.mapAttrs (name: project: {
+              inherit name;
+              description = project.metadata.summary or null;
+              deliverables = {
+                service = project.nixos.modules ? services && project.nixos.modules.services != { };
+                program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
+                demo = project.nixos.examples ? demo;
+              };
+            }) projects;
+          };
+          __toString = mkOption {
+            type = with types; functionTo str;
+            default = self: with lib; concatMapStringsSep "\n" toString (attrValues self.projects);
+          };
+        };
+      };
 
     demoGlue.one = exampleText: ''
       # default.nix
@@ -381,7 +368,7 @@ let
         </li>
       </ul>
 
-    ${render.projectSnippets.many projects}
+    ${render.projectSnippets projects}
 
     </section>
 
