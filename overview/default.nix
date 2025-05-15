@@ -228,11 +228,11 @@ let
       <article class="page-width">
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
+        ${render.options.many (pick.options project)}
+        ${render.examples.many (pick.examples project)}
         ${optionalString (project.nixos.examples ? demo) (
           render.serviceDemo.one project.nixos.modules.services project.nixos.examples.demo
         )}
-        ${render.options.many (pick.options project)}
-        ${render.examples.many (pick.examples project)}
       </article>
     '';
 
@@ -298,30 +298,49 @@ let
         servicePort = (builtins.head openPorts);
       in
       ''
-        ${heading 2 "demo" "Run a demo deployment locally"}
+        ${heading 2 "demo" "Demo"}
+        <details>
+        <summary>Run service in a VM</summary>
 
         <ol>
-          <li><strong>Install Nix on your platform.</strong></li>
           <li>
-            <strong>Download this Nix file to your computer.</strong>
-            It obtains the NGIpkgs source code and declares a basic service configuration
-            to be run in a virtual machine.
-            ${render.codeSnippet.one {
-              filename = "default.nix";
-              relative = true;
-              downloadable = true;
-            }}
+            <strong>Install Nix</strong>
+              <ul>
+                <li>Arch Linux</li>
+                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
+                <li>Debian/Ubuntu</li>
+                  <pre><code>apt install --yes curl git jq nix</code></pre>
+              </ul>
           </li>
           <li>
-            <strong>Build the virtual machine</strong> defined in <code>default.nix</code> and run it:
-            <pre><code>nix-build && ./result</code></pre>
-            Building <strong>will</strong> take a while.
+            <strong>Download a configuration file</strong>
+              ${render.codeSnippet.one {
+                filename = "default.nix";
+                relative = true;
+                downloadable = true;
+              }}
           </li>
           <li>
-            <strong>Access the service</strong> with a web browser:
-            <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a>
+            <strong>Enable binary substituters</strong>
+              <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
+              <pre><code>export NIX_CONFIG</code></pre>
+          </li>
+          <li>
+            <strong>Build and run a virtual machine</strong>
+              <ul>
+                <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
+                  <pre><code>nix-build ./default.nix && ./result</code></pre>
+                <li>Debian 12 and Ubuntu 24.04/24.10</li>
+                  <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
+                  <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
+              </ul>
+          </li>
+          <li>
+            <strong>Access the service</strong><br />
+              Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
           </li>
         </ol>
+        </details>
       '';
   };
 
