@@ -35,8 +35,7 @@ let
           { };
       allowedFiles = [
         "README.md"
-        # TODO: remove `-module` suffix when migration to modules is complete
-        "default-module.nix"
+        "default.nix"
         "types.nix"
       ];
     in

@@ -153,7 +153,7 @@ rec {
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
-  raw-projects-new = import ./projects/default-module.nix {
+  raw-projects = import ./projects {
     inherit lib;
     pkgs = pkgs // ngipkgs;
     sources = {
@@ -163,8 +163,7 @@ rec {
     };
   };
 
-  projects-new = make-projects raw-projects-new.config.projects;
-  projects = projects-new;
+  projects = make-projects raw-projects.config.projects;
 
   # TODO: find a better place for this
   make-projects =
