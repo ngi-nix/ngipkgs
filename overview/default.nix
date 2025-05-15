@@ -325,7 +325,7 @@ let
               ${
                 "" # TODO(@fricklerhandwerk): add more shells
               }
-              <pre><code>NIX_CONFIG="
+              <pre><code>export NIX_CONFIG="
         ${
           let
             from-yaml =
@@ -340,8 +340,7 @@ let
           with lib;
           (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG
           # optimising for readability; empty lines in NIX_CONFIG are ignored
-        }"
-        export NIX_CONFIG</code></pre>
+        }"</code></pre>
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
