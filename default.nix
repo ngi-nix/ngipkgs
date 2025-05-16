@@ -167,15 +167,18 @@ rec {
     ++ lib.mapAttrsToList (name: value: value) nixos-modules.programs
   );
 
+  nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules =
-    with lib;
     [
-      nixos-modules.ngipkgs
+      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+      {
+        nixpkgs.overlays = [ overlays.default ];
+      }
       # TODO: needed for examples that use sops (like Pretalx)
       sops-nix
     ]
-    ++ attrValues nixos-modules.programs
-    ++ attrValues nixos-modules.services;
+    ++ ngipkgsModules
+    ++ nixosModules;
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
