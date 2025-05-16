@@ -1,18 +1,6 @@
 #!/usr/bin/env bash
 
-# nix build .#overview
-# podman run --privileged \
-#   --volume ./result/project/Cryptpad/default.nix:/default.nix \
-#   --volume .github/workflows/test-demo.sh:/test-demo.sh <DISTRO> /bin/bash \
-#   -c "bash /test-demo.sh <DISTRO>"
-
 set -euo pipefail
-
-DISTRO="$1"
-# shellcheck disable=SC2089,2026
-NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='
-export NIX_CONFIG
-
 
 echo -e "\n-> Installing Nix ..."
 # Debian/Ubuntu
@@ -48,7 +36,6 @@ else
         | jq --raw-output
     )
     NIXPKGS="https://github.com/NixOS/nixpkgs/archive/$nixpkgs_revision.tar.gz"
-    
     nix-shell --include nixpkgs="$NIXPKGS" --packages nix --run "nix-build /default.nix"
 fi
 

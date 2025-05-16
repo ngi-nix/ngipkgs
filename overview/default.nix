@@ -309,8 +309,25 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-              <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
-              <pre><code>export NIX_CONFIG</code></pre>
+              ${
+                "" # TODO(@fricklerhandwerk): add more shells
+              }
+              <pre><code>export NIX_CONFIG="
+        ${
+          let
+            from-yaml =
+              file:
+              with builtins;
+              fromJSON (
+                # XXX(@fricklerhandwerk): IFD, sorry. I was there, Gandalf: https://github.com/NixOS/nix/pull/7340
+                readFile (pkgs.runCommandNoCC "yaml.json" { } "${lib.getExe pkgs.yj} < ${file} > $out")
+              );
+            workflow = from-yaml ../.github/workflows/test-demo.yaml;
+          in
+          with lib;
+          (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG
+          # optimising for readability; empty lines in NIX_CONFIG are ignored
+        }"</code></pre>
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
