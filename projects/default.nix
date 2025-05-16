@@ -86,11 +86,11 @@ in
                   with types;
                   submodule {
                     options = {
-                      services = mkOption {
+                      modules.services = mkOption {
                         type = nullOr (attrsOf (nullOr types'.service));
                         default = null;
                       };
-                      programs = mkOption {
+                      modules.programs = mkOption {
                         type = nullOr (attrsOf (nullOr types'.program));
                         default = null;
                       };
