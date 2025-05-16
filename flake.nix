@@ -45,10 +45,6 @@
 
       overlay = classic'.overlays.default;
 
-      # Note that modules and examples are system-agnostic, so import them first.
-      # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
-      rawNgiProjects = classic'.projects;
-
       toplevel = machine: machine.config.system.build.toplevel;
 
       # Finally, define the system-agnostic outputs.
@@ -57,7 +53,7 @@
           makemake = import ./infra/makemake { inherit inputs; };
         };
 
-        inherit (classic') nixosModules;
+        nixosModules = classic'.ngipkgsModules;
 
         # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
         overlays.default = overlay;
@@ -118,8 +114,13 @@
                       checksForNixosTests = concatMapAttrs (testName: test: {
                         "projects/${projectName}/nixos/tests/${testName}" = test;
                       }) project.nixos.tests;
+                      checksForNixosTypes = {
+                        "projects/${projectName}/nixos/check" = pkgs.writeText "${projectName}-eval-check" (
+                          lib.strings.toJSON classic.check-projects.${projectName}
+                        );
+                      };
                     in
-                    checksForNixosTests;
+                    checksForNixosTests // checksForNixosTypes;
                 in
                 concatMapAttrs checksForProject classic.projects;
 
