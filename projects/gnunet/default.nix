@@ -21,7 +21,7 @@
   nixos.modules.services = {
     gnunet = {
       name = "gnunet";
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/gnunet.nix";
+      module = lib.moduleLocFromOptionString "services.gnunet";
       examples.basic = {
         module = ./services/gnunet/examples/basic.nix;
         description = "";
