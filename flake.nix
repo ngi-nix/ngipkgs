@@ -114,8 +114,13 @@
                       checksForNixosTests = concatMapAttrs (testName: test: {
                         "projects/${projectName}/nixos/tests/${testName}" = test;
                       }) project.nixos.tests;
+                      checksForNixosTypes = {
+                        "projects/${projectName}/nixos/check" = pkgs.writeText "${projectName}-eval-check" (
+                          lib.strings.toJSON classic.check-projects.${projectName}
+                        );
+                      };
                     in
-                    checksForNixosTests;
+                    checksForNixosTests // checksForNixosTypes;
                 in
                 concatMapAttrs checksForProject classic.projects;
 

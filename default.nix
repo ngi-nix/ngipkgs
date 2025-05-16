@@ -204,6 +204,9 @@ rec {
     };
   };
 
+  # recursively evaluates each attribute for all projects
+  check-projects = lib'.forceEvalRecursive evaluated-modules.config.projects;
+
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   raw-projects = import ./projects {
