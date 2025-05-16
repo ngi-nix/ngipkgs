@@ -80,13 +80,17 @@ let
             };
           }
         )
+        ./shell.nix
       ] ++ extendedNixosModules;
+      specialArgs = { inherit sources; };
     };
-
-  demo =
+in
+{
+  demo-vm =
     module:
     pkgs.writeShellScript "demo-vm" ''
       exec ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm "$@"
     '';
-in
-demo
+
+  demo-shell = module: (demo-system module).config.shells.bash.activate;
+}

@@ -3,8 +3,8 @@
 # nix build .#overview
 # podman run --privileged \
 #   --volume ./result/project/Cryptpad/default.nix:/default.nix \
-#   --volume .github/workflows/test-demo.sh:/test-demo.sh <DISTRO> /bin/bash \
-#   -c "bash /test-demo.sh <DISTRO>"
+#   --volume .:/ngipkgs <DISTRO> /bin/bash \
+#   -c "bash /ngipkgs/.github/workflows/test-demo.sh <DISTRO>"
 
 set -euo pipefail
 
@@ -39,17 +39,20 @@ echo -e "\n-> Building VM ..."
 # https://github.com/NixOS/nix/issues/6820
 if [ "$NIX_VERSION" -ge 22400 ]; then
     echo "Using Nix installed by Linux package manager"
-    nix-build /default.nix
+    nix-build --arg ngipkgs "import /ngipkgs {}" /default.nix
 else
     echo "Using Nix from Nixpkgs unstable"
 
     nixpkgs_revision=$(
-        nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz \
+        nix-instantiate --eval --attr sources.nixpkgs.rev /ngipkgs \
         | jq --raw-output
     )
     NIXPKGS="https://github.com/NixOS/nixpkgs/archive/$nixpkgs_revision.tar.gz"
-    
-    nix-shell --include nixpkgs="$NIXPKGS" --packages nix --run "nix-build /default.nix"
+
+    nix-shell \
+        --include nixpkgs="$NIXPKGS" \
+        --packages nix \
+        --run "nix-build --arg ngipkgs \"import /ngipkgs {}\" /default.nix"
 fi
 
 echo -e "\n-> Launching VM ..."
