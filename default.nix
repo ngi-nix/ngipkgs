@@ -22,45 +22,9 @@ rec {
     sources
     ;
 
-  rawNixosModules = lib'.flattenAttrs "." (
-    with lib;
-    foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos.modules) projects))
-  );
-
-  nixosModules = {
-    # The default module adds the default overlay on top of Nixpkgs.
-    # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-    default.nixpkgs.overlays = [ overlays.default ];
-  } // rawNixosModules;
-
-  optionsDoc =
-    let
-      nixosSystem =
-        args:
-        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
-          {
-            inherit lib;
-            system = null;
-          }
-          // args
-        );
-    in
-    pkgs.nixosOptionsDoc {
-      options =
-        (nixosSystem {
-          inherit system;
-          modules = [
-            {
-              networking = {
-                domain = "invalid";
-                hostName = "options";
-              };
-
-              system.stateVersion = "23.05";
-            }
-          ] ++ lib.attrValues nixosModules;
-        }).options;
-    };
+  optionsDoc = pkgs.nixosOptionsDoc {
+    inherit (evaluated-modules) options;
+  };
 
   # TODO: we should be exporting our custom functions as `lib`, but refactoring
   # this to use `pkgs.lib` everywhere is a lot of movement
