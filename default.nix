@@ -180,6 +180,30 @@ rec {
     ++ ngipkgsModules
     ++ nixosModules;
 
+  evaluated-modules = lib.evalModules {
+    class = "nixos";
+    modules = [
+      {
+        nixpkgs.hostPlatform = { inherit system; };
+
+        networking = {
+          domain = "invalid";
+          hostName = "options";
+        };
+
+        # faster eval time
+        documentation.nixos.enable = false;
+        documentation.man.generateCaches = false;
+
+        system.stateVersion = "23.05";
+      }
+      raw-projects # for checks
+    ] ++ extendedNixosModules;
+    specialArgs = {
+      modulesPath = "${sources.nixpkgs}/nixos/modules";
+    };
+  };
+
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   raw-projects = import ./projects {
