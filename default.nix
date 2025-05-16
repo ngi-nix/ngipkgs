@@ -162,6 +162,11 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
+  ngipkgsModules = lib.filter (m: m != null) (
+    lib.mapAttrsToList (name: value: value) nixos-modules.services
+    ++ lib.mapAttrsToList (name: value: value) nixos-modules.programs
+  );
+
   extendedNixosModules =
     with lib;
     [
