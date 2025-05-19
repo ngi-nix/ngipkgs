@@ -23,7 +23,7 @@
 
   nixos.modules.services = {
     pixelfed = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/pixelfed.nix";
+      module = lib.moduleLocFromOptionString "services.pixelfed";
       examples.basic = {
         module = ./example.nix;
         description = "";

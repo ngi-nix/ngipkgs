@@ -13,16 +13,75 @@
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
   sops-nix = import "${sources.sops-nix}/modules/sops";
+
+  extension = {
+    # Take an attrset of arbitrary nesting and make it flat
+    # by concatenating the nested names with the given separator.
+    flattenAttrs =
+      separator:
+      let
+        f = path: lib.concatMapAttrs (flatten path);
+        flatten =
+          path: name: value:
+          if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
+      in
+      f "";
+
+    # get the path of NixOS module from string
+    # example:
+    # moduleLocFromOptionString "services.ntpd-rs"
+    # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
+    moduleLocFromOptionString =
+      let
+        inherit
+          (lib.evalModules {
+            class = "nixos";
+            specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
+            modules = [
+              ({
+                config = {
+                  _module.check = false;
+                  # remove it when separate nixpkgs: https://github.com/ngi-nix/ngipkgs/pull/968#discussion_r2067929098
+                  # nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                  nixpkgs.hostPlatform = builtins.currentSystem or "x86_64-linux";
+                };
+              })
+            ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+          })
+          options
+          ;
+      in
+      opt:
+      let
+        locList = lib.splitString "." opt;
+        optAttrs = lib.getAttrFromPath locList options;
+
+        # collect all file paths from all options
+        collectFiles =
+          attrs:
+          let
+            # get value of `files` attr or empty list
+            getFiles =
+              attr: if attr.value ? files && builtins.isList attr.value.files then attr.value.files else [ ];
+          in
+          lib.concatMap getFiles (lib.attrsToList attrs);
+      in
+      lib.head (collectFiles optAttrs);
+  };
+
+  extended = lib.extend (_: _: extension);
 in
 rec {
+  lib = extended;
+  inherit extension;
+
   inherit
-    lib
     pkgs
     system
     sources
     ;
 
-  rawNixosModules = lib'.flattenAttrs "." (
+  rawNixosModules = lib.flattenAttrs "." (
     with lib;
     foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos.modules) projects))
   );
@@ -61,61 +120,6 @@ rec {
           ] ++ lib.attrValues nixosModules;
         }).options;
     };
-
-  # TODO: we should be exporting our custom functions as `lib`, but refactoring
-  # this to use `pkgs.lib` everywhere is a lot of movement
-  lib' = {
-    # Take an attrset of arbitrary nesting and make it flat
-    # by concatenating the nested names with the given separator.
-    flattenAttrs =
-      separator:
-      let
-        f = path: lib.concatMapAttrs (flatten path);
-        flatten =
-          path: name: value:
-          if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
-      in
-      f "";
-
-    # get the path of NixOS module from string
-    # example:
-    # lib'.moduleLocFromOptionString "services.ntpd-rs"
-    # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
-    moduleLocFromOptionString =
-      let
-        inherit
-          (lib.evalModules {
-            class = "nixos";
-            specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
-            modules = [
-              ({
-                config = {
-                  _module.check = false;
-                  nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
-                };
-              })
-            ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
-          })
-          options
-          ;
-      in
-      opt:
-      let
-        locList = lib.splitString "." opt;
-        optAttrs = lib.getAttrFromPath locList options;
-
-        # collect all file paths from all options
-        collectFiles =
-          attrs:
-          let
-            # get value of `files` attr or empty list
-            getFiles =
-              attr: if attr.value ? files && builtins.isList attr.value.files then attr.value.files else [ ];
-          in
-          lib.concatMap getFiles (lib.attrsToList attrs);
-      in
-      lib.head (collectFiles optAttrs);
-  };
 
   overlays.default =
     final: prev:

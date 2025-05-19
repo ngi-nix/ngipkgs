@@ -33,7 +33,7 @@
         sources = inputs;
         system = null;
       };
-      inherit (classic') lib lib';
+      inherit (classic') lib extension;
 
       inherit (lib)
         attrValues
@@ -53,6 +53,8 @@
 
       # Finally, define the system-agnostic outputs.
       systemAgnosticOutputs = {
+        lib = extension;
+
         nixosConfigurations = {
           makemake = import ./infra/makemake { inherit inputs; };
         };
@@ -80,7 +82,6 @@
             overview = import ./overview {
               inherit
                 lib
-                lib'
                 self
                 nixpkgs
                 system
