@@ -22,45 +22,9 @@ rec {
     sources
     ;
 
-  rawNixosModules = lib'.flattenAttrs "." (
-    with lib;
-    foldl recursiveUpdate { } (attrValues (mapAttrs (_: project: project.nixos.modules) projects))
-  );
-
-  nixosModules = {
-    # The default module adds the default overlay on top of Nixpkgs.
-    # This is so that `ngipkgs` can be used alongside `nixpkgs` in a configuration.
-    default.nixpkgs.overlays = [ overlays.default ];
-  } // rawNixosModules;
-
-  optionsDoc =
-    let
-      nixosSystem =
-        args:
-        import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
-          {
-            inherit lib;
-            system = null;
-          }
-          // args
-        );
-    in
-    pkgs.nixosOptionsDoc {
-      options =
-        (nixosSystem {
-          inherit system;
-          modules = [
-            {
-              networking = {
-                domain = "invalid";
-                hostName = "options";
-              };
-
-              system.stateVersion = "23.05";
-            }
-          ] ++ lib.attrValues nixosModules;
-        }).options;
-    };
+  optionsDoc = pkgs.nixosOptionsDoc {
+    inherit (evaluated-modules) options;
+  };
 
   # TODO: we should be exporting our custom functions as `lib`, but refactoring
   # this to use `pkgs.lib` everywhere is a lot of movement
@@ -76,6 +40,27 @@ rec {
           if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
       in
       f "";
+
+    # Recursively evaluate attributes for an attribute set.
+    # Coupled with an evaluated nixos configuration, this presents an efficient
+    # way for checking module types.
+    forceEvalRecursive =
+      attrs:
+      lib.mapAttrsRecursive (
+        n: v:
+        if lib.isList v then
+          map (
+            i:
+            # if eval fails
+            if !(builtins.tryEval i).success then
+              # recursively recurse into attrsets
+              if lib.isAttrs i then lib'.forceEvalRecursive i else (builtins.tryEval i).success
+            else
+              (builtins.tryEval i).success
+          ) v
+        else
+          (builtins.tryEval v).success
+      ) attrs;
 
     # get the path of NixOS module from string
     # example:
@@ -141,15 +126,50 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
+  ngipkgsModules = lib.filter (m: m != null) (
+    lib.mapAttrsToList (name: value: value) nixos-modules.services
+    ++ lib.mapAttrsToList (name: value: value) nixos-modules.programs
+  );
+
+  nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules =
-    with lib;
     [
-      nixos-modules.ngipkgs
+      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+      {
+        nixpkgs.overlays = [ overlays.default ];
+      }
       # TODO: needed for examples that use sops (like Pretalx)
       sops-nix
     ]
-    ++ attrValues nixos-modules.programs
-    ++ attrValues nixos-modules.services;
+    ++ ngipkgsModules
+    ++ nixosModules;
+
+  evaluated-modules = lib.evalModules {
+    class = "nixos";
+    modules = [
+      {
+        nixpkgs.hostPlatform = { inherit system; };
+
+        networking = {
+          domain = "invalid";
+          hostName = "options";
+        };
+
+        # faster eval time
+        documentation.nixos.enable = false;
+        documentation.man.generateCaches = false;
+
+        system.stateVersion = "23.05";
+      }
+      raw-projects # for checks
+    ] ++ extendedNixosModules;
+    specialArgs = {
+      modulesPath = "${sources.nixpkgs}/nixos/modules";
+    };
+  };
+
+  # recursively evaluates each attribute for all projects
+  check-projects = lib'.forceEvalRecursive evaluated-modules.config.projects;
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
