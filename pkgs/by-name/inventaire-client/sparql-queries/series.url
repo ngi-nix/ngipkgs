@@ -1,0 +1,1 @@
+https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fseries%20WHERE%20%7B%0A%23%20instance%20of%20book%20series%20or%20its%20subclasses%20%28includes%20comic%20book%20series%29%0A%3Fseries%20wdt%3AP31%2Fwdt%3AP279%2a%20wd%3AQ277759%20.%0A%7D

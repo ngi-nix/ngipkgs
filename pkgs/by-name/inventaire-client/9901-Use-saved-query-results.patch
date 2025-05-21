@@ -1,0 +1,58 @@
+From 85adc05735d0266bc1019a884e7f3c723a48576c Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Mon, 30 Jun 2025 15:13:07 +0200
+Subject: [PATCH] Use saved query results
+
+Normally, the sitemaps creation would do queries against wikidata at build-time to get its results.
+Since the build sandbox doesn't have network access, patch out the fetching and use prefetched results from a supplied
+directory instead.
+---
+ scripts/sitemaps/generate_sitemaps.js | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/sitemaps/generate_sitemaps.js b/scripts/sitemaps/generate_sitemaps.js
+index 347ba73f1..5c1239251 100644
+--- a/scripts/sitemaps/generate_sitemaps.js
++++ b/scripts/sitemaps/generate_sitemaps.js
+@@ -4,9 +4,12 @@ import { folderPath } from './config.js'
+ import queries from './queries.js'
+ import wrapUrls from './wrap_urls.js'
+ import writeSitemap from './write_sitemap.js'
++import fs from 'node:fs/promises'
+ 
+ const { green } = chalk
+ 
++const sparqlQueryDir = '@sparqlQueries@'
++
+ export function generateSitemaps () {
+   const queriesNames = Object.keys(queries)
+ 
+@@ -24,12 +27,19 @@ export function generateSitemaps () {
+ const generateFilesFromQuery = async name => {
+   console.log(green(`${name} query`), queries[name])
+   const url = queries[name]
+-  const results = await fetch(url, {
+-    headers: {
+-      'user-agent': 'inventaire-client (https://codeberg.org/inventaire/inventaire-client)',
+-    },
+-  })
+-  .then(res => res.json())
++
++  // If saved URL is available, make sure it's the same query
++  const savedUrlPath = `${sparqlQueryDir}/${name}.url`
++  const hasSavedUrl = fs.access(savedUrlPath).then(() => true).catch(() => false)
++  if (hasSavedUrl) {
++    const savedUrl = (await fs.readFile(savedUrlPath, { encoding: 'utf8' })).trim()
++    if (url != savedUrl) {
++      throw new Error(`Saved URL mismatch found. Expected '${url}', found '${savedUrl}'`)
++    }
++  }
++
++  const savedResults = await fs.readFile(`${sparqlQueryDir}/${name}.json`, { encoding: 'utf8' })
++  const results = JSON.parse(savedResults)
+ 
+   try {
+     const items = await wdk.simplifySparqlResults(results)
+-- 
+2.49.0
+
