@@ -2,9 +2,7 @@
   python3Packages,
   lib,
   fetchFromGitHub,
-  doubleratchet,
   omemo,
-  x3dh,
 }:
 python3Packages.buildPythonPackage rec {
   pname = "oldmemo";
@@ -24,13 +22,13 @@ python3Packages.buildPythonPackage rec {
 
   propagatedBuildInputs =
     [
-      doubleratchet
       omemo
-      x3dh
     ]
     ++ (with python3Packages; [
       cryptography
+      doubleratchet
       protobuf
+      x3dh
     ]);
 
   pythonImportsCheck = [

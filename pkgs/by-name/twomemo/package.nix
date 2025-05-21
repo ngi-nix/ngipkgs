@@ -2,9 +2,7 @@
   lib,
   python3Packages,
   fetchFromGitHub,
-  doubleratchet,
   omemo,
-  x3dh,
 }:
 python3Packages.buildPythonPackage rec {
   pname = "twomemo";
@@ -24,13 +22,13 @@ python3Packages.buildPythonPackage rec {
 
   dependencies =
     [
-      doubleratchet
       omemo
-      x3dh
     ]
     ++ (with python3Packages; [
+      doubleratchet
       protobuf
       typing-extensions
+      x3dh
       xeddsa
     ]);
 
