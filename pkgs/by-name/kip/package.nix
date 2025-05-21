@@ -17,7 +17,7 @@
   json_c,
   bison,
   flex,
-  freeDiameter,
+  freediameter,
   python3,
   libressl,
   cacert,
@@ -82,7 +82,7 @@ stdenv.mkDerivation rec {
     json_c
     bison
     flex
-    freeDiameter
+    freediameter
     python-with-packages
   ];
 
