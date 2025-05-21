@@ -14,6 +14,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package ];
+    demo-shell.mitmproxy.programs = {
+      mitmproxy = cfg.package;
+    };
   };
 }
