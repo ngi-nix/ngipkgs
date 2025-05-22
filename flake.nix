@@ -5,7 +5,6 @@
   inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -22,10 +21,7 @@
       self,
       nixpkgs,
       flake-utils,
-      sops-nix,
       pre-commit-hooks,
-      dream2nix,
-      buildbot-nix,
       ...
     }@inputs:
     let
@@ -36,11 +32,8 @@
       inherit (classic') lib lib';
 
       inherit (lib)
-        attrValues
         concatMapAttrs
         filterAttrs
-        mapAttrs
-        recursiveUpdate
         ;
 
       overlay = classic'.overlays.default;
@@ -68,8 +61,6 @@
           };
 
           inherit (classic) pkgs ngipkgs optionsDoc;
-
-          ngiProjects = classic.projects;
         in
         rec {
           packages = ngipkgs // {
