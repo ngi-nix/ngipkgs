@@ -106,7 +106,7 @@ in
             default = name;
           };
           module = mkOption {
-            type = deferredModule;
+            type = path;
           };
           examples = mkOption {
             type = attrsOf (nullOr types'.example);
@@ -179,7 +179,7 @@ in
       options = {
         module = mkOption {
           description = "the example must be a NixOS module in a file";
-          type = deferredModule;
+          type = path;
         };
         description = mkOption {
           description = "description of the example, ideally with further instructions on how to use it";
