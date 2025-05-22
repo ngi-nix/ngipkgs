@@ -9,6 +9,26 @@ let
     ;
 in
 rec {
+  metadata =
+    with types;
+    submodule {
+      options = {
+        summary = mkOption {
+          type = nullOr str;
+          default = null;
+        };
+        # TODO: convert all subgrants to `subgrant`, remove listOf
+        subgrants = mkOption {
+          type = either (listOf str) subgrant;
+          default = null;
+        };
+        links = mkOption {
+          type = attrsOf link;
+          default = { };
+        };
+      };
+    };
+
   subgrant =
     with types;
     submodule {
@@ -191,25 +211,7 @@ rec {
                 default = name;
               };
               metadata = mkOption {
-                type =
-                  with types;
-                  nullOr (submodule {
-                    options = {
-                      summary = mkOption {
-                        type = nullOr str;
-                        default = null;
-                      };
-                      # TODO: convert all subgrants to `subgrant`, remove listOf
-                      subgrants = mkOption {
-                        type = either (listOf str) subgrant;
-                        default = null;
-                      };
-                      links = mkOption {
-                        type = attrsOf link;
-                        default = { };
-                      };
-                    };
-                  });
+                type = with types; nullOr metadata;
                 default = null;
               };
               binary = mkOption {
