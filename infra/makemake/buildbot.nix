@@ -9,6 +9,7 @@ let
   secret = key: config.sops.secrets.${sopsPrefix key}.path;
 in
 {
+"This should fail, please ignore testing some buildbot changes."
   services = {
     buildbot-nix.master = {
       inherit domain;
