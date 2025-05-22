@@ -92,50 +92,6 @@ rec {
       }
     );
 
-  # TODO: plugins are actually component *extensions* that are of component-specific type,
-  #       and which compose in application-specific ways defined in the application module.
-  #       this also means that there's no fundamental difference between programs and services,
-  #       and even languages: libraries are just extensions of compilers.
-  # TODO: implement this, now that we're using the module system
-  plugin = with types; anything;
-
-  nonEmtpyAttrs =
-    elemType:
-    with types;
-    (
-      (attrsOf elemType)
-      // {
-        name = "nonEmtpyAttrs";
-        description = "non-empty attribute set";
-        check = x: lib.isAttrs x && x != { };
-      }
-    );
-
-  example =
-    with types;
-    submodule {
-      options = {
-        module = mkOption {
-          description = "the example must be a NixOS module in a file";
-          type = deferredModule;
-        };
-        description = mkOption {
-          description = "description of the example, ideally with further instructions on how to use it";
-          type = nullOr str;
-          default = null;
-        };
-        tests = mkOption {
-          description = "at least one test for the example";
-          type = nonEmtpyAttrs (nullOr test);
-        };
-        links = mkOption {
-          description = "links to related resources";
-          type = attrsOf link;
-          default = { };
-        };
-      };
-    };
-
   # TODO: port modular services to programs
   program =
     with types;
@@ -196,6 +152,50 @@ rec {
       }
     );
 
+  # TODO: plugins are actually component *extensions* that are of component-specific type,
+  #       and which compose in application-specific ways defined in the application module.
+  #       this also means that there's no fundamental difference between programs and services,
+  #       and even languages: libraries are just extensions of compilers.
+  # TODO: implement this, now that we're using the module system
+  plugin = with types; anything;
+
+  nonEmtpyAttrs =
+    elemType:
+    with types;
+    (
+      (attrsOf elemType)
+      // {
+        name = "nonEmtpyAttrs";
+        description = "non-empty attribute set";
+        check = x: lib.isAttrs x && x != { };
+      }
+    );
+
+  example =
+    with types;
+    submodule {
+      options = {
+        module = mkOption {
+          description = "the example must be a NixOS module in a file";
+          type = deferredModule;
+        };
+        description = mkOption {
+          description = "description of the example, ideally with further instructions on how to use it";
+          type = nullOr str;
+          default = null;
+        };
+        tests = mkOption {
+          description = "at least one test for the example";
+          type = nonEmtpyAttrs (nullOr test);
+        };
+        links = mkOption {
+          description = "links to related resources";
+          type = attrsOf link;
+          default = { };
+        };
+      };
+    };
+
   test = with types; either deferredModule package;
 
   projects = mkOption {
@@ -223,12 +223,12 @@ rec {
                   with types;
                   submodule {
                     options = {
-                      modules.services = mkOption {
-                        type = nullOr (attrsOf (nullOr service));
-                        default = null;
-                      };
                       modules.programs = mkOption {
                         type = nullOr (attrsOf (nullOr program));
+                        default = null;
+                      };
+                      modules.services = mkOption {
+                        type = nullOr (attrsOf (nullOr service));
                         default = null;
                       };
                       # An application component may have examples using it in isolation,
