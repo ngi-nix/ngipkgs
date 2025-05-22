@@ -7,8 +7,10 @@ let
     types
     mkOption
     ;
+
+  types' = import ./types.nix { inherit lib; };
 in
-rec {
+{
   metadata =
     with types;
     submodule {
@@ -19,11 +21,11 @@ rec {
         };
         # TODO: convert all subgrants to `subgrant`, remove listOf
         subgrants = mkOption {
-          type = either (listOf str) subgrant;
+          type = either (listOf str) types'.subgrant;
           default = null;
         };
         links = mkOption {
-          type = attrsOf link;
+          type = attrsOf types'.link;
           default = { };
         };
       };
@@ -107,15 +109,15 @@ rec {
             type = deferredModule;
           };
           examples = mkOption {
-            type = attrsOf (nullOr example);
+            type = attrsOf (nullOr types'.example);
             default = { };
           };
           extensions = mkOption {
-            type = attrsOf (nullOr plugin);
+            type = attrsOf (nullOr types'.plugin);
             default = { };
           };
           links = mkOption {
-            type = attrsOf link;
+            type = attrsOf types'.link;
             default = { };
           };
         };
@@ -137,15 +139,15 @@ rec {
             type = deferredModule;
           };
           examples = mkOption {
-            type = nullOr (attrsOf (nullOr example));
+            type = nullOr (attrsOf (nullOr types'.example));
             default = null;
           };
           extensions = mkOption {
-            type = nullOr (attrsOf (nullOr plugin));
+            type = nullOr (attrsOf (nullOr types'.plugin));
             default = null;
           };
           links = mkOption {
-            type = attrsOf link;
+            type = attrsOf types'.link;
             default = { };
           };
         };
@@ -186,11 +188,11 @@ rec {
         };
         tests = mkOption {
           description = "at least one test for the example";
-          type = nonEmtpyAttrs (nullOr test);
+          type = types'.nonEmtpyAttrs (nullOr types'.test);
         };
         links = mkOption {
           description = "links to related resources";
-          type = attrsOf link;
+          type = attrsOf types'.link;
           default = { };
         };
       };
@@ -211,11 +213,11 @@ rec {
                 default = name;
               };
               metadata = mkOption {
-                type = with types; nullOr metadata;
+                type = with types; nullOr types'.metadata;
                 default = null;
               };
               binary = mkOption {
-                type = with types; attrsOf binary;
+                type = with types; attrsOf types'.binary;
                 default = { };
               };
               nixos = mkOption {
@@ -224,11 +226,11 @@ rec {
                   submodule {
                     options = {
                       modules.programs = mkOption {
-                        type = nullOr (attrsOf (nullOr program));
+                        type = nullOr (attrsOf (nullOr types'.program));
                         default = null;
                       };
                       modules.services = mkOption {
-                        type = nullOr (attrsOf (nullOr service));
+                        type = nullOr (attrsOf (nullOr types'.service));
                         default = null;
                       };
                       # An application component may have examples using it in isolation,
@@ -237,7 +239,7 @@ rec {
                       # If this tends to be too cumbersome for package authors and we find a way obtain coverage information programmatically,
                       # we can still reduce granularity and move all examples to the application level.
                       examples = mkOption {
-                        type = nullOr (attrsOf example);
+                        type = nullOr (attrsOf types'.example);
                         default = null;
                       };
                       # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
@@ -245,7 +247,7 @@ rec {
                       #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
                       #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
                       tests = mkOption {
-                        type = nullOr (attrsOf test);
+                        type = nullOr (attrsOf types'.test);
                         default = null;
                       };
                     };
