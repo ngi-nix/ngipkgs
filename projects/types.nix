@@ -100,7 +100,7 @@ let
         {
           options = {
             name = mkOption {
-              type = with types; nullOr str;
+              type = str;
               default = name;
             };
             module = mkOption {
@@ -130,7 +130,7 @@ let
         {
           options = {
             name = mkOption {
-              type = nullOr str;
+              type = str;
               default = name;
             };
             module = mkOption {
@@ -207,7 +207,7 @@ let
             {
               options = {
                 name = mkOption {
-                  type = with types; nullOr str;
+                  type = str;
                   default = name;
                 };
                 metadata = mkOption {
