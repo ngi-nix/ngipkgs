@@ -104,7 +104,7 @@ let
               default = name;
             };
             module = mkOption {
-              type = deferredModule;
+              type = nullOr deferredModule;
             };
             examples = mkOption {
               type = attrsOf (nullOr types'.example);
@@ -134,7 +134,7 @@ let
               default = name;
             };
             module = mkOption {
-              type = deferredModule;
+              type = nullOr deferredModule;
             };
             examples = mkOption {
               type = nullOr (attrsOf (nullOr types'.example));
