@@ -1,4 +1,4 @@
-name: Test VM demo
+name: Test shell demo
 
 permissions: {}
 
@@ -20,7 +20,7 @@ jobs:
           - "debian:unstable"
           - "ubuntu:24.04"
           - "ubuntu:24.10"
-          - "ubuntu:devel"
+          - "ubuntu:25.04"
 
     runs-on: ubuntu-latest
     steps:
@@ -30,9 +30,23 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3  #v17
 
       - name: Build projects overview
-        run: nix build .#overview
+      # FIXME: take default.nix file from overview
+      #   run: nix build .#overview
+        run: |
+          mkdir -p ./result/project/mitmproxy
+          cat <<EOF >./result/project/mitmproxy/default.nix
+          {
+            ngipkgs ?
+              import
+                (fetchTarball "https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz")
+                { },
+          }:
+          ngipkgs.demo-shell {
+            programs.mitmproxy.enable = true;
+          }
+          EOF
 
-      - name: Run and test VM
+      - name: Run and test shell environment
         env:
           DISTRO: ${{ matrix.distro }}
           NIX_CONFIG: |
@@ -41,8 +55,8 @@ jobs:
         run: >
           docker run
           --privileged
-          --volume ./result/project/Cryptpad/default.nix:/default.nix
+          --volume ./result/project/mitmproxy/default.nix:/default.nix
           --volume "$(pwd):/ngipkgs"
           -e DISTRO="$DISTRO"
           "$DISTRO"
-          /bin/bash -c "bash /ngipkgs/.github/workflows/test-demo.sh"
+          /bin/bash -c "bash /ngipkgs/.github/workflows/test-demo-shell.sh"
