@@ -8,7 +8,7 @@ let
     attrValues
     ;
   inherit (types)
-    attrsOf
+    listOf
     nullOr
     functionTo
     str
@@ -65,7 +65,7 @@ in
             </li>
           </ul>
 
-        ${concatMapStringsSep "\n" toString (self.projectListItems)}
+        ${concatMapStringsSep "\n" toString (self.projects)}
 
         </section>
 

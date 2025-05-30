@@ -325,7 +325,7 @@ let
   index = eval {
     imports = [ ./content-types/project-list.nix ];
 
-    projectListItems = lib.mapAttrs (name: project: {
+    projects = lib.mapAttrsToList (name: project: {
       inherit name;
       description = project.metadata.summary or null;
       deliverables = {
