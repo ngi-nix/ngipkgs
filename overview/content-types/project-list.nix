@@ -17,7 +17,7 @@ let
 in
 {
   options = {
-    projectListItems = mkOption {
+    projects = mkOption {
       type = listOf (submodule ./project-list-item.nix);
     };
     version = mkOption {
