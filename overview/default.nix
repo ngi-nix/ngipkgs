@@ -239,30 +239,6 @@ let
       </article>
     '';
 
-    # The snippets for each project that are rendered on https://ngi.nixos.org
-    projectSnippets =
-      projects:
-      eval {
-        options = {
-          projects = mkOption {
-            type = with types; attrsOf (submodule ./content-types/project-list-item.nix);
-            default = lib.mapAttrs (name: project: {
-              inherit name;
-              description = project.metadata.summary or null;
-              deliverables = {
-                service = project.nixos.modules ? services && project.nixos.modules.services != { };
-                program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
-                demo = project.nixos.examples ? demo;
-              };
-            }) projects;
-          };
-          __toString = mkOption {
-            type = with types; functionTo str;
-            default = self: with lib; concatMapStringsSep "\n" toString (attrValues self.projects);
-          };
-        };
-      };
-
     demoGlue.one = exampleText: ''
       # default.nix
       {
@@ -331,50 +307,6 @@ let
       '';
   };
 
-  # The top-level overview for all projects
-  index = ''
-    <section class="page-width">
-      ${heading 1 null "NGIpkgs"}
-
-      <p>
-        NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
-      </p>
-
-      <p>
-        This service is still <strong>experimental</strong> and under active development.
-        Don't expect anything specific to work yet:
-      </p>
-
-      <ul>
-        <li>The package collection is far incomplete</li>
-        <li>Many packages lack crucial components</li>
-        <li>There are no instructions for getting started</li>
-        <li>How software and the corresponding Nix expressions are exposed is subject to change</li>
-      </ul>
-
-      <p>
-        More information about the project:
-      </p>
-
-      <ul>
-        <li>
-          <a href="https://github.com/ngi-nix/ngipkgs">Source code</a>
-        </li>
-        <li>
-          <a href="https://github.com/ngi-nix/summer-of-nix/issues/41">Issue tracker</a>
-        </li>
-        <li>
-          <a href="https://nixos.org/community/teams/ngi/">Nix@NGI team</a>
-        </li>
-      </ul>
-
-    ${render.projectSnippets projects}
-
-    </section>
-
-    <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
-  '';
-
   # HTML project pages
   projectPages = mapAttrs' (
     name: project:
@@ -389,6 +321,22 @@ let
           null;
     }
   ) projects;
+
+  index = eval {
+    imports = [ ./content-types/project-list.nix ];
+
+    projectListItems = lib.mapAttrs (name: project: {
+      inherit name;
+      description = project.metadata.summary or null;
+      deliverables = {
+        service = project.nixos.modules ? services && project.nixos.modules.services != { };
+        program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
+        demo = project.nixos.examples ? demo;
+      };
+    }) projects;
+    inherit version;
+    inherit lastModified;
+  };
 
   # The summary page at the overview root
   indexPage = {
