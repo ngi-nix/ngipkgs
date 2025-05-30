@@ -1,0 +1,48 @@
+name: Test VM demo
+
+permissions: {}
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - "archlinux:latest"
+          - "debian:12"
+          - "debian:unstable"
+          - "ubuntu:24.04"
+          - "ubuntu:24.10"
+          - "ubuntu:25.04"
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v4'
+        with: { persist-credentials: false }
+
+      - uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3  #v17
+
+      - name: Build projects overview
+        run: nix build .#overview
+
+      - name: Run and test VM
+        env:
+          DISTRO: ${{ matrix.distro }}
+          NIX_CONFIG: |
+            extra-substituters = https://ngi.cachix.org/
+            extra-trusted-public-keys = ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw=
+        run: >
+          docker run
+          --privileged
+          --volume ./result/project/Cryptpad/default.nix:/default.nix
+          --volume "$(pwd):/ngipkgs"
+          -e DISTRO="$DISTRO"
+          "$DISTRO"
+          /bin/bash -c "bash /ngipkgs/.github/workflows/test-demo-vm.sh"
