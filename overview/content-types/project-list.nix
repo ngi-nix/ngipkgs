@@ -65,7 +65,7 @@ in
             </li>
           </ul>
 
-        ${concatMapStringsSep "\n" toString (attrValues self.projectListItems)}
+        ${concatMapStringsSep "\n" toString (self.projectListItems)}
 
         </section>
 
