@@ -41,6 +41,7 @@ in
     };
     __toString = mkOption {
       type = with types; functionTo str;
+      readOnly = true;
       default =
         self: with lib; ''
           <article class="project">
