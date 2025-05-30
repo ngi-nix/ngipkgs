@@ -18,7 +18,7 @@ in
 {
   options = {
     projectListItems = mkOption {
-      type = attrsOf (submodule ./project-list-item.nix);
+      type = listOf (submodule ./project-list-item.nix);
     };
     version = mkOption {
       type = nullOr str;
