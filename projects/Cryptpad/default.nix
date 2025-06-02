@@ -48,9 +48,7 @@
       examples.demo = {
         module = ./demo.nix;
         description = "Deployment for demo purposes";
-        # TODO: fixed in nixpkgs, enable after the flake is updated
-        # tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/cryptpad.nix" args;
-        tests.basic = null;
+        tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/cryptpad.nix" args;
       };
       links = {
         admin-guide = {
