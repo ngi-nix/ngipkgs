@@ -286,6 +286,12 @@ code, pre {
   overflow-x: auto;
 }
 
+pre.shell,
+div.code > pre /* for pygments output */
+{
+  padding: 0.5em;
+}
+
 .code-block {
   position: relative;
 }

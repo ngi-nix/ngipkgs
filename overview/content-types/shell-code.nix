@@ -24,7 +24,7 @@ in
       readOnly = true;
       default =
         self: with lib; ''
-          <pre><code>${trim ''
+          <pre class="shell"><code>${trim ''
             ${self.prompt} ${self.input}
             ${optionalString (!isNull self.output) self.output}
           ''}</code></pre>

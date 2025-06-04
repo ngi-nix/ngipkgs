@@ -18,16 +18,14 @@ in
       default = self: ''
         <strong>Install Nix</strong>
           <ul>
-            ${
-              lib.concatMapStringsSep "\n" (i: ''
-                <li>
-                  <dt>${i.platform}</dt>
-                  <dd>
-                    ${i.commands.bash}
-                  </dd>
-                </li>
-              '') self.instructions
-            }
+            ${lib.concatMapStringsSep "\n" (i: ''
+              <li>
+                <dt>${i.platform}</dt>
+                <dd>
+                  ${i.commands.bash}
+                </dd>
+              </li>
+            '') self.instructions}
           </ul>
       '';
     };
