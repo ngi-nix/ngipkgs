@@ -397,7 +397,7 @@ article.project .deliverable-tag {
   font-family: "IBM Plex Mono";
 }
 
-.option-readonly {
+.option-alert {
   background: red;
   color: white;
   padding: 0 0.3em;

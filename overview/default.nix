@@ -143,8 +143,16 @@ let
             <dd class="option-default"><code>${option.default.text}</code></dd>
           '';
           maybeReadonly = optionalString option.readOnly ''
-            <span class="option-readonly" title="This option can't be set by users">Read-only</span>
+            <span class="option-alert" title="This option can't be set by users">Read-only</span>
           '';
+          updateScriptStatus =
+            let
+              optionName = lib.removePrefix "pkgs." option.default.text;
+            in
+            optionalString (option.type == "package" && !pkgs ? ${optionName}.passthru.updateScript) ''
+              <dt>Notes:</dt>
+              <dd><span class="option-alert">Missing update script</span> An update script is required for automatically tracking the latest release.</dd>
+            '';
         in
         ''
           <dt class="option-name">
@@ -159,6 +167,7 @@ let
               <dt>Type:</dt>
               <dd class="option-type"><code>${option.type}</code></dd>
               ${maybeDefault}
+              ${updateScriptStatus}
             </dl>
           </dd>
         '';
