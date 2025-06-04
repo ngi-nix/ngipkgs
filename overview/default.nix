@@ -243,31 +243,40 @@ let
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
         ${optionalString (project.nixos.examples ? demo) (
-          render.serviceDemo.one project.nixos.modules.services project.nixos.examples.demo
+          render.serviceDemo.one "vm" project.nixos.modules project.nixos.examples.demo
+        )}
+        ${optionalString (project.nixos.examples ? demo-shell) (
+          render.serviceDemo.one "shell" project.nixos.modules project.nixos.examples.demo-shell
         )}
       </article>
     '';
 
-    demoGlue.one = exampleText: ''
+    demoGlue.one = demo-function: exampleText: ''
       # default.nix
       {
         ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
       }:
-      ngipkgs.demo-vm (
+      ngipkgs.${demo-function} (
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
       )
     '';
 
     serviceDemo.one =
-      services: example:
+      type: modules: example:
       let
         demoSystem = import (nixpkgs + "/nixos/lib/eval-config.nix") {
           inherit system;
-          modules = (attrValues services) ++ [ example.module ];
+          modules =
+            [
+              example.module
+              ./demo/shell.nix
+            ]
+            ++ (attrValues modules.services)
+            ++ (attrValues modules.programs);
         };
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
-        servicePort = (builtins.head openPorts);
+        servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         nix-config = eval {
           imports = [ ./content-types/nix-config.nix ];
           settings = [
@@ -289,7 +298,10 @@ let
         };
       in
       ''
-        ${heading 2 "demo" "Try the service in a VM"}
+        ${heading 2 "demo" (
+          if type == "shell" then "Try the program in a shell" else "Try the service in a VM"
+        )}
+
         <ol>
           <li>
             <strong>Install Nix</strong>
@@ -323,10 +335,17 @@ let
                   <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
               </ul>
           </li>
-          <li>
-            <strong>Access the service</strong><br />
-              Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
-          </li>
+          ${
+            if servicePort != "" then
+              ''
+                <li>
+                  <strong>Access the service</strong><br />
+                    Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
+                </li>
+              ''
+            else
+              ""
+          }
         </ol>
       '';
   };
@@ -340,7 +359,13 @@ let
       summary = project.metadata.summary or null;
       demoFile =
         if project.nixos.examples ? demo then
-          (pkgs.writeText "default.nix" (render.demoGlue.one (readFile project.nixos.examples.demo.module)))
+          (pkgs.writeText "default.nix" (
+            render.demoGlue.one "demo-vm" (readFile project.nixos.examples.demo.module)
+          ))
+        else if project.nixos.examples ? demo-shell then
+          (pkgs.writeText "default.nix" (
+            render.demoGlue.one "demo-shell" (readFile project.nixos.examples.demo-shell.module)
+          ))
         else
           null;
     }
@@ -355,7 +380,7 @@ let
       deliverables = {
         service = project.nixos.modules ? services && project.nixos.modules.services != { };
         program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
-        demo = project.nixos.examples ? demo;
+        demo = project.nixos.examples ? demo || project.nixos.examples ? demo-shell;
       };
     }) projects;
     inherit version;
