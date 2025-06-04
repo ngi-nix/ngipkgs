@@ -261,10 +261,7 @@ let
         servicePort = (builtins.head openPorts);
       in
       ''
-        ${heading 2 "demo" "Demo"}
-        <details>
-        <summary>Run service in a VM</summary>
-
+        ${heading 2 "demo" "Try the service in a VM"}
         <ol>
           <li>
             <strong>Install Nix</strong>
@@ -303,7 +300,6 @@ let
               Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
           </li>
         </ol>
-        </details>
       '';
   };
 
