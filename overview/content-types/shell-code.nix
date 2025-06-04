@@ -19,5 +19,16 @@ in
       type = with types; nullOr lines;
       default = null;
     };
+    __toString = mkOption {
+      type = with types; functionTo str;
+      readOnly = true;
+      default =
+        self: with lib; ''
+          <pre><code>${trim ''
+            ${self.prompt} ${self.input}
+            ${optionalString (!isNull self.output) self.output}
+          ''}</code></pre>
+        '';
+    };
   };
 }

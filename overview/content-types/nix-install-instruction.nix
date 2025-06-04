@@ -1,5 +1,4 @@
 {
-  name,
   config,
   lib,
   ...
@@ -11,8 +10,6 @@ in
   options = {
     platform = mkOption {
       type = types.str;
-      readOnly = true;
-      default = name;
     };
     commands = {
       bash = mkOption {

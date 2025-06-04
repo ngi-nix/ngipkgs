@@ -268,18 +268,41 @@ let
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = (builtins.head openPorts);
+        installation-instructions = eval {
+          imports = [ ./content-types/nix-install-platform-instructions.nix ];
+          instructions = [
+            {
+              platform = "Arch Linux";
+              commands.bash = {
+                input = ''
+                  pacman --sync --refresh --noconfirm curl git jq nix
+                '';
+              };
+            }
+            {
+              platform = "Debian";
+              commands.bash = {
+                input = ''
+                  apt install --yes curl git jq nix
+                '';
+              };
+            }
+            {
+              platform = "Ubuntu";
+              commands.bash = {
+                input = ''
+                  apt install --yes curl git jq nix
+                '';
+              };
+            }
+          ];
+        };
       in
       ''
         ${heading 2 "demo" "Try the service in a VM"}
         <ol>
           <li>
-            <strong>Install Nix</strong>
-              <ul>
-                <li>Arch Linux</li>
-                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
-                <li>Debian/Ubuntu</li>
-                  <pre><code>apt install --yes curl git jq nix</code></pre>
-              </ul>
+            ${installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -349,7 +372,7 @@ let
     content = index;
     summary = ''
       NGIpkgs is collection of software applications funded by the Next
-      Generation Internet initiative and packaged for NixOS. 
+      Generation Internet initiative and packaged for NixOS.
     '';
   };
 
