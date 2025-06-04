@@ -39,7 +39,7 @@
         {
           options.programs.cryptolyzer = {
             enable = lib.mkEnableOption "CryptoLyzer";
-            package = lib.mkPackageOption pkgs.python3Packages "cryptolyzer" { };
+            package = lib.mkPackageOption pkgs [ "python3Packages" "cryptolyzer" ] { };
           };
           config.environment.systemPackages = lib.mkIf cfg.enable [ cfg.package ];
         };
