@@ -145,11 +145,19 @@ let
           maybeReadonly = optionalString option.readOnly ''
             <span class="option-readonly" title="This option can't be set by users">Read-only</span>
           '';
+          updateScriptStatus =
+            let
+              optionName = lib.removePrefix "pkgs." option.default.text;
+            in
+            optionalString (option.type == "package" && !pkgs ? ${optionName}.passthru.updateScript) ''
+              <span class="option-readonly" title="This derivation needs an update script">Missing: passthru.updateScript</span>
+            '';
         in
         ''
           <dt class="option-name">
             <span class="option-prefix">${join "." (take prefixLength option.loc)}.</span><span>${join "." (drop prefixLength option.loc)}</span>
             ${maybeReadonly}
+            ${updateScriptStatus}
           </dt>
           <dd class="option-body">
             <div class="option-description">
