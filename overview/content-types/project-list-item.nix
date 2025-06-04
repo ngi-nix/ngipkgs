@@ -31,10 +31,7 @@ in
               type = types.bool;
               default = false;
             };
-            demo = mkOption {
-              type = types.bool;
-              default = false;
-            };
+            demos = ./demo-item.nix;
           };
         };
       default = { };
