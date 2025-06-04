@@ -267,7 +267,7 @@ let
         };
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
-        servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
+        servicePort = if openPorts != [ ] then (builtins.head openPorts) else 0;
       in
       ''
         ${heading 2 "demo" (
@@ -276,13 +276,6 @@ let
 
         <ol>
           <li>
-            <strong>Install Nix</strong>
-              <ul>
-                <li>Arch Linux</li>
-                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
-                <li>Debian/Ubuntu</li>
-                  <pre><code>apt install --yes curl git jq nix</code></pre>
-              </ul>
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -352,7 +345,9 @@ let
       deliverables = {
         service = project.nixos.modules ? services && project.nixos.modules.services != { };
         program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
-        demo = project.nixos.examples ? demo || project.nixos.examples ? demo-shell;
+        demos = lib.filterAttrs (
+          name: value: name == "demo" || name == "demo-shell"
+        ) project.nixos.examples;
       };
     }) projects;
     inherit version;

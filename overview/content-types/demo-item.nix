@@ -8,7 +8,7 @@ let
   inherit (lib) mkOption types;
 in
 types.submodule (
-  { name, ... }:
+  { name, config, ... }:
   {
     options = {
       type = mkOption {
@@ -16,7 +16,7 @@ types.submodule (
           "vm"
           "shell"
         ];
-        default = if name == "demo-shell" then "shell" else "vm";
+        default = if name == "demo-shell" then "shell" else "VM";
       };
       servicePort = mkOption {
         type = types.port;
@@ -52,7 +52,7 @@ types.submodule (
             build = mkOption {
               type = types.str;
               default = ''
-                <strong>Build and run a ${if name == "demo-shell" then "shell" else "virtual machine"}</strong>
+                <strong>Build and run a ${config.type}</strong>
                   <ul>
                     <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
                       <pre><code>nix-build ./default.nix && ./result</code></pre>
@@ -69,6 +69,10 @@ types.submodule (
         readOnly = true;
         default =
           self: with lib; ''
+            ${heading 2 "demo" ''
+              Try the ${if self.type == "shell" then "program" else "service"} in a ${self.type}
+            ''}
+
             <ol>
               ${mapAttrsToList (instruction: value: ''
                 <li>
