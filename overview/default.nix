@@ -240,14 +240,14 @@ let
       <article class="page-width">
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
-        ${render.options.many (pick.options project)}
-        ${render.examples.many (pick.examples project)}
         ${optionalString (project.nixos.examples ? demo) (
           render.serviceDemo.one "vm" project.nixos.modules project.nixos.examples.demo
         )}
         ${optionalString (project.nixos.examples ? demo-shell) (
           render.serviceDemo.one "shell" project.nixos.modules project.nixos.examples.demo-shell
         )}
+        ${render.options.many (pick.options project)}
+        ${render.examples.many (pick.examples project)}
       </article>
     '';
 
