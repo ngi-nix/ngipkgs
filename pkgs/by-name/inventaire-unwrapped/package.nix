@@ -81,6 +81,23 @@ buildNpmPackage rec {
         "import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'" \
         "import type { estypes } from '@elastic/elasticsearch'" \
       --replace-fail 'SearchRequest' 'estypes.SearchRequest' \
+
+    # Look up some directories relative to CWD, instead of in the installed tree
+
+    substituteInPlace server/db/level/get_db.ts \
+      --replace-fail "absolutePath('root', 'db')" "'db'"
+
+    substituteInPlace server/lib/auto_rotated_keys.ts \
+      --replace-fail "absolutePath('root', 'keys/sessions_keys')" "'keys/sessions_keys'"
+
+    substituteInPlace server/controllers/images/lib/local_client.ts \
+      --replace-fail 'resolve(projectRoot, localStorage.folder)' 'localStorage.folder'
+
+    # Please, don't run git to try to find out the revision of the src
+    substituteInPlace server/lib/package.ts \
+      --replace-fail "await execAsync('git rev-parse --short HEAD').then(({ stdout }) => stdout.trim())" "'${
+        if src.tag != null then src.tag else src.rev
+      }'" \
   '';
 
   makeCacheWritable = true;
@@ -102,11 +119,9 @@ buildNpmPackage rec {
     for candidate in $out/lib/node_modules/inventaire/dist/*; do
       if [ -L "$candidate" ]; then
         linkName="$(basename "$candidate")"
-        rm "$candidate"
+        rm -v "$candidate"
         if [ -e "$(dirname "$candidate")/../''${linkName}" ]; then
           ln -vs ../"$linkName" "$candidate"
-        else
-          mkdir "$candidate"
         fi
       fi
     done
@@ -116,7 +131,19 @@ buildNpmPackage rec {
     cat <<EOF >$out/bin/inventaire
     #!/bin/sh
 
-    ${lib.getExe nodejs} $out/lib/node_modules/inventaire/dist/server/server.js
+    # Find server.js relative to location of this file
+    INVENTAIRE_THIS="\$0"
+    INVENTAIRE_SERVER="\$(dirname "\$INVENTAIRE_THIS")/../lib/node_modules/inventaire/dist/server/server.js"
+
+    if [ ! -e "\$INVENTAIRE_SERVER" ]; then
+      echo "Missing: \$INVENTAIRE_SERVER"
+
+      # Fallback to hardcoding (this will likely fail to run due to missing client symlink from the wrapper)
+      INVENTAIRE_SERVER="$out/lib/node_modules/inventaire/dist/server/server.js"
+      echo "Falling back to: \$INVENTAIRE_SERVER"
+    fi
+
+    exec ${lib.getExe nodejs} "\$INVENTAIRE_SERVER"
     EOF
     chmod +x $out/bin/inventaire
 
