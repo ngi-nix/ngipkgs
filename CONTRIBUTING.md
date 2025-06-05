@@ -179,47 +179,6 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 
 ## Triaging an NGI project
 
-The following information is needed to [open an issue for a new NGI project](https://github.com/ngi-nix/ngipkgs/issues/new?template=project-triaging.yaml):
-
-1. Navigate to <https://nlnet.nl/project/>.
-   In the search bar, type the project name and look for any related projects.
-
-   ```md
-   - https://nlnet.nl/project/foobar
-   - https://nlnet.nl/project/foobar-core
-   ```
-
-   In the project pages, look for any `website` or `source code` links and open them.
-
-1. We'd like to know some information about the `framework` and `dependency management` tools the project is using which helps us to estimate the time and effort needed to package it. If possible, we'd also like to know about Nix development environments, if they exist in the repo.
-
-   ```md
-   - Language/Framework: Python/Django
-   - Dependency management: pip
-   - Development environment: [default.nix, shell.nix, flake.nix, devenv.nix, ...](<FILE_LINK>)
-   ```
-
-1. In the project's website, look for any tabs or buttons that lead to the documentation. You may also use your favorite search engine and look for `<PROJECT_NAME> documentation`.
-   The most important information we need are the instructions for building the project from source and examples for using it.
-   If the project has multiple components, it would be ideal to have this information for each one of them.
-
-   ```md
-   - Usage Examples:
-     - https://foo.bar/docs/quickstart
-   - Build from source/Development:
-     - foobar-cli: https://foo.bar/docs/dev/cli
-     - foobar-mobile: https://foo.bar/docs/dev/mobile
-   ```
-
-1. Go to the [nixpkgs search](https://search.nixos.org/packages) and [services search](https://search.nixos.org/options?) and check if anything related to the project is already packaged.
-
-   ```md
-   - Packages:
-     - [<NAME>](<SOURCE_LINK>)
-   - Services:
-     - [<NAME>](<SOURCE_LINK>)
-   ```
-
 ## Adding/Exposing an NGI project
 
 1. Copy the project template to the projects directory:
