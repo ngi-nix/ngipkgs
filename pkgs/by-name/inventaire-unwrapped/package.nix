@@ -13,7 +13,7 @@
 }:
 
 buildNpmPackage rec {
-  pname = "inventaire";
+  pname = "inventaire-unwrapped";
   version = "3.0.1-beta";
 
   src = fetchFromGitea {

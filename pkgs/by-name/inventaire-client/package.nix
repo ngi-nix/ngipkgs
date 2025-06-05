@@ -4,7 +4,7 @@
   fetchFromGitea,
   fetchFromGitHub,
   fetchpatch,
-  inventaire,
+  inventaire-unwrapped,
   inventaire-i18n,
   writeShellApplication,
 }:
@@ -64,7 +64,7 @@ buildNpmPackage rec {
 
     # inventaire (server-side) is not at a directory above us during build, patch in path to our prebuilt one
     substituteInPlace package.json tsconfig.base.json \
-      --replace-fail '"../server/' '"${inventaire}/lib/node_modules/inventaire/dist/server/' \
+      --replace-fail '"../server/' '"${inventaire-unwrapped}/lib/node_modules/inventaire/dist/server/' \
 
     # Don't do git things
     # Don't fetch a file, copy prefetched copy instead
