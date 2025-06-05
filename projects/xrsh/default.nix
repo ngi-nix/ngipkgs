@@ -22,6 +22,16 @@
     };
   };
 
-  nixos.modules.programs.xrsh = null;
+  nixos.modules.programs = {
+    xrsh = {
+      module = ./programs/xrsh/module.nix;
+      examples.basic = {
+        module = ./programs/xrsh/examples/basic.nix;
+        description = "Basic example of using xrsh";
+        tests.basic = import ./programs/xrsh/tests/basic.nix args;
+      };
+    };
+  };
+
   nixos.modules.services.xrsh = null;
 }
