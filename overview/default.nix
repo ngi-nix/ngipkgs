@@ -268,6 +268,25 @@ let
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = (builtins.head openPorts);
+        nix-config = eval {
+          imports = [ ./content-types/nix-config.nix ];
+          settings = [
+            {
+              name = "substituters";
+              value = [
+                "https://cache.nixos.org/"
+                "https://ngi.cachix.org/"
+              ];
+            }
+            {
+              name = "trusted-public-keys";
+              value = [
+                "cache.nixos.org-1:6nchdd59x431o0gwypbmraurkbj16zpmqfgspcdshjy="
+                "ngi.cachix.org-1:n+cal72roc3qqulxihpv+tw5t42whxmmhpragkrsrow="
+              ];
+            }
+          ];
+        };
       in
       ''
         ${heading 2 "demo" "Try the service in a VM"}
@@ -291,7 +310,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-              <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
+              <pre><code>${nix-config}</code></pre>
               <pre><code>export NIX_CONFIG</code></pre>
           </li>
           <li>
