@@ -1,13 +1,13 @@
 name: Project Triaging
 description: A template for information to look for in an NGI project's resources
-title: "NGI Project: <PROJECT_NAME>"
+title: "<PROJECT_NAME>: Triaged data"
 labels: ["NGI Project"]
 projects: ["Nix@NGI"]
 body:
   - type: "markdown"
     attributes:
       value: |
-        Replace the **`NGI Project: <PROJECT_NAME>`** template above with the correct project name, as found from searching for the project name in the [NLnet projects](http://nlnet.nl/project) page. Note that the name should be derived from the URL identifier instead of the title.
+        Replace **`<PROJECT_NAME>`** in the title with the correct project name, as found from searching for the project name in the [NLnet projects](http://nlnet.nl/project) page. Note that the name should be derived from the URL identifier instead of the title.
 
         For instance, if you were triaging data for a project called `Foobar`, you might find two entries in the NLnet search page:
         - Improving communications with Foobar
