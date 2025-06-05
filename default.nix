@@ -212,8 +212,9 @@ rec {
               };
             };
           debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
+          args = debugging // test;
         in
-        pkgs.nixosTest (debugging // test);
+        if lib.isDerivation test then test else pkgs.nixosTest args;
 
       empty-if-null = x: if x != null then x else { };
       filter-map =
@@ -244,12 +245,12 @@ rec {
           nixos.tests = mapAttrs (
             _: test:
             if lib.isString test then
-              (import test {
-                inherit pkgs;
-                inherit (pkgs) system;
-              })
-            else if lib.isDerivation test then
-              test
+              nixosTest (
+                import test {
+                  inherit pkgs lib;
+                  inherit (pkgs) system;
+                }
+              )
             else
               nixosTest test
           ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
