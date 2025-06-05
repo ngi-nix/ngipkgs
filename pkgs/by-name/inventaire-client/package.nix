@@ -67,10 +67,12 @@ buildNpmPackage rec {
       --replace-fail '"../server/' '"${inventaire-unwrapped}/lib/node_modules/inventaire/dist/server/' \
 
     # Don't do git things
+    # Don't build in configurePhase
     # Don't fetch a file, copy prefetched copy instead
     # Don't nuke node_modules cache
     substituteInPlace scripts/postinstall \
       --replace-fail 'git config' '# git config' \
+      --replace-fail 'npm run build' 'echo "[Nix] Building later"' \
       --replace-fail \
         'curl -sk https://raw.githubusercontent.com/WICG/visual-viewport/44deaba/polyfill/visualViewport.js >> ./vendor/visual_viewport_polyfill.js' \
         'cat ${visual-viewport}/polyfill/visualViewport.js >> ./vendor/visual_viewport_polyfill.js' \
@@ -99,14 +101,9 @@ buildNpmPackage rec {
   # "Your cache folder contains root-owned files" error from NPM
   makeCacheWritable = true;
 
-  # A build actually already happens during the cache rebuild, least we can do is print its output...
-  postConfigure = ''
-    cat logs/build.log
-  '';
-
   # These get produced/modified during the build, but not installed (fully)
   postInstall = ''
-    cp -r app vendor $out/lib/node_modules/inventaire-client/
+    cp -r app public vendor $out/lib/node_modules/inventaire-client/
   '';
 
   meta = {
