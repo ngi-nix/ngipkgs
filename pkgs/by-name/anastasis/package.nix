@@ -23,12 +23,12 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis";
-  version = "0.6.1-unstable-2025-03-02";
+  version = "0.6.4";
 
   src = fetchgit {
     url = "https://git.taler.net/anastasis.git";
-    rev = "e35b82a7d597403fefa753598def3bc316d64e76";
-    hash = "sha256-P82yhdYaUYxFoQgyHsQJwMPGGnVois3/1huKSwDD7is=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-I666RLo3rsmnxp9ET+RDy4wQgOIomuTg7LqVvxL7nIc=";
   };
 
   postPatch = ''
