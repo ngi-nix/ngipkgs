@@ -46,7 +46,9 @@
           makemake = import ./infra/makemake { inherit inputs; };
         };
 
-        nixosModules = classic'.ngipkgsModules;
+        nixosModules = {
+          default.nixpkgs.overlays = [ overlay ];
+        } // lib'.flattenAttrs "." classic'.nixos-modules;
 
         # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
         overlays.default = overlay;
