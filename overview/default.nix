@@ -181,19 +181,19 @@ let
         in
         optionalString (!empty projectOptions) ''
           ${heading 2 "service" "Options"}
-          <section><details><summary><code>${join "." commonPrefix}</code></summary><dl>
+          <details><summary><code>${join "." commonPrefix}</code></summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
-          </dl></details></section>
+          </dl></details>
         '';
     };
 
     examples = rec {
       one = example: ''
-        <section><details><summary>${example.description}</summary>
+        <details><summary>${example.description}</summary>
 
         ${render.codeSnippet.one { filename = example.module; }}
 
-        </details></section>
+        </details>
       '';
       many =
         examples:
