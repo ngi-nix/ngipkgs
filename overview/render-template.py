@@ -22,7 +22,7 @@ def include_code(language, file_path, relative_path=False):
         return highlight(code, lexer, formatter)
     except Exception:
         print("Fallback: Return the code without highlighting")
-        return f'<pre><code>{code}</code></pre>'
+        return f'<pre class="shell" class="shell"><code>{code}</code></pre>'
 
 md = MarkdownIt("commonmark")
 

@@ -268,47 +268,70 @@ let
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = (builtins.head openPorts);
+        installation-instructions = eval {
+          imports = [ ./content-types/nix-install-platform-instructions.nix ];
+          instructions = [
+            {
+              platform = "Arch Linux";
+              commands.bash = {
+                input = ''
+                  pacman --sync --refresh --noconfirm curl git jq nix
+                '';
+              };
+            }
+            {
+              platform = "Debian";
+              commands.bash = {
+                input = ''
+                  apt install --yes curl git jq nix
+                '';
+              };
+            }
+            {
+              platform = "Ubuntu";
+              commands.bash = {
+                input = ''
+                  apt install --yes curl git jq nix
+                '';
+              };
+            }
+          ];
+        };
       in
       ''
-        ${heading 2 "demo" "Try the service in a VM"}
-        <ol>
-          <li>
-            <strong>Install Nix</strong>
-              <ul>
-                <li>Arch Linux</li>
-                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
-                <li>Debian/Ubuntu</li>
-                  <pre><code>apt install --yes curl git jq nix</code></pre>
-              </ul>
-          </li>
-          <li>
-            <strong>Download a configuration file</strong>
-              ${render.codeSnippet.one {
-                filename = "default.nix";
-                relative = true;
-                downloadable = true;
-              }}
-          </li>
-          <li>
-            <strong>Enable binary substituters</strong>
-              <pre><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='</code></pre>
-              <pre><code>export NIX_CONFIG</code></pre>
-          </li>
-          <li>
-            <strong>Build and run a virtual machine</strong>
-              <ul>
-                <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
-                  <pre><code>nix-build ./default.nix && ./result</code></pre>
-                <li>Debian 12 and Ubuntu 24.04/24.10</li>
-                  <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
-                  <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
-              </ul>
-          </li>
-          <li>
-            <strong>Access the service</strong><br />
-              Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
-          </li>
-        </ol>
+          ${heading 2 "demo" "Try the service in a VM"}
+          <ol>
+            <li>
+              ${installation-instructions}
+            </li>
+            <li>
+              <strong>Download a configuration file</strong>
+                ${render.codeSnippet.one {
+                  filename = "default.nix";
+                  relative = true;
+                  downloadable = true;
+                }}
+            </li>
+            <li>
+              <strong>Enable binary substituters</strong>
+                <pre class="shell"><code>NIX_CONFIG='substituters = https://cache.nixos.org/ https://ngi.cachix.org/'$'\n'''trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ngi.cachix.org-1:n+CAL72ROC3qQuLxIHpV+Tw5t42WhXmMhprAGkRSrOw='
+        export NIX_CONFIG</code></pre>
+            </li>
+            <li>
+              <strong>Build and run a virtual machine</strong>
+                <ul>
+                  <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
+                    <pre class="shell"><code>nix-build ./default.nix && ./result</code></pre>
+                  <li>Debian 12 and Ubuntu 24.04/24.10</li>
+                    <pre class="shell"><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)
+        nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
+                </ul>
+            </li>
+            <li>
+              <strong>Access the service</strong><br />
+                Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
+            </li>
+          </ol>
       '';
   };
 
@@ -349,7 +372,7 @@ let
     content = index;
     summary = ''
       NGIpkgs is collection of software applications funded by the Next
-      Generation Internet initiative and packaged for NixOS. 
+      Generation Internet initiative and packaged for NixOS.
     '';
   };
 
