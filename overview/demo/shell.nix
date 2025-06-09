@@ -51,6 +51,14 @@ in
             };
             default = { };
           };
+          env = mkOption {
+            type = attrsOf str;
+            description = "Set of environment variables that will be passed to the shell.";
+            example = {
+              XRSH_PORT = "9090";
+            };
+            default = { };
+          };
         };
       });
   };
