@@ -277,6 +277,29 @@ let
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
+        installation-instructions = eval {
+          imports = [ ./content-types/commands.nix ];
+          instructions = [
+            {
+              platform = "Arch Linux";
+              commands.bash.input = ''
+                pacman --sync --refresh --noconfirm curl git jq nix
+              '';
+            }
+            {
+              platform = "Debian";
+              commands.bash.input = ''
+                apt install --yes curl git jq nix
+              '';
+            }
+            {
+              platform = "Ubuntu";
+              commands.bash.input = ''
+                apt install --yes curl git jq nix
+              '';
+            }
+          ];
+        };
         nix-config = eval {
           imports = [ ./content-types/nix-config.nix ];
           settings = [
@@ -296,6 +319,12 @@ let
             }
           ];
         };
+        set-nix-config = eval {
+          imports = [ ./content-types/commands.nix ];
+          instructions.commands.bash.input = ''
+            export ${nix-config}
+          '';
+        };
       in
       ''
         ${heading 2 "demo" (
@@ -305,12 +334,7 @@ let
         <ol>
           <li>
             <strong>Install Nix</strong>
-              <ul>
-                <li>Arch Linux</li>
-                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
-                <li>Debian/Ubuntu</li>
-                  <pre><code>apt install --yes curl git jq nix</code></pre>
-              </ul>
+            ${installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -322,8 +346,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-              <pre><code>${nix-config}</code></pre>
-              <pre><code>export NIX_CONFIG</code></pre>
+            ${set-nix-config}
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
@@ -393,7 +416,7 @@ let
     content = index;
     summary = ''
       NGIpkgs is collection of software applications funded by the Next
-      Generation Internet initiative and packaged for NixOS. 
+      Generation Internet initiative and packaged for NixOS.
     '';
   };
 
