@@ -5,22 +5,12 @@
   extendedNixosModules,
 }:
 let
-  nixosSystem =
-    args:
-    import (sources.nixpkgs + "/nixos/lib/eval-config.nix") (
-      {
-        inherit lib;
-        system = null;
-      }
-      // args
-    );
-
   demo-system =
-    module:
-    nixosSystem {
+    demo-module:
+    import (sources.nixpkgs + "/nixos/lib/eval-config.nix") {
       system = "x86_64-linux";
       modules = [
-        module
+        demo-module
         (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
         (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
         ./shell.nix
