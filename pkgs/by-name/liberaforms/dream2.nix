@@ -27,7 +27,7 @@ in
         postgresql
         postgresqlTestHook
         runCommand
-        substituteAll
+        replaceVars
         ;
       python = nixpkgs.python311;
     };
@@ -121,8 +121,7 @@ in
       python-magic = {
         mkDerivation = {
           patches = [
-            (config.deps.substituteAll {
-              src = ./libmagic-path.patch;
+            (config.deps.replaceVars ./libmagic-path.patch {
               libmagic = "${config.deps.file}/lib/libmagic.so";
             })
           ];

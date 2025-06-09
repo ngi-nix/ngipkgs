@@ -8,7 +8,11 @@
   libervia-backend,
   libervia-media,
   wrapGAppsHook3,
+  callPackage,
 }:
+let
+  kivy-garden-modernmenu = callPackage ./kivy-garden-modernmenu.nix { };
+in
 python3Packages.buildPythonApplication rec {
   pname = "libervia-desktop-kivy";
   version = "0.8.0-unstable-2024-10-26";

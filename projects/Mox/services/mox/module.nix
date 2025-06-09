@@ -64,7 +64,7 @@ in
     ];
 
     networking.firewall = lib.mkIf cfg.openFirewall {
-      enable = true;
+
       allowedTCPPorts =
         with lib;
         (
