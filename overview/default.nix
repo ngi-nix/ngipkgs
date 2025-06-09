@@ -278,31 +278,25 @@ let
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         installation-instructions = eval {
-          imports = [ ./content-types/nix-install-platform-instructions.nix ];
+          imports = [ ./content-types/commands.nix ];
           instructions = [
             {
               platform = "Arch Linux";
-              commands.bash = {
-                input = ''
-                  pacman --sync --refresh --noconfirm curl git jq nix
-                '';
-              };
+              commands.bash.input = ''
+                pacman --sync --refresh --noconfirm curl git jq nix
+              '';
             }
             {
               platform = "Debian";
-              commands.bash = {
-                input = ''
-                  apt install --yes curl git jq nix
-                '';
-              };
+              commands.bash.input = ''
+                apt install --yes curl git jq nix
+              '';
             }
             {
               platform = "Ubuntu";
-              commands.bash = {
-                input = ''
-                  apt install --yes curl git jq nix
-                '';
-              };
+              commands.bash.input = ''
+                apt install --yes curl git jq nix
+              '';
             }
           ];
         };
@@ -325,6 +319,12 @@ let
             }
           ];
         };
+        set-nix-config = eval {
+          imports = [ ./content-types/commands.nix ];
+          instructions.commands.bash.input = ''
+            export ${nix-config}
+          '';
+        };
       in
       ''
         ${heading 2 "demo" (
@@ -333,7 +333,8 @@ let
 
         <ol>
           <li>
-              ${installation-instructions}
+            <strong>Install Nix</strong>
+            ${installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -345,8 +346,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-              <pre><code>${nix-config}</code></pre>
-              <pre><code>export NIX_CONFIG</code></pre>
+            ${set-nix-config}
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
