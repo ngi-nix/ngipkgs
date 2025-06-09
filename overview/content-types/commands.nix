@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib) mkOption types;
+  # TODO: wrap in submodule and make it render itself
   commands = {
     bash = mkOption {
       type = types.submodule ./bash-code.nix;
