@@ -18,18 +18,15 @@
       };
   };
 
-  # TODO: test xrsh
-
-  # Figuring out how to test xrsh is a bit tricky because the program does not
-  # have a command line interface, but a web interface that's accessed via
-  # a browser. 127.0.0.1:8080 is the default port.
-
-  # A demo test might be more plausiblle as it allows port forwarding
-  # to the local browser.
-
   testScript =
     { nodes, ... }:
     ''
-      # start_all()
+      start_all()
+
+      machine.succeed("xrsh >&2 &")
+
+      # xrsh serves defaultly on :8080
+      machine.wait_for_open_port(8090)
+      machine.succeed("curl -i 0.0.0.0:8090")
     '';
 }
