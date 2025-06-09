@@ -11,16 +11,14 @@ let
     mkOption
     ;
 
-  mapAppsToList =
-    demo-shell: lib.flatten (map (name: lib.attrValues name.programs) (lib.attrValues demo-shell));
-
   makeManPath = lib.makeSearchPathOutput "man" "share/man";
 
   activate =
-    apps:
+    demo-shell:
     pkgs.writeShellApplication rec {
       name = "demo-shell";
-      runtimeInputs = apps;
+      runtimeInputs = lib.attrValues (lib.concatMapAttrs (name: value: value.programs) demo-shell);
+      runtimeEnv = lib.concatMapAttrs (name: value: value.env) demo-shell;
       passthru.inheritManPath = false;
       # HACK: start shell from ./result
       derivationArgs.postCheck = ''
@@ -72,7 +70,7 @@ in
           };
         };
         config = lib.mkIf config.shells.bash.enable {
-          bash.activate = activate (mapAppsToList config.demo-shell);
+          bash.activate = activate config.demo-shell;
         };
       };
     default = { };
