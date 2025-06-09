@@ -5,7 +5,6 @@
   inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -22,10 +21,7 @@
       self,
       nixpkgs,
       flake-utils,
-      sops-nix,
       pre-commit-hooks,
-      dream2nix,
-      buildbot-nix,
       ...
     }@inputs:
     let
@@ -36,18 +32,11 @@
       inherit (classic') lib lib';
 
       inherit (lib)
-        attrValues
         concatMapAttrs
         filterAttrs
-        mapAttrs
-        recursiveUpdate
         ;
 
       overlay = classic'.overlays.default;
-
-      # Note that modules and examples are system-agnostic, so import them first.
-      # TODO: get rid of these, it's extremely confusing to import the seemingly same thing twice
-      rawNgiProjects = classic'.projects;
 
       toplevel = machine: machine.config.system.build.toplevel;
 
@@ -57,7 +46,7 @@
           makemake = import ./infra/makemake { inherit inputs; };
         };
 
-        inherit (classic') nixosModules;
+        nixosModules = classic'.ngipkgsModules;
 
         # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
         overlays.default = overlay;
@@ -72,8 +61,6 @@
           };
 
           inherit (classic) pkgs ngipkgs optionsDoc;
-
-          ngiProjects = classic.projects;
         in
         rec {
           packages = ngipkgs // {
@@ -118,8 +105,13 @@
                       checksForNixosTests = concatMapAttrs (testName: test: {
                         "projects/${projectName}/nixos/tests/${testName}" = test;
                       }) project.nixos.tests;
+                      checksForNixosTypes = {
+                        "projects/${projectName}/nixos/check" = pkgs.writeText "${projectName}-eval-check" (
+                          lib.strings.toJSON classic.check-projects.${projectName}
+                        );
+                      };
                     in
-                    checksForNixosTests;
+                    checksForNixosTests // checksForNixosTypes;
                 in
                 concatMapAttrs checksForProject classic.projects;
 

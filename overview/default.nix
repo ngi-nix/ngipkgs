@@ -27,6 +27,9 @@ let
 
   join = concatStringsSep;
 
+  eval = module: (lib.evalModules { modules = [ module ]; }).config;
+  inherit (lib) mkOption types;
+
   inherit (lib)
     concatLines
     flip
@@ -140,8 +143,16 @@ let
             <dd class="option-default"><code>${option.default.text}</code></dd>
           '';
           maybeReadonly = optionalString option.readOnly ''
-            <span class="option-readonly" title="This option can't be set by users">Read-only</span>
+            <span class="option-alert" title="This option can't be set by users">Read-only</span>
           '';
+          updateScriptStatus =
+            let
+              optionName = lib.removePrefix "pkgs." option.default.text;
+            in
+            optionalString (option.type == "package" && !pkgs ? ${optionName}.passthru.updateScript) ''
+              <dt>Notes:</dt>
+              <dd><span class="option-alert">Missing update script</span> An update script is required for automatically tracking the latest release.</dd>
+            '';
         in
         ''
           <dt class="option-name">
@@ -156,6 +167,7 @@ let
               <dt>Type:</dt>
               <dd class="option-type"><code>${option.type}</code></dd>
               ${maybeDefault}
+              ${updateScriptStatus}
             </dl>
           </dd>
         '';
@@ -169,19 +181,19 @@ let
         in
         optionalString (!empty projectOptions) ''
           ${heading 2 "service" "Options"}
-          <section><details><summary><code>${join "." commonPrefix}</code></summary><dl>
+          <details><summary><code>${join "." commonPrefix}</code></summary><dl>
           ${concatLines (map (one prefixLength) projectOptions)}
-          </dl></details></section>
+          </dl></details>
         '';
     };
 
     examples = rec {
       one = example: ''
-        <section><details><summary>${example.description}</summary>
+        <details><summary>${example.description}</summary>
 
         ${render.codeSnippet.one { filename = example.module; }}
 
-        </details></section>
+        </details>
       '';
       many =
         examples:
@@ -228,89 +240,96 @@ let
       <article class="page-width">
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
+        ${optionalString (project.nixos.examples ? demo) (
+          render.serviceDemo.one "vm" project.nixos.modules project.nixos.examples.demo
+        )}
+        ${optionalString (project.nixos.examples ? demo-shell) (
+          render.serviceDemo.one "shell" project.nixos.modules project.nixos.examples.demo-shell
+        )}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
-        ${optionalString (project.nixos.examples ? demo) (
-          render.serviceDemo.one project.nixos.modules.services project.nixos.examples.demo
-        )}
       </article>
     '';
 
-    deliverableTags = rec {
-      one = name: label: ''
-        <a href="/project/${name}#${label}" class="deliverable-tag">${label}</a>
-      '';
-      many =
-        name: project:
-        # TODO is missing in the model yet
-        optionalString false (one name "library")
-        + optionalString (project.nixos.modules ? services && project.nixos.modules.services != { }) (
-          one name "service"
-        )
-        + optionalString (project.nixos.examples ? demo) (one name "demo")
-        +
-          # TODO is supposed to represent GUI apps and needs to be distinguished from CLI applications
-          optionalString false (one name "application");
-    };
-
-    # The snippets for each project that are rendered on https://ngi.nixos.org
-    projectSnippets = rec {
-      one =
-        name: project:
-        let
-          description = optionalString (project.metadata ? summary) ''
-            <div class="description">${project.metadata.summary}</div>
-          '';
-        in
-        ''
-          <article class="project">
-            <div class="row">
-              <h2>
-                <a href="/project/${name}">${name}</a>
-              </h2>
-              ${render.deliverableTags.many name project}
-            </div>
-            ${description}
-          </article>
-        '';
-      many = projects: concatLines (mapAttrsToList one projects);
-    };
-
-    demoGlue.one = exampleText: ''
+    demoGlue.one = demo-function: exampleText: ''
       # default.nix
       {
         ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
       }:
-      ngipkgs.demo (
+      ngipkgs.${demo-function} (
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
       )
     '';
 
     serviceDemo.one =
-      services: example:
+      type: modules: example:
       let
         demoSystem = import (nixpkgs + "/nixos/lib/eval-config.nix") {
           inherit system;
-          modules = (attrValues services) ++ [ example.module ];
+          modules =
+            [
+              example.module
+              ./demo/shell.nix
+            ]
+            ++ (attrValues modules.services)
+            ++ (attrValues modules.programs);
         };
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
-        servicePort = (builtins.head openPorts);
+        servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
+        installation-instructions = eval {
+          imports = [ ./content-types/commands.nix ];
+          instructions = [
+            {
+              platform = "Arch Linux";
+              commands.bash.input = ''
+                pacman --sync --refresh --noconfirm curl git jq nix
+              '';
+            }
+            {
+              platform = "Debian";
+              commands.bash.input = ''
+                apt install --yes curl git jq nix
+              '';
+            }
+            {
+              platform = "Ubuntu";
+              commands.bash.input = ''
+                apt install --yes curl git jq nix
+              '';
+            }
+          ];
+        };
+        set-nix-config =
+          let
+            from-yaml =
+              file:
+              with builtins;
+              fromJSON (
+                # XXX(@fricklerhandwerk): IFD, sorry. I was there, Gandalf: https://github.com/NixOS/nix/pull/7340
+                readFile (pkgs.runCommandNoCC "yaml.json" { } "${lib.getExe pkgs.yj} < ${file} > $out")
+              );
+            workflow = from-yaml ../.github/workflows/test-demo.yaml;
+            nix-config = with lib; (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG;
+          in
+          eval {
+            imports = [ ./content-types/commands.nix ];
+            instructions.commands.bash.input = ''
+              export NIX_CONFIG="
+              ${nix-config}
+              "
+            '';
+          };
       in
       ''
-        ${heading 2 "demo" "Demo"}
-        <details>
-        <summary>Run service in a VM</summary>
+        ${heading 2 "demo" (
+          if type == "shell" then "Try the program in a shell" else "Try the service in a VM"
+        )}
 
         <ol>
           <li>
             <strong>Install Nix</strong>
-              <ul>
-                <li>Arch Linux</li>
-                  <pre><code>pacman --sync --refresh --noconfirm curl git jq nix</code></pre>
-                <li>Debian/Ubuntu</li>
-                  <pre><code>apt install --yes curl git jq nix</code></pre>
-              </ul>
+            ${installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -322,25 +341,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-              ${
-                "" # TODO(@fricklerhandwerk): add more shells
-              }
-              <pre><code>export NIX_CONFIG="
-        ${
-          let
-            from-yaml =
-              file:
-              with builtins;
-              fromJSON (
-                # XXX(@fricklerhandwerk): IFD, sorry. I was there, Gandalf: https://github.com/NixOS/nix/pull/7340
-                readFile (pkgs.runCommandNoCC "yaml.json" { } "${lib.getExe pkgs.yj} < ${file} > $out")
-              );
-            workflow = from-yaml ../.github/workflows/test-demo.yaml;
-          in
-          with lib;
-          (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG
-          # optimising for readability; empty lines in NIX_CONFIG are ignored
-        }"</code></pre>
+            ${set-nix-config}
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
@@ -352,58 +353,20 @@ let
                   <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
               </ul>
           </li>
-          <li>
-            <strong>Access the service</strong><br />
-              Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
-          </li>
+          ${
+            if servicePort != "" then
+              ''
+                <li>
+                  <strong>Access the service</strong><br />
+                    Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
+                </li>
+              ''
+            else
+              ""
+          }
         </ol>
-        </details>
       '';
   };
-
-  # The top-level overview for all projects
-  index = ''
-    <section class="page-width">
-      ${heading 1 null "NGIpkgs"}
-
-      <p>
-        NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
-      </p>
-
-      <p>
-        This service is still <strong>experimental</strong> and under active development.
-        Don't expect anything specific to work yet:
-      </p>
-
-      <ul>
-        <li>The package collection is far incomplete</li>
-        <li>Many packages lack crucial components</li>
-        <li>There are no instructions for getting started</li>
-        <li>How software and the corresponding Nix expressions are exposed is subject to change</li>
-      </ul>
-
-      <p>
-        More information about the project:
-      </p>
-
-      <ul>
-        <li>
-          <a href="https://github.com/ngi-nix/ngipkgs">Source code</a>
-        </li>
-        <li>
-          <a href="https://github.com/ngi-nix/summer-of-nix/issues/41">Issue tracker</a>
-        </li>
-        <li>
-          <a href="https://nixos.org/community/teams/ngi/">Nix@NGI team</a>
-        </li>
-      </ul>
-
-    ${render.projectSnippets.many projects}
-
-    </section>
-
-    <footer>Version: ${version}, Last Modified: ${lastModified}</footer>
-  '';
 
   # HTML project pages
   projectPages = mapAttrs' (
@@ -414,11 +377,33 @@ let
       summary = project.metadata.summary or null;
       demoFile =
         if project.nixos.examples ? demo then
-          (pkgs.writeText "default.nix" (render.demoGlue.one (readFile project.nixos.examples.demo.module)))
+          (pkgs.writeText "default.nix" (
+            render.demoGlue.one "demo-vm" (readFile project.nixos.examples.demo.module)
+          ))
+        else if project.nixos.examples ? demo-shell then
+          (pkgs.writeText "default.nix" (
+            render.demoGlue.one "demo-shell" (readFile project.nixos.examples.demo-shell.module)
+          ))
         else
           null;
     }
   ) projects;
+
+  index = eval {
+    imports = [ ./content-types/project-list.nix ];
+
+    projects = lib.mapAttrsToList (name: project: {
+      inherit name;
+      description = project.metadata.summary or null;
+      deliverables = {
+        service = project.nixos.modules ? services && project.nixos.modules.services != { };
+        program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
+        demo = project.nixos.examples ? demo || project.nixos.examples ? demo-shell;
+      };
+    }) projects;
+    inherit version;
+    inherit lastModified;
+  };
 
   # The summary page at the overview root
   indexPage = {
@@ -426,7 +411,7 @@ let
     content = index;
     summary = ''
       NGIpkgs is collection of software applications funded by the Next
-      Generation Internet initiative and packaged for NixOS. 
+      Generation Internet initiative and packaged for NixOS.
     '';
   };
 

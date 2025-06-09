@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "Program Name";
+  name = "Mox";
 
   nodes = {
     machine =
@@ -12,8 +12,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services._serviceName_
-          sources.examples._ProjectName_._exampleName_ # i.e _ProjectName_.basic
+          sources.modules.programs.mox
+          sources.examples.Mox.basic
         ];
       };
   };
@@ -23,6 +23,7 @@
     ''
       start_all()
 
-      machine.succeed()
+      # List available SMTP config examples
+      machine.succeed("mox config example")
     '';
 }
