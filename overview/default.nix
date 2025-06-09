@@ -310,7 +310,7 @@ let
                 readFile (pkgs.runCommandNoCC "yaml.json" { } "${lib.getExe pkgs.yj} < ${file} > $out")
               );
             workflow = from-yaml ../.github/workflows/test-demo.yaml;
-            nix-config = with lib; (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG;
+            nix-config = with lib; trim (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG;
           in
           eval {
             imports = [ ./content-types/commands.nix ];
