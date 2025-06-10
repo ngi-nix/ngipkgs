@@ -1,6 +1,6 @@
 ---
 name: "Task: NixOS service module"
-about: "Implement NixOS service module for an NGI project"
+about: "Task for implementing NixOS service module for an NGI applicaton"
 title: "Implement NixOS service module for <PROJECT_NAME>"
 projects: Nix@NGI
 type: task
