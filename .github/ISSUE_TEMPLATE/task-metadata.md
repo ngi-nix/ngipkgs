@@ -1,6 +1,6 @@
 ---
 name: "Task: Implement project metadata"
-about: "Implement project metadata for an NGI project"
+about: "Task for adding in-code metadata for an NGI project"
 title: "Implement project metadata for <PROJECT_NAME>"
 projects: Nix@NGI
 type: task
