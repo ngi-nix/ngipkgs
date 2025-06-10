@@ -33,5 +33,11 @@
     };
   };
 
+  nixos.examples.demo-shell = {
+    module = ./programs/xrsh/examples/basic.nix;
+    description = "xrsh demo";
+    test.basic = import ./programs/xrsh/tests/basic.nix args;
+  };
+
   nixos.modules.services.xrsh = null;
 }
