@@ -13,8 +13,6 @@
 {
   name = "Ethersync";
 
-  interactive.sshBackdoor.enable = true;
-
   nodes =
     let
       config = {
