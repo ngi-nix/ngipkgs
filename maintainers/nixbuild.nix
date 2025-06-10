@@ -14,8 +14,8 @@ let
   trusted = true
   /*
     Leave `true` unless you have a particular reason not to! See:
-     - <https://nixos.org/manual/nix/stable/command-ref/conf-file.html?highlight=substituters#conf-substituters>
-     - <https://nixos.org/manual/nix/stable/command-ref/conf-file.html?highlight=substituters#conf-trusted-substituters>
+    - <https://nixos.org/manual/nix/stable/command-ref/conf-file.html?highlight=substituters#conf-substituters>
+    - <https://nixos.org/manual/nix/stable/command-ref/conf-file.html?highlight=substituters#conf-trusted-substituters>
   */
   ;
 

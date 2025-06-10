@@ -128,6 +128,7 @@
                   src = ./.;
                   hooks = {
                     actionlint.enable = true;
+                    editorconfig-checker.enable = true;
                     nixfmt-rfc-style.enable = true;
                   };
                 };

@@ -11,8 +11,7 @@ let
       PDF support is not functional, it needs a custom pdftomemo binary from the in-tree xpdf version (/filters/xpdf-3.01-bsn).
 
       1. This directory doesn't exist in the re-isearch version that's packaged in Nixpkgs.
-      2. The xpdf version in Nixpkgs, which is newer than the one vendored here, is marked
-         insecure due to multiple unresolved CVEs.
+      2. The xpdf version in Nixpkgs, which is newer than the one vendored here, is marked insecure due to multiple unresolved CVEs.
 
       Leaving the following attrset here, in case PDF support can ever be securely enabled.
     */
