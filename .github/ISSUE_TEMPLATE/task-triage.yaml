@@ -1,6 +1,6 @@
-name: Triage Project
-description: Create a triaging task for an NGI project
-title: "Triage <PROJECT NAME>"
+name: "Task: Triage project"
+description: Collect information about an NGI project
+title: "<PROJECT NAME>: Triage metadata"
 labels: ["good first issue"]
 projects: ["Nix@NGI"]
 body:
@@ -9,7 +9,7 @@ body:
     attributes:
       label: Instructions
       value: |
-        Collect relevant information about this project by following the instructions in the [NGI project issue template](https://github.com/ngi-nix/ngipkgs/issues/new?template=project-triaging.yaml).
+        Collect relevant information about this project by following the instructions in the [contributing guide](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#triaging-an-ngi-project) and put the metadata in the parent issue: `NGI PROJECT: <PROJECT_NAME>`.
     validations:
       required: true
   - type: markdown
