@@ -1,0 +1,21 @@
+# EditorConfig configuration for NGIpkgs
+# https://EditorConfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{nix,sh,bash}]
+indent_size = 2
+indent_style = space
+
+# Generated, just take whatever generator spits out
+[{*lock.json,*.patch{,.in}}]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
