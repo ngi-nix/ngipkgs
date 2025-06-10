@@ -19,7 +19,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.ethersync
-          sources.examples.Ethersync.basic
+          sources.examples.Ethersync.demo-shell
         ];
         services.getty.autologinUser = "root";
       };
