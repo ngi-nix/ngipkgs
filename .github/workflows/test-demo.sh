@@ -10,6 +10,8 @@ install_nix() {
     # Archlinux
     elif echo "$DISTRO" | grep --quiet archlinux; then
         pacman --sync --refresh --noconfirm curl git jq nix
+        # temporary fix for https://gitlab.archlinux.org/archlinux/packaging/packages/nix/-/issues/18
+        pacman --sync --refresh --noconfirm aws-sdk-cpp-iam
     # Other
     else
         echo "ERROR: Unknown distro. Exiting ..."
