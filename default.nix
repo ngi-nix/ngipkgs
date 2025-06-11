@@ -21,7 +21,6 @@ in
 }:
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
-  sops-nix = import "${sources.sops-nix}/modules/sops";
 in
 rec {
   inherit
@@ -135,23 +134,12 @@ rec {
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues projects));
 
-  ngipkgsModules = lib.filter (m: m != null) (
-    lib.mapAttrsToList (name: value: value) nixos-modules.services
-    ++ lib.mapAttrsToList (name: value: value) nixos-modules.programs
-  );
-
-  nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
   extendedNixosModules =
-    [
-      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-      {
-        nixpkgs.overlays = [ overlays.default ];
-      }
-      # TODO: needed for examples that use sops (like Pretalx)
-      sops-nix
-    ]
-    ++ ngipkgsModules
-    ++ nixosModules;
+    let
+      ngipkgsModules = lib.attrValues (lib'.flattenAttrs "." nixos-modules);
+      nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+    in
+    nixosModules ++ ngipkgsModules;
 
   evaluated-modules = lib.evalModules {
     class = "nixos";
