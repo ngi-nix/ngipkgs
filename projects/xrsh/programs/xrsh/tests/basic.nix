@@ -12,7 +12,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.xrsh
-          sources.examples.xrsh.basic
+          sources.examples.xrsh.demo-shell
         ];
       };
   };
