@@ -13,7 +13,7 @@
   nodes = {
     machine =
       let
-        demo-vm = sources.utils.demo-vm sources.examples.Cryptpad.demo;
+        demo-vm = sources.utils.demo.vm sources.examples.Cryptpad.demo;
       in
       { config, ... }:
       {
@@ -30,11 +30,14 @@
 
   testScript =
     { nodes, ... }:
+    let
+      demo-system = sources.utils.demo.eval sources.examples.Cryptpad.demo;
+      servicePort = demo-system.config.services.cryptpad.settings.httpPort;
+    in
     ''
       start_all()
 
       machine.execute("demo-vm &>/dev/null &")
-      # TODO: get port from config
-      machine.succeed("curl --silent --retry 10 --retry-max-time 120 --retry-all-errors http://localhost:9000/")
+      machine.succeed("curl --silent --retry 10 --retry-max-time 120 --retry-all-errors http://localhost:${toString servicePort}/")
     '';
 }

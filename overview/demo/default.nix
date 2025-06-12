@@ -5,7 +5,7 @@
   sources,
   extendedNixosModules,
 }:
-let
+rec {
   eval =
     demo-module:
     import (sources.nixpkgs + "/nixos/lib/eval-config.nix") {
@@ -19,9 +19,8 @@ let
       ] ++ extendedNixosModules;
       specialArgs = { inherit sources; };
     };
-in
-{
-  demo-vm =
+
+  vm =
     module:
     pkgs.writeShellApplication {
       name = "demo-vm";
@@ -30,5 +29,5 @@ in
       '';
     };
 
-  demo-shell = module: (eval module).config.shells.bash.activate;
+  shell = module: (eval module).config.shells.bash.activate;
 }
