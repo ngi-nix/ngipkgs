@@ -26,7 +26,7 @@
     }@inputs:
     let
       classic' = import ./. {
-        sources = inputs;
+        flake = self;
         system = null;
       };
       inherit (classic') lib lib';
@@ -57,7 +57,7 @@
         system:
         let
           classic = import ./. {
-            sources = inputs;
+            flake = self;
             inherit system;
           };
 
@@ -65,18 +65,7 @@
         in
         rec {
           packages = ngipkgs // {
-            overview = import ./overview {
-              inherit
-                lib
-                lib'
-                self
-                nixpkgs
-                system
-                ;
-              pkgs = pkgs // ngipkgs;
-              projects = classic.projects;
-              options = optionsDoc.optionsNix;
-            };
+            inherit (classic) overview;
 
             options =
               pkgs.runCommand "options.json"

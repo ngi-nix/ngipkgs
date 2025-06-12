@@ -3,7 +3,7 @@
   lib,
   lib',
   options,
-  nixpkgs,
+  nixpkgs ? self.inputs.nixpkgs,
   pkgs,
   projects,
   self,

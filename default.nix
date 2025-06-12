@@ -30,6 +30,18 @@ rec {
     sources
     ;
 
+  overview = import ./overview {
+    inherit
+      lib
+      lib'
+      system
+      projects
+      ;
+    self = flake;
+    pkgs = pkgs // ngipkgs;
+    options = optionsDoc.optionsNix;
+  };
+
   optionsDoc = pkgs.nixosOptionsDoc {
     inherit (evaluated-modules) options;
   };
@@ -261,7 +273,7 @@ rec {
     packages = [
       # live overview watcher
       (pkgs.devmode.override {
-        buildArgs = "${toString ./overview/devmode.nix} --show-trace";
+        buildArgs = "-A overview --show-trace";
       })
     ];
   };
