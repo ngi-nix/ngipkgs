@@ -29,6 +29,11 @@ in
       elasticsearch: {
         origin: "http://localhost:${toString elasticPort}",
       },
+      mediaStorage: {
+        local: {
+          folder: "${config.services.inventaire.stateDir}/storage",
+        },
+      },
     }
   '';
 

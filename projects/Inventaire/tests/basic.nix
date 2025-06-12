@@ -17,12 +17,19 @@
       }:
       {
         imports = [
+          (sources.inputs.nixpkgs + "/nixos/tests/common/x11.nix")
           sources.modules.ngipkgs
           sources.modules.services.inventaire
           sources.examples.Inventaire.basic
         ];
 
-        virtualisation.memorySize = 2048;
+        # couchdb + elasticsearch eats up memory
+        # leave some overhead for interactive firefox usage
+        virtualisation.memorySize = 4096;
+
+        environment.systemPackages = with pkgs; [
+          firefox
+        ];
       };
   };
 

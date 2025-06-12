@@ -58,6 +58,7 @@ in
             name = "inventaire-launch";
 
             runtimeInputs = with pkgs; [
+              graphicsmagick # server-side image resizing
               inventaire
             ];
 
