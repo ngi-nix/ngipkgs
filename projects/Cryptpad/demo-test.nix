@@ -30,7 +30,7 @@
     ''
       start_all()
 
-      machine.execute("demo-vm &")
-      machine.succeed("curl --fail --connect-timeout 10 http://localhost:9000/") # TODO: get port from config
+      machine.execute("demo-vm &>/dev/null &")
+      machine.succeed("curl --fail --retry 5 --connect-timeout 10 http://localhost:9000/") # TODO: get port from config
     '';
 }
