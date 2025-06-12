@@ -23,9 +23,12 @@ in
 {
   demo-vm =
     module:
-    pkgs.writeShellScript "demo-vm" ''
-      exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
-    '';
+    pkgs.writeShellApplication {
+      name = "demo-vm";
+      text = ''
+        exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
+      '';
+    };
 
   demo-shell = module: (eval module).config.shells.bash.activate;
 }
