@@ -1,14 +1,15 @@
 {
   lib,
   pkgs,
+  system,
   sources,
   extendedNixosModules,
 }:
 let
-  demo-system =
+  eval =
     demo-module:
     import (sources.nixpkgs + "/nixos/lib/eval-config.nix") {
-      system = "x86_64-linux";
+      inherit system;
       modules = [
         demo-module
         (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
@@ -23,8 +24,8 @@ in
   demo-vm =
     module:
     pkgs.writeShellScript "demo-vm" ''
-      exec ${(demo-system module).config.system.build.vm}/bin/run-nixos-vm "$@"
+      exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
     '';
 
-  demo-shell = module: (demo-system module).config.shells.bash.activate;
+  demo-shell = module: (eval module).config.shells.bash.activate;
 }
