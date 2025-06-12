@@ -22,12 +22,9 @@ rec {
 
   vm =
     module:
-    pkgs.writeShellApplication {
-      name = "demo-vm";
-      text = ''
-        exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
-      '';
-    };
+    pkgs.writeShellScript "demo-vm" ''
+      exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
+    '';
 
   shell = module: (eval module).config.shells.bash.activate;
 }
