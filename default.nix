@@ -1,7 +1,16 @@
+let
+  flake-inputs = import (
+    fetchTarball "https://github.com/fricklerhandwerk/flake-inputs/tarball/4.1.0"
+  );
+  inherit (flake-inputs)
+    import-flake
+    ;
+in
 {
-  sources ? import (fetchTarball "https://github.com/fricklerhandwerk/flake-inputs/tarball/main") {
-    root = ./.;
+  flake ? import-flake {
+    src = ./.;
   },
+  sources ? flake.inputs,
   system ? builtins.currentSystem,
   pkgs ? import sources.nixpkgs {
     config = { };
