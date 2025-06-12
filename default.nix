@@ -129,6 +129,8 @@ rec {
       ngipkgs =
         { ... }:
         {
+          # TODO: properly separate the demo modules from production code
+          imports = [ ./overview/demo/shell.nix ];
           nixpkgs.overlays = [ overlays.default ];
         };
     }
