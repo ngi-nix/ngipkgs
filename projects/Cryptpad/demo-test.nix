@@ -5,29 +5,32 @@
 {
   name = "cryptpad-demo";
 
+  skipTypeCheck = true;
+  interactive.sshBackdoor.enable = true;
+
   nodes = {
     machine =
+      let
+        demo-vm = sources.utils.demo-vm sources.examples.Cryptpad.demo;
+      in
       { ... }:
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.cryptpad
-          sources.examples.Cryptpad.demo
         ];
+
+        environment.systemPackages = [ demo-vm ];
+
+        virtualisation.memorySize = 8192;
       };
   };
 
   testScript =
     { nodes, ... }:
-    let
-      servicePort = toString nodes.machine.services.cryptpad.settings.httpPort;
-    in
     ''
       start_all()
 
-      machine.wait_for_unit("cryptpad.service")
-      machine.wait_for_open_port(${servicePort})
-
-      machine.succeed("curl --fail http://localhost:${servicePort}")
+      machine.execute("demo-vm &")
+      machine.succeed("curl --fail --connect-timeout 10 http://localhost:9000/") # TODO: get port from config
     '';
 }

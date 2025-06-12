@@ -180,6 +180,9 @@ rec {
       inputs = sources;
       modules = nixos-modules;
       inherit examples;
+      utils = {
+        inherit demo-vm demo-shell;
+      };
     };
   };
 
