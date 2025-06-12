@@ -272,6 +272,7 @@ rec {
       pkgs
       sources
       extendedNixosModules
+      system
       ;
   };
 
