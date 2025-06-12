@@ -2,7 +2,6 @@
   sources,
   ...
 }:
-
 {
   name = "xrsh";
 
@@ -13,20 +12,23 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.xrsh
-          sources.examples.xrsh.basic
+          sources.examples.xrsh.demo-shell
         ];
       };
   };
 
   testScript =
     { nodes, ... }:
+    let
+      XRSH_PORT = toString nodes.machine.config.programs.xrsh.port;
+    in
     ''
       start_all()
 
       machine.succeed("xrsh >&2 &")
 
       # xrsh serves defaultly on :8080
-      machine.wait_for_open_port(8090)
-      machine.succeed("curl -i 0.0.0.0:8090")
+      machine.wait_for_open_port(${XRSH_PORT})
+      machine.succeed("curl -i 0.0.0.0:${XRSH_PORT}")
     '';
 }

@@ -25,9 +25,9 @@
   nixos.modules.programs = {
     xrsh = {
       module = ./programs/xrsh/module.nix;
-      examples.basic = {
+      examples.demo-shell = {
         module = ./programs/xrsh/examples/basic.nix;
-        description = "Basic example of using xrsh";
+        description = "xrsh example";
         tests.basic = import ./programs/xrsh/tests/basic.nix args;
       };
     };
