@@ -1,7 +1,14 @@
 { config, ... }:
 {
   virtualisation = {
+    memorySize = 4096;
+    cores = 4;
     graphics = false;
+
+    qemu.options = [
+      "-cpu host"
+      "-enable-kvm"
+    ];
 
     # ssh + open service ports
     forwardPorts = map (port: {
