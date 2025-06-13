@@ -40,7 +40,6 @@ in
     };
     render-codeblock = mkOption {
       type = with types; functionTo str;
-
     };
     __toString = mkOption {
       type = with types; functionTo str;
