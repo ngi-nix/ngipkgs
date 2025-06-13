@@ -33,7 +33,9 @@
         module = ./programs/peertube-cli/module.nix;
         examples.basic-cli = {
           module = ./programs/peertube-cli/examples/basic.nix;
-          description = "CLI configuration";
+          description = ''
+            Enable peertube-cli, a tool for remotely managing PeerTube instances
+          '';
           tests.basic-cli = import ./programs/peertube-cli/tests/basic.nix args;
         };
         links = {
