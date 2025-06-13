@@ -38,28 +38,32 @@ in
             })
           );
     };
-    __toString = mkOption {
-      type = with types; functionTo str;
-      readOnly = true;
-      default =
-        self:
-        if lib.isList self.instructions then
-          ''
-            <ul>
-              ${lib.concatMapStringsSep "\n" (i: ''
-                <li>
-                  <dt>${i.platform}</dt>
-                  <dd>
-                    ${i.commands.bash}
-                  </dd>
-                </li>
-              '') self.instructions}
-            </ul>
-          ''
-        else
-          ''
-            ${self.instructions.commands.bash}
-          '';
-    };
+    # __toString = mkOption {
+    # type = with types; functionTo str;
+    # readOnly = true;
+    # default =
+    # self:
+    # if lib.isList self.instructions then
+    # ''
+    # <ul>
+    # ${lib.concatMapStringsSep "\n" (i: ''
+    # <li>
+    # <dt>${i.platform}</dt>
+    # <dd>
+    # ${render.codeBlock.one {
+    # content = toString i.commands.bash;
+    # copyableContent = i.commands.bash.input;
+    # }}
+    # </dd>
+    # </li>
+    # '') self.instructions}
+    # </ul>
+    # ''
+    # else
+    # render.codeBlock.one {
+    # content = toString self.instructions.commands.bash;
+    # copyableContent = self.instructions.commands.bash.input;
+    # };
+    # };
   };
 }

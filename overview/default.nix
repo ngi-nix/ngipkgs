@@ -134,6 +134,27 @@ let
           </div>
         </div>
       '';
+    codeBlock.one =
+      {
+        content,
+        copyableContent ? content,
+        language ? "bash",
+      }:
+      ''
+        <div class="code-block">
+          ${content}
+          <div class="code-buttons">
+            <template scripted>
+              <button class="button copy" onclick="copyInlineToClipboard(this)">
+                <script type="application/json">
+                  ${toJSON copyableContent}
+                </script>
+                Copy
+              </button>
+            </template>
+          </div>
+        </div>
+      '';
     options = rec {
       one =
         prefixLength: option:
@@ -279,6 +300,7 @@ let
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         installation-instructions = eval {
           imports = [ ./content-types/commands.nix ];
+          _module.args = { inherit render; };
           instructions = [
             {
               platform = "Arch Linux";
@@ -300,6 +322,31 @@ let
             }
           ];
         };
+
+        renderInstructions =
+          instructions:
+          if lib.isList instructions.instructions then
+            ''
+              <ul>
+                ${lib.concatMapStringsSep "\n" (i: ''
+                  <li>
+                    <dt>${i.platform}</dt>
+                    <dd>
+                      ${render.codeBlock.one {
+                        content = toString i.commands.bash;
+                        copyableContent = i.commands.bash.input;
+                      }}
+                    </dd>
+                  </li>
+                '') instructions.instructions}
+              </ul>
+            ''
+          else
+            render.codeBlock.one {
+              content = toString instructions.instructions.commands.bash;
+              copyableContent = instructions.instructions.commands.bash.input;
+            };
+
         nix-config = eval {
           imports = [ ./content-types/nix-config.nix ];
           settings = [
@@ -334,7 +381,7 @@ let
         <ol>
           <li>
             <strong>Install Nix</strong>
-            ${installation-instructions}
+            ${renderInstructions installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -346,7 +393,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-            ${set-nix-config}
+            ${renderInstructions set-nix-config}
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
@@ -465,6 +512,16 @@ let
             await navigator.clipboard.writeText(code);
             button.textContent = "Copied ✓";
             setTimeout(() => button.textContent = "Copy", 2000);
+          }
+
+          async function copyInlineToClipboard(button) {
+            const scriptElement = Array.from(button.children).find(child => child.tagName === "SCRIPT");
+            if (scriptElement) {
+              const code = JSON.parse(scriptElement.textContent);
+              await navigator.clipboard.writeText(code);
+              button.textContent = "Copied ✓";
+              setTimeout(() => button.textContent = "Copy", 2000);
+            }
           }
         </script>
       </body>
