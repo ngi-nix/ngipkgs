@@ -379,17 +379,20 @@ For services, click on the module name to reveal more details, then copy the nam
 >
 > Example: Searching for Oku (web browser) might also return Okular (document viewver), which share a similar names, but which are totally unrelated.
 
-## Adding/Exposing an NGI project
+## Exposing an NGI project
 
-1. Copy the project template to the projects directory:
+In order to display a project on <ngi.nixos.org>, its metadata must be added to this repository's source code in a certain format.
+
+1. Copy the [project template](./maintainers/templates/project) to the projects directory:
 
    ```
    cp -r maintainers/templates/project projects/<project_name>
    ```
 
-1. Search for `NGI Project: <project_name>` in the [Ngipkgs issues](https://github.com/ngi-nix/ngipkgs/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22NGI%20Project%22) page.
-   If a page with that name exists, use the information available there in the next step.
-1. Follow the instructions inside the `projects/<project_name>/default.nix` file and fill in the missing data about the project.
+1. Follow the instructions inside the [`projects/<project_name>/default.nix`](./maintainers/templates/project/default.nix) file, and fill in the data based on the project's tracking issue.
+
+   Project tracking issues are labeled with [`NGI Project`](https://github.com/ngi-nix/ngipkgs/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22NGI%20Project%22).
+
 1. Check that the code is valid by running the test locally:
 
    ```
