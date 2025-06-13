@@ -42,6 +42,16 @@
       start_all()
 
       machine.wait_for_unit("inventaire.service")
-      machine.wait_for_console_text("inventaire server is listening")
+      machine.wait_for_console_text("inventaire server is listening on port 3006")
+
+      machine.succeed("env DISPLAY=:0 firefox http://localhost:3006 >&2 &")
+
+      # Title of start page
+      machine.wait_for_window("Inventaire - your friends and communities are your best library")
+
+      # Default instance name (insecure example config doesn't override this)
+      machine.wait_for_text("My Inventaire Instance")
+
+      machine.screenshot("Inventaire-works")
     '';
 }
