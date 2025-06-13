@@ -4,9 +4,24 @@
   fetchFromGitea,
   fetchFromGitHub,
   fetchpatch,
+  gitUpdater,
+  curl,
   inventaire-unwrapped,
   inventaire-i18n,
+  nix,
+  nodejs,
+  replaceVars,
+  runCommandNoCC,
   writeShellApplication,
+  _experimental-update-script-combinators,
+
+  # In case users want to override these with different ones
+  sparql-queries ? runCommandNoCC "sparql-queries-unpacked" { } ''
+    cp -r --no-preserve=mode ${./sparql-queries} $out
+    for archive in $out/*.gz; do
+      gunzip "$archive"
+    done
+  '',
 }:
 
 let
@@ -16,11 +31,12 @@ let
     rev = "44deaba64b1c2c474bf5a4ece07eefa93b2fb028";
     hash = "sha256-uMNqmMBDmz2zmPYjpVuQeCw4DsSm8DYhC33jOpMQj+w=";
   };
+
   # scripts/build_i18n, with all the manual i18n cloning & building ripped out
   copyI18nDataScript = writeShellApplication {
     name = "copy_i18n_data";
     text = ''
-      echo "[Nix] Copying aready-built data from ${inventaire-i18n}"
+      echo "[Nix] Copying already-built data from ${inventaire-i18n}"
 
       rm -rf ./public/i18n
       cp -rv --no-preserve=all ${inventaire-i18n}/lib/node_modules/inventaire-i18n/dist/client ./public/i18n
@@ -55,6 +71,10 @@ buildNpmPackage rec {
       url = "https://codeberg.org/inventaire/inventaire-client/commit/cac30096cca66400f29033a010ae9a5d6d0d5f4b.patch";
       hash = "sha256-v4ZW5MfY8bpgVzrXs7NVAGu71BCc6U6cDtVY80tLemU=";
     })
+
+    (replaceVars ./9901-Use-saved-query-results.patch {
+      sparqlQueries = sparql-queries;
+    })
   ];
 
   npmDepsHash = "sha256-jZQ5rQK8fZQsv/5tYdxYhAE3ha7rSC1++TEwRsp9ucA=";
@@ -65,6 +85,12 @@ buildNpmPackage rec {
     # inventaire (server-side) is not at a directory above us during build, patch in path to our prebuilt one
     substituteInPlace package.json tsconfig.base.json \
       --replace-fail '"../server/' '"${inventaire-unwrapped}/lib/node_modules/inventaire/dist/server/' \
+
+    # TypeError: wdk.simplifySparqlResults is not a function
+    # items is a list of objects, so id are objects. This generates [object Object] URLs otherwise.
+    substituteInPlace scripts/sitemaps/generate_sitemaps.js \
+      --replace-fail 'wdk.simplifySparqlResults' 'wdk.simplify.sparqlResults' \
+      --replace-fail 'entity/wd:''${id}' 'entity/wd:''${id.item}'
 
     # Don't do git things
     # Don't build in configurePhase
@@ -92,19 +118,46 @@ buildNpmPackage rec {
       --replace-fail '$(git rev-parse --short HEAD)' '"${
         if src.tag != null then src.tag else src.rev
       }"' \
-
-    # TODO
-    # Skip building of sitemaps, needs internet access to query wikidata for large JSON files
-    mkdir -p ./public/sitemaps
   '';
 
   # "Your cache folder contains root-owned files" error from NPM
   makeCacheWritable = true;
 
+  # Actually error out when this failed
+  postBuild = ''
+    if [ ! -e ./public/sitemaps/sitemapindex.xml ]; then
+      echo "Sitemaps generation likely failed!"
+      exit 1
+    fi
+  '';
+
   # These get produced/modified during the build, but not installed (fully)
   postInstall = ''
     cp -r app public vendor $out/lib/node_modules/inventaire-client/
   '';
+
+  passthru = rec {
+    updateSourceScript = gitUpdater {
+      rev-prefix = "v";
+    };
+    updateQueriesScript = writeShellApplication {
+      name = "inventaire-client-sparql-queries-update-script";
+      runtimeInputs = [
+        curl
+        nix
+        nodejs
+      ];
+      runtimeEnv = {
+        storeDir = builtins.storeDir;
+        dumpUrlsJson = ./dump-urls-json.js;
+      };
+      text = lib.strings.readFile ./update-sparql-queries.sh;
+    };
+    updateScript = _experimental-update-script-combinators.sequence [
+      updateSourceScript.command
+      updateQueriesScript
+    ];
+  };
 
   meta = {
     description = "A libre collaborative resources mapper powered by open-knowledge (client-side)";
