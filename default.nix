@@ -192,6 +192,7 @@ rec {
       inputs = sources;
       modules = nixos-modules;
       inherit examples;
+      utils = { inherit demo; };
     };
   };
 
@@ -287,9 +288,4 @@ rec {
       system
       ;
   };
-
-  inherit (demo)
-    demo-vm
-    demo-shell
-    ;
 }

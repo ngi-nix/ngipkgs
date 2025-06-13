@@ -383,11 +383,11 @@ let
       demoFile =
         if project.nixos.examples ? demo then
           (pkgs.writeText "default.nix" (
-            render.demoGlue.one "demo-vm" (readFile project.nixos.examples.demo.module)
+            render.demoGlue.one "demo.vm" (readFile project.nixos.examples.demo.module)
           ))
         else if project.nixos.examples ? demo-shell then
           (pkgs.writeText "default.nix" (
-            render.demoGlue.one "demo-shell" (readFile project.nixos.examples.demo-shell.module)
+            render.demoGlue.one "demo.shell" (readFile project.nixos.examples.demo-shell.module)
           ))
         else
           null;
