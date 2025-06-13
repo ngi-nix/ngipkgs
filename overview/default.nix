@@ -300,7 +300,6 @@ let
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         installation-instructions = eval {
           imports = [ ./content-types/commands.nix ];
-          _module.args = { inherit render; };
           instructions = [
             {
               platform = "Arch Linux";
@@ -321,8 +320,8 @@ let
               '';
             }
           ];
+          render-codeblock = render.codeBlock.one;
         };
-
         renderInstructions =
           instructions:
           if lib.isList instructions.instructions then
@@ -381,7 +380,7 @@ let
         <ol>
           <li>
             <strong>Install Nix</strong>
-            ${renderInstructions installation-instructions}
+            ${installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -393,7 +392,7 @@ let
           </li>
           <li>
             <strong>Enable binary substituters</strong>
-            ${renderInstructions set-nix-config}
+            ${set-nix-config}
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
