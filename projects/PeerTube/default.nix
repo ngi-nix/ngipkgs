@@ -27,14 +27,34 @@
     };
   };
 
-  nixos.modules.services = {
-    peertube = {
-      name = "peertube";
-      module = ./services/peertube/module.nix;
-      examples.basic = {
-        module = ./services/peertube/examples/basic.nix;
-        description = "Basic configuration mainly used for testing purposes.";
-        tests.peertube-plugins = import ./services/peertube/tests/peertube-plugins.nix args;
+  nixos.modules = {
+    programs = {
+      peertube-cli = {
+        module = ./programs/peertube-cli/module.nix;
+        examples.basic-cli = {
+          module = ./programs/peertube-cli/examples/basic.nix;
+          description = ''
+            Enable peertube-cli, a tool for remotely managing PeerTube instances
+          '';
+          tests.basic-cli = import ./programs/peertube-cli/tests/basic.nix args;
+        };
+        links = {
+          docs = {
+            text = "Documentation";
+            url = "https://docs.joinpeertube.org/maintain/tools#remote-peertube-cli";
+          };
+        };
+      };
+    };
+
+    services = {
+      peertube = {
+        module = ./services/peertube/module.nix;
+        examples.basic = {
+          module = ./services/peertube/examples/basic.nix;
+          description = "Basic configuration mainly used for testing purposes";
+          tests.peertube-plugins = import ./services/peertube/tests/peertube-plugins.nix args;
+        };
       };
     };
   };
