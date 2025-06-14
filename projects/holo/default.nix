@@ -26,4 +26,5 @@
   };
 
   # TODO: add service module
+  nixos.modules.services.holo-daemon = null;
 }
