@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "Program Name";
+  name = "holo";
 
   nodes = {
     machine =
