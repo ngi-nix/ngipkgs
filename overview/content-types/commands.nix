@@ -50,17 +50,20 @@ in
           ''
             <ul>
             ${lib.concatMapStringsSep "\n" (i: ''
-              <li>
-              <dt>${i.platform}</dt>
-              <dd>
-              ${self.render-codeblock {
-                content = toString i.commands.bash;
-                copyableContent = i.commands.bash.input;
-              }}
-              </dd>
-              </li>
+                  <li>
+              <details>
+                  <summary>${i.platform}</summary>
+                  <div>
+                  ${self.render-codeblock {
+                    content = toString i.commands.bash;
+                    copyableContent = i.commands.bash.input;
+                  }}
+                  </div>
+              </details>
+                  </li>
             '') self.instructions}
             </ul>
+
           ''
         else
           self.render-codeblock {
