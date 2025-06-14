@@ -19,7 +19,7 @@
       module = ./programs/holo/module.nix;
       examples.basic = {
         module = ./programs/holo/examples/basic.nix;
-        description = "Enable holo to install the holo-cli package";
+        description = "Enable the holo program";
         tests.basic = import ./programs/holo/tests/basic.nix args;
       };
     };
