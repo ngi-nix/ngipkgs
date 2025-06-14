@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.holo.enable = true;
+}
