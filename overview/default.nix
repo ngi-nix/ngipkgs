@@ -105,7 +105,7 @@ let
   # step.
   markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
 
-  render = {
+  render = rec {
     # A code snippet that is copyable and optionally downloadable
     codeSnippet.one =
       {
@@ -129,6 +129,27 @@ let
                     </script>
                   ''}
                   Copy
+              </button>
+            </template>
+          </div>
+        </div>
+      '';
+    codeBlock.one =
+      {
+        content,
+        copyableContent ? content,
+        language ? "bash",
+      }:
+      ''
+        <div class="code-block">
+          ${content}
+          <div class="code-buttons">
+            <template scripted>
+              <button class="button copy" onclick="copyInlineToClipboard(this)">
+                <script type="application/json">
+                  ${toJSON copyableContent}
+                </script>
+                Copy
               </button>
             </template>
           </div>
@@ -279,6 +300,7 @@ let
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         installation-instructions = eval {
           imports = [ ./content-types/commands.nix ];
+          render-codeblock = codeBlock.one;
           instructions = [
             {
               platform = "Arch Linux";
@@ -319,11 +341,37 @@ let
             }
           ];
         };
+        # TODO: this will be refactored
         set-nix-config = eval {
           imports = [ ./content-types/commands.nix ];
           instructions.commands.bash.input = ''
             export ${nix-config}
           '';
+          render-codeblock = codeBlock.one;
+        };
+        set-build-instructions = eval {
+          imports = [ ./content-types/commands.nix ];
+          render-codeblock = codeBlock.one;
+
+          instructions = [
+            {
+              platform = "Arch Linux, Debian Sid and Ubuntu 25.04";
+              commands.bash.input = ''
+                nix-build ./default.nix && ./result
+              '';
+            }
+            {
+              platform = "Debian 12 and Ubuntu 24.04/24.10";
+              commands.bash.input = [
+                ''
+                  rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)
+                ''
+                ''
+                  nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"
+                ''
+              ];
+            }
+          ];
         };
       in
       ''
@@ -334,7 +382,7 @@ let
         <ol>
           <li>
             <strong>Install Nix</strong>
-            ${installation-instructions}
+            ${toString installation-instructions}
           </li>
           <li>
             <strong>Download a configuration file</strong>
@@ -350,13 +398,7 @@ let
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
-              <ul>
-                <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
-                  <pre><code>nix-build ./default.nix && ./result</code></pre>
-                <li>Debian 12 and Ubuntu 24.04/24.10</li>
-                  <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
-                  <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
-              </ul>
+            ${set-build-instructions}
           </li>
           ${
             if servicePort != "" then
@@ -465,6 +507,16 @@ let
             await navigator.clipboard.writeText(code);
             button.textContent = "Copied ✓";
             setTimeout(() => button.textContent = "Copy", 2000);
+          }
+
+          async function copyInlineToClipboard(button) {
+            const scriptElement = Array.from(button.children).find(child => child.tagName === "SCRIPT");
+            if (scriptElement) {
+              const code = JSON.parse(scriptElement.textContent);
+              await navigator.clipboard.writeText(code);
+              button.textContent = "Copied ✓";
+              setTimeout(() => button.textContent = "Copy", 2000);
+            }
           }
         </script>
       </body>

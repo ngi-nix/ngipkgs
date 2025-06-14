@@ -38,6 +38,9 @@ in
             })
           );
     };
+    render-codeblock = mkOption {
+      type = with types; functionTo str;
+    };
     __toString = mkOption {
       type = with types; functionTo str;
       readOnly = true;
@@ -46,20 +49,27 @@ in
         if lib.isList self.instructions then
           ''
             <ul>
-              ${lib.concatMapStringsSep "\n" (i: ''
-                <li>
-                  <dt>${i.platform}</dt>
-                  <dd>
-                    ${i.commands.bash}
-                  </dd>
-                </li>
-              '') self.instructions}
+            ${lib.concatMapStringsSep "\n" (i: ''
+                  <li>
+              <details>
+                  <summary>${i.platform}</summary>
+                  <div>
+                  ${self.render-codeblock {
+                    content = toString i.commands.bash;
+                    copyableContent = i.commands.bash.input;
+                  }}
+                  </div>
+              </details>
+                  </li>
+            '') self.instructions}
             </ul>
+
           ''
         else
-          ''
-            ${self.instructions.commands.bash}
-          '';
+          self.render-codeblock {
+            content = toString self.instructions.commands.bash;
+            copyableContent = self.instructions.commands.bash.input;
+          };
     };
   };
 }
