@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.jaq.enable = true;
+}
