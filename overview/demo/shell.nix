@@ -32,7 +32,31 @@ let
         + ''
           export PS1="\[\033[1m\][demo-shell]\[\033[m\]\040\w >\040"
 
-          ${pkgs.lib.getExe pkgs.bash} --norc "$@"
+          ${lib.optionalString (demo-shell != { }) ''
+            echo -e "\n\033[1;32mDemo shell activated! Available programs:\033[0m"
+            ${lib.concatStringsSep "\n" (
+              lib.mapAttrsToList (
+                name: value:
+                lib.concatStringsSep "\n" (
+                  lib.mapAttrsToList (progName: prog: "echo '  - ${progName} (from ${name})'") value.programs
+                )
+              ) demo-shell
+            )}
+            # echo ""
+          ''}
+
+          # Display instructions if any exist
+          ${lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (
+              name: value:
+              lib.optionalString (value.usage-instructions != "") ''
+                echo -e "\n\033[1;34m=== ${name} Demo Usage Instructions ===\033[0m"
+                echo -e "${lib.escape [ "\"" "\\" ] value.usage-instructions}"
+              ''
+            ) demo-shell
+          )}
+
+            ${pkgs.lib.getExe pkgs.bash} --norc "$@"
         '';
     };
 in
@@ -58,6 +82,15 @@ in
               XRSH_PORT = "9090";
             };
             default = { };
+          };
+          usage-instructions = mkOption {
+            type = lines;
+            description = "Instructions that will be shown to the user";
+            example = ''
+              Run the `xrsh` command to start the web server.
+              Visit http://localhost:8080 in your browser to access the application.
+            '';
+            default = "";
           };
         };
       });

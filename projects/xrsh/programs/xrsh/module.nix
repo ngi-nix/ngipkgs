@@ -32,6 +32,10 @@ in
         xrsh = cfg.package;
       };
       env.XRSH_PORT = "8090";
+      usage-instructions = ''
+        Run 'xrsh' to start the web server.
+        Visit http://localhost:${toString cfg.port} in your browser to access the application.
+      '';
     };
   };
 }
