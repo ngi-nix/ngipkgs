@@ -8,8 +8,8 @@
   metadata = {
     summary = "Jaq is a data wrangling tool focusing on correctness, speed, and simplicity";
     subgrants = [
-        "jaq"
-        "Polyglot-jaq"
+      "jaq"
+      "Polyglot-jaq"
     ];
   };
 
