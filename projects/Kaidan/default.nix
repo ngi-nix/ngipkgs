@@ -27,6 +27,17 @@
     };
   };
 
-  nixos.modules.programs.kaidan = null;
+  nixos.modules.programs = {
+    kaidan = {
+      module = ./programs/kaidan/module.nix;
+      examples.basic = {
+        module = ./programs/kaidan/examples/basic.nix;
+        description = "Kaidan program example";
+        # TODO: Write tests
+        # Test requires x-server, OCR and maybe an XMPP server
+        tests.kaidan = null;
+      };
+    };
+  };
   nixos.modules.services.kaidan = null;
 }
