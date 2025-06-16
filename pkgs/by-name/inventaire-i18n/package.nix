@@ -11,14 +11,14 @@
 
 buildNpmPackage rec {
   pname = "inventaire-i18n";
-  version = "0-unstable-2025-05-17";
+  version = "0-unstable-2025-06-12";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire-i18n";
-    rev = "8bad152485569c2db76715f46fa6ac7ee57a64e2";
-    hash = "sha256-UfGBN2YZpbldihK70xb5z30vKn+KYzW5zf4NyUVi7Z4=";
+    rev = "834830455bbdf7684a55141f80e9b7a2da33d4eb";
+    hash = "sha256-0FhJuHZI4NyeWg3mhb0KCqe/SOR2nNo2uOfJ2CJYXPo=";
   };
 
   npmDepsHash = "sha256-hJ9L9X53n44Iz0lKX2NspMLtQbQA0nRgJvYZc5+xNuA=";
@@ -38,7 +38,7 @@ buildNpmPackage rec {
       text = ''
         export UPDATE_NIX_ATTR_PATH="''${UPDATE_NIX_ATTR_PATH:-inventaire-i18n}"
 
-        oldhash="$(nix-instantiate . --eval --strict -A ngipkgs."$UPDATE_NIX_ATTR_PATH".npmDepsHash" | cut -d'"' -f2)"
+        oldhash="$(nix-instantiate . --eval --strict -A ngipkgs."$UPDATE_NIX_ATTR_PATH".npmDepsHash | cut -d'"' -f2)"
         newhash="$(nix-build -A ngipkgs."$UPDATE_NIX_ATTR_PATH".npmDeps --no-out-link 2>&1 | tail -n3 | grep 'got:' | cut -d: -f2- | xargs echo || true)"
 
         if [ "$newhash" == "" ]; then
