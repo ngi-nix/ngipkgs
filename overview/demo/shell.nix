@@ -39,14 +39,9 @@ let
 
           # Display instructions if any exist
           ${lib.concatStringsSep "\n" (
-            lib.mapAttrsToList (
-              name: value:
-              lib.optionalString (value.usage-instructions != "") ''
-                echo -e "\n\033[1;34m=== ${name} Demo Usage Instructions ===\033[0m"
-                echo -e "${lib.escape [ "\"" "\\" ] value.usage-instructions}"
-              ''
-            ) demo-shell
+            lib.mapAttrsToList (name: value: toString demo-shell.${name}) demo-shell
           )}
+          echo -e
 
           ${pkgs.lib.getExe pkgs.bash} --norc "$@"
         '';
@@ -56,36 +51,53 @@ in
   options.demo-shell = mkOption {
     type =
       with types;
-      attrsOf (submodule {
-        options = {
-          programs = mkOption {
-            type = attrsOf package;
-            description = "Set of programs that will be installed in the shell.";
-            example = {
-              embedded = pkgs.icestudio;
-              messaging = pkgs.briar-desktop;
+      attrsOf (
+        submodule (
+          { name, ... }:
+          {
+            options = {
+              programs = mkOption {
+                type = attrsOf package;
+                description = "Set of programs that will be installed in the shell.";
+                example = {
+                  embedded = pkgs.icestudio;
+                  messaging = pkgs.briar-desktop;
+                };
+                default = { };
+              };
+              env = mkOption {
+                type = attrsOf str;
+                description = "Set of environment variables that will be passed to the shell.";
+                example = {
+                  XRSH_PORT = "9090";
+                };
+                default = { };
+              };
+              usage-instructions = mkOption {
+                type = lines;
+                description = "Instructions that will be shown to the user";
+                example = ''
+                  Run the `xrsh` command to start the web server.
+                  Visit http://localhost:8080 in your browser to access the application.
+                '';
+                default = "";
+              };
+              __toString = mkOption {
+                type = functionTo str;
+                readOnly = true;
+                default =
+                  self:
+                  lib.optionalString (self.usage-instructions != "") ''
+                    echo -e "\n\033[1;34m=== ${name} Demo Usage Instructions ===\033[0m"
+                    cat <<"EOF"
+                    ${lib.trim self.usage-instructions}
+                    EOF
+                  '';
+              };
             };
-            default = { };
-          };
-          env = mkOption {
-            type = attrsOf str;
-            description = "Set of environment variables that will be passed to the shell.";
-            example = {
-              XRSH_PORT = "9090";
-            };
-            default = { };
-          };
-          usage-instructions = mkOption {
-            type = lines;
-            description = "Instructions that will be shown to the user";
-            example = ''
-              Run the `xrsh` command to start the web server.
-              Visit http://localhost:8080 in your browser to access the application.
-            '';
-            default = "";
-          };
-        };
-      });
+          }
+        )
+      );
   };
 
   options.shells = mkOption {
