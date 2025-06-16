@@ -19,4 +19,12 @@ assignees: ''
 Next, depending on the project deliverable, open sub-issues for the following tasks:
 
 - [ ] [Implement NixOS program module](https://github.com/ngi-nix/ngipkgs/issues/new?template=task-module-program.md)
+  - [ ] Example configuration
+  - [ ] NixOS test
+  - [ ] Shell demo
 - [ ] [Implement NixOS service module](https://github.com/ngi-nix/ngipkgs/issues/new?template=task-module-service.md)
+  - [ ] Example configuration
+  - [ ] NixOS test
+  - [ ] VM demo
+
+**Note:** Each example needs to be tested.
