@@ -32,18 +32,10 @@ let
         + ''
           export PS1="\[\033[1m\][demo-shell]\[\033[m\]\040\w >\040"
 
-          ${lib.optionalString (demo-shell != { }) ''
-            echo -e "\n\033[1;32mDemo shell activated! Available programs:\033[0m"
-            ${lib.concatStringsSep "\n" (
-              lib.mapAttrsToList (
-                name: value:
-                lib.concatStringsSep "\n" (
-                  lib.mapAttrsToList (progName: prog: "echo '  - ${progName} (from ${name})'") value.programs
-                )
-              ) demo-shell
-            )}
-            # echo ""
-          ''}
+          echo -e "\n\033[1;32mDemo shell activated! Available programs:\033[0m"
+          ${lib.concatStringsSep "\n" (
+            map (program: "echo '- ${program.pname} (${program.version})'") runtimeInputs
+          )}
 
           # Display instructions if any exist
           ${lib.concatStringsSep "\n" (
@@ -56,7 +48,7 @@ let
             ) demo-shell
           )}
 
-            ${pkgs.lib.getExe pkgs.bash} --norc "$@"
+          ${pkgs.lib.getExe pkgs.bash} --norc "$@"
         '';
     };
 in
