@@ -462,6 +462,17 @@ let
             button.textContent = "Copied ✓";
             setTimeout(() => button.textContent = "Copy", 2000);
           }
+
+          async function copyInlineToClipboard(button) {
+            const scriptElement = Array.from(button.children).find(child => child.tagName === "SCRIPT");
+            const label = button.querySelector('.copy-label');
+            if (scriptElement && label) {
+              const code = JSON.parse(scriptElement.textContent);
+              await navigator.clipboard.writeText(code);
+              label.textContent = "Copied ✓";
+              setTimeout(() => label.textContent = "Copy", 2000);
+            }
+          }
         </script>
       </body>
       </html>
