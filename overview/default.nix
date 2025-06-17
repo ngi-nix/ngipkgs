@@ -293,33 +293,80 @@ let
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         installation-instructions = eval {
-          imports = [ ./content-types/commands.nix ];
+          imports = [ ./content-types/shell-instructions.nix ];
           instructions = [
             {
               platform = "Arch Linux";
-              commands.bash.input = ''
-                pacman --sync --refresh --noconfirm curl git jq nix
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    pacman --sync --refresh --noconfirm curl git jq nix
+                  '';
+                }
+              ];
             }
             {
               platform = "Debian";
-              commands.bash.input = ''
-                apt install --yes curl git jq nix
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    apt install --yes curl git jq nix
+                  '';
+                }
+              ];
             }
             {
               platform = "Ubuntu";
-              commands.bash.input = ''
-                apt install --yes curl git jq nix
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    apt install --yes curl git jq nix
+                  '';
+                }
+              ];
             }
           ];
         };
         set-nix-config = eval {
-          imports = [ ./content-types/commands.nix ];
-          instructions.commands.bash.input = ''
-            export NIX_CONFIG='${nix-config}'
-          '';
+          imports = [ ./content-types/shell-instructions.nix ];
+          instructions.bash = [
+            {
+              input = ''
+                export NIX_CONFIG='${nix-config}'
+              '';
+            }
+          ];
+        };
+        build-instructions = eval {
+          imports = [ ./content-types/shell-instructions.nix ];
+
+          instructions = [
+            {
+              platform = "Arch Linux, Debian Sid and Ubuntu 25.04";
+              shell-session.bash = [
+                {
+                  input = ''
+                    nix-build ./default.nix && ./result
+                  '';
+                }
+              ];
+            }
+            {
+              platform = "Debian 12 and Ubuntu 24.04/24.10";
+              shell-session.bash = [
+                {
+                  input = ''
+                    rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)
+                  '';
+                }
+                {
+                  input = ''
+                    nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"
+                  '';
+                }
+              ];
+            }
+          ];
         };
       in
       ''
@@ -346,13 +393,7 @@ let
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
-              <ul>
-                <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
-                  <pre><code>nix-build ./default.nix && ./result</code></pre>
-                <li>Debian 12 and Ubuntu 24.04/24.10</li>
-                  <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
-                  <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
-              </ul>
+            ${build-instructions}
           </li>
           ${
             if servicePort != "" then
@@ -461,6 +502,20 @@ let
             await navigator.clipboard.writeText(code);
             button.textContent = "Copied ✓";
             setTimeout(() => button.textContent = "Copy", 2000);
+          }
+
+          ${
+            "" # TODO: this should be the exact same code for copying file content
+          }
+          async function copyInlineToClipboard(button) {
+            const scriptElement = Array.from(button.children).find(child => child.tagName === "SCRIPT");
+            const label = button.querySelector('.copy-label');
+            if (scriptElement && label) {
+              const code = JSON.parse(scriptElement.textContent);
+              await navigator.clipboard.writeText(code);
+              label.textContent = "Copied ✓";
+              setTimeout(() => label.textContent = "Copy", 2000);
+            }
           }
         </script>
       </body>

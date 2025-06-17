@@ -8,6 +8,6 @@ let
   inherit (lib) mkOption types;
 in
 {
-  imports = [ ./shell-code.nix ];
+  imports = [ ./shell-command.nix ];
   config.prompt = lib.mkDefault "$";
 }
