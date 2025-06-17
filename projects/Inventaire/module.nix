@@ -64,7 +64,7 @@ in
 
             text =
               ''
-                mkdir -p config db keys
+                mkdir -p config db/leveldb keys
                 for configFile in ${pkgs.inventaire}/lib/node_modules/inventaire/config/*.cjs; do
                   ln -fs "$configFile" config/"$(basename "$configFile")"
                 done

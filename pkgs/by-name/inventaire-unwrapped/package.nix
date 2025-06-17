@@ -1,6 +1,3 @@
-# TODO
-# - `npm run generate-local-config-from-env` generates a config to override built-in defaults.
-#   Generate this config via module.
 {
   lib,
   buildNpmPackage,
@@ -14,30 +11,31 @@
 
 buildNpmPackage rec {
   pname = "inventaire-unwrapped";
-  version = "3.0.1-beta";
+  version = "4.0.0";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire";
     tag = "v${version}";
-    hash = "sha256-BKsejw+Q5MwBKGFC4FYlOqb08Q5mJ7l5z/A4kGBA9zU=";
+    hash = "sha256-qAU9Rj1AjYG3nAhOanDy564PgAVbdCMaSnxahevk/UQ=";
   };
 
-  # Could not get upstream lockfile to work, had to regenerate it
+  # Cannot handle git+https://codeberg.org source url, but it later gets fetched manually anyway
+  # Dropping it from package.json, regenerated package-lock.json
   npmDeps = fetchNpmDeps {
     src = ./.;
-    hash = "sha256-Q8pMDDOj3SDjvXHRUbdiKTE9AnzcNYk9paAYTt6t2V0=";
+    hash = "sha256-laYizRIdsjiKWnWDNKO9EQofHPkD/D0IsnScB4gnUGM=";
   };
 
   postPatch = ''
-    cp -v ${npmDeps.src}/package-lock.json ./
+    cp -v ${npmDeps.src}/package{,-lock}.json ./
 
     patchShebangs scripts
 
     # Don't run this (tries to clone & build inventaire-i18n), just pretend that we did and hook it up to our prebuilt inventaire-i18n
     substituteInPlace package.json \
-      --replace-fail './scripts/update_i18n.sh' 'rm -r node_modules/inventaire-i18n && ln -vs ${inventaire-i18n}/lib/node_modules/inventaire-i18n node_modules/'
+      --replace-fail './scripts/update_i18n.sh' 'ln -vs ${inventaire-i18n}/lib/node_modules/inventaire-i18n node_modules/'
 
     # Don't do git stuff, don't build in configurePhase, never try to clone & build inventaire-client
     substituteInPlace scripts/postinstall.sh \
@@ -84,14 +82,11 @@ buildNpmPackage rec {
 
     # Look up some directories relative to CWD, instead of in the installed tree
 
-    substituteInPlace server/db/level/get_db.ts \
-      --replace-fail "absolutePath('root', 'db')" "'db'"
-
     substituteInPlace server/lib/auto_rotated_keys.ts \
       --replace-fail "absolutePath('root', 'keys/sessions_keys')" "'keys/sessions_keys'"
 
     substituteInPlace server/controllers/images/lib/local_client.ts \
-      --replace-fail 'resolve(projectRoot, localStorage.folder)' 'localStorage.folder'
+      --replace-fail 'resolve(projectRoot, localStorage.directory)' 'localStorage.directory'
 
     # Please, don't run git to try to find out the revision of the src
     substituteInPlace server/lib/package.ts \
@@ -106,14 +101,9 @@ buildNpmPackage rec {
     tsx
   ];
 
-  postConfigure = ''
-    npm run postinstall
-  '';
-
   postInstall = ''
     cp -r dist $out/lib/node_modules/inventaire/
 
-    # TODO
     # One link wants to point at inventaire-client, most of the others at generated files
     # Just delete broken ones for now, and create empty dirs in their place
     for candidate in $out/lib/node_modules/inventaire/dist/*; do

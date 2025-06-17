@@ -26,12 +26,15 @@ in
         username: "${couchdbUser}",
         password: "${couchdbPassword}",
       },
+      leveldb: {
+        directory: "${config.services.inventaire.stateDir}/db/leveldb",
+      },
       elasticsearch: {
         origin: "http://localhost:${toString elasticPort}",
       },
       mediaStorage: {
         local: {
-          folder: "${config.services.inventaire.stateDir}/storage",
+          directory: "${config.services.inventaire.stateDir}/storage",
         },
       },
     }
