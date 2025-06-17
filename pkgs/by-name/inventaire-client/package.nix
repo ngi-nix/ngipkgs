@@ -3,7 +3,6 @@
   buildNpmPackage,
   fetchFromGitea,
   fetchFromGitHub,
-  fetchpatch,
   gitUpdater,
   curl,
   inventaire-unwrapped,
@@ -52,32 +51,23 @@ let
 in
 buildNpmPackage rec {
   pname = "inventaire-client";
-  version = "3.0.1-beta";
+  version = "4.0.0";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire-client";
     tag = "v${version}";
-    hash = "sha256-Ores7/dQXRVDIW3Namqe4Qpa9PXoeI6ntA1z5eLaGoU=";
+    hash = "sha256-8m8HQhMO9B20LyzQ/ghyGfZDwnR/vBl+BiwfrbUZF+4=";
   };
 
   patches = [
-    # wikibase-sdk was expected to be provided by inventaire (this was being built in a subdirectory of it)
-    # Apply patch which introduces this dependency properly
-    # Remove when version > 3.0.1-beta
-    (fetchpatch {
-      name = "0001-inventaire-client-dependencies-replace-wikidata-sdk-with-wikibase-sdk-wikidata-org.patch";
-      url = "https://codeberg.org/inventaire/inventaire-client/commit/cac30096cca66400f29033a010ae9a5d6d0d5f4b.patch";
-      hash = "sha256-v4ZW5MfY8bpgVzrXs7NVAGu71BCc6U6cDtVY80tLemU=";
-    })
-
     (replaceVars ./9901-Use-saved-query-results.patch {
       sparqlQueries = sparql-queries;
     })
   ];
 
-  npmDepsHash = "sha256-jZQ5rQK8fZQsv/5tYdxYhAE3ha7rSC1++TEwRsp9ucA=";
+  npmDepsHash = "sha256-vLq0EYiP6i1IfNRL5mPntT37qwkRAAKNH9sX9MAfkKI=";
 
   postPatch = ''
     patchShebangs scripts

@@ -21,13 +21,12 @@ jsonDumpsDir="$tmpDir"/sparql-queries
 
 mkdir -p "$jsonDumpsDir"
 
-cp -v "${srcDir}"/scripts/sitemaps/queries.js "$tmpDir"/
+cp -v --no-preserve=mode "${srcDir}"/scripts/sitemaps/queries.js "$tmpDir"/
 cp -v "${dumpUrlsJson}" "$tmpDir"/
 
-# TODO: wikidata-sdk gets replaced with wikibase-sdk/wikidata.org in a future src version
 env \
   HOME="$tmpDir" \
-  sh -c 'cd ~ && npm install wikidata-sdk'
+  sh -c 'cd ~ && npm install wikibase-sdk'
 
 env \
   HOME="$tmpDir" \
@@ -49,7 +48,7 @@ while IFS= read -r urlDump; do
   gzip -9ck "$tmpDir"/"$name".json > "$jsonDumpsDir"/"$name".json.gz
 
   # Save the query URL, for checking that they match what the build would've fetched
-  printf "$url" > "$jsonDumpsDir"/"$name".url
+  printf "%s" "$url" > "$jsonDumpsDir"/"$name".url
 done < "$urlsDumpPath"
 
 # Put new data into place
