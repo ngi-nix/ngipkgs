@@ -300,31 +300,26 @@ let
             }
           ];
         };
-        nix-config = eval {
-          imports = [ ./content-types/nix-config.nix ];
-          settings = [
-            {
-              name = "substituters";
-              value = [
-                "https://cache.nixos.org/"
-                "https://ngi.cachix.org/"
-              ];
-            }
-            {
-              name = "trusted-public-keys";
-              value = [
-                "cache.nixos.org-1:6nchdd59x431o0gwypbmraurkbj16zpmqfgspcdshjy="
-                "ngi.cachix.org-1:n+cal72roc3qqulxihpv+tw5t42whxmmhpragkrsrow="
-              ];
-            }
-          ];
-        };
-        set-nix-config = eval {
-          imports = [ ./content-types/commands.nix ];
-          instructions.commands.bash.input = ''
-            export ${nix-config}
-          '';
-        };
+        set-nix-config =
+          let
+            from-yaml =
+              file:
+              with builtins;
+              fromJSON (
+                # XXX(@fricklerhandwerk): IFD, sorry. I was there, Gandalf: https://github.com/NixOS/nix/pull/7340
+                readFile (pkgs.runCommandNoCC "yaml.json" { } "${lib.getExe pkgs.yj} < ${file} > $out")
+              );
+            workflow = from-yaml ../.github/workflows/test-demo.yaml;
+            nix-config = with lib; trim (elemAt workflow.jobs.test.steps 3).env.NIX_CONFIG;
+          in
+          eval {
+            imports = [ ./content-types/commands.nix ];
+            instructions.commands.bash.input = ''
+              export NIX_CONFIG="
+              ${nix-config}
+              "
+            '';
+          };
       in
       ''
         ${heading 2 "demo" (
