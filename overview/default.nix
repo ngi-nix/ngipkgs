@@ -321,6 +321,33 @@ let
             export NIX_CONFIG='${nix-config}'
           '';
         };
+        set-build-instructions = eval {
+          imports = [ ./content-types/commands.nix ];
+
+          instructions = [
+            {
+              platform = "Arch Linux, Debian Sid and Ubuntu 25.04";
+              commands.bash.input = ''
+                nix-build ./default.nix && ./result
+              '';
+            }
+            {
+              platform = "Debian 12 and Ubuntu 24.04/24.10";
+              session.commands = [
+                {
+                  bash.input = ''
+                    rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)
+                  '';
+                }
+                {
+                  bash.input = ''
+                    nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"
+                  '';
+                }
+              ];
+            }
+          ];
+        };
       in
       ''
         ${heading 2 "demo" (
@@ -346,13 +373,7 @@ let
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
-              <ul>
-                <li>Arch Linux, Debian Sid and Ubuntu 25.04</li>
-                  <pre><code>nix-build ./default.nix && ./result</code></pre>
-                <li>Debian 12 and Ubuntu 24.04/24.10</li>
-                  <pre><code>rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)</code></pre>
-                  <pre><code>nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"</code></pre>
-              </ul>
+            ${set-build-instructions}
           </li>
           ${
             if servicePort != "" then
