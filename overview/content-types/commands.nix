@@ -9,9 +9,14 @@ let
   # TODO: wrap in submodule and make it render itself
   commands = {
     bash = mkOption {
-      type = types.submodule ./bash-code.nix;
+      type = with types; nullOr (submodule ./bash-code.nix);
+      default = null;
     };
     # TODO: moar shells
+  };
+  session = mkOption {
+    type = with types; nullOr (submodule ./shell-session.nix);
+    default = null;
   };
 in
 {
@@ -23,7 +28,7 @@ in
           # cross-platform
           (submodule {
             options = {
-              inherit commands;
+              inherit commands session;
             };
           })
           # platform-specific
@@ -33,7 +38,7 @@ in
                 platform = mkOption {
                   type = types.str;
                 };
-                inherit commands;
+                inherit commands session;
               };
             })
           );
@@ -46,20 +51,17 @@ in
         if lib.isList self.instructions then
           ''
             <ul>
-              ${lib.concatMapStringsSep "\n" (i: ''
-                <li>
-                  <dt>${i.platform}</dt>
-                  <dd>
-                    ${i.commands.bash}
-                  </dd>
-                </li>
-              '') self.instructions}
+            ${lib.concatMapStringsSep "\n" (i: ''
+              <li>
+                <summary>${i.platform}</summary>
+                  ${toString i.commands.bash}
+                  ${toString i.session}
+              </li>
+            '') self.instructions}
             </ul>
           ''
         else
-          ''
-            ${self.instructions.commands.bash}
-          '';
+          toString self.instructions.commands.bash;
     };
   };
 }
