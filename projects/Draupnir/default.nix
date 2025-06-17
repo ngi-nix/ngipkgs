@@ -22,6 +22,11 @@
     };
   };
 
-  nixos.modules.programs.draupnir = null;
-  nixos.modules.services.draupnir = null;
+  nixos = {
+    modules.services.draupnir = {
+      module = "${sources.inputs.nixpkgs}/nixos/modules/services/matrix/draupnir.nix";
+      examples.basic = null;
+    };
+    tests.draupnir = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
+  };
 }
