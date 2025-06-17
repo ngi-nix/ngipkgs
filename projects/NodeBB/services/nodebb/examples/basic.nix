@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.nodebb.enable = true;
+}
