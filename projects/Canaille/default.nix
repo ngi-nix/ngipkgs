@@ -15,7 +15,7 @@
   nixos.modules.services = {
     canaille = {
       name = "Canaille";
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/security/canaille.nix";
+      module = lib.moduleLocFromOptionString "services.canaille";
       examples.basic = {
         module = ./services/Canaille/examples/basic.nix;
         description = "";

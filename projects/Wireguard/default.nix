@@ -31,7 +31,7 @@
 
   nixos.modules.services = {
     wireguard = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/wireguard.nix";
+      module = lib.moduleLocFromOptionString "networking.wireguard";
       examples.basic = null;
     };
   };

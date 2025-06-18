@@ -68,17 +68,17 @@
     _serviceName_ = {
       name = "service name";
       # Check if the service exists in https://search.nixos.org/options?
-      # If it does, click on one of its options and copy the text in the `Declared in` field
-      # into the `module` attribute:
+      # If it does, click on one of its options and copy the text in the `Name` field
+      # into the `module` attribute (use the root option name):
       #
       # ```nix
-      # module = "${sources.inputs.nixpkgs}/<DECLARED_IN_TEXT>";
+      # module = lib.moduleLocFromOptionString "<NAME>";
       # ```
       #
       # Example (Cryptpad):
       #
       # ```nix
-      # module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/cryptpad.nix";
+      # module = lib.moduleLocFromOptionString "services.cryptpad";
       # ```
       #
       # Note: we can either use the module in nixpkgs or make one ourselves
