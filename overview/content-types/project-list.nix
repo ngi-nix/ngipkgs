@@ -6,6 +6,7 @@ let
     types
     concatMapStringsSep
     attrValues
+    length
     ;
   inherit (types)
     listOf
@@ -34,7 +35,7 @@ in
           <h1>NGIpkgs</h1>
 
           <p>
-            NGIpkgs is collection of software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
+            NGIpkgs is a collection of ${toString (length self.projects)} software applications funded by the <a href="https://www.ngi.eu/ngi-projects/ngi-zero/">Next Generation Internet</a> initiative and packaged for <a href="https://nixos.org">NixOS</a>.
           </p>
 
           <p>
