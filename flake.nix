@@ -29,7 +29,7 @@
         flake = self;
         system = null;
       };
-      inherit (classic') lib lib';
+      inherit (classic') lib extension;
 
       inherit (lib)
         concatMapAttrs
@@ -42,6 +42,8 @@
 
       # Finally, define the system-agnostic outputs.
       systemAgnosticOutputs = {
+        lib = extension;
+
         nixosConfigurations = {
           makemake = import ./infra/makemake { inherit inputs; };
         };
