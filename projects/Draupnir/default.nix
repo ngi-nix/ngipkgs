@@ -25,8 +25,11 @@
   nixos = {
     modules.services.draupnir = {
       module = lib.moduleLocFromOptionString "services.draupnir";
-      examples.basic = null;
+      examples.basic = {
+        module = ./example.nix;
+        description = "";
+        tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
+      };
     };
-    tests.draupnir = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
   };
 }
