@@ -21,34 +21,8 @@ in
 }:
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
-in
-rec {
-  inherit
-    lib
-    pkgs
-    system
-    sources
-    ;
 
-  overview = import ./overview {
-    inherit
-      lib
-      lib'
-      system
-      projects
-      ;
-    self = flake;
-    pkgs = pkgs // ngipkgs;
-    options = optionsDoc.optionsNix;
-  };
-
-  optionsDoc = pkgs.nixosOptionsDoc {
-    inherit (evaluated-modules) options;
-  };
-
-  # TODO: we should be exporting our custom functions as `lib`, but refactoring
-  # this to use `pkgs.lib` everywhere is a lot of movement
-  lib' = {
+  extension = rec {
     # Take an attrset of arbitrary nesting and make it flat
     # by concatenating the nested names with the given separator.
     flattenAttrs =
@@ -74,7 +48,7 @@ rec {
             # if eval fails
             if !(builtins.tryEval i).success then
               # recursively recurse into attrsets
-              if lib.isAttrs i then lib'.forceEvalRecursive i else (builtins.tryEval i).success
+              if lib.isAttrs i then forceEvalRecursive i else (builtins.tryEval i).success
             else
               (builtins.tryEval i).success
           ) v
@@ -84,7 +58,7 @@ rec {
 
     # get the path of NixOS module from string
     # example:
-    # lib'.moduleLocFromOptionString "services.ntpd-rs"
+    # moduleLocFromOptionString "services.ntpd-rs"
     # => "/nix/store/...-source/nixos/modules/services/networking/ntp/ntpd-rs.nix"
     moduleLocFromOptionString =
       let
@@ -93,12 +67,13 @@ rec {
             class = "nixos";
             specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
             modules = [
-              ({
+              {
                 config = {
-                  _module.check = false;
-                  nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                  # remove this after nixpkgs is separated: https://github.com/ngi-nix/ngipkgs/pull/968#discussion_r2067929098
+                  # nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
+                  nixpkgs.hostPlatform = builtins.currentSystem or "x86_64-linux";
                 };
-              })
+              }
             ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
           })
           options
@@ -120,6 +95,33 @@ rec {
           lib.concatMap getFiles (lib.attrsToList attrs);
       in
       lib.head (collectFiles optAttrs);
+  };
+
+  extended = lib.extend (_: _: extension);
+in
+rec {
+  lib = extended;
+  inherit extension;
+
+  inherit
+    pkgs
+    system
+    sources
+    ;
+
+  overview = import ./overview {
+    inherit
+      lib
+      system
+      projects
+      ;
+    self = flake;
+    pkgs = pkgs // ngipkgs;
+    options = optionsDoc.optionsNix;
+  };
+
+  optionsDoc = pkgs.nixosOptionsDoc {
+    inherit (evaluated-modules) options;
   };
 
   overlays.default =
@@ -150,7 +152,7 @@ rec {
 
   extendedNixosModules =
     let
-      ngipkgsModules = lib.attrValues (lib'.flattenAttrs "." nixos-modules);
+      ngipkgsModules = lib.attrValues (lib.flattenAttrs "." nixos-modules);
       nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
     in
     nixosModules ++ ngipkgsModules;
@@ -181,7 +183,7 @@ rec {
   };
 
   # recursively evaluates each attribute for all projects
-  check-projects = lib'.forceEvalRecursive evaluated-modules.config.projects;
+  check-projects = lib.forceEvalRecursive evaluated-modules.config.projects;
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
