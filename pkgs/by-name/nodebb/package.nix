@@ -1,5 +1,6 @@
 {
   buildNpmPackage,
+  dart-sass,
   fetchFromGitHub,
   lib,
   pkg-config,
@@ -26,9 +27,20 @@ buildNpmPackage (finalAttrs: {
 
   nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = [ vips ];
+  buildInputs = [
+    dart-sass
+    vips
+  ];
 
-  dontNpmBuild = true;
+  buildPhase = ''
+    runHook preBuild
+
+    # force sass-embedded to use our own sass instead of the bundled one
+    substituteInPlace node_modules/sass-embedded/dist/lib/src/compiler-path.js \
+        --replace-fail 'compilerCommand = (() => {' 'compilerCommand = (() => { return ["${lib.getExe dart-sass}"];'
+
+    runHook postBuild
+  '';
 
   meta = {
     description = "Forum software";
