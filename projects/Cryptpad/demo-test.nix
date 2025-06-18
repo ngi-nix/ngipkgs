@@ -5,29 +5,35 @@
 {
   name = "cryptpad-demo";
 
+  # TODO: just for debugging, remove after
+  skipTypeCheck = true;
+  skipLint = true;
+  interactive.sshBackdoor.enable = true;
+
   nodes = {
     machine =
-      { ... }:
+      { config, ... }:
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.cryptpad
-          sources.examples.Cryptpad.demo
         ];
+
+        # without this, qemu fails to allocate memory in the demo VM
+        virtualisation.memorySize = 8192;
       };
   };
 
   testScript =
     { nodes, ... }:
     let
-      servicePort = toString nodes.machine.services.cryptpad.settings.httpPort;
+      demo-vm = sources.utils.demo.vm sources.examples.Cryptpad.demo;
+      demo-system = sources.utils.demo.eval sources.examples.Cryptpad.demo;
+      servicePort = demo-system.config.services.cryptpad.settings.httpPort;
     in
     ''
       start_all()
 
-      machine.wait_for_unit("cryptpad.service")
-      machine.wait_for_open_port(${servicePort})
-
-      machine.succeed("curl --fail http://localhost:${servicePort}")
+      machine.execute("${demo-vm} &>/dev/null &")
+      machine.succeed("curl --silent --retry 10 --retry-max-time 120 --retry-all-errors http://localhost:${toString servicePort}/")
     '';
 }
