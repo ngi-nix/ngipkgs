@@ -293,54 +293,74 @@ let
         # The port that is forwarded to the host so that the user can access the demo service.
         servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
         installation-instructions = eval {
-          imports = [ ./content-types/commands.nix ];
+          imports = [ ./content-types/shell-instructions.nix ];
           instructions = [
             {
               platform = "Arch Linux";
-              commands.bash.input = ''
-                pacman --sync --refresh --noconfirm curl git jq nix
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    pacman --sync --refresh --noconfirm curl git jq nix
+                  '';
+                }
+              ];
             }
             {
               platform = "Debian";
-              commands.bash.input = ''
-                apt install --yes curl git jq nix
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    apt install --yes curl git jq nix
+                  '';
+                }
+              ];
             }
             {
               platform = "Ubuntu";
-              commands.bash.input = ''
-                apt install --yes curl git jq nix
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    apt install --yes curl git jq nix
+                  '';
+                }
+              ];
             }
           ];
         };
         set-nix-config = eval {
-          imports = [ ./content-types/commands.nix ];
-          instructions.commands.bash.input = ''
-            export NIX_CONFIG='${nix-config}'
-          '';
+          imports = [ ./content-types/shell-instructions.nix ];
+          instructions.bash = [
+            {
+              input = ''
+                export NIX_CONFIG='${nix-config}'
+              '';
+            }
+          ];
         };
-        set-build-instructions = eval {
-          imports = [ ./content-types/commands.nix ];
+        build-instructions = eval {
+          imports = [ ./content-types/shell-instructions.nix ];
 
           instructions = [
             {
               platform = "Arch Linux, Debian Sid and Ubuntu 25.04";
-              commands.bash.input = ''
-                nix-build ./default.nix && ./result
-              '';
+              shell-session.bash = [
+                {
+                  input = ''
+                    nix-build ./default.nix && ./result
+                  '';
+                }
+              ];
             }
             {
               platform = "Debian 12 and Ubuntu 24.04/24.10";
-              session.commands = [
+              shell-session.bash = [
                 {
-                  bash.input = ''
+                  input = ''
                     rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)
                   '';
                 }
                 {
-                  bash.input = ''
+                  input = ''
                     nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"
                   '';
                 }
@@ -373,7 +393,7 @@ let
           </li>
           <li>
             <strong>Build and run a virtual machine</strong>
-            ${set-build-instructions}
+            ${build-instructions}
           </li>
           ${
             if servicePort != "" then
@@ -484,6 +504,9 @@ let
             setTimeout(() => button.textContent = "Copy", 2000);
           }
 
+          ${
+            "" # TODO: this should be the exact same code for copying file content
+          }
           async function copyInlineToClipboard(button) {
             const scriptElement = Array.from(button.children).find(child => child.tagName === "SCRIPT");
             const label = button.querySelector('.copy-label');

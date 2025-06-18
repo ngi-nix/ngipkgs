@@ -6,36 +6,26 @@
 }:
 let
   inherit (lib) mkOption types;
-  command = {
-    bash = mkOption {
-      type = types.submodule ./bash-code.nix;
-    };
-    # TODO: moar shells
-  };
 in
 {
   options = {
-    commands = mkOption {
-      type =
-        with types;
-        listOf (submodule {
-          options = command;
-        });
+    bash = mkOption {
+      type = with types; listOf (submodule ./bash-command.nix);
       default = [ ];
     };
+    # TODO: moar shells
     __toString = mkOption {
       type = with types; functionTo str;
-      default =
-        self:
-        lib.optionalString (self.commands != [ ]) ''
-          <ul>
-            ${lib.concatMapStringsSep "\n" (command: ''
-              ${lib.optionalString (command ? bash) ''
-                <li>${toString command.bash}</li>
-              ''}
-            '') self.commands}
-          </ul>
-        '';
+      default = self: ''
+        <dl>
+          ${lib.optionalString (self.bash != [ ]) ''
+            <dt>Bash</dt>
+            <dd>
+              ${lib.concatStringsSep "\n" self.bash}
+            </dd>
+          ''}
+        </dl>
+      '';
     };
   };
 }
