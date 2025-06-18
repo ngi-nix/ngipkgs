@@ -12,7 +12,7 @@
   };
   nixos.modules.services = {
     gancio = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/web-apps/gancio.nix";
+      module = lib.moduleLocFromOptionString "services.gancio";
       examples.gancio = {
         module = ./example.nix;
         description = "";

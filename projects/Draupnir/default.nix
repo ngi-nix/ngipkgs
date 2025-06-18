@@ -24,7 +24,7 @@
 
   nixos = {
     modules.services.draupnir = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/matrix/draupnir.nix";
+      module = lib.moduleLocFromOptionString "services.draupnir";
       examples.basic = null;
     };
     tests.draupnir = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";

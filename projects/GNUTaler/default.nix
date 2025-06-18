@@ -43,7 +43,7 @@
 
   nixos.modules.services = {
     taler = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/finance/taler/module.nix";
+      module = lib.moduleLocFromOptionString "services.taler";
       examples.basic = {
         # See https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/taler/common/nodes.nix
         module = ./examples/basic/default.nix;

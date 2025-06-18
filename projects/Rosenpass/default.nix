@@ -43,7 +43,7 @@
   nixos.modules.services = {
     rosenpass = {
       name = "rosenpass";
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/rosenpass.nix";
+      module = lib.moduleLocFromOptionString "services.rosenpass";
       examples.basic = {
         module = ./services/basic/examples/basic.nix;
         description = "";

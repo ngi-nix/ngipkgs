@@ -32,7 +32,7 @@
 
   nixos.modules.services = {
     forgejo = {
-      module = "${sources.inputs.nixpkgs}/nixos/modules/services/misc/forgejo.nix";
+      module = lib.moduleLocFromOptionString "services.forgejo";
       examples.basic = null;
     };
   };

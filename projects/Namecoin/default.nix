@@ -5,8 +5,8 @@
 }:
 {
   nixos = {
-    modules.services.namecoind.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/namecoind.nix";
-    modules.services.ncdns.module = "${sources.inputs.nixpkgs}/nixos/modules/services/networking/ncdns.nix";
+    modules.services.namecoind.module = lib.moduleLocFromOptionString "services.namecoind";
+    modules.services.ncdns.module = lib.moduleLocFromOptionString "services.ncdns";
     modules.programs.electrum-nmc = null;
     # the namecoind service module does not add namecoin commands to the environment
     modules.programs.namecoin = null;
