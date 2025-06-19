@@ -43,6 +43,8 @@ in
     enable = lib.mkEnableOption "NodeBB";
     package = lib.mkPackageOption pkgs "nodebb" { };
 
+    enableLocalDB = lib.mkEnableOption "a local database for NodeBB";
+
     user = lib.mkOption {
       type = lib.types.str;
       default = "nodebb";
@@ -176,63 +178,88 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    systemd.services.nodebb = {
-      description = "NodeBB";
-      documentation = [ "https://docs.nodebb.org" ];
-      after = [
-        "system.slice"
-        "multi-user.target"
-      ];
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      {
+        systemd.services.nodebb = {
+          description = "NodeBB";
+          documentation = [ "https://docs.nodebb.org" ];
+          after = [
+            "system.slice"
+            "multi-user.target"
+          ];
 
-      environment.CONFIG = "/etc/nodebb/config.json";
+          environment.CONFIG = "/etc/nodebb/config.json";
 
-      serviceConfig = {
-        Type = "forking";
-        User = cfg.user;
-        Group = cfg.group;
-        StateDirectory = "nodebb";
-        ConfigurationDirectory = "nodebb";
-        WorkingDirectory = "/var/lib/nodebb";
-        PIDFile = "/var/lib/nodebb/pidfile";
-        ExecStart = "${lib.getExe pkgs.nodejs} loader.js --no-silent";
-        Restart = "always";
-      };
+          serviceConfig = {
+            Type = "forking";
+            User = cfg.user;
+            Group = cfg.group;
+            StateDirectory = "nodebb";
+            ConfigurationDirectory = "nodebb";
+            WorkingDirectory = "/var/lib/nodebb";
+            PIDFile = "/var/lib/nodebb/pidfile";
+            ExecStart = "${lib.getExe pkgs.nodejs} loader.js --no-silent";
+            Restart = "always";
+          };
 
-      preStart = ''
-        ${lib.getExe pkgs.rsync} -a --chmod=u+w ${cfg.package}/lib/node_modules/nodebb/ .
+          preStart = ''
+            ${lib.getExe pkgs.rsync} -a --chmod=u+w ${cfg.package}/lib/node_modules/nodebb/ .
 
-        # Cannot copy favicon.ico
-        mkdir -p public/uploads/system
+            # Cannot copy favicon.ico
+            mkdir -p public/uploads/system
 
-        if test ! -f $CONFIG; then
-          cp ${configFile} $CONFIG
-        else
-          # https://stackoverflow.com/a/24904276
-          ${lib.getExe pkgs.jq} -s '.[0] * .[1]' $CONFIG ${configFile} > $CONFIG.new
-          mv $CONFIG.new $CONFIG
-        fi
+            if test ! -f $CONFIG; then
+              cp ${configFile} $CONFIG
+            else
+              # https://stackoverflow.com/a/24904276
+              ${lib.getExe pkgs.jq} -s '.[0] * .[1]' $CONFIG ${configFile} > $CONFIG.new
+              mv $CONFIG.new $CONFIG
+            fi
 
-        databasePasswordKey='."${cfg.settings.database}:password"'
-        databasePassword="$(<${cfg.databasePasswordFile})"
-        ${lib.getExe pkgs.jq} "$databasePasswordKey = \"$databasePassword\"" $CONFIG > $CONFIG.new
-        mv $CONFIG.new $CONFIG
+            databasePasswordKey='."${cfg.settings.database}:password"'
+            databasePassword="$(<${cfg.databasePasswordFile})"
+            ${lib.getExe pkgs.jq} "$databasePasswordKey = \"$databasePassword\"" $CONFIG > $CONFIG.new
+            mv $CONFIG.new $CONFIG
 
-        export NODEBB_ADMIN_USERNAME="${cfg.admin.username}"
-        export NODEBB_ADMIN_PASSWORD="$(<${cfg.admin.passwordFile})"
-        export NODEBB_ADMIN_EMAIL="${cfg.admin.email}"
-        ./nodebb setup "$(<$CONFIG)"
-      '';
+            export NODEBB_ADMIN_USERNAME="${cfg.admin.username}"
+            export NODEBB_ADMIN_PASSWORD="$(<${cfg.admin.passwordFile})"
+            export NODEBB_ADMIN_EMAIL="${cfg.admin.email}"
+            ./nodebb setup "$(<$CONFIG)"
+          '';
 
-      wantedBy = [ "multi-user.target" ];
-    };
+          wantedBy = [ "multi-user.target" ];
+        };
 
-    users = {
-      groups.${cfg.group} = { };
-      users.${cfg.user} = {
-        inherit (cfg) group;
-        isSystemUser = true;
-      };
-    };
-  };
+        users = {
+          groups.${cfg.group} = { };
+          users.${cfg.user} = {
+            inherit (cfg) group;
+            isSystemUser = true;
+          };
+        };
+      }
+      (lib.mkIf (cfg.enableLocalDB && cfg.settings.database == "postgres") {
+        systemd.services.nodebb.after = [ "postgresql.service" ];
+
+        services.postgresql = {
+          enable = true;
+          ensureDatabases = [ "nodebb" ];
+          ensureUsers = [
+            {
+              name = "nodebb";
+              ensureDBOwnership = true;
+            }
+          ];
+        };
+      })
+      (lib.mkIf (cfg.enableLocalDB && cfg.settings.database == "redis") {
+        services.nodebb.databasePasswordFile = config.services.redis.servers."nodebb".requirePassFile;
+
+        systemd.services.nodebb.after = [ "redis-nodebb.service" ];
+
+        services.redis.servers."nodebb".enable = true;
+      })
+    ]
+  );
 }
