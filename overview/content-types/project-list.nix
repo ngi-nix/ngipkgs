@@ -65,7 +65,9 @@ in
             </li>
           </ul>
 
-        ${concatMapStringsSep "\n" toString (self.projects)}
+        ${concatMapStringsSep "\n" toString (
+          with lib; sortOn (project: toLower project.name) self.projects
+        )}
 
         </section>
 
