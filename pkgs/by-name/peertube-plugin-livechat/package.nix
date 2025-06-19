@@ -4,42 +4,40 @@
   fetchNpmDeps,
   fetchFromGitHub,
   runCommand,
-  stdenvNoCC,
-  symlinkJoin,
   prosody,
 }:
 let
   details = {
     livechat = rec {
       pname = "peertube-plugin-livechat";
-      version = "10.1.2";
+      version = "13.0.0";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "peertube-plugin-livechat";
         rev = "refs/tags/v${version}";
-        hash = "sha256-YXx171816oZhZyNA4OSAlFIzyqq9nVLEZSHhM+F7AHg=";
+        hash = "sha256-zoG5KkGATi4zIZ2HkhVHZEIRkfl3rP1sE+5UROdmCiY=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
         inherit src;
-        hash = "sha256-VnV1EyHDhvrjVUSOdjFef8aV6lGRVv8DZllf6ODVwx4=";
+        hash = "sha256-M4FxLJEJ1IntNnr1U7be2kNaK87pN8qHEsHnx+a4ZEo=";
       };
     };
 
     # Check <livechat-src>/conversejs/build-conversejs.sh for which conversejs to use
     conversejs = rec {
       pname = "conversejs-livechat";
-      version = "10.1.0";
+      version = "12.0.1";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "converse.js";
         rev = "refs/tags/livechat-${version}";
-        hash = "sha256-udSpkYSyBkR2d5jxRBz3qLwiRH4PXdHCsv8j4Z6i8xY=";
+        hash = "sha256-vD5ZFeGZYcsDX/Ye0tmBlRveOGusLP2NGkvHcNdZyqE=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
         inherit src;
-        hash = "sha256-1ObgAiaIsXK6ACxdNjRWxmRYClDfHZ3BdBb+47EsD4Q=";
+        hash = "sha256-jTs+1fLPE6D78rHhudEc+qVTyA2E8Z7C1CgKfdl1w8o=";
       };
     };
   };
@@ -107,7 +105,7 @@ let
 
     postPatch = ''
       substituteInPlace conversejs/build-conversejs.sh \
-        --replace-fail '/bin/env node' 'node' \
+        --replace-fail '/usr/bin/env node' 'node' \
         --replace-fail 'if [[ ! -d "$converse_build_dir/node_modules" ]]; then' 'echo "Done patching ConverseJS" && exit 0; if [[ ! -d "$converse_build_dir/node_modules" ]]; then'
     '';
 
@@ -146,7 +144,7 @@ let
   };
 
   # livechat needs converse.js
-  conversejs = buildNpmPackage rec {
+  conversejs = buildNpmPackage {
     inherit (details.conversejs) pname version npmDeps;
 
     src = merged-patched-src;
@@ -203,7 +201,7 @@ let
     };
   };
 in
-buildNpmPackage rec {
+buildNpmPackage {
   inherit (details.livechat) pname version npmDeps;
 
   src = merged-src;
@@ -226,13 +224,6 @@ buildNpmPackage rec {
       --replace-fail '"build:avatars": "./build-avatars.js"' '"build:avatars": "node ./build-avatars.js"' \
       --replace-fail '"build": "npm-run-all -s clean:light build:languages' '"build": "npm-run-all -s' \
       --replace-fail 'build:prosodymodules build:converse build:prosody' 'build:prosodymodules'
-
-    substituteInPlace conversejs/build-conversejs.sh \
-      --replace-fail '/bin/env node' 'node'
-
-    # We don't want to rely on a bundled AppImage version of prosody
-    substituteInPlace server/lib/settings.ts \
-      --replace-fail 'default: false' 'default: true'
 
     # Wants to run its own prosody instance
     substituteInPlace server/lib/prosody/config.ts \
