@@ -3,6 +3,7 @@
 {
   services.nodebb = {
     enable = true;
+    enableLocalDB = true;
     admin = {
       username = "admin";
       email = "admin@example.com";
@@ -14,20 +15,8 @@
     databasePasswordFile = pkgs.writeText "postgresql-password" "nodebb";
   };
 
-  systemd.services.nodebb.after = [ "postgresql.service" ];
-
-  services.postgresql = {
-    enable = true;
-    ensureDatabases = [ "nodebb" ];
-    ensureUsers = [
-      {
-        name = "nodebb";
-        ensureDBOwnership = true;
-      }
-    ];
-    # Do *NOT* do this in production!
-    initialScript = pkgs.writeText "init-sql-script" ''
-      CREATE ROLE nodebb LOGIN PASSWORD 'nodebb';
-    '';
-  };
+  # Do *NOT* do this in production!
+  services.postgresql.initialScript = pkgs.writeText "init-sql-script" ''
+    CREATE ROLE nodebb LOGIN PASSWORD 'nodebb';
+  '';
 }
