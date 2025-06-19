@@ -11,15 +11,6 @@ diff --git a/server/lib/settings.ts b/server/lib/settings.ts
 index eda78e1df..098ae3b14 100644
 --- a/server/lib/settings.ts
 +++ b/server/lib/settings.ts
-@@ -120,7 +120,7 @@ function initImportantNotesSettings ({ registerSetting }: RegisterServerOptions)
-       // Note: the following text as a variable in it.
-       //   Not translating it: it should be very rare.
-       descriptionHTML: `<span class="peertube-plugin-livechat-warning">
--It seems that your are using a ${process.arch} CPU, 
-+It seems that your are using a ${process.arch} CPU,
- which is not compatible with the plugin.
- Please read
- <a
 @@ -535,7 +535,7 @@ function initChatServerAdvancedSettings ({ registerSetting }: RegisterServerOpti
      label: loc('system_prosody_label'),
      descriptionHTML: loc('system_prosody_description'),
