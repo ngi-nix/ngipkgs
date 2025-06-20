@@ -2,8 +2,9 @@
   lib,
   buildNpmPackage,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
-buildNpmPackage rec {
+buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-video-annotation";
   version = "0.0.8";
 
@@ -12,7 +13,8 @@ buildNpmPackage rec {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "fee5b7eb1d8d1a51c56ea9a6b4b7d109f91b20c3";
-    hash = "sha256-MWcHMAXPLAxlp+EEFs60nIAR99PBNw15bWj1/NA3ZWs=";
+    sparseCheckout = [ "peertube-plugin-video-annotation" ];
+    hash = "sha256-jiGbwSaHwYfQCxe/LEywV+zEITkdWznTCo/HQyEfqvc=";
   };
 
   # prepare script breaks installation at peertube plugin time
@@ -21,11 +23,11 @@ buildNpmPackage rec {
       --replace-fail '"prepare": "npm run build",' ""
   '';
 
-  sourceRoot = "${src.name}/peertube-plugin-video-annotation";
+  sourceRoot = "${finalAttrs.src.name}/peertube-plugin-video-annotation";
 
   npmDepsHash = "sha256-gqEa1DwNlNR5JED0Lhhi9XFKCoJ+NhNHKioNR1A8puU=";
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Add a field in the video form so users can set annotation to their video";
@@ -34,4 +36,4 @@ buildNpmPackage rec {
     maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
-}
+})
