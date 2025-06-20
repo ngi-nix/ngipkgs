@@ -1,9 +1,14 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
 let
+  # The package for ElasticSearch is currently under a license that is considered unfree. Fixing this requires buiding ElasticSearch from source.
+  # If opting into unfree packages is fine with you, you may switch this boolean to true. For testing in NGIpkgs, we are not fine with this.
+  setupElasticSearch = false;
+
   # !!! THIS IS INSECURE, DO NOT DO THIS IN PRODUCTION !!!
   # This is only done like this here to allow easy testing & debugging.
   # Use some secrets management mechanism to track values like this outside of Nix, so they can't leak into the store
@@ -11,6 +16,14 @@ let
   couchdbPassword = "ThisIsNotSecurelyManagedAndImFullyAwareOfThis";
   couchdbPort = 5984;
   elasticPort = 9200;
+
+  inventaireServiceDeps =
+    [
+      "couchdb.service"
+    ]
+    ++ lib.optionals setupElasticSearch [
+      "elasticsearch.service"
+    ];
 in
 {
   # !!! THIS IS INSECURE, DO NOT DO THIS IN PRODUCTION !!!
@@ -96,7 +109,7 @@ in
     '';
   };
 
-  services.elasticsearch = {
+  services.elasticsearch = lib.optionalAttrs setupElasticSearch {
     enable = true;
     port = elasticPort;
   };
@@ -108,12 +121,6 @@ in
   };
 
   # We connect to local instances of these, so we might as well ensure they get launched first
-  systemd.services."inventaire".wants = [
-    "couchdb.service"
-    "elasticsearch.service"
-  ];
-  systemd.services."inventaire".after = [
-    "couchdb.service"
-    "elasticsearch.service"
-  ];
+  systemd.services."inventaire".wants = inventaireServiceDeps;
+  systemd.services."inventaire".after = inventaireServiceDeps;
 }

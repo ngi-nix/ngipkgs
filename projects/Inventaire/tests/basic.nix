@@ -38,20 +38,36 @@
 
   testScript =
     { nodes, ... }:
+
+    let
+      elasticSearchEnabled = nodes.machine.services.elasticsearch.enable;
+    in
     ''
       start_all()
 
       machine.wait_for_unit("inventaire.service")
-      machine.wait_for_console_text("inventaire server is listening on port 3006")
+    ''
+    + (
+      if elasticSearchEnabled then
+        # With ElasticSearch, we can actually expect full startup & check that it works
+        ''
+          machine.wait_for_console_text("inventaire server is listening on port 3006")
 
-      machine.succeed("env DISPLAY=:0 firefox http://localhost:3006 >&2 &")
+          machine.succeed("env DISPLAY=:0 firefox http://localhost:3006 >&2 &")
 
-      # Title of start page
-      machine.wait_for_window("Inventaire - your friends and communities are your best library")
+          # Title of start page
+          machine.wait_for_window("Inventaire - your friends and communities are your best library")
 
-      # Default instance name (insecure example config doesn't override this)
-      machine.wait_for_text("My Inventaire Instance")
+          # Default instance name (insecure example config doesn't override this)
+          machine.wait_for_text("My Inventaire Instance")
 
-      machine.screenshot("Inventaire-works")
-    '';
+          machine.screenshot("Inventaire-works")
+        ''
+      else
+        # Without ElasticSearch, we only can get some vey early startup stuff done before we're stuck waiting for
+        # a nonexistent ElasticSearch instance
+        ''
+          machine.wait_for_console_text("waiting for Elasticsearch")
+        ''
+    );
 }
