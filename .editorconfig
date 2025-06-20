@@ -12,3 +12,10 @@ trim_trailing_whitespace = true
 [*.{nix,sh,bash}]
 indent_size = 2
 indent_style = space
+
+# Generated, just take whatever generator spits out
+[{*lock.json,*.patch{,.in}}]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
