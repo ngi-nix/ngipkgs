@@ -2,6 +2,7 @@
   pkgs,
   lib,
   sources,
+  ...
 }:
 {
   nixos = {

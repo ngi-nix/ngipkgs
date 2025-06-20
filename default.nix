@@ -188,7 +188,7 @@ rec {
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   raw-projects = import ./projects {
-    inherit lib;
+    inherit lib system;
     pkgs = pkgs // ngipkgs;
     sources = {
       inputs = sources;

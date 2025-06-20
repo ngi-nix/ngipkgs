@@ -3,6 +3,7 @@
   pkgs,
   sources,
   system,
+  ...
 }@args:
 
 {
