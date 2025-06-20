@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-logo-framasoft";
@@ -12,7 +13,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "b4ff861a3458bd502a6b95c9005c90d786f2a74e";
-    hash = "sha256-BPV1DrqCvKsV5SA4o2+oUsE/kNY9sL6svJmshjDTG+Y=";
+    sparseCheckout = [ "peertube-plugin-logo-famasof" ];
+    hash = "sha256-BwoM47xMcLHBoat0hgbO7vjzplwlDQhiMoSiRM5/Szk=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-logo-framasoft";
@@ -28,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Framasoft logo on PeerTube";
