@@ -1,7 +1,7 @@
 ---
 name: NGI Project
 about: "User story for an NGI project"
-title: "NGI Project: <PROJECT NAME>"
+title: "NGI Project: PROJECT_NAME"
 labels: User story
 projects: Nix@NGI
 assignees: ''
@@ -27,4 +27,4 @@ Next, depending on the project deliverable, open sub-issues for the following ta
   - [ ] NixOS test
   - [ ] VM demo
 
-**Note:** Each example needs to be tested.
+**Note:** Each program/service module needs an example, and each example needs to be tested.

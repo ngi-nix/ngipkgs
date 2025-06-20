@@ -18,3 +18,8 @@ Use metadata about the application from its tracking issue:
 - #PROJECT_ISSUE_NUMBER
 
 and implement a NixOS module for the program.
+
+> [!NOTE]
+> For an example of how this looks like, please refer to the [project template](https://github.com/ngi-nix/ngipkgs/tree/main/maintainers/templates/project).
+
+<!-- TODO: create contributor documentation for this task -->
