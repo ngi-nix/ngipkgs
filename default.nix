@@ -271,12 +271,17 @@ rec {
     in
     mapAttrs (name: project: hydrate project) projects;
 
+  formatter = import ./maintainers/formatter.nix { inherit pkgs sources system; };
+
   shell = pkgs.mkShellNoCC {
     packages = [
       # live overview watcher
       (pkgs.devmode.override {
         buildArgs = "-A overview --show-trace";
       })
+      # nix-shell --run format
+      formatter.format
+      formatter.pre-commit-hook
     ];
   };
 
