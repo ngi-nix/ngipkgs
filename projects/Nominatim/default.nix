@@ -38,7 +38,8 @@
     nominatim = {
       name = "nominatim";
       module = null;
-      examples.demo = null;
     };
   };
+
+  nixos.demo = null;
 }
