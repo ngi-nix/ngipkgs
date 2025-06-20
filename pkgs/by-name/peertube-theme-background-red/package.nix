@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-theme-background-red";
@@ -12,7 +13,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "e763baddf3ad0efb215bcc8c0d3eb286d0471f21";
-    hash = "sha256-50H4JU4BW/2+6xQzXkoK6Ug30FzFDRpt42mTXh1SH9o=";
+    sparseCheckout = [ "peertube-theme-background-red" ];
+    hash = "sha256-euc/7gEkxNmJT/W4nHZYohNQyzRsRm+JauHeNs8GD/8=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-theme-background-red";
@@ -28,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Ugly and painful example theme";
