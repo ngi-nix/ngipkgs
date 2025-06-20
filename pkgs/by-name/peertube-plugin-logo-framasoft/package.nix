@@ -13,8 +13,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
-    sparseCheckout = [ "peertube-plugin-logo-famasof" ];
-    hash = "sha256-jn4jWFREfcXXwxLMdwZ7Jfjl5ZM//nE18YuI2EAx/0c=";
+    sparseCheckout = [ "peertube-plugin-logo-framasoft" ];
+    hash = "sha256-svLsqvUYSFUvAD13xtt6C8JtvQi7lQ36w51Iy7U+0L0=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-logo-framasoft";
