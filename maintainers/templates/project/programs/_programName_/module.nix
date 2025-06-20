@@ -10,10 +10,12 @@ in
 {
   options.programs._programName_ = {
     enable = lib.mkEnableOption "_programName_";
+    package = lib.mkPackageOption pkgs "_programName_" { };
   };
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      cfg.package
       # put the `packages` here
     ];
   };
