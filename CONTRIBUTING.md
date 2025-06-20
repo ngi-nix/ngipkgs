@@ -404,14 +404,13 @@ In order to display a project on <ngi.nixos.org>, its metadata must be added to 
 
 ## Running and testing the overview locally
 
-1. To run a local version of the overview, enter a development shell with:
+1. To run a local version of the [overview](https://ngi.nixos.org/), run a live overview watcher with:
 
    ```
-   nix-shell -A shell
+   nix-shell --run devmode
    ```
 
-2. Execute the `devmode` command.
-3. The overview will automatically open in your default browser.
+2. The overview will automatically open in your default browser.
 
 If you make any changes to the overview while running `devmode`, the server will automatically be reloaded with the new contents in a few seconds, after you save.
 
