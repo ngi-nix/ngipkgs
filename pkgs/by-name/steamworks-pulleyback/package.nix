@@ -1,5 +1,6 @@
 {
   stdenv,
+  lib,
   cmake,
   arpa2common,
   arpa2cm,
@@ -37,11 +38,8 @@ stdenv.mkDerivation rec {
 
   patches = [ ./install-dirs.patch ];
 
-  configurePhase = ''
-    mkdir -p build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=$out \
-             -DCMAKE_PREFIX_PATH=$out \
-             -DPULLEY_BACKEND_DIR=$out/share/steamworks/pulleyback/
-  '';
+  cmakeFlags = [
+    (lib.cmakeFeature "CMAKE_PREFIX_PATH" "${placeholder "out"}")
+    (lib.cmakeFeature "PULLEY_BACKEND_DIR" "${placeholder "out"}/share/steamworks/pulleyback")
+  ];
 }
