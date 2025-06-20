@@ -204,6 +204,25 @@ let
           description
           links
           ;
+        problem = mkOption {
+          type = types.nullOr types'.problem;
+          default = null;
+          example = {
+            problem.broken = {
+              reason = "Does not work as intended. Needs fixing.";
+            };
+          };
+        };
+      };
+    };
+
+    problem = types.attrTag {
+      broken = mkOption {
+        type = types.submodule {
+          options.reason = mkOption {
+            type = types.str;
+          };
+        };
       };
     };
 
