@@ -254,23 +254,22 @@ let
       <article class="page-width">
         ${heading 1 null name}
         ${render.metadata.one project.metadata}
-        ${optionalString (project.nixos.examples ? demo) (
-          render.serviceDemo.one "vm" project.nixos.modules project.nixos.examples.demo
-        )}
-        ${optionalString (project.nixos.examples ? demo-shell) (
-          render.serviceDemo.one "shell" project.nixos.modules project.nixos.examples.demo-shell
+        ${optionalString (project.nixos.demo != { }) (
+          lib.concatMapAttrsStringSep "\n" (
+            type: demo: (render.serviceDemo.one type project.nixos.modules demo)
+          ) project.nixos.demo
         )}
         ${render.options.many (pick.options project)}
         ${render.examples.many (pick.examples project)}
       </article>
     '';
 
-    demoGlue.one = demo-function: exampleText: ''
+    demoGlue.one = type: exampleText: ''
       # default.nix
       {
         ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
       }:
-      ngipkgs.${demo-function} (
+      ngipkgs.demo-${type} (
         ${toString (intersperse "\n " (splitString "\n" exampleText))}
       )
     '';
@@ -417,14 +416,15 @@ let
       content = render.projects.one name project;
       summary = project.metadata.summary or null;
       demoFile =
-        if project.nixos.examples ? demo then
-          (pkgs.writeText "default.nix" (
-            render.demoGlue.one "demo-vm" (readFile project.nixos.examples.demo.module)
-          ))
-        else if project.nixos.examples ? demo-shell then
-          (pkgs.writeText "default.nix" (
-            render.demoGlue.one "demo-shell" (readFile project.nixos.examples.demo-shell.module)
-          ))
+        let
+          demoFiles = lib.mapAttrs (
+            type: demo: (pkgs.writeText "default.nix" (render.demoGlue.one type (readFile demo.module)))
+          ) project.nixos.demo;
+        in
+        if project.nixos.demo ? vm then
+          demoFiles.vm
+        else if project.nixos.demo ? shell then
+          demoFiles.shell
         else
           null;
     }
@@ -439,7 +439,7 @@ let
       deliverables = {
         service = project.nixos.modules ? services && project.nixos.modules.services != { };
         program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
-        demo = project.nixos.examples ? demo || project.nixos.examples ? demo-shell;
+        demo = project.nixos.demo != { };
       };
     }) projects;
     inherit version;
