@@ -30,12 +30,7 @@
     };
   };
 
-  binary =
-    # https://github.com/ngi-nix/ngipkgs/pull/773
-    if builtins ? currentSystem then
-      {
-        "libresoc.v".data = pkgs.libresoc-verilog;
-      }
-    else
-      { };
+  binary = {
+    "libresoc.v".data = pkgs.libresoc-verilog;
+  };
 }
