@@ -8,7 +8,7 @@ git clone https://codeberg.org/Kbin/kbin-core.git $KBIN_ROOT
 
 if [ ! -f "$KBIN_ROOT/.env" ]
 then
-	ln $KBIN_ROOT/.env.example $KBIN_ROOT/.env
+  ln $KBIN_ROOT/.env.example $KBIN_ROOT/.env
 fi
 
 composer --ignore-platform-req=ext-amqp --ignore-platform-req=ext-redis \
