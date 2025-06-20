@@ -2,7 +2,9 @@
   lib,
   pkgs,
   sources,
-}:
+  system,
+  ...
+}@args:
 let
   inherit (builtins)
     elem
@@ -40,8 +42,5 @@ let
 in
 {
   options.projects = types.projects;
-
-  config.projects = mapAttrs (
-    name: directory: import directory { inherit lib pkgs sources; }
-  ) projectDirectories;
+  config.projects = mapAttrs (name: directory: import directory args) projectDirectories;
 }
