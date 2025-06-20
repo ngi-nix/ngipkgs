@@ -6,20 +6,20 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auth-ldap";
-  version = "0.0.12";
+  version = "0-unstable-2025-05-30";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "fb3226e552a475f70b5ee033803274ed27a86619";
+    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
     sparseCheckout = [ "peertube-plugin-auth-ldap" ];
-    hash = "sha256-bvLCCn2uSuO4ERVt5G3eTqpD50oTE4fvbyVcLV/lx20=";
+    hash = "sha256-kyQeVRNRgEVh74fjFvwto9dDbliurQhRTlb0+gYYf1Q=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auth-ldap";
 
-  npmDepsHash = "sha256-1esTdjtbBIf3xY90xPbTZ9YmydhHO8tF430O8sIevjo=";
+  npmDepsHash = "sha256-Q3HDMv8Suac3y8yP+obnnMuhKS6gteHfmVZjfzCkUBY=";
 
   dontNpmBuild = true;
 
