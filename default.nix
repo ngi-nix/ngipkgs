@@ -244,6 +244,7 @@ rec {
         # TODO: encode this in types, either yants or the module system
         project: rec {
           metadata = empty-if-null (filterAttrs (_: m: m != null) (project.metadata or { }));
+          nixos.demo = filterAttrs (_: m: m != null) (empty-if-null (project.nixos.demo or { }));
           nixos.modules.services = filterAttrs (_: m: m != null) (
             lib.mapAttrs (name: value: value.module or null) project.nixos.modules.services or { }
           );

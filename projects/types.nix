@@ -196,6 +196,17 @@ let
         };
       };
 
+    demo = types.submodule {
+      options = {
+        inherit (types'.example.getSubOptions { })
+          module
+          tests
+          description
+          links
+          ;
+      };
+    };
+
     test = with types; either deferredModule package;
 
     projects = mkOption {
@@ -229,6 +240,13 @@ let
                         };
                         modules.services = mkOption {
                           type = nullOr (attrsOf (nullOr types'.service));
+                          default = null;
+                        };
+                        demo = mkOption {
+                          type = nullOr (attrTag {
+                            vm = mkOption { type = types'.demo; };
+                            shell = mkOption { type = types'.demo; };
+                          });
                           default = null;
                         };
                         # An application component may have examples using it in isolation,
