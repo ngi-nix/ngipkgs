@@ -6,20 +6,20 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-hello-world";
-  version = "0.0.22";
+  version = "0-unstable-2025-05-30";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "fa9005ab1bab93e41e10bb1be3dc4837bd6bbc47";
+    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
     sparseCheckout = [ "peertube-plugin-hello-world" ];
-    hash = "sha256-gNeOJpKYqIRVLMbgfSVXnzCD9QGOJfGcJB3IkZweTEI=";
+    hash = "sha256-U5VjoIxk/UvP+jyn8D7c75Sb2+pPxAEfJIgSPPGjlZc=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-hello-world";
 
-  npmDepsHash = "sha256-Y6bq2w5ykqLMY9eDTNKL3DMkoOx+imV7OCw2Hy961Tk=";
+  npmDepsHash = "sha256-dNoVdDImF+KaOiMlW0tva4bOk2hMykHkzOZSSZWVEyw=";
 
   dontNpmBuild = true;
 
