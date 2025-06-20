@@ -404,7 +404,7 @@ In order to display a project on <ngi.nixos.org>, its metadata must be added to 
 
 ## Running and testing the overview locally
 
-1. To run a local version of the [overview](https://ngi.nixos.org/), run a live overview watcher with:
+1. To preview a local version of the [overview](https://ngi.nixos.org/), run a live watcher with:
 
    ```
    nix-shell --run devmode
