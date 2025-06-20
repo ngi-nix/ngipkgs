@@ -61,7 +61,13 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
 
      ```ShellSession
-     nix fmt pkgs/by-name/some-package
+     nix fmt
+     ```
+
+     or by running:
+
+     ```shellSession
+     nix-shell --run format
      ```
 
    An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/main/pkgs/by-name/libgnunetchat/package.nix).
@@ -118,7 +124,13 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
 
      ```ShellSession
-     nix fmt projects/some-project
+     nix fmt
+     ```
+
+     or by running:
+
+     ```shellSession
+     nix-shell --run format
      ```
 
    An existing example is [AtomicData](https://github.com/ngi-nix/ngipkgs/tree/main/projects/AtomicData).
@@ -399,7 +411,7 @@ In order to display a project on <ngi.nixos.org>, its metadata must be added to 
    nix build .#checks.x86_64-linux.projects/<project_name>/nixos/tests/<test_name>
    ```
 
-1. Run the Nix code formatter with `nix fmt`
+1. Run the Nix code formatter with `nix fmt` or `nix-shell --run format`
 1. Commit your changes and [create a new PR](#how-to-create-pull-requests-to-ngipkgs)
 
 ## Running and testing the overview locally
