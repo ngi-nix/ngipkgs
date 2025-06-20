@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-transcoding-custom-quality";
@@ -12,7 +13,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "9731357f9fb68c48df9cdc3f51fe3dafbecf3bf6";
-    hash = "sha256-diklMd0S6wUsQKunQYLGzrIJqIfAfDzBTZy6aUiu584=";
+    sparseCheckout = [ "peertube-plugin-transcoding-custom-quality" ];
+    hash = "sha256-e7twKvYxb1NjGu/LnsDnv3XOqdMN9VuofhVpdGMriOs=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-transcoding-custom-quality";
@@ -28,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Set a custom quality for transcoding";
