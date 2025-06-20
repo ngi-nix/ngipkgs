@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.slipshow.enable = true;
+}
