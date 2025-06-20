@@ -6,15 +6,15 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-privacy-remover";
-  version = "0.0.1";
+  version = "0-unstable-2025-05-30";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "2df3a5909536f17f143b2c391bb483e339f36c3e";
+    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
     sparseCheckout = [ "peertube-plugin-privacy-remover" ];
-    hash = "sha256-CptC4fBeJ5q9i/EmgShdl1tdtz6ymnGR/T5kj60EBPI=";
+    hash = "sha256-cK1ojyhjYfOUoYfLZA7pzUtp1P1o3PXrezR+mOhS0SE=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-privacy-remover";
