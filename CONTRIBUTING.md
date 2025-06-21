@@ -198,7 +198,7 @@ Provide a short description of the project.
 This needs be brief and also capture the essence of what the project does.
 
    ```markdown
-   ### Short summary 
+   ### Short summary
 
    <!-- A short description of the project -->
 
@@ -219,8 +219,8 @@ This needs be brief and also capture the essence of what the project does.
    - <https://nlnet.nl/project/Foobar>
    - <https://nlnet.nl/project/Foobar-mobile> -->
 
-   - 
-   - 
+   -
+   -
    ```
 
 ### Resources
@@ -233,7 +233,7 @@ Additionally, include information about the programming languages, build tools u
 
    <!-- The main project website, as found in the NLnet pages. -->
 
-   - 
+   -
 
    ### Source repositories
 
@@ -277,14 +277,14 @@ Next, provide any links to documentation and any other resource that can help wi
      - Notes -->
 
    - Usage Examples:
-    - 
-    - 
+    -
+    -
    - Build from source/Development:
-    - 
-    - 
+    -
+    -
    - Other:
-    - 
-    - 
+    -
+    -
    ```
 
 > [!TIP]
@@ -342,7 +342,7 @@ To do this, please go and search for the project's name and note any results fro
      - https://github.com/ngi-nix/ngipkgs/tree/main/pkgs/by-name/liberaforms
    - ngi-nix repository
      - https://github.com/ngi-nix/liberaforms-flake -->
-   
+
    - project:
    - pkgs/by-name:
    - ngi-nix repository:
@@ -367,7 +367,7 @@ For services, click on the module name to reveal more details, then copy the nam
 
    - Packages:
    - Services:
-   
+
    ### Extra Information
 
    <!-- Anything interesting or helpful for packaging the project like notes, issues or pull requests -->

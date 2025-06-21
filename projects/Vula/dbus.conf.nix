@@ -12,14 +12,14 @@
     <policy user="${userPrefix}-organize">
       <allow own="local.vula.organize"/>
       <allow
-         send_destination="local.vula.discover"
-         send_interface="local.vula.discover1.Listen"
-         send_type="method_call"
+        send_destination="local.vula.discover"
+        send_interface="local.vula.discover1.Listen"
+        send_type="method_call"
       />
       <allow
-         send_destination="local.vula.publish"
-         send_interface="local.vula.publish1.Listen"
-         send_type="method_call"
+        send_destination="local.vula.publish"
+        send_interface="local.vula.publish1.Listen"
+        send_type="method_call"
       />
     </policy>
 
@@ -30,9 +30,9 @@
     <policy user="${userPrefix}-discover">
       <allow own="local.vula.discover"/>
       <allow
-         send_destination="local.vula.organize"
-         send_interface="local.vula.organize1.ProcessDescriptor"
-         send_type="method_call"
+        send_destination="local.vula.organize"
+        send_interface="local.vula.organize1.ProcessDescriptor"
+        send_type="method_call"
       />
     </policy>
 
@@ -42,19 +42,19 @@
 
     <policy context="default">
       <allow
-         send_destination="local.vula.organize"
-         send_interface="org.freedesktop.DBus.Introspectable"
-         send_type="method_call"
+        send_destination="local.vula.organize"
+        send_interface="org.freedesktop.DBus.Introspectable"
+        send_type="method_call"
       />
       <allow
-         send_destination="local.vula.publish"
-         send_interface="org.freedesktop.DBus.Introspectable"
-         send_type="method_call"
+        send_destination="local.vula.publish"
+        send_interface="org.freedesktop.DBus.Introspectable"
+        send_type="method_call"
       />
       <allow
-         send_destination="local.vula.discover"
-         send_interface="org.freedesktop.DBus.Introspectable"
-         send_type="method_call"
+        send_destination="local.vula.discover"
+        send_interface="org.freedesktop.DBus.Introspectable"
+        send_type="method_call"
       />
     </policy>
   </busconfig>
