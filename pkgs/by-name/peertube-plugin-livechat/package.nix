@@ -202,6 +202,51 @@ let
       inherit (commonMeta) maintainers platforms;
     };
   };
+
+  livechatProsody = prosody.override {
+    withExtraLuaPackages = (
+      p: [
+        # Needed by one of peertube-livechat's prosody modules
+        (p.callPackage (
+          {
+            buildLuarocksPackage,
+            fetchFromGitHub,
+            fetchurl,
+            luaOlder,
+            oniguruma,
+          }:
+          buildLuarocksPackage {
+            pname = "lrexlib-oniguruma";
+            version = "2.9.2-1";
+            knownRockspec =
+              (fetchurl {
+                url = "mirror://luarocks/lrexlib-oniguruma-2.9.2-1.rockspec";
+                sha256 = "sha256-DTYlzumhkpWhUZQMezTO1RONQnjP2hraEm7SWqvZoo4=";
+              }).outPath;
+            src = fetchFromGitHub {
+              owner = "rrthomas";
+              repo = "lrexlib";
+              rev = "rel-2-9-2";
+              hash = "sha256-DzNDve+xeKb+kAcW+o7GK/RsoDhaDAVAWAhgjISCyZc=";
+            };
+
+            disabled = luaOlder "5.1";
+
+            luarocksConfig.variables = {
+              ONIG_INCDIR = "${lib.getDev oniguruma}/include";
+              ONIG_DIR = lib.getLib oniguruma;
+            };
+
+            meta = {
+              homepage = "https://github.com/rrthomas/lrexlib";
+              description = "Regular expression library binding (oniguruma flavour).";
+              license.fullName = "MIT/X11";
+            };
+          }
+        ) { })
+      ]
+    );
+  };
 in
 buildNpmPackage {
   inherit (details.livechat) pname version npmDeps;
@@ -229,8 +274,8 @@ buildNpmPackage {
 
     # Wants to run its own prosody instance
     substituteInPlace server/lib/prosody/config.ts \
-      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' prosody "prosody"}'" \
-      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
+      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' livechatProsody "prosody"}'" \
+      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' livechatProsody "prosodyctl"}'" \
   '';
 
   meta = {
