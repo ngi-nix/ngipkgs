@@ -202,6 +202,15 @@ let
       inherit (commonMeta) maintainers platforms;
     };
   };
+
+  livechatProsody = prosody.override {
+    withExtraLuaPackages = (
+      p: [
+        # Needed by one of peertube-livechat's prosody modules
+        p.lrexlib-oniguruma
+      ]
+    );
+  };
 in
 buildNpmPackage {
   inherit (details.livechat) pname version npmDeps;
@@ -229,8 +238,8 @@ buildNpmPackage {
 
     # Wants to run its own prosody instance
     substituteInPlace server/lib/prosody/config.ts \
-      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' prosody "prosody"}'" \
-      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
+      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' livechatProsody "prosody"}'" \
+      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' livechatProsody "prosodyctl"}'" \
   '';
 
   meta = {
