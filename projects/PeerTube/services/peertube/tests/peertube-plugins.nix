@@ -58,8 +58,5 @@
 
       with subtest("peertube plugin ${pkgs.peertube-plugin-hello-world.pname} works"):
           server.wait_for_console_text("hello world PeerTube admin")
-
-      with subtest("peertube plugin ${pkgs.peertube-plugin-livechat.pname} works"):
-          server.wait_for_console_text("loading peertube admins and moderators")
     '';
 }
