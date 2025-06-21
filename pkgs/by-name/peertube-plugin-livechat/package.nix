@@ -4,42 +4,40 @@
   fetchNpmDeps,
   fetchFromGitHub,
   runCommand,
-  stdenvNoCC,
-  symlinkJoin,
   prosody,
 }:
 let
   details = {
     livechat = rec {
       pname = "peertube-plugin-livechat";
-      version = "10.1.2";
+      version = "14.0.0";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "peertube-plugin-livechat";
         rev = "refs/tags/v${version}";
-        hash = "sha256-YXx171816oZhZyNA4OSAlFIzyqq9nVLEZSHhM+F7AHg=";
+        hash = "sha256-5cq4Z0WQ/xbqoYlIia9KzglFtyExlK9cDyT6dyfZVr4=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
         inherit src;
-        hash = "sha256-VnV1EyHDhvrjVUSOdjFef8aV6lGRVv8DZllf6ODVwx4=";
+        hash = "sha256-B2VZnJ4G5uycEvB0jHdtvBVZet4oQSlY6E6lrwnWx9g=";
       };
     };
 
     # Check <livechat-src>/conversejs/build-conversejs.sh for which conversejs to use
     conversejs = rec {
       pname = "conversejs-livechat";
-      version = "10.1.0";
+      version = "12.0.1";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "converse.js";
         rev = "refs/tags/livechat-${version}";
-        hash = "sha256-udSpkYSyBkR2d5jxRBz3qLwiRH4PXdHCsv8j4Z6i8xY=";
+        hash = "sha256-vD5ZFeGZYcsDX/Ye0tmBlRveOGusLP2NGkvHcNdZyqE=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
         inherit src;
-        hash = "sha256-1ObgAiaIsXK6ACxdNjRWxmRYClDfHZ3BdBb+47EsD4Q=";
+        hash = "sha256-jTs+1fLPE6D78rHhudEc+qVTyA2E8Z7C1CgKfdl1w8o=";
       };
     };
   };
@@ -107,7 +105,7 @@ let
 
     postPatch = ''
       substituteInPlace conversejs/build-conversejs.sh \
-        --replace-fail '/bin/env node' 'node' \
+        --replace-fail '/usr/bin/env node' 'node' \
         --replace-fail 'if [[ ! -d "$converse_build_dir/node_modules" ]]; then' 'echo "Done patching ConverseJS" && exit 0; if [[ ! -d "$converse_build_dir/node_modules" ]]; then'
     '';
 
@@ -146,7 +144,7 @@ let
   };
 
   # livechat needs converse.js
-  conversejs = buildNpmPackage rec {
+  conversejs = buildNpmPackage {
     inherit (details.conversejs) pname version npmDeps;
 
     src = merged-patched-src;
@@ -177,7 +175,9 @@ let
     installPhase = ''
       runHook preInstall
 
-      cp -r dist/client/conversejs $out
+      mkdir -p $out/client
+      cp -r dist/client/conversejs $out/client/
+      cp dist/converse-emoji.json $out/
 
       runHook postInstall
     '';
@@ -187,7 +187,7 @@ let
     installCheckPhase = ''
       runHook preInstallCheck
 
-      if [ ! -f $out/converse.min.js -o ! -f $out/converse.min.css ]; then
+      if [ ! -f $out/client/conversejs/converse.min.js -o ! -f $out/client/conversejs/converse.min.css ]; then
         echo "converse.min.js or converse.min.css failed to be generated, please check the build log!"
         exit 1
       fi
@@ -202,8 +202,53 @@ let
       inherit (commonMeta) maintainers platforms;
     };
   };
+
+  livechatProsody = prosody.override {
+    withExtraLuaPackages = (
+      p: [
+        # Needed by one of peertube-livechat's prosody modules
+        (p.callPackage (
+          {
+            buildLuarocksPackage,
+            fetchFromGitHub,
+            fetchurl,
+            luaOlder,
+            oniguruma,
+          }:
+          buildLuarocksPackage {
+            pname = "lrexlib-oniguruma";
+            version = "2.9.2-1";
+            knownRockspec =
+              (fetchurl {
+                url = "mirror://luarocks/lrexlib-oniguruma-2.9.2-1.rockspec";
+                sha256 = "sha256-DTYlzumhkpWhUZQMezTO1RONQnjP2hraEm7SWqvZoo4=";
+              }).outPath;
+            src = fetchFromGitHub {
+              owner = "rrthomas";
+              repo = "lrexlib";
+              rev = "rel-2-9-2";
+              hash = "sha256-DzNDve+xeKb+kAcW+o7GK/RsoDhaDAVAWAhgjISCyZc=";
+            };
+
+            disabled = luaOlder "5.1";
+
+            luarocksConfig.variables = {
+              ONIG_INCDIR = "${lib.getDev oniguruma}/include";
+              ONIG_DIR = lib.getLib oniguruma;
+            };
+
+            meta = {
+              homepage = "https://github.com/rrthomas/lrexlib";
+              description = "Regular expression library binding (oniguruma flavour).";
+              license.fullName = "MIT/X11";
+            };
+          }
+        ) { })
+      ]
+    );
+  };
 in
-buildNpmPackage rec {
+buildNpmPackage {
   inherit (details.livechat) pname version npmDeps;
 
   src = merged-src;
@@ -216,7 +261,7 @@ buildNpmPackage rec {
   postPatch = ''
     mkdir -p dist/client
     cp -r --no-preserve=mode,ownership ${translations} dist/languages
-    cp -r --no-preserve=mode,ownership ${conversejs} dist/client/conversejs
+    cp -r --no-preserve=mode,ownership ${conversejs}/* dist/
 
     # Don't try to delete & rebuild everything when installing (either in this derivation or as a plugin in peertube)
     # clean:light would get rid of the built conversejs
@@ -227,17 +272,10 @@ buildNpmPackage rec {
       --replace-fail '"build": "npm-run-all -s clean:light build:languages' '"build": "npm-run-all -s' \
       --replace-fail 'build:prosodymodules build:converse build:prosody' 'build:prosodymodules'
 
-    substituteInPlace conversejs/build-conversejs.sh \
-      --replace-fail '/bin/env node' 'node'
-
-    # We don't want to rely on a bundled AppImage version of prosody
-    substituteInPlace server/lib/settings.ts \
-      --replace-fail 'default: false' 'default: true'
-
     # Wants to run its own prosody instance
     substituteInPlace server/lib/prosody/config.ts \
-      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' prosody "prosody"}'" \
-      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' prosody "prosodyctl"}'" \
+      --replace-fail "exec = 'prosody'" "exec = '${lib.getExe' livechatProsody "prosody"}'" \
+      --replace-fail "execCtl = 'prosodyctl'" "execCtl = '${lib.getExe' livechatProsody "prosodyctl"}'" \
   '';
 
   meta = {

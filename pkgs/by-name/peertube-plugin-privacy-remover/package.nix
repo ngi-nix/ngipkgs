@@ -2,17 +2,19 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-privacy-remover";
-  version = "0.0.1";
+  version = "0-unstable-2025-05-30";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "2df3a5909536f17f143b2c391bb483e339f36c3e";
-    hash = "sha256-2kcugu4uEPd/WgOe3vV6xaA1d2OcSBJy2ZkZ8gNv760=";
+    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    sparseCheckout = [ "peertube-plugin-privacy-remover" ];
+    hash = "sha256-cK1ojyhjYfOUoYfLZA7pzUtp1P1o3PXrezR+mOhS0SE=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-privacy-remover";
@@ -28,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Remove video privacy settings of your choice";

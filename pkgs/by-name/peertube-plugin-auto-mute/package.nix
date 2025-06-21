@@ -2,8 +2,9 @@
   lib,
   buildNpmPackage,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
-buildNpmPackage rec {
+buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auto-mute";
   version = "0.0.6";
 
@@ -12,16 +13,17 @@ buildNpmPackage rec {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "932c51d45ce3160ab9ba097bbede51a44d890a61";
-    hash = "sha256-UGqoevqoyvWfAmumuOsdDdMIDPfaOhnjwoFXynWCgHQ=";
+    sparseCheckout = [ "peertube-plugin-auto-mute" ];
+    hash = "sha256-OOIUXs09Gx5WkXE8W8BpIwwpSxqDp0ifJh5PsA4Eoko=";
   };
 
-  sourceRoot = "${src.name}/peertube-plugin-auto-mute";
+  sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auto-mute";
 
   npmDepsHash = "sha256-YbFEefvSLk9jf6g6FMmCahxqA+X+FD4MCc+c6luRZq4=";
 
   dontNpmBuild = true;
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Auto mute accounts or instances based on public blocklists";
@@ -30,4 +32,4 @@ buildNpmPackage rec {
     maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
-}
+})

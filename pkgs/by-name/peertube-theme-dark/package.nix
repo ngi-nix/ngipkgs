@@ -2,17 +2,19 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-theme-dark";
-  version = "2.5.0";
+  version = "0-unstable-2025-05-30";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "631f784774dc5f9686bf06033d6ceb0d596ef987";
-    hash = "sha256-VvtqF9et2uLxj8kGIjdaHQjxQbeNIAwz+NTPME/6Wpk=";
+    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    sparseCheckout = [ "peertube-theme-dark" ];
+    hash = "sha256-qICONcpP05r1BYF+GaPsp9+7CoKZcF024otOHspU2Tk=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-theme-dark";
@@ -28,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "PeerTube dark theme";

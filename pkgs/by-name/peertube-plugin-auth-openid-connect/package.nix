@@ -2,26 +2,28 @@
   lib,
   buildNpmPackage,
   fetchFromGitLab,
+  peertube-plugin-akismet,
 }:
-buildNpmPackage rec {
+buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auth-openid-connect";
-  version = "0.1.1";
+  version = "0-unstable-2025-05-30";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "9ed56041e9a9dcb98cc610e938c7853db38cd349";
-    hash = "sha256-L9yD+amw49s+zhP4anTkXGdemitOoqJgqwzwd9PHWyw=";
+    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    sparseCheckout = [ "peertube-plugin-auth-openid-connect" ];
+    hash = "sha256-vc1ZOO1hAmTD2NE4P7WELZjDTP7+CwJk7yMCXeuRn0E=";
   };
 
-  sourceRoot = "${src.name}/peertube-plugin-auth-openid-connect";
+  sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auth-openid-connect";
 
-  npmDepsHash = "sha256-3FD9i4utzkHOjBXVPz574vttOL6VDuqM1kxtgqp8eOA=";
+  npmDepsHash = "sha256-NXCjLPJvFZ05b3gHnhnGF58ULgfL23+r6b0IaMeIw60=";
 
   dontNpmBuild = true;
 
-  # TODO: passthru.updateScript? there are no tags, versions come as commits with changes to subdir's package.json
+  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
   meta = {
     description = "Add OpenID Connect support to login form in PeerTube";
@@ -30,4 +32,4 @@ buildNpmPackage rec {
     maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
   };
-}
+})
