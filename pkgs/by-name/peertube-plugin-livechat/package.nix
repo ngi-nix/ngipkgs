@@ -175,7 +175,9 @@ let
     installPhase = ''
       runHook preInstall
 
-      cp -r dist/client/conversejs $out
+      mkdir -p $out/client
+      cp -r dist/client/conversejs $out/client/
+      cp dist/converse-emoji.json $out/
 
       runHook postInstall
     '';
@@ -185,7 +187,7 @@ let
     installCheckPhase = ''
       runHook preInstallCheck
 
-      if [ ! -f $out/converse.min.js -o ! -f $out/converse.min.css ]; then
+      if [ ! -f $out/client/conversejs/converse.min.js -o ! -f $out/client/conversejs/converse.min.css ]; then
         echo "converse.min.js or converse.min.css failed to be generated, please check the build log!"
         exit 1
       fi
@@ -214,7 +216,7 @@ buildNpmPackage {
   postPatch = ''
     mkdir -p dist/client
     cp -r --no-preserve=mode,ownership ${translations} dist/languages
-    cp -r --no-preserve=mode,ownership ${conversejs} dist/client/conversejs
+    cp -r --no-preserve=mode,ownership ${conversejs}/* dist/
 
     # Don't try to delete & rebuild everything when installing (either in this derivation or as a plugin in peertube)
     # clean:light would get rid of the built conversejs
