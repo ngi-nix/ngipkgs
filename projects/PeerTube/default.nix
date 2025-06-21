@@ -55,6 +55,7 @@
           module = ./services/peertube/examples/basic.nix;
           description = "Basic configuration mainly used for testing purposes";
           tests.peertube-plugins = import ./services/peertube/tests/peertube-plugins.nix args;
+          tests.peertube-plugin-livechat = import ./services/peertube/tests/peertube-plugin-livechat.nix args;
         };
       };
     };
