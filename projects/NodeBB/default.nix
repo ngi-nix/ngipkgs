@@ -27,22 +27,29 @@
     };
   };
 
-  nixos.modules.services = {
-    nodebb = {
-      name = "NodeBB";
-      module = ./services/nodebb/module.nix;
-      examples = {
-        postgresql = {
-          module = ./services/nodebb/examples/postgresql.nix;
-          description = "";
-          tests.postgresql = import ./services/nodebb/tests/postgresql.nix args;
-        };
-        redis = {
-          module = ./services/nodebb/examples/redis.nix;
-          description = "";
-          tests.redis = import ./services/nodebb/tests/redis.nix args;
+  nixos = {
+    modules.services = {
+      nodebb = {
+        name = "NodeBB";
+        module = ./services/nodebb/module.nix;
+        examples = {
+          postgresql = {
+            module = ./services/nodebb/examples/postgresql.nix;
+            description = "";
+            tests.postgresql = import ./services/nodebb/tests/postgresql.nix args;
+          };
+          redis = {
+            module = ./services/nodebb/examples/redis.nix;
+            description = "";
+            tests.redis = import ./services/nodebb/tests/redis.nix args;
+          };
         };
       };
+    };
+    demo.vm = {
+      module = ./services/nodebb/examples/postgresql.nix;
+      description = "Deployment for demo purposes";
+      tests.postgresql = import ./services/nodebb/tests/postgresql.nix args;
     };
   };
 }
