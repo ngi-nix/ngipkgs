@@ -25,4 +25,9 @@
     };
   };
 
+  nixos.demo.shell = {
+    module = ./programs/slipshow/examples/basic.nix;
+    description = "slipshow example";
+    tests.basic = import ./programs/slipshow/tests/shell.nix args;
+  };
 }
