@@ -1,6 +1,9 @@
 # https://github.com/NixOS/nixpkgs/blob/c7661dfc33f947d81443ec911549e2d0f6414085/nixos/tests/matrix/draupnir.nix
 { ... }:
 
+let
+  port = 8008;
+in
 {
   # We want a server for demos.
   services.matrix-synapse = {
@@ -16,7 +19,7 @@
           bind_addresses = [
             "::"
           ];
-          port = 8008;
+          inherit port;
           resources = [
             {
               compress = true;
@@ -38,7 +41,7 @@
   services.draupnir = {
     enable = true;
     settings = {
-      homeserverUrl = "http://localhost:8008";
+      homeserverUrl = "http://localhost:${toString port}";
       managementRoom = "#moderators:homeserver";
     };
     secrets = {
@@ -46,4 +49,7 @@
       accessToken = "/tmp/draupnir-access-token";
     };
   };
+
+  # demo-vm
+  networking.firewall.allowedTCPPorts = [ port ];
 }

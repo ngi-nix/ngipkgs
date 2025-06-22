@@ -32,5 +32,13 @@
         tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
       };
     };
+    demo.vm = {
+      module = ./example.nix;
+      description = "Deployment for demo purposes";
+      tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
+      problem.broken.reason = ''
+        Still a work in progress.
+      '';
+    };
   };
 }
