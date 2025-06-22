@@ -25,5 +25,4 @@
     };
   };
 
-  # no service module as this is strictly a program
 }
