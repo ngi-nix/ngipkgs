@@ -13,6 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.slipshow
+          sources.examples.slipshow.demo-shell
         ];
       };
   };
