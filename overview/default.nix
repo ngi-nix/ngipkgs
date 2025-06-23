@@ -12,17 +12,13 @@ let
   inherit (builtins)
     any
     attrValues
-    concatStringsSep
     filter
     isList
     isInt
-    readFile
     substring
     toJSON
     toString
     ;
-
-  join = concatStringsSep;
 
   eval = module: (lib.evalModules { modules = [ module ]; }).config;
 
@@ -34,14 +30,14 @@ let
     mapAttrs'
     nameValuePair
     drop
-    splitString
-    intersperse
+    join
     ;
 
   empty =
     xs:
     assert isList xs;
     xs == [ ];
+
   heading =
     i: anchor: text:
     assert (isInt i && i > 0);

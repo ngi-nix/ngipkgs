@@ -42,6 +42,16 @@ let
         (lib.filterAttrs (_: v: v != null))
       ];
 
+    join = lib.concatStringsSep;
+
+    indent =
+      prefix: s:
+      with lib.lists;
+      let
+        lines = lib.splitString "\n" s;
+      in
+      join "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
+
     # Recursively evaluate attributes for an attribute set.
     # Coupled with an evaluated nixos configuration, this presents an efficient
     # way for checking module types.
