@@ -2,11 +2,9 @@
 {
   lib,
   options,
-  nixpkgs ? self.inputs.nixpkgs,
   pkgs,
   projects,
   self,
-  system,
 }:
 let
   inherit (builtins)
@@ -88,50 +86,7 @@ let
   # step.
   markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
 
-  nix-config = eval {
-    imports = [ ./content-types/nix-config.nix ];
-    _module.args.pkgs = pkgs;
-    settings = {
-      substituters = [
-        "https://cache.nixos.org/"
-        "https://ngi.cachix.org/"
-      ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6nchdd59x431o0gwypbmraurkbj16zpmqfgspcdshjy="
-        "ngi.cachix.org-1:n+cal72roc3qqulxihpv+tw5t42whxmmhpragkrsrow="
-      ];
-    };
-  };
-
   render = {
-    # A code snippet that is copyable and optionally downloadable
-    codeSnippet.one =
-      {
-        filename,
-        language ? "nix",
-        relative ? false,
-        downloadable ? false,
-      }:
-      ''
-        <div class="code-block">
-          {{ include_code("${language}", "${filename}" ${optionalString relative ", relative_path=True"}) }}
-          <div class="code-buttons">
-            ${optionalString downloadable ''
-              <a class="button download" href="${filename}" download>Download</a>
-            ''}
-            <template scripted>
-              <button class="button copy" onclick="copyToClipboard(this, '${filename}')">
-                  ${optionalString (!relative) ''
-                    <script type="application/json">
-                      ${toJSON (readFile filename)}
-                    </script>
-                  ''}
-                  Copy
-              </button>
-            </template>
-          </div>
-        </div>
-      '';
     options = rec {
       one =
         prefix: option:
@@ -182,7 +137,10 @@ let
       one = example: ''
         <details><summary>${example.description}</summary>
 
-        ${render.codeSnippet.one { filename = example.module; }}
+        ${eval {
+          imports = [ ./content-types/code-snippet.nix ];
+          filepath = example.module;
+        }}
 
         </details>
       '';
@@ -257,7 +215,7 @@ let
           ${optionalString (project.metadata != null) (render.metadata.one project.metadata)}
           ${optionalString (project.nixos.demo != null) (
             lib.concatMapAttrsStringSep "\n" (
-              type: demo: (render.serviceDemo.one type project.nixos.modules demo)
+              type: demo: toString (render.serviceDemo.one type demo)
             ) project.nixos.demo
           )}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
@@ -266,150 +224,26 @@ let
         </article>
       '';
 
-    demoGlue.one = type: exampleText: ''
-      # default.nix
-      {
-        ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
-      }:
-      ngipkgs.demo-${type} (
-        ${toString (intersperse "\n " (splitString "\n" exampleText))}
-      )
-    '';
-
     serviceDemo.one =
-      type: modules: example:
-      let
-        demoSystem = import (nixpkgs + "/nixos/lib/eval-config.nix") {
-          inherit system;
-          modules =
-            [
-              example.module
-              ./demo/shell.nix
-            ]
-            ++ (filter (module: module != null) (
-              (mapAttrsToList (name: service: service.module) modules.services)
-              ++ (mapAttrsToList (name: program: program.module) modules.programs)
-            ));
-        };
-        openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
-        # The port that is forwarded to the host so that the user can access the demo service.
-        servicePort = if openPorts != [ ] then (builtins.head openPorts) else "";
-        installation-instructions = eval {
-          imports = [ ./content-types/shell-instructions.nix ];
-          instructions = [
-            {
-              platform = "Arch Linux";
-              shell-session.bash = [
-                {
-                  input = ''
-                    pacman --sync --refresh --noconfirm curl git jq nix
-                  '';
-                }
-              ];
-            }
-            {
-              platform = "Debian";
-              shell-session.bash = [
-                {
-                  input = ''
-                    apt install --yes curl git jq nix
-                  '';
-                }
-              ];
-            }
-            {
-              platform = "Ubuntu";
-              shell-session.bash = [
-                {
-                  input = ''
-                    apt install --yes curl git jq nix
-                  '';
-                }
-              ];
-            }
-          ];
-        };
-        set-nix-config = eval {
-          imports = [ ./content-types/shell-instructions.nix ];
-          instructions.bash = [
-            {
-              input = ''
-                export NIX_CONFIG='${nix-config}'
-              '';
-            }
-          ];
-        };
-        build-instructions = eval {
-          imports = [ ./content-types/shell-instructions.nix ];
+      type: demo:
+      eval {
+        imports = [ ./content-types/demo-instructions.nix ];
+        _module.args.pkgs = pkgs;
 
-          instructions = [
-            {
-              platform = "Arch Linux, Debian Sid and Ubuntu 25.04";
-              shell-session.bash = [
-                {
-                  input = ''
-                    nix-build ./default.nix && ./result
-                  '';
-                }
-              ];
-            }
-            {
-              platform = "Debian 12 and Ubuntu 24.04/24.10";
-              shell-session.bash = [
-                {
-                  input = ''
-                    rev=$(nix-instantiate --eval --attr sources.nixpkgs.rev https://github.com/ngi-nix/ngipkgs/archive/master.tar.gz | jq --raw-output)
-                  '';
-                }
-                {
-                  input = ''
-                    nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"
-                  '';
-                }
-              ];
-            }
-          ];
-        };
-      in
-      ''
-        ${heading 2 "demo" (
+        heading = heading 2 "demo" (
           if type == "shell" then "Try the program in a shell" else "Try the service in a VM"
-        )}
+        );
 
-        <ol>
-          <li>
-            <strong>Install Nix</strong>
-            ${installation-instructions}
-          </li>
-          <li>
-            <strong>Download a configuration file</strong>
-              ${render.codeSnippet.one {
-                filename = "default.nix";
-                relative = true;
-                downloadable = true;
-              }}
-          </li>
-          <li>
-            <strong>Enable binary substituters</strong>
-            ${set-nix-config}
-          </li>
-          <li>
-            <strong>Build and run a virtual machine</strong>
-            ${build-instructions}
-          </li>
-          ${
-            if servicePort != "" then
-              ''
-                <li>
-                  <strong>Access the service</strong><br />
-                    Open a web browser at <a href="http://localhost:${toString servicePort}">http://localhost:${toString servicePort}</a> .
-                </li>
-              ''
-            else
-              ""
-          }
-        </ol>
-      '';
+        demo = {
+          inherit type;
+          inherit (demo)
+            tests
+            module
+            ;
+          problem = demo.problem or null;
+          _module.args.pkgs = pkgs;
+        };
+      };
   };
 
   # HTML project pages
@@ -419,10 +253,24 @@ let
       pagetitle = "NGIpkgs | ${name}";
       content = render.projects.one name project;
       summary = project.metadata.summary or null;
+      # TODO: do we still need this? originally, we wanted to write a
+      # `default.nix` file in each project directory so CI would test those,
+      # but we're not heading in that direction anymore as we're either gonna
+      # use NixOS VM tests or not test the individual projects at all.
       demoFile =
         let
           demoFiles = lib.mapAttrs (
-            type: demo: (pkgs.writeText "default.nix" (render.demoGlue.one type (readFile demo.module)))
+            type: demo:
+            (eval {
+              imports = [ ./content-types/demo.nix ];
+              inherit type;
+              inherit (demo)
+                tests
+                module
+                problem
+                ;
+              _module.args.pkgs = pkgs;
+            }).filepath
           ) project.nixos.demo;
         in
         if project.nixos.demo == null then

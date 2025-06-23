@@ -118,19 +118,16 @@ let
 in
 rec {
   lib = extended;
-  inherit extension;
 
   inherit
     pkgs
     system
     sources
+    extension
     ;
 
   overview = import ./overview {
-    inherit
-      lib
-      system
-      ;
+    inherit lib;
     projects = evaluated-modules.config.projects;
     self = flake;
     pkgs = pkgs // ngipkgs;
