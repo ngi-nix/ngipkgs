@@ -31,7 +31,7 @@ in
       programs = {
         xrsh = cfg.package;
       };
-      env.XRSH_PORT = "8090";
+      env.XRSH_PORT = toString cfg.port;
     };
   };
 }
