@@ -26,6 +26,12 @@
     };
   };
 
-  # TODO: add service module
-  nixos.modules.services.holo-daemon = null;
+  nixos.modules.services = {
+    holo-daemon = {
+      name = "holo-daemon";
+      module = ./services/holo/module.nix;
+      # TODO: add example and test
+      examples.holo = null;
+    };
+  };
 }
