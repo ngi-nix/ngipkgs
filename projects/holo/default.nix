@@ -30,8 +30,11 @@
     holo-daemon = {
       name = "holo-daemon";
       module = ./services/holo/module.nix;
-      # TODO: add example and test
-      examples.holo = null;
+      examples.holo = {
+        module = ./services/holo/examples/holo.nix;
+        description = "Enable the holo daemon service";
+        tests.holo = import ./services/holo/tests/holo.nix args;
+      };
     };
   };
 }
