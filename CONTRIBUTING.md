@@ -177,6 +177,70 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 1. After the build succeeds, verify that the package works, if possible.
    This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
 
+## How to add an example
+> [!NOTE]
+> - This is applicable to both programs and services.
+> - Change `_programName_` to `_serviceName_` and `programs` to `services` if you are adding a service example.
+
+An example, is a configuration of an existing module (program or service) that describes how to use it. To add a program module example:
+
+1. Create an `examples` directory with a `basic.nix` file inside the programs directory.
+   For example, for a project called `fooBar`:
+
+   ```shell
+   cp ./maintainers/templates/project/programs/_programName_/examples/basic.nix ./projects/fooBar/programs/examples/
+   ```
+
+   The directory structure should look like this:
+
+    ```shell
+    └── programs
+      └── fooBar
+          └── examples
+              └── basic.nix
+    ```
+
+2.  Rename `basic.nix` to fit what the example does. For example, if it configures plugins, call it `plugins.nix`, otherwise if it a simple configuration example, leave it.
+
+3. Edit this file to write an example configuration of the program.
+   For example, if you want to enable a program called `fooBar`, you would write:
+
+      ```shell
+      $EDITOR ./projects/fooBar/programs/fooBar/examples/basic.nix
+      ```
+
+      ```nix
+      { ... }:
+      {
+        programs.fooBar.enable = true;
+      }
+      ```
+
+4.  Inside the `default.nix` file at the root of the project, add an example in the module configuration.
+    For instance, to add the basic example for the `fooBar` program, you would add the following code:
+
+    ```nix
+    {
+      # other configurations...
+      nixosModules = {
+        programs.fooBar = {
+          name = "fooBar";
+          module = ./programs/fooBar/module.nix;
+          examples.basic = {
+            module = ./programs/fooBar/examples/basic.nix;
+            description = "A basic example of how to use fooBar.";
+            tests.basic = null;
+          };
+        };
+      };
+    }
+    ```
+
+>  [!NOTE]
+>
+> - Each example should have a test. <!-- TODO: link tests docs -->
+> - Set attributes to `null` if tests are not available, yet.
+
 ## Triaging an NGI application
 
 An NGI-funded application is triaged by collecting relevant information and resources related to its packaging, which can be in the form of links to source repositories, documentation, previous packaging attempts, ...
