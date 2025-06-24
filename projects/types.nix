@@ -105,17 +105,78 @@ let
             };
             module = mkOption {
               type = nullOr deferredModule;
+              description = ''
+                Contains the path to the NixOS module for the program.
+
+                For modules that reside in NixOS, use:
+
+                ```nix
+                {
+                  module = lib.moduleLocFromOptionString "programs.PROGRAM_NAME";
+                }
+                ```
+
+                If you want to extend such modules, you can import them in a new module:
+
+                ```nix
+                {
+                  module = ./module.nix;
+                }
+                ```
+
+                Where `module.nix` contains:
+
+                ```nix
+                { lib, ... }:
+                {
+                  imports = [
+                    (lib.moduleLocFromOptionString "programs.PROGRAM_NAME")
+                  ];
+
+                  options.programs.PROGRAM_NAME = {
+                    extra-option = lib.mkEnableOption "extra option";
+                  };
+                }
+                ```
+              '';
             };
             examples = mkOption {
               type = attrsOf types'.example;
-              default = { };
-            };
-            extensions = mkOption {
-              type = attrsOf (nullOr types'.plugin);
+              description = ''
+                Configurations that illustrate how to set up the program.
+
+                ::: {.note}
+                Each program must include at least one example, so users get an idea of what to do with it.
+                :::
+              '';
+              example = lib.literalExpression ''
+                nixos.modules.foobar.examples.basic = {
+                  module = ./programs/foobar/examples/basic.nix;
+                  description = "Basic configuration example for foobar";
+                  tests.foobar-basic.module = import ./programs/foobar/tests/basic.nix args;
+                };
+              '';
               default = { };
             };
             links = mkOption {
               type = attrsOf types'.link;
+              description = ''
+                Links to documentation or resources that may help building, configuring and testing the program.
+              '';
+              example = {
+                usage = {
+                  text = "Usage examples";
+                  url = "https://docs.foobar.com/quickstart";
+                };
+                build = {
+                  text = "Build from source";
+                  url = "https://docs.foobar.com/dev";
+                };
+              };
+              default = { };
+            };
+            extensions = mkOption {
+              type = attrsOf (nullOr types'.plugin);
               default = { };
             };
           };
@@ -220,7 +281,7 @@ let
         module = mkOption {
           # - null: needed, but not available
           # - deferredModule: something that nixosTest will run
-          # - package: derivation from Nixpkgs
+          # - package: derivation from NixOS
           type = with types; nullOr (either deferredModule package);
           default = null;
         };
@@ -260,6 +321,16 @@ let
                           programs = mkOption {
                             type = attrsOf types'.program;
                             description = "Software that can be run in the shell";
+                            example = lib.literalExpression ''
+                              nixos.modules.programs.foobar = {
+                                module = ./programs/foobar/module.nix;
+                                examples.basic = {
+                                  module = ./programs/foobar/examples/basic.nix;
+                                  description = "Basic configuration example for foobar";
+                                  tests.basic.module = import ./programs/foobar/tests/basic.nix args;
+                                };
+                              };
+                            '';
                             default = { };
                           };
                           services = mkOption {
