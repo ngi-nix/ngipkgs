@@ -96,5 +96,7 @@ python3Packages.buildPythonApplication rec {
     changelog = "https://repos.goffi.org/libervia-desktop-kivy/file/${src.rev}/CHANGELOG";
     license = lib.licenses.agpl3Plus;
     maintainers = [ ];
+    # FIX: https://buildbot.ngi.nixos.org/#/builders/387/builds/1770
+    broken = true;
   };
 }
