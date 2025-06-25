@@ -31,7 +31,8 @@
     };
   };
 
-  binary = {
-    "libresoc.v".data = pkgs.libresoc-verilog;
-  };
+  # FIX: https://github.com/NixOS/nixpkgs/issues/389149
+  # binary = {
+  #   "libresoc.v".data = pkgs.libresoc-verilog;
+  # };
 }
