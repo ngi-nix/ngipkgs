@@ -7,7 +7,7 @@ projects: Nix@NGI
 assignees: ''
 ---
 
-<!-- Follow the instructions in the [contributing guide](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#triaging-an-ngi-project) and put the project metadata here -->
+<!-- Follow the instructions in the [contributing guide](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#triaging-an-ngi-application) and put the project metadata here -->
 
 ### Tasks
 
