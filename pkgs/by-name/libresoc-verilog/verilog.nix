@@ -11,6 +11,9 @@ runCommand "libresoc.v"
       libresoc-nmigen
       pinmux
     ];
+
+    # FIX: https://github.com/NixOS/nixpkgs/issues/389149
+    meta.broken = true;
   }
   ''
     mkdir pinmux

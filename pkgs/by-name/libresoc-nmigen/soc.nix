@@ -75,5 +75,7 @@ python3Packages.buildPythonPackage rec {
     description = "A nmigen-based OpenPOWER multi-issue Hybrid 3D CPU-VPU-GPU";
     homepage = "https://git.libre-soc.org/?p=soc.git;a=summary";
     license = lib.licenses.lgpl3Plus;
+    # FIX: https://github.com/NixOS/nixpkgs/issues/389149
+    broken = true;
   };
 }
