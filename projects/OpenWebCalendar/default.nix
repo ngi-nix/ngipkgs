@@ -13,7 +13,10 @@
       examples.basic = {
         module = ./example.nix;
         description = "";
-        tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
+        # FIX: re-enable after this is solved:
+        # https://github.com/NixOS/nixpkgs/issues/418689
+        # tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
+        tests.basic = null;
       };
       links = {
         development = {
@@ -45,7 +48,10 @@
     demo.vm = {
       module = ./example.nix;
       description = "Deployment for demo purposes";
-      tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
+      # FIX: re-enable after this is solved:
+      # https://github.com/NixOS/nixpkgs/issues/418689
+      # tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
+      tests.basic = null;
     };
   };
 }
