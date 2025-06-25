@@ -27,7 +27,7 @@
     mcaptcha = {
       name = "mcaptcha";
       module = ./services/mcaptcha/module.nix;
-      examples.basic = null;
+      examples.basic.module = null;
       links = {
         setup = {
           text = "Development setup";

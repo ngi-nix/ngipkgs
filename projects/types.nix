@@ -107,7 +107,7 @@ let
               type = nullOr deferredModule;
             };
             examples = mkOption {
-              type = attrsOf (nullOr types'.example);
+              type = attrsOf types'.example;
               default = { };
             };
             extensions = mkOption {
@@ -137,8 +137,8 @@ let
               type = nullOr deferredModule;
             };
             examples = mkOption {
-              type = nullOr (attrsOf (nullOr types'.example));
-              default = null;
+              type = attrsOf types'.example;
+              default = { };
             };
             extensions = mkOption {
               type = nullOr (attrsOf (nullOr types'.plugin));
@@ -159,18 +159,6 @@ let
     # TODO: implement this, now that we're using the module system
     plugin = with types; anything;
 
-    nonEmtpyAttrs =
-      elemType:
-      with types;
-      (
-        (attrsOf elemType)
-        // {
-          name = "nonEmtpyAttrs";
-          description = "non-empty attribute set";
-          check = x: lib.isAttrs x && x != { };
-        }
-      );
-
     example =
       with types;
       submodule {
@@ -186,7 +174,8 @@ let
           };
           tests = mkOption {
             description = "at least one test for the example";
-            type = types'.nonEmtpyAttrs (nullOr types'.test);
+            type = attrsOf (nullOr types'.test);
+            default = { };
           };
           links = mkOption {
             description = "links to related resources";
@@ -253,13 +242,15 @@ let
                     with types;
                     submodule {
                       options = {
-                        modules.programs = mkOption {
-                          type = nullOr (attrsOf (nullOr types'.program));
-                          default = null;
-                        };
-                        modules.services = mkOption {
-                          type = nullOr (attrsOf (nullOr types'.service));
-                          default = null;
+                        modules = {
+                          programs = mkOption {
+                            type = attrsOf types'.program;
+                            default = { };
+                          };
+                          services = mkOption {
+                            type = attrsOf types'.service;
+                            default = { };
+                          };
                         };
                         demo = mkOption {
                           type = nullOr (attrTag {
@@ -274,16 +265,16 @@ let
                         # If this tends to be too cumbersome for package authors and we find a way obtain coverage information programmatically,
                         # we can still reduce granularity and move all examples to the application level.
                         examples = mkOption {
-                          type = nullOr (attrsOf types'.example);
-                          default = null;
+                          type = attrsOf types'.example;
+                          default = { };
                         };
                         # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
                         #       But reality is such that most NixOS tests aren't based on self-contained, minimal examples, or if they are they can't be extracted easily.
                         #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
                         #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
                         tests = mkOption {
-                          type = nullOr (attrsOf types'.test);
-                          default = null;
+                          type = attrsOf (nullOr types'.test);
+                          default = { };
                         };
                       };
                     };

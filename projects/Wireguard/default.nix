@@ -33,7 +33,7 @@
   nixos.modules.services = {
     wireguard = {
       module = lib.moduleLocFromOptionString "networking.wireguard";
-      examples.basic = null;
+      examples.basic.module = null;
     };
   };
 
