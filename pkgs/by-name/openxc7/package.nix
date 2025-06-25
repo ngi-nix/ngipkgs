@@ -128,7 +128,7 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "openxc7";
-  version = "0.8.2-unstable-2025-03-14";
+  version = "0.8.2-unstable-2025-04-03";
 
   # We can't use upstream's files via fetched src without introducing IFD
   # or pushing the building onto the user - which makes internet-less VM testing
@@ -137,8 +137,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "openXC7";
     repo = "toolchain-nix";
-    rev = "f358781e5c21a59ab9c8c10f03beb81d8f8e468a";
-    hash = "sha256-KwFHIGKzY5SdXPbhXj9LcHRlj2MPHVrmam8QECzWysY=";
+    rev = "b2ca2c45c8a4919fffe04a8716654dc9bba6c7c1";
+    hash = "sha256-M4nlDnuFiOVDQvd360NsRPU7jsepIvehEHvIyL/uCSc=";
   };
 
   dontUnpack = true;
