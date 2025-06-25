@@ -176,6 +176,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     platforms = lib.platforms.linux;
     # ghdl -> gnat -> gnat-bootstrap only available for very specific platforms
     # Mark broken if bootstrapping gnat is unavailable, to keep CI green
-    broken = !lib.meta.availableOn stdenvNoCC.hostPlatform gnat-bootstrap;
+    # FIX: re-enable after this is solved
+    # https://github.com/NixOS/nixpkgs/issues/419942
+    # broken = !lib.meta.availableOn stdenvNoCC.hostPlatform gnat-bootstrap;
+    broken = true;
   };
 })
