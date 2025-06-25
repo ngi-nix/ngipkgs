@@ -177,7 +177,7 @@ let
         options = {
           module = mkOption {
             description = "the example must be a NixOS module in a file";
-            type = deferredModule;
+            type = nullOr path;
           };
           description = mkOption {
             description = "description of the example, ideally with further instructions on how to use it";
