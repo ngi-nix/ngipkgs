@@ -40,5 +40,5 @@
       };
     };
   };
-  nixos.modules.services.kaidan = null;
+  nixos.modules.services.kaidan.module = null;
 }

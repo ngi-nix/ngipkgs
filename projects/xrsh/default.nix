@@ -29,7 +29,7 @@
     };
   };
 
-  nixos.modules.services.xrsh = null;
+  nixos.modules.services.xrsh.module = null;
 
   nixos.demo.shell = {
     module = ./programs/xrsh/examples/basic.nix;

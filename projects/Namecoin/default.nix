@@ -8,9 +8,9 @@
   nixos = {
     modules.services.namecoind.module = lib.moduleLocFromOptionString "services.namecoind";
     modules.services.ncdns.module = lib.moduleLocFromOptionString "services.ncdns";
-    modules.programs.electrum-nmc = null;
+    modules.programs.electrum-nmc.module = null;
     # the namecoind service module does not add namecoin commands to the environment
-    modules.programs.namecoin = null;
+    modules.programs.namecoin.module = null;
 
     examples.tor-browser-temporary = {
       description = ''

@@ -27,7 +27,7 @@
     ntpd-rs = {
       name = "ntpd-rs";
       module = lib.moduleLocFromOptionString "services.ntpd-rs";
-      examples.basic = null;
+      examples.basic.module = null;
       # See https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/tests/ntpd-rs.nix for examples
     };
   };

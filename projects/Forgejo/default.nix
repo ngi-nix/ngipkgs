@@ -34,7 +34,7 @@
   nixos.modules.services = {
     forgejo = {
       module = lib.moduleLocFromOptionString "services.forgejo";
-      examples.basic = null;
+      examples.basic.module = null;
     };
   };
 

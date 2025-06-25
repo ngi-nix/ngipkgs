@@ -33,7 +33,6 @@
           # meta.broken = true;
         };
     };
-    tests = null;
-    examples = null;
+    examples.basic.module = null;
   };
 }

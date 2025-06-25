@@ -14,7 +14,7 @@
   nixos = {
     modules.services.agorakit = {
       module = lib.moduleLocFromOptionString "services.agorakit";
-      examples.basic = null;
+      examples.basic.module = null;
     };
     tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/web-apps/agorakit.nix" args;
   };
