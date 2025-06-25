@@ -10,9 +10,7 @@
 }:
 let
   inherit (builtins)
-    head
     any
-    attrNames
     attrValues
     concatStringsSep
     filter
@@ -27,20 +25,14 @@ let
   join = concatStringsSep;
 
   eval = module: (lib.evalModules { modules = [ module ]; }).config;
-  inherit (lib) mkOption types;
 
   inherit (lib)
     concatLines
-    flip
-    foldl'
-    hasPrefix
     mapAttrsToList
     optionalString
-    recursiveUpdate
     filterAttrs
     mapAttrs'
     nameValuePair
-    take
     drop
     splitString
     intersperse
@@ -83,20 +75,16 @@ let
       self.dirtyRev;
 
   pick = {
-    options =
+    options = prefix: filter (option: lib.lists.hasPrefix prefix option.loc) (attrValues options);
+    examples =
       project:
-      let
-        # string comparison is faster than collecting attribute paths as lists
-        spec = attrNames (
-          lib.flattenAttrs "." (
-            foldl' recursiveUpdate { } (
-              mapAttrsToList (name: value: { ${name} = value; }) project.nixos.modules
-            )
-          )
-        );
-      in
-      filter (option: any ((flip hasPrefix) (join "." option.loc)) spec) (attrValues options);
-    examples = project: attrValues (filterAttrs (name: _: name != "demo") project.nixos.examples);
+      attrValues (
+        filterAttrs (name: example: example.module != null) (
+          project.nixos.examples
+          // (lib.filter-map project.nixos.modules.programs "examples")
+          // (lib.filter-map project.nixos.modules.services "examples")
+        )
+      );
   };
 
   # This doesn't actually produce a HTML string but a Jinja2 template string
@@ -150,7 +138,7 @@ let
       '';
     options = rec {
       one =
-        prefixLength: option:
+        prefix: option:
         let
           maybeDefault = optionalString (option ? default.text) ''
             <dt>Default:</dt>
@@ -170,7 +158,7 @@ let
         in
         ''
           <dt class="option-name">
-            <span class="option-prefix">${join "." (take prefixLength option.loc)}.</span><span>${join "." (drop prefixLength option.loc)}</span>
+            <span class="option-prefix">${join "." prefix}.</span><span>${join "." (drop (lib.length prefix) option.loc)}</span>
             ${maybeReadonly}
           </dt>
           <dd class="option-body">
@@ -186,17 +174,10 @@ let
           </dd>
         '';
       many =
-        projectOptions:
-        let
-          # The length of the attrs path that is common to all options
-          # TODO: calculate dynamically
-          prefixLength = 2;
-          commonPrefix = take prefixLength (head projectOptions).loc;
-        in
+        prefix: projectOptions:
         optionalString (!empty projectOptions) ''
-          ${heading 2 "service" "Options"}
-          <details><summary><code>${join "." commonPrefix}</code></summary><dl>
-          ${concatLines (map (one prefixLength) projectOptions)}
+          <details><summary><code>${join "." prefix}</code></summary><dl>
+          ${concatLines (map (one prefix) projectOptions)}
           </dl></details>
         '';
     };
@@ -232,15 +213,15 @@ let
         '';
     };
 
-    metadata = rec {
+    metadata = {
       one =
         metadata:
-        (optionalString (metadata ? summary) ''
+        (optionalString (metadata.summary != null) ''
           <p>
             ${metadata.summary}
           </p>
         '')
-        + (optionalString (metadata ? subgrants && metadata.subgrants != [ ]) ''
+        + (optionalString (metadata.subgrants != null && metadata.subgrants != [ ]) ''
           <p>
             This project is funded by NLnet through these subgrants:
 
@@ -250,19 +231,44 @@ let
     };
 
     # The indivdual page of a project
-    projects.one = name: project: ''
-      <article class="page-width">
-        ${heading 1 null name}
-        ${render.metadata.one project.metadata}
-        ${optionalString (project.nixos.demo != { }) (
-          lib.concatMapAttrsStringSep "\n" (
-            type: demo: (render.serviceDemo.one type project.nixos.modules demo)
-          ) project.nixos.demo
-        )}
-        ${render.options.many (pick.options project)}
-        ${render.examples.many (pick.examples project)}
-      </article>
-    '';
+    projects.one =
+      name: project:
+      let
+        optionsRender =
+          lib.concatMapStringsSep "\n"
+            (
+              type:
+              lib.concatMapAttrsStringSep "\n" (
+                name: val:
+                optionalString (val.module != null) (
+                  render.options.many [ type name ] (
+                    pick.options [
+                      type
+                      name
+                    ]
+                  )
+                )
+              ) project.nixos.modules.${type}
+            )
+            [
+              "programs"
+              "services"
+            ];
+      in
+      ''
+        <article class="page-width">
+          ${heading 1 null name}
+          ${optionalString (project.metadata != null) (render.metadata.one project.metadata)}
+          ${optionalString (project.nixos.demo != null) (
+            lib.concatMapAttrsStringSep "\n" (
+              type: demo: (render.serviceDemo.one type project.nixos.modules demo)
+            ) project.nixos.demo
+          )}
+          ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
+          ${optionsRender}
+          ${render.examples.many (pick.examples project)}
+        </article>
+      '';
 
     demoGlue.one = type: exampleText: ''
       # default.nix
@@ -284,8 +290,10 @@ let
               example.module
               ./demo/shell.nix
             ]
-            ++ (attrValues modules.services)
-            ++ (attrValues modules.programs);
+            ++ (filter (module: module != null) (
+              (mapAttrsToList (name: service: service.module) modules.services)
+              ++ (mapAttrsToList (name: program: program.module) modules.programs)
+            ));
         };
         openPorts = demoSystem.config.networking.firewall.allowedTCPPorts;
         # The port that is forwarded to the host so that the user can access the demo service.
@@ -421,7 +429,9 @@ let
             type: demo: (pkgs.writeText "default.nix" (render.demoGlue.one type (readFile demo.module)))
           ) project.nixos.demo;
         in
-        if project.nixos.demo ? vm then
+        if project.nixos.demo == null then
+          null
+        else if project.nixos.demo ? vm then
           demoFiles.vm
         else if project.nixos.demo ? shell then
           demoFiles.shell
@@ -437,9 +447,9 @@ let
       inherit name;
       description = project.metadata.summary or null;
       deliverables = {
-        service = project.nixos.modules ? services && project.nixos.modules.services != { };
-        program = project.nixos.modules ? programs && project.nixos.modules.programs != { };
-        demo = project.nixos.demo != { };
+        service = any (service: service.module != null) (attrValues project.nixos.modules.services);
+        program = any (program: program.module != null) (attrValues project.nixos.modules.programs);
+        demo = project.nixos.demo != null;
       };
     }) projects;
     inherit version;

@@ -35,6 +35,13 @@ let
       in
       f "";
 
+    filter-map =
+      attrs: input:
+      lib.pipe attrs [
+        (lib.concatMapAttrs (_: value: value."${input}" or { }))
+        (lib.filterAttrs (_: v: v != null))
+      ];
+
     # Recursively evaluate attributes for an attribute set.
     # Coupled with an evaluated nixos configuration, this presents an efficient
     # way for checking module types.
@@ -113,8 +120,8 @@ rec {
     inherit
       lib
       system
-      projects
       ;
+    projects = evaluated-modules.config.projects;
     self = flake;
     pkgs = pkgs // ngipkgs;
     options = optionsDoc.optionsNix;
@@ -230,12 +237,6 @@ rec {
         if lib.isDerivation test then test else pkgs.nixosTest args;
 
       empty-if-null = x: if x != null then x else { };
-      filter-map =
-        attrs: input:
-        lib.pipe attrs [
-          (lib.concatMapAttrs (_: value: value."${input}" or { }))
-          (lib.filterAttrs (_: v: v != null))
-        ];
 
       hydrate =
         # we use fields to track state of completion.
