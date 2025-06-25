@@ -9,7 +9,11 @@
   nixos.modules.services.open-web-calendar = {
     name = "open-web-calendar";
     module = lib.moduleLocFromOptionString "services.open-web-calendar";
-    examples.basic = null;
+    examples.basic = {
+      module = ./example.nix;
+      description = "";
+      tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
+    };
     links = {
       development = {
         text = "Development";
@@ -37,5 +41,4 @@
       };
     };
   };
-  nixos.tests.open-web-calendar = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
 }
