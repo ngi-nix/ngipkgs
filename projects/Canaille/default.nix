@@ -20,7 +20,9 @@
       examples.basic = {
         module = ./services/Canaille/examples/basic.nix;
         description = "";
-        tests.canaille = "${sources.inputs.nixpkgs}/nixos/tests/canaille.nix";
+        # FIX: https://github.com/pallets-eco/flask-alembic/issues/47
+        # tests.canaille = "${sources.inputs.nixpkgs}/nixos/tests/canaille.nix";
+        tests.canaille = null;
       };
       links = {
         build = {
