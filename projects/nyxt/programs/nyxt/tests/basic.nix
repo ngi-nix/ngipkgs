@@ -15,6 +15,9 @@
           sources.modules.programs.nyxt
           sources.examples.nyxt.basic
         ];
+
+        # not enough memory for the allocation
+        virtualisation.memorySize = 4096;
       };
   };
 
