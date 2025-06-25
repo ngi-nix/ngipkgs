@@ -74,7 +74,7 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    $EDITOR projects/some-project/default.nix
    ```
 
-   Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-project) workflow and create a new issue, detailing some information about this project.
+   Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-application) workflow and create a new issue, detailing some information about this project.
    This will allow you to get more familiar with the project and fill out the template more easily.
 
 1. To add a NixOS service module, start by editing the `default.nix` file in the directory `projects/some-project`.
