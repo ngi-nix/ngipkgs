@@ -20,7 +20,7 @@
       examples.basic = {
         module = ./programs-example.nix;
         description = "";
-        tests.basic = null;
+        tests.basic.module = null;
       };
       links = {
         build = {
@@ -42,7 +42,7 @@
       examples.basic = {
         module = ./services-example.nix;
         description = "";
-        tests.basic = null;
+        tests.basic.module = null;
       };
       links = {
         build = {

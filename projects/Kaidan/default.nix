@@ -36,7 +36,7 @@
         description = "Kaidan program example";
         # TODO: Write tests
         # Test requires x-server, OCR and maybe an XMPP server
-        tests.kaidan = null;
+        tests.kaidan.module = null;
       };
     };
   };

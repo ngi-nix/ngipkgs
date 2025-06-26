@@ -9,6 +9,6 @@
   examples.keyoxide-cli = {
     module = ./example.nix;
     description = "";
-    tests.keyoxide-cli = import ./test.nix args;
+    tests.keyoxide-cli.module = import ./test.nix args;
   };
 }

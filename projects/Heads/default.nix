@@ -25,7 +25,7 @@
           Builds heads for the example qemu-coreboot-fbwhiptail-tpm1-hotp board, and makes the ROM image available
           at a fixed location, for testing it in a VM.
         '';
-        tests.basic = import ./test.nix args;
+        tests.basic.module = import ./test.nix args;
       };
       links = {
         setup = {

@@ -20,7 +20,7 @@
       examples.basic = {
         module = ./programs/kbin/examples/basic.nix;
         description = "";
-        tests.basic = import ./programs/kbin/tests/basic.nix args;
+        tests.basic.module = import ./programs/kbin/tests/basic.nix args;
       };
     };
   };
@@ -32,7 +32,7 @@
       examples.basic = {
         module = ./services/kbin/examples/basic.nix;
         description = "";
-        tests.basic = import ./services/kbin/tests/basic.nix args;
+        tests.basic.module = import ./services/kbin/tests/basic.nix args;
       };
       links = {
         source = {

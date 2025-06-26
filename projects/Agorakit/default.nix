@@ -16,6 +16,6 @@
       module = lib.moduleLocFromOptionString "services.agorakit";
       examples.basic.module = null;
     };
-    tests.basic = pkgs.nixosTests.agorakit;
+    tests.basic.module = pkgs.nixosTests.agorakit;
   };
 }

@@ -23,7 +23,7 @@
       module = ./examples/tor-browser-temporary.nix;
       links.documentation.text = "Tor Browser";
       links.documentation.url = "https://www.namecoin.org/download/#tor-browser";
-      tests.tor-browser-temporary = null;
+      tests.tor-browser-temporary.module = null;
     };
 
     examples.tor-browser-permanent = {
@@ -33,10 +33,10 @@
       links.documentation.text = "Tor Browser";
       links.documentation.url = "https://www.namecoin.org/download/#tor-browser";
       module = ./examples/tor-browser-permanent.nix;
-      tests.tor-browser-permanent = null;
+      tests.tor-browser-permanent.module = null;
     };
 
-    tests.ncdns = pkgs.nixosTests.ncdns;
+    tests.ncdns.module = pkgs.nixosTests.ncdns;
   };
 
   metadata.subgrants = [

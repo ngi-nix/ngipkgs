@@ -6,7 +6,7 @@
       examples.base = {
         module = ./example.nix;
         description = "Basic configuration, mainly used for testing purposes.";
-        tests.atomic-server = import ./test.nix args;
+        tests.atomic-server.module = import ./test.nix args;
       };
     };
   };

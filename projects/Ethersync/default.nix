@@ -31,7 +31,7 @@
         demo-shell = {
           module = ./programs/ethersync/examples/basic.nix;
           description = "";
-          tests.basic = import ./programs/ethersync/tests/basic.nix args;
+          tests.basic.module = import ./programs/ethersync/tests/basic.nix args;
         };
       };
     };

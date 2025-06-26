@@ -34,6 +34,6 @@
   nixos.demo.shell = {
     module = ./programs/xrsh/examples/basic.nix;
     description = "xrsh example";
-    tests.basic = import ./programs/xrsh/tests/basic.nix args;
+    tests.basic.module = import ./programs/xrsh/tests/basic.nix args;
   };
 }

@@ -30,6 +30,6 @@
   examples.keyoxide-web = {
     module = ./example.nix;
     description = "";
-    tests.keyoxide-web = null;
+    tests.keyoxide-web.module = null;
   };
 }

@@ -41,14 +41,14 @@
         backend = {
           description = "Enables manually starting Libervia's backend and the use of its CLI and TUI clients.";
           module = ./examples/backend.nix;
-          tests.backend = import ./tests/backend.nix args;
+          tests.backend.module = import ./tests/backend.nix args;
         };
         desktop = {
           description = "Enables the use of the Kivy desktop client for Libervia.";
           module = ./examples/desktop.nix;
           # FIX: https://buildbot.ngi.nixos.org/#/builders/473/builds/1182
-          # tests.desktop = import ./tests/desktop.nix args;
-          tests.desktop = null;
+          # tests.desktop.module = import ./tests/desktop.nix args;
+          tests.desktop.module = null;
         };
       };
     };

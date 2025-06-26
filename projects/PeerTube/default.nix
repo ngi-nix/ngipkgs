@@ -37,7 +37,7 @@
           description = ''
             Enable peertube-cli, a tool for remotely managing PeerTube instances
           '';
-          tests.basic-cli = import ./programs/peertube-cli/tests/basic.nix args;
+          tests.basic-cli.module = import ./programs/peertube-cli/tests/basic.nix args;
         };
         links = {
           docs = {
@@ -54,8 +54,8 @@
         examples.basic = {
           module = ./services/peertube/examples/basic.nix;
           description = "Basic configuration mainly used for testing purposes";
-          tests.peertube-plugins = import ./services/peertube/tests/peertube-plugins.nix args;
-          tests.peertube-plugin-livechat = import ./services/peertube/tests/peertube-plugin-livechat.nix args;
+          tests.peertube-plugins.module = import ./services/peertube/tests/peertube-plugins.nix args;
+          tests.peertube-plugin-livechat.module = import ./services/peertube/tests/peertube-plugin-livechat.nix args;
         };
       };
     };

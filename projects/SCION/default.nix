@@ -40,7 +40,7 @@
       examples.basic = {
         module = ./programs/basic/examples/basic.nix;
         description = "";
-        tests.basic = import ./programs/basic/tests/basic.nix args;
+        tests.basic.module = import ./programs/basic/tests/basic.nix args;
       };
     };
   };
@@ -52,5 +52,5 @@
     };
   };
 
-  nixos.tests.scion = pkgs.nixosTests.scion-freestanding-deployment;
+  nixos.tests.scion.module = pkgs.nixosTests.scion-freestanding-deployment;
 }

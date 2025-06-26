@@ -31,7 +31,7 @@
       examples.backup = {
         module = ./examples/backup.nix;
         description = "Backup with anastasis";
-        tests.anastasis = import ../../pkgs/by-name/anastasis/test.nix {
+        tests.anastasis.module = import ../../pkgs/by-name/anastasis/test.nix {
           inherit lib pkgs;
           inherit (pkgs) nixosTest anastasis;
         };
@@ -46,7 +46,7 @@
         # See https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/taler/common/nodes.nix
         module = ./examples/basic/default.nix;
         description = "Basic GNU Taler configuration";
-        tests.basic = pkgs.nixosTests.taler.basic;
+        tests.basic.module = pkgs.nixosTests.taler.basic;
       };
     };
   };

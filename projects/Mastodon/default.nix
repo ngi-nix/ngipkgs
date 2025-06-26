@@ -19,11 +19,7 @@
       module = lib.moduleLocFromOptionString "services.mastodon";
       examples.basic.module = null;
     };
-    tests = {
-      inherit (pkgs.nixosTests.mastodon)
-        standard
-        remote-databases
-        ;
-    };
+    tests.standard.module = pkgs.nixosTests.mastodon.standard;
+    tests.remote-databases.module = pkgs.nixosTests.mastodon.remote-databases;
   };
 }

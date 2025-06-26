@@ -15,7 +15,7 @@
         description = "";
         # FIX: re-enable after this is solved:
         # https://github.com/NixOS/nixpkgs/issues/418689
-        # tests.basic = pkgs.nixosTests.open-web-calendar;
+        # tests.basic.module = pkgs.nixosTests.open-web-calendar;
       };
       links = {
         development = {
@@ -49,7 +49,7 @@
       description = "Deployment for demo purposes";
       # FIX: re-enable after this is solved:
       # https://github.com/NixOS/nixpkgs/issues/418689
-      # tests.basic = pkgs.nixosTests.open-web-calendar;
+      # tests.basic.module = pkgs.nixosTests.open-web-calendar;
     };
   };
 }

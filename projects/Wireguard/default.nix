@@ -25,7 +25,7 @@
       examples.basic = {
         module = ./program/example.nix;
         description = "";
-        tests.basic = null;
+        tests.basic.module = null;
       };
     };
   };

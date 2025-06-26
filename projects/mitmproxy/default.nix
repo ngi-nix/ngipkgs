@@ -21,6 +21,6 @@
   nixos.demo.shell = {
     module = ./demo.nix;
     description = "";
-    tests.demo = null;
+    tests.demo.module = null;
   };
 }

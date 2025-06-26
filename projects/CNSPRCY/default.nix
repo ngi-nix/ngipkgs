@@ -25,7 +25,7 @@
     examples.basic = {
       module = ./programs/cnsprcy/examples/basic.nix;
       description = "Checks for cnspr executable";
-      tests.basic = import ./programs/cnsprcy/tests/basic.nix args;
+      tests.basic.module = import ./programs/cnsprcy/tests/basic.nix args;
     };
   };
 
@@ -35,7 +35,7 @@
     examples.basic = {
       module = ./services/cnsprcy/examples/basic.nix;
       description = "Checks that cnsprcy systemd service is running";
-      tests.basic = import ./services/cnsprcy/tests/basic.nix args;
+      tests.basic.module = import ./services/cnsprcy/tests/basic.nix args;
     };
   };
 }

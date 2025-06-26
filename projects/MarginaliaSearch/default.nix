@@ -27,7 +27,7 @@
           Insecure practices are used here to make testing easy.
           For production usage, look into secrets management via Nix.
         '';
-        tests.marginalia-search = import ./test.nix args;
+        tests.marginalia-search.module = import ./test.nix args;
       };
     };
   };
