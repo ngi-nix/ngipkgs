@@ -49,7 +49,8 @@
     scion = {
       name = "scion";
       module = lib.moduleLocFromOptionString "services.scion";
-      tests.scion = pkgs.nixosTests.scion-freestanding-deployment;
     };
   };
+
+  nixos.tests.scion = pkgs.nixosTests.scion-freestanding-deployment;
 }
