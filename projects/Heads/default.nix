@@ -25,11 +25,7 @@
           Builds heads for the example qemu-coreboot-fbwhiptail-tpm1-hotp board, and makes the ROM image available
           at a fixed location, for testing it in a VM.
         '';
-        # FIX: it seems this file is no longer accessible:
-        # https://acpica.org/sites/acpica/files/acpica-unix2-20220331.tar.gz
-        # https://buildbot.ngi.nixos.org/#/builders/558/builds/881
-        # tests.basic = import ./test.nix args;
-        tests.basic = null;
+        tests.basic = import ./test.nix args;
       };
       links = {
         setup = {
@@ -47,9 +43,6 @@
       };
     };
   };
-  # TODO: Referencing `pkgs` here is currently causing eval issues all over ngipkgs.
-  # https://github.com/ngi-nix/ngipkgs/pull/773
-  # Resolve this first before enabling this.
   binary = lib.attrsets.mapAttrs' (
     board: pkg: lib.attrsets.nameValuePair "${board}.rom" { data = "${pkg}/${pkg.passthru.romName}"; }
   ) (lib.attrsets.filterAttrs (_: lib.attrsets.isDerivation) pkgs.heads);
