@@ -138,6 +138,7 @@ let
           examples = map (value: { inherit (value) description module tests; }) (pick.examples project);
         };
 
+        # TODO: clean up
         optionsRender =
           lib.concatMapStringsSep "\n"
             (
@@ -154,7 +155,15 @@ let
                     name
                   ];
                 in
-                render.options attrpath-prefix project-options
+                # TODO: refactor
+                if (val.module != null) then
+                  render.options attrpath-prefix project-options
+                else
+                  ''
+                    <dd><span class="option-alert">${type}.${name}</span>
+                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
+                    </dd>
+                  ''
               ) project.nixos.modules.${type}
             )
             [
