@@ -174,7 +174,7 @@ let
           };
           tests = mkOption {
             description = "at least one test for the example";
-            type = attrsOf (nullOr types'.test);
+            type = attrsOf types'.test;
             default = { };
           };
           links = mkOption {
@@ -215,7 +215,21 @@ let
       };
     };
 
-    test = with types; either deferredModule package;
+    test = types.submodule {
+      options = {
+        module = mkOption {
+          # - null: needed, but not available
+          # - deferredModule: something that nixosTest will run
+          # - package: derivation from Nixpkgs
+          type = with types; nullOr (either deferredModule package);
+          default = null;
+        };
+        problem = mkOption {
+          type = types.nullOr types'.problem;
+          default = null;
+        };
+      };
+    };
 
     projects = mkOption {
       type =
@@ -273,7 +287,7 @@ let
                         #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
                         #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
                         tests = mkOption {
-                          type = attrsOf (nullOr types'.test);
+                          type = attrsOf types'.test;
                           default = { };
                         };
                       };
