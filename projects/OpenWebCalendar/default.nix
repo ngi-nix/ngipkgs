@@ -15,8 +15,7 @@
         description = "";
         # FIX: re-enable after this is solved:
         # https://github.com/NixOS/nixpkgs/issues/418689
-        # tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
-        tests.basic = null;
+        # tests.basic = pkgs.nixosTests.open-web-calendar;
       };
       links = {
         development = {
@@ -50,8 +49,7 @@
       description = "Deployment for demo purposes";
       # FIX: re-enable after this is solved:
       # https://github.com/NixOS/nixpkgs/issues/418689
-      # tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/open-web-calendar.nix";
-      tests.basic = null;
+      # tests.basic = pkgs.nixosTests.open-web-calendar;
     };
   };
 }

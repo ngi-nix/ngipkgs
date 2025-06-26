@@ -36,7 +36,7 @@
       tests.tor-browser-permanent = null;
     };
 
-    tests.ncdns = "${sources.inputs.nixpkgs}/nixos/tests/ncdns.nix";
+    tests.ncdns = pkgs.nixosTests.ncdns;
   };
 
   metadata.subgrants = [

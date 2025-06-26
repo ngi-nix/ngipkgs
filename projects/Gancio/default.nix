@@ -17,7 +17,7 @@
       examples.gancio = {
         module = ./example.nix;
         description = "";
-        tests.gancio = "${sources.inputs.nixpkgs}/nixos/tests/gancio.nix";
+        tests.gancio = pkgs.nixosTests.gancio;
       };
     };
   };
