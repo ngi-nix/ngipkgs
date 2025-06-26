@@ -177,6 +177,120 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 1. After the build succeeds, verify that the package works, if possible.
    This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
 
+## Implementing a program
+
+A program is a software application that can be executed in the user's shell, which may be either Command-Line Interface (CLI), Text User Interface (TUI), or Graphical User Interface (GUI).
+
+The representation of a program is achieved through the NixOS module system. Particularly, it's composed of:
+
+- A NixOS module that describes program options
+- Examples that illustrate how to use these options
+- Tests to ensure that examples work correctly
+
+In code, this composition is already outlined in the [project template](./maintainers/templates/project):
+
+<!-- `$ tree --noreport --dirsfirst -I services maintainers/templates` as shellSession -->
+
+```shellSession
+maintainers/templates
+└── project
+    ├── programs
+    │   └── _programName_
+    │       ├── examples
+    │       │   └── basic.nix
+    │       ├── tests
+    │       │   └── basic.nix
+    │       └── module.nix
+    └── default.nix
+```
+
+So to add a program to a project:
+
+1. Copy the template to the project directory:
+
+   ```shellSession
+   cp -r ./maintainers/templates/project/programs/_programName_ ./projects/PROJECT_NAME/programs/PROGRAM_NAME
+   ```
+
+1. Copy the following code snippet inside the project's `default.nix`:
+
+   ```shellSession
+   $EDITOR ./projects/PROJECT_NAME/default.nix
+   ```
+
+   ```nix
+   nixos.modules.programs = {
+     _programName_ = {
+       module = ./programs/_programName_/module.nix;
+       examples.basic = {
+         module = ./programs/_programName_/examples/basic.nix;
+         description = "Basic configuration example";
+         tests.basic = import ./programs/_programName_/tests/basic.nix args;
+       };
+     };
+   };
+   ```
+
+> [!NOTE]
+>
+> - Each program must include at least one example. <!-- TODO: link docs anchor -->
+> - Set attributes to `null` if they are needed, but not available.
+
+1. If the module is in Nixpkgs, replace `module` with the following:
+
+   ```nix
+   nixos.modules.programs = {
+     _programName_ = {
+       module = lib.moduleLocFromOptionString "programs.PROGRAM_NAME";
+     };
+   };
+   ```
+
+   Where `programs.PROGRAM_NAME` is the module name in Nixpkgs.
+   For example: `programs.neovim`.
+
+   Sometimes, we also want to extend a module that's in Nixpkgs, and we can achieve this inside our already existing `module.nix` file:
+
+   ```
+   $EDITOR ./projects/PROJECT_NAME/programs/PROGRAM_NAME/module.nix
+   ```
+
+   ```nix
+   imports = [
+     (lib.moduleLocFromOptionString "programs.PROGRAM_NAME")
+   ];
+
+   options.programs._programName_ = {
+     extra-option = lib.mkEnableOption "_programName_";
+   };
+   ```
+
+1. Similarly, if a test is in Nixpkgs:
+
+   ```nix
+   nixos.modules.programs = {
+     _programName_ = {
+       examples.basic = {
+         tests.basic = pkgs.nixosTests.project.testname;
+       };
+     };
+   };
+   ```
+
+1. Verify that the structure conforms to the project type:
+
+   ```shellSession
+   nix-build -A checks.<PROJECT_NAME>
+   ```
+
+1. Run the tests, if they exist, and make sure they pass:
+
+   ```shellSession
+   nix-build -A projects.PROJECT_NAME.nixos.tests.TEST_NAME
+   ```
+
+1. [Launch the overview](#running-and-testing-the-overview-locally) and make sure that the program options and examples shows up in the project page.
+
 ## Triaging an NGI application
 
 An NGI-funded application is triaged by collecting relevant information and resources related to its packaging, which can be in the form of links to source repositories, documentation, previous packaging attempts, ...

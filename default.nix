@@ -190,7 +190,11 @@ rec {
   };
 
   # recursively evaluates each attribute for all projects
-  check-projects = lib.forceEvalRecursive evaluated-modules.config.projects;
+  eval-projects = lib.forceEvalRecursive evaluated-modules.config.projects;
+
+  checks = lib.mapAttrs (
+    name: value: pkgs.writeText "${name}-eval-check" (lib.strings.toJSON value)
+  ) eval-projects;
 
   ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
