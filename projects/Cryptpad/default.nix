@@ -32,10 +32,10 @@
       };
     };
   };
-  nixos.tests.basic = pkgs.nixosTests.cryptpad;
+  nixos.tests.basic.module = pkgs.nixosTests.cryptpad;
   nixos.demo.vm = {
     module = ./demo.nix;
     description = "Deployment for demo purposes";
-    tests.demo = import ./demo-test.nix args;
+    tests.demo.module = import ./demo-test.nix args;
   };
 }

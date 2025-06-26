@@ -20,7 +20,7 @@
       examples.base = {
         module = ./example.nix;
         description = "Basic Omnom configuration, mainly used for testing purposes";
-        tests.basic = null;
+        tests.basic.module = null;
       };
     };
   };

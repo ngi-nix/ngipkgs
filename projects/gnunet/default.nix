@@ -26,7 +26,7 @@
       examples.basic = {
         module = ./services/gnunet/examples/basic.nix;
         description = "";
-        tests.basic = import ./services/gnunet/tests/basic.nix args;
+        tests.basic.module = import ./services/gnunet/tests/basic.nix args;
       };
       links = {
         build = {

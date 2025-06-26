@@ -32,5 +32,5 @@
     };
   };
 
-  nixos.tests.ntpd-rs = pkgs.nixosTests.ntpd-rs;
+  nixos.tests.ntpd-rs.module = pkgs.nixosTests.ntpd-rs;
 }

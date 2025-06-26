@@ -20,7 +20,7 @@
       examples.re-isearch = {
         module = ./example.nix;
         description = "";
-        tests.search-document = import ./test.nix args;
+        tests.search-document.module = import ./test.nix args;
       };
       links = {
         handbook = {

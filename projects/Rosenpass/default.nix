@@ -36,7 +36,7 @@
       examples.basic = {
         module = ./programs/basic/examples/basic.nix;
         description = "";
-        tests.basic = null;
+        tests.basic.module = null;
       };
     };
   };
@@ -48,8 +48,8 @@
       examples.basic = {
         module = ./services/basic/examples/basic.nix;
         description = "";
-        tests.with-sops = import ./tests args;
-        tests.without-sops = pkgs.nixosTests.rosenpass;
+        tests.with-sops.module = import ./tests args;
+        tests.without-sops.module = pkgs.nixosTests.rosenpass;
       };
     };
   };

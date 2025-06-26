@@ -22,7 +22,7 @@
       examples.base = {
         module = ./example.nix;
         description = "testing documentation";
-        tests.basic = null;
+        tests.basic.module = null;
       };
       links = {
         build = {

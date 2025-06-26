@@ -22,7 +22,7 @@
       examples.basic = {
         module = ./programs/nyxt/examples/basic.nix;
         description = "Enable the nyxt program";
-        tests.basic = import ./programs/nyxt/tests/basic.nix args;
+        tests.basic.module = import ./programs/nyxt/tests/basic.nix args;
       };
     };
   };

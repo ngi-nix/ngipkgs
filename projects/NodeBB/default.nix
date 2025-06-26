@@ -36,12 +36,12 @@
           postgresql = {
             module = ./services/nodebb/examples/postgresql.nix;
             description = "";
-            tests.postgresql = import ./services/nodebb/tests/postgresql.nix args;
+            tests.postgresql.module = import ./services/nodebb/tests/postgresql.nix args;
           };
           redis = {
             module = ./services/nodebb/examples/redis.nix;
             description = "";
-            tests.redis = import ./services/nodebb/tests/redis.nix args;
+            tests.redis.module = import ./services/nodebb/tests/redis.nix args;
           };
         };
       };
@@ -49,7 +49,7 @@
     demo.vm = {
       module = ./services/nodebb/examples/postgresql.nix;
       description = "Deployment for demo purposes";
-      tests.postgresql = import ./services/nodebb/tests/postgresql.nix args;
+      tests.postgresql.module = import ./services/nodebb/tests/postgresql.nix args;
     };
   };
 }

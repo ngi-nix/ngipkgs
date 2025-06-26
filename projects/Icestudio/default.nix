@@ -26,7 +26,7 @@
       examples.basic = {
         module = ./programs/Icestudio/examples/basic.nix;
         description = "";
-        tests.basic = import ./programs/Icestudio/tests/basic.nix args;
+        tests.basic.module = import ./programs/Icestudio/tests/basic.nix args;
       };
       links = {
         build = {

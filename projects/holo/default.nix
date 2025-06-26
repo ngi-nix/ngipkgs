@@ -21,7 +21,7 @@
       examples.basic = {
         module = ./programs/holo/examples/basic.nix;
         description = "Enable the holo program";
-        tests.basic = import ./programs/holo/tests/basic.nix args;
+        tests.basic.module = import ./programs/holo/tests/basic.nix args;
       };
     };
   };
@@ -33,7 +33,7 @@
       examples.holo = {
         module = ./services/holo/examples/holo.nix;
         description = "Enable the holo daemon service";
-        tests.holo = import ./services/holo/tests/holo.nix args;
+        tests.holo.module = import ./services/holo/tests/holo.nix args;
       };
     };
   };

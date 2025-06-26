@@ -20,7 +20,7 @@
     examples.basic = {
       module = ./example.nix;
       description = "";
-      tests.liberaforms = import ./test.nix args;
+      tests.liberaforms.module = import ./test.nix args;
     };
   };
 }

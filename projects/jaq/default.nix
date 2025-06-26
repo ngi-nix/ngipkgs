@@ -21,7 +21,7 @@
       examples.basic = {
         module = ./programs/jaq/examples/basic.nix;
         description = "Enable the jaq program";
-        tests.basic = import ./programs/jaq/tests/basic.nix args;
+        tests.basic.module = import ./programs/jaq/tests/basic.nix args;
       };
     };
   };

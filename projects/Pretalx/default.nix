@@ -22,8 +22,8 @@
           Basic configuration for Pretalx, incl. secret management with SOPS, excl. database settings.
         '';
         # FIX:
-        # tests.pretalx = import ./test args;
-        tests.pretalx = null;
+        # tests.pretalx.module = import ./test args;
+        tests.pretalx.module = null;
       };
       postgresql = {
         module = ./examples/postgresql.nix;
@@ -31,8 +31,8 @@
           Supplementary to `base.nix`, adds database configuration for PostgreSQL.
         '';
         # FIX:
-        # tests.pretalx = import ./test args;
-        tests.pretalx = null;
+        # tests.pretalx.module = import ./test args;
+        tests.pretalx.module = null;
       };
       mysql = {
         module = ./examples/mysql.nix;
@@ -40,8 +40,8 @@
           Supplementary to `base.nix`, adds database configuration for MySQL.
         '';
         # FIX:
-        # tests.pretalx = import ./test args;
-        tests.pretalx = null;
+        # tests.pretalx.module = import ./test args;
+        tests.pretalx.module = null;
       };
     };
   };

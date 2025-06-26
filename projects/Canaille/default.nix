@@ -21,8 +21,8 @@
         module = ./services/Canaille/examples/basic.nix;
         description = "";
         # FIX: https://github.com/pallets-eco/flask-alembic/issues/47
-        # tests.canaille = pkgs.nixosTests.canaille;
-        tests.canaille = null;
+        # tests.canaille.module = pkgs.nixosTests.canaille;
+        tests.canaille.module = null;
       };
       links = {
         build = {

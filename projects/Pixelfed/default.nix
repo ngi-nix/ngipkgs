@@ -30,7 +30,8 @@
         module = ./example.nix;
         description = "";
         # aarch64 is not a supported platform for the test
-        tests.basic = if (system != "aarch64-linux") then pkgs.nixosTests.pixelfed.standard else null;
+        tests.basic.module =
+          if (system != "aarch64-linux") then pkgs.nixosTests.pixelfed.standard else null;
       };
     };
   };
