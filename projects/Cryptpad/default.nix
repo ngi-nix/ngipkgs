@@ -32,7 +32,7 @@
       };
     };
   };
-  nixos.tests.basic = import "${sources.inputs.nixpkgs}/nixos/tests/cryptpad.nix" args;
+  nixos.tests.basic = pkgs.nixosTests.cryptpad;
   nixos.demo.vm = {
     module = ./demo.nix;
     description = "Deployment for demo purposes";

@@ -29,13 +29,13 @@
       examples.basic = {
         module = ./example.nix;
         description = "";
-        tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
+        tests.basic = pkgs.nixosTests.draupnir;
       };
     };
     demo.vm = {
       module = ./example.nix;
       description = "Deployment for demo purposes";
-      tests.basic = "${sources.inputs.nixpkgs}/nixos/tests/matrix/draupnir.nix";
+      tests.basic = pkgs.nixosTests.draupnir;
       problem.broken.reason = ''
         Still a work in progress.
       '';

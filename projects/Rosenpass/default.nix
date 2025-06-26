@@ -49,7 +49,7 @@
         module = ./services/basic/examples/basic.nix;
         description = "";
         tests.with-sops = import ./tests args;
-        tests.without-sops = "${sources.inputs.nixpkgs}/nixos/tests/rosenpass.nix";
+        tests.without-sops = pkgs.nixosTests.rosenpass;
       };
     };
   };

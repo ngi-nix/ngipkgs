@@ -20,8 +20,10 @@
       examples.basic.module = null;
     };
     tests = {
-      standard = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/mastodon/standard.nix";
-      remote-databases = "${sources.inputs.nixpkgs}/nixos/tests/web-apps/mastodon/remote-databases.nix";
+      inherit (pkgs.nixosTests.mastodon)
+        standard
+        remote-databases
+        ;
     };
   };
 }

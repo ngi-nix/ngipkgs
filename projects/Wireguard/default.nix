@@ -37,14 +37,8 @@
     };
   };
 
-  nixos.tests =
-    lib.foldl'
-      (acc: test: acc // { ${test} = "${sources.inputs.nixpkgs}/nixos/tests/wireguard/${test}.nix"; })
-      { }
-      [
-        "basic"
-        "namespaces"
-        "wg-quick"
-        "generated"
-      ];
+  nixos.tests = lib.removeAttrs pkgs.nixosTests.wireguard [
+    # FIX: https://buildbot.ngi.nixos.org/#/builders/987/builds/1
+    "wireguard-dynamic-refresh-networkd-linux-latest"
+  ];
 }

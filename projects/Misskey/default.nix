@@ -20,7 +20,7 @@
       examples.basic = {
         module = ./services/misskey/examples/basic.nix;
         description = "";
-        tests.misskey = "${sources.inputs.nixpkgs}/nixos/tests/misskey.nix";
+        tests.misskey = pkgs.nixosTests.misskey;
       };
     };
   };

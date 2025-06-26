@@ -49,8 +49,7 @@
     scion = {
       name = "scion";
       module = lib.moduleLocFromOptionString "services.scion";
-      # TODO: unbreak
-      # tests.scion = "${sources.inputs.nixpkgs}/nixos/tests/scion/freestanding-deployment/default.nix";
+      tests.scion = pkgs.nixosTests.scion-freestanding-deployment;
     };
   };
 }
