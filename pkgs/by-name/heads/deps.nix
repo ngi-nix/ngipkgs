@@ -666,11 +666,13 @@
         url = "https://ftp.gnu.org/gnu/binutils/binutils-2.37.tar.xz";
         hash = "sha256-gg2XJPAgo+acszeJOgtjwtsWHa3LDgb8Edwp6x6Eoyw=";
       }
-      {
-        name = "coreboot-crossgcc-acpica-unix2-20220331.tar.gz";
-        url = "https://acpica.org/sites/acpica/files/acpica-unix2-20220331.tar.gz";
-        hash = "sha256-CG1rZYX1Zndob+2K9rC1upOuwYC0HSKFobdM0CtY8ko=";
-      }
+      # URL seems long-term broken, needs #1256 to get fixed
+      # Short-term, commenting this package out makes boards that don't need this particular coreboot version build again
+      #{
+      #  name = "coreboot-crossgcc-acpica-unix2-20220331.tar.gz";
+      #  url = "https://acpica.org/sites/acpica/files/acpica-unix2-20220331.tar.gz";
+      #  hash = "sha256-CG1rZYX1Zndob+2K9rC1upOuwYC0HSKFobdM0CtY8ko=";
+      #}
       {
         name = "coreboot-crossgcc-llvm-14.0.6.src.tar.xz";
         url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.6/llvm-14.0.6.src.tar.xz";

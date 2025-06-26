@@ -432,10 +432,7 @@ lib.makeScope newScope (
     # only allow a fixed list of boards and slowly increase it
     # (see: https://github.com/NixOS/nixpkgs/pull/286228#issuecomment-2779598354)
     allowedBoards = [
-      # FIX: it seems this file is no longer accessible:
-      # https://acpica.org/sites/acpica/files/acpica-unix2-20220331.tar.gz
-      # https://buildbot.ngi.nixos.org/#/builders/558/builds/881
-      # "qemu-coreboot-fbwhiptail-tpm1-hotp"
+      "qemu-coreboot-fbwhiptail-tpm1-hotp"
     ];
   in
   {
