@@ -137,6 +137,9 @@ let
         </div>
       '';
     options = rec {
+      /**
+        TODO(@fricklerhandwerk): modularize
+      */
       one =
         prefix: option:
         let
@@ -240,19 +243,17 @@ let
               type:
               lib.concatMapAttrsStringSep "\n" (
                 name: val:
-                if (val.module != null) then
-                  (render.options.many [ type name ] (
-                    pick.options [
-                      type
-                      name
-                    ]
-                  ))
-                else
-                  ''
-                    <dd><span class="option-alert">${type}.${name}</span>
-                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
-                    </dd>
-                  ''
+                let
+                  project-options = pick.options [
+                    type
+                    name
+                  ];
+                  attrpath-prefix = [
+                    type
+                    name
+                  ];
+                in
+                render.options.many attrpath-prefix project-options
               ) project.nixos.modules.${type}
             )
             [
