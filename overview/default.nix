@@ -96,7 +96,7 @@ let
         );
       in
       filter (option: any ((flip hasPrefix) (join "." option.loc)) spec) (attrValues options);
-    examples = project: attrValues (filterAttrs (name: _: name != "demo") project.nixos.examples);
+    examples = project: attrValues project.nixos.examples;
   };
 
   # This doesn't actually produce a HTML string but a Jinja2 template string
@@ -209,12 +209,11 @@ let
 
         </details>
       '';
-      many =
-        examples:
-        optionalString (!empty examples) ''
-          ${heading 2 "examples" "Examples"}
-          ${concatLines (map one examples)}
-        '';
+      many = examples: ''
+        ${heading 2 "examples" "Examples"}
+        <button class="button example"><a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#how-to-add-an-example">Add example</a></button>
+        ${concatLines (map one examples)}
+      '';
     };
 
     subgrants = rec {
