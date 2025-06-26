@@ -240,14 +240,19 @@ let
               type:
               lib.concatMapAttrsStringSep "\n" (
                 name: val:
-                optionalString (val.module != null) (
-                  render.options.many [ type name ] (
+                if (val.module != null) then
+                  (render.options.many [ type name ] (
                     pick.options [
                       type
                       name
                     ]
-                  )
-                )
+                  ))
+                else
+                  ''
+                    <dd><span class="option-alert">${type}.${name}</span>
+                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
+                    </dd>
+                  ''
               ) project.nixos.modules.${type}
             )
             [
