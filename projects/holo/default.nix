@@ -37,4 +37,10 @@
       };
     };
   };
+
+  nixos.demo.vm = {
+    module = ./demo/vm.nix;
+    description = "A demo VM for testing Holo";
+    tests.demo.module = import ./services/holo/tests/holo.nix args;
+  };
 }
