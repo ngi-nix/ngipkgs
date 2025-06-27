@@ -1,6 +1,5 @@
 {
   sources,
-  fetchurl,
   ...
 }:
 {
@@ -8,33 +7,35 @@
 
   nodes = {
     machine =
-      { ... }:
+      { pkgs, ... }:
       {
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.slipshow
           sources.examples.slipshow.demo-shell
         ];
+
+        environment.etc."slipshow".source = pkgs.fetchFromGitHub {
+          owner = "meithecatte";
+          repo = "bbslides";
+          rev = "ce1c08cafa71ae36dda8cc581956548b8386ae16";
+          hash = "sha256-sOydmvtDeMhNejDkwlsXdrbwtqN6lcNnzTnGzBVRFxA=";
+        };
+
       };
   };
 
   testScript =
     { nodes, ... }:
-    let
-      mdfile = fetchurl {
-        url = "https://github.com/panglesd/slipshow/blob/v0.2.0/example/campus-du-libre/slipshow.md";
-        hash = "sha256-4+ow0GQ8RAIYDDM6rg69/X4aYs9GgqFSuEjTJmAoG8A=";
-      };
-    in
     ''
       start_all()
 
       # it may take around a minute to compile the file and serve it
-      machine.succeed("slipshow serve ${mdfile} &")
+      machine.succeed("slipshow serve /etc/slipshow/bbslides.md &")
 
-      # slipshow serves defaultly on :8080
+      # slipshow serves defaultly on :8080 and unfortunately cannot
+      # be changed currently
       machine.wait_for_open_port(8080)
       machine.succeed("curl -i 0.0.0.0:8080")
     '';
 }
-
