@@ -112,7 +112,8 @@ in
       default =
         self:
         let
-          nullTests = lib.elem null (lib.attrValues self.demo.tests);
+          tests = lib.attrValues self.demo.tests;
+          nullTests = lib.any (test: test.module == null) tests;
         in
         if (self.demo.problem == null && !nullTests) then
           ''
@@ -135,19 +136,31 @@ in
                 <strong>Build and run a virtual machine</strong>
                 ${config.build-instructions}
               </li>
+              ${lib.optionalString (with self.demo; description == null || description == "") ''
+                <li><span class="option-alert">Missing</span>
+                  <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
+                </li>
+              ''}
             </ol>
           ''
         else
-          lib.optionalString (self.demo.problem != null) ''
-            <dt>Problems:</dt>
-            <dd><span class="option-alert">Demo</span> ${
-              lib.concatMapAttrsStringSep "\n" (name: value: value.reason) self.demo.problem
-            }</dd>
           ''
-          + lib.optionalString nullTests ''
-            <dd><span class="option-alert">Demo</span>
-              Tests are missing for the demo.
-            </dd>
+            ${self.heading}
+
+            <ul>
+            ${
+              lib.optionalString nullTests ''
+                <li><span class="option-alert">Missing</span>
+                  <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute tests for the demo.</a>
+                </li>
+              ''
+              + lib.optionalString (self.demo.problem != null) ''
+                <li><span class="option-alert">Problem</span> ${
+                  lib.concatMapAttrsStringSep "\n" (name: value: value.reason) self.demo.problem
+                }</li>
+              ''
+            }
+            </ul>
           '';
     };
   };
