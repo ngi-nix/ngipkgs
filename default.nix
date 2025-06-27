@@ -211,31 +211,6 @@ rec {
     projects:
     with lib;
     let
-      nixosTest =
-        test:
-        let
-          # Amenities for interactive tests
-          tools =
-            { pkgs, ... }:
-            {
-              environment.systemPackages = with pkgs; [
-                vim
-                tmux
-                jq
-              ];
-              # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
-              # to provide a slightly nicer console.
-              # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
-              services.kmscon = {
-                enable = true;
-                autologinUser = "root";
-              };
-            };
-          debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
-          args = debugging // test;
-        in
-        if lib.isDerivation test then test else pkgs.nixosTest args;
-
       empty-if-null = x: if x != null then x else { };
 
       hydrate =
@@ -258,18 +233,54 @@ rec {
             // (filter-map (project.nixos.modules.programs or { }) "examples")
             // (filter-map (project.nixos.modules.services or { }) "examples")
           );
-          nixos.tests = mapAttrs (
-            _: test:
-            if lib.isString test then
-              nixosTest (
-                import test {
-                  inherit pkgs lib;
-                  inherit (pkgs) system;
-                }
-              )
-            else
-              nixosTest test
-          ) ((empty-if-null project.nixos.tests or { }) // (filter-map (nixos.examples or { }) "tests"));
+          nixos.tests =
+            let
+              nixosTest =
+                test:
+                let
+                  # Amenities for interactive tests
+                  tools =
+                    { pkgs, ... }:
+                    {
+                      environment.systemPackages = with pkgs; [
+                        vim
+                        tmux
+                        jq
+                      ];
+                      # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
+                      # to provide a slightly nicer console.
+                      # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
+                      services.kmscon = {
+                        enable = true;
+                        autologinUser = "root";
+                      };
+                    };
+                  debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
+                  args = debugging // test;
+                in
+                if lib.isDerivation test then test else pkgs.nixosTest args;
+              # TODO: refactor
+              tests =
+                (empty-if-null project.nixos.tests or { })
+                // (filter-map (nixos.examples or { }) "tests")
+                // (filter-map (nixos.demo.vm or { }) "tests")
+                // (filter-map (nixos.demo.shell or { }) "tests");
+              filtered-tests = filterAttrs (
+                _: test: (!test ? problem.broken) && (test ? module && test.module != null)
+              ) tests;
+            in
+            mapAttrs (
+              _: test:
+              if lib.isString test.module then
+                nixosTest (
+                  import test.module {
+                    inherit pkgs lib;
+                    inherit (pkgs) system;
+                  }
+                )
+              else
+                nixosTest test.module
+            ) filtered-tests;
         };
     in
     mapAttrs (name: project: hydrate project) projects;
