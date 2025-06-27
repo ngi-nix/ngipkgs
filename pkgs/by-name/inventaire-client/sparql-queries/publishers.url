@@ -1,0 +1,1 @@
+https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fitem%20WHERE%20%7B%20%3Fedition%20wdt%3AP123%20%3Fitem%20%7D
