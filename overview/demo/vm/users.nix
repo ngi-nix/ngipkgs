@@ -1,4 +1,8 @@
 {
+  lib,
+  ...
+}:
+{
   users.users.nixos = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
@@ -6,5 +10,5 @@
   };
 
   security.sudo.wheelNeedsPassword = false;
-  services.getty.autologinUser = "nixos";
+  services.getty.autologinUser = lib.mkDefault "nixos";
 }
