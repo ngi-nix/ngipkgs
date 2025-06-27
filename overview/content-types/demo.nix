@@ -16,6 +16,7 @@ in
     inherit (types'.demo.getSubOptions { })
       tests
       problem
+      description
       ;
     module = mkOption {
       type = types.path;
