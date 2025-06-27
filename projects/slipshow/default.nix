@@ -20,7 +20,7 @@
       examples.basic = {
         module = ./programs/slipshow/examples/basic.nix;
         description = "Enable the slipshow program";
-        tests.basic = import ./programs/slipshow/tests/basic.nix args;
+        tests.basic.module = import ./programs/slipshow/tests/basic.nix args;
       };
     };
   };
