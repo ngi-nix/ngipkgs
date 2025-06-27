@@ -34,9 +34,7 @@
       examples.basic = {
         module = ./programs/kaidan/examples/basic.nix;
         description = "Kaidan program example";
-        # TODO: Write tests
-        # Test requires x-server, OCR and maybe an XMPP server
-        tests.kaidan.module = null;
+        tests.kaidan.module = import ./programs/kaidan/tests/kaidan.nix args;
       };
     };
   };
