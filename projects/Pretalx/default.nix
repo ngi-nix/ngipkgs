@@ -4,7 +4,14 @@
   sources,
   ...
 }@args:
-
+let
+  pretalx-test = {
+    module = import ./test args;
+    problem.broken.reason = ''
+      django.urls.exceptions.NoReverseMatch: Reverse for 'organiser.teams.view' not found. 'organiser.teams.view' is not a valid view function or pattern name.
+    '';
+  };
+in
 {
   metadata = {
     summary = "Open source tooling for events and conferences";
@@ -22,26 +29,21 @@
           Basic configuration for Pretalx, incl. secret management with SOPS, excl. database settings.
         '';
         # FIX:
-        # tests.pretalx.module = import ./test args;
-        tests.pretalx.module = null;
+        tests.pretalx = pretalx-test;
       };
       postgresql = {
         module = ./examples/postgresql.nix;
         description = ''
           Supplementary to `base.nix`, adds database configuration for PostgreSQL.
         '';
-        # FIX:
-        # tests.pretalx.module = import ./test args;
-        tests.pretalx.module = null;
+        tests.pretalx-psql = pretalx-test;
       };
       mysql = {
         module = ./examples/mysql.nix;
         description = ''
           Supplementary to `base.nix`, adds database configuration for MySQL.
         '';
-        # FIX:
-        # tests.pretalx.module = import ./test args;
-        tests.pretalx.module = null;
+        tests.pretalx-mysql = pretalx-test;
       };
     };
   };

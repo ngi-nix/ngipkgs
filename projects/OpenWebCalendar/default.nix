@@ -13,9 +13,14 @@
       examples.basic = {
         module = ./example.nix;
         description = "";
-        # FIX: re-enable after this is solved:
-        # https://github.com/NixOS/nixpkgs/issues/418689
-        # tests.basic.module = pkgs.nixosTests.open-web-calendar;
+        # FIX:
+        tests.basic = {
+          module = pkgs.nixosTests.open-web-calendar;
+          problem.broken.reason = ''
+            Build failure: python3.13-lxml-html-clean
+            https://github.com/NixOS/nixpkgs/issues/418689
+          '';
+        };
       };
       links = {
         development = {
@@ -47,9 +52,14 @@
     demo.vm = {
       module = ./example.nix;
       description = "Deployment for demo purposes";
-      # FIX: re-enable after this is solved:
-      # https://github.com/NixOS/nixpkgs/issues/418689
-      # tests.basic.module = pkgs.nixosTests.open-web-calendar;
+      # FIX:
+      tests.basic = {
+        module = pkgs.nixosTests.open-web-calendar;
+        problem.broken.reason = ''
+          Build failure: python3.13-lxml-html-clean
+          https://github.com/NixOS/nixpkgs/issues/418689
+        '';
+      };
     };
   };
 }
