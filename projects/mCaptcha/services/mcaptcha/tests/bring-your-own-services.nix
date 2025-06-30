@@ -4,10 +4,6 @@
   ...
 }:
 let
-  inherit (lib)
-    mkAfter
-    ;
-
   port = 7000;
   urlRoot = "http://localhost:${builtins.toString port}";
   redisPassword = "(*&(*):ps@r}";
@@ -60,8 +56,8 @@ in
         }
       ];
 
-      systemd.services.postgresql.postStart = mkAfter ''
-        $PSQL my_mcaptcha -c "ALTER USER my_mcaptcha WITH PASSWORD 'mcaptcha-db-secret'"
+      systemd.services.postgresql-setup.postStart = ''
+        psql my_mcaptcha -c "ALTER USER my_mcaptcha WITH PASSWORD 'mcaptcha-db-secret'"
       '';
       services.postgresql.authentication = ''
         #type  database  DBuser         auth-method
