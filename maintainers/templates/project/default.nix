@@ -47,7 +47,7 @@
       examples.basic = {
         module = ./programs/_programName_/examples/basic.nix;
         description = "";
-        tests.basic = import ./programs/_programName_/tests/basic.nix args;
+        tests.basic.module = import ./programs/_programName_/tests/basic.nix args;
       };
       # Add relevant links to the program (if they're available)
       # else, remove the `links` attribute below
@@ -89,7 +89,7 @@
       examples.basic = {
         module = ./services/_serviceName_/examples/basic.nix;
         description = "";
-        tests.basic = import ./services/_serviceName_/tests/basic.nix args;
+        tests.basic.module = import ./services/_serviceName_/tests/basic.nix args;
       };
       # Add relevant links to the service (if they're available)
       # else, remove the `links` attribute below
