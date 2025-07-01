@@ -402,6 +402,40 @@ In order to display a project on <ngi.nixos.org>, its metadata must be added to 
 1. Run the Nix code formatter with `nix fmt`
 1. Commit your changes and [create a new PR](#how-to-create-pull-requests-to-ngipkgs)
 
+## How to add an example
+
+An example, is a valid configuration of an existing application module that illustrates how to use it.
+Examples should capture a characteristic use case of the application and work exactly as shown.
+Therefore, examples are only displayed to users if they have working tests.
+
+To add an example:
+
+1. Figure out the application module options and how they are configured. For instace, this can be done by looking at the module's source code.
+
+2. Create a new `.nix` file to contain the valid example configuration.
+> [!NOTE]
+>
+> - Examples should work as-is without requiring additional configuration outside of what's shown.
+> - Include all necessary options and dependent services.
+
+3. In the project's `default.nix`, reference the example with a clear description:
+> [!NOTE]
+>
+> - Descriptions are for instructions on playing with the example.
+> - They are optional, but important.
+
+   ```nix
+   nixos.modules.services.some-service = {
+     module = ./services/some-service/module.nix;
+     examples."Basic mail server setup with default ports" = {
+      module = ./services/some-service/examples/basic.nix;
+      description = "Send email via SMTP to port `${somehow access the right value here}` to check that it works";
+     };
+   };
+   ```
+4. Ensure the example works by building and running its test.
+<!--TODO: Reference the tests section when it is written -->
+
 ## Running and testing the overview locally
 
 1. To preview a local version of the [overview](https://ngi.nixos.org/), run a live watcher with:
