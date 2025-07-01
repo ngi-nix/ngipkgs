@@ -37,4 +37,30 @@
       };
     };
   };
+
+  nixos.demo.vm = {
+    module = ./services/holo/examples/holo.nix;
+    description = ''
+      A demo VM for testing Holo.
+
+      First, we need to execute `holo-cli` with previliges because it changes the IP table and the network configuration:
+
+      $ sudo holo-cli
+
+      This will start a holo shell, inside which you need to run the following to set up an ospf protocol:
+
+      - configure
+      - routing control-plane-protocols control-plane-protocol ietf-ospf:ospfv3 main
+      - ospf preference inter-area 50
+      - show changes
+      - commit
+      - end
+      - exit
+
+      Finally, you can print and verify the routing configuration:
+
+      $ holo-cli -c 'show running format json'
+    '';
+    tests.demo.module = import ./services/holo/tests/holo.nix args;
+  };
 }
