@@ -259,10 +259,12 @@ let
                         modules = {
                           programs = mkOption {
                             type = attrsOf types'.program;
+                            description = "Software that can be run in the shell";
                             default = { };
                           };
                           services = mkOption {
                             type = attrsOf types'.service;
+                            description = "Software that runs as a background process";
                             default = { };
                           };
                         };
@@ -280,6 +282,7 @@ let
                         # we can still reduce granularity and move all examples to the application level.
                         examples = mkOption {
                           type = attrsOf types'.example;
+                          description = "A configuration of an existing application module that illustrates how to use it";
                           default = { };
                         };
                         # TODO: Tests should really only be per example, in order to clarify that we care about tested examples more than merely tests.
