@@ -89,46 +89,17 @@ let
   render = {
     options = rec {
       one =
-        prefix: option:
-        let
-          maybeDefault = optionalString (option ? default.text) ''
-            <dt>Default:</dt>
-            <dd class="option-default"><code>${option.default.text}</code></dd>
-          '';
-          maybeReadonly = optionalString option.readOnly ''
-            <span class="option-alert" title="This option can't be set by users">Read-only</span>
-          '';
-          updateScriptStatus =
-            let
-              optionName = lib.removePrefix "pkgs." option.default.text;
-            in
-            optionalString (option.type == "package" && !pkgs ? ${optionName}.passthru.updateScript) ''
-              <dt>Notes:</dt>
-              <dd><span class="option-alert">Missing update script</span> An update script is required for automatically tracking the latest release.</dd>
-            '';
-        in
-        ''
-          <dt class="option-name">
-            <span class="option-prefix">${join "." prefix}.</span><span>${join "." (drop (lib.length prefix) option.loc)}</span>
-            ${maybeReadonly}
-          </dt>
-          <dd class="option-body">
-            <div class="option-description">
-            ${markdownToHtml option.description}
-            </div>
-            <dl>
-              <dt>Type:</dt>
-              <dd class="option-type"><code>${option.type}</code></dd>
-              ${maybeDefault}
-              ${updateScriptStatus}
-            </dl>
-          </dd>
-        '';
+        option:
+        eval {
+          imports = [ ./content-types/option.nix ];
+          _module.args.pkgs = pkgs;
+          inherit option;
+        };
       many =
         prefix: projectOptions:
         optionalString (!empty projectOptions) ''
           <details><summary><code>${join "." prefix}</code></summary><dl>
-          ${concatLines (map (one prefix) projectOptions)}
+          ${concatLines (map one projectOptions)}
           </dl></details>
         '';
     };
