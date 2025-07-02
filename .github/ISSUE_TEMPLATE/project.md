@@ -28,3 +28,6 @@ Next, depending on the project deliverable, open sub-issues for the following ta
   - [ ] VM demo
 
 **Note:** Each program/service module needs an example, and each example needs to be tested.
+
+> [!IMPORTANT]
+> Make sure to open sub-tasks for each deliverable under the parent issue.

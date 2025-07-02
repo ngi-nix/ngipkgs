@@ -4,6 +4,12 @@ title: "<PROJECT NAME>: Triage metadata"
 labels: ["good first issue"]
 projects: ["Nix@NGI"]
 body:
+  - type: markdown
+    id: notes_tasks
+    attributes:
+      value: |
+        > [!IMPORTANT]
+        > After triaging the project, make sure to open sub-tasks for each deliverable under the parent issue.
   - type: textarea
     id: instructions
     attributes:
