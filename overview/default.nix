@@ -193,7 +193,7 @@ let
       many = examples: ''
         ${heading 2 "examples" "Examples"}
         ${concatLines (map one examples)}
-        <button class="button example"><a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Add example</a></button>
+        <button class="button example"><a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#how-to-add-an-example">Add an example</a></button>
       '';
     };
 
