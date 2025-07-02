@@ -429,7 +429,7 @@ To add an example:
      module = ./services/some-service/module.nix;
      examples."Basic mail server setup with default ports" = {
       module = ./services/some-service/examples/basic.nix;
-      description = "Send email via SMTP to port `${somehow access the right value here}` to check that it works";
+      description = "Send email via SMTP to port 587 to check that it works";
      };
    };
    ```
