@@ -336,6 +336,16 @@ div.code > pre /* for pygments output */
   background-color: darkgreen;
 }
 
+.button.example {
+  margin-bottom: 15px;
+  border-radius: 5px;
+  padding: 5px
+}
+
+.button.example:hover {
+  background-color: darkgreen;
+}
+
 details > summary > h2, details > summary > h3 {
     display: inline;
 }

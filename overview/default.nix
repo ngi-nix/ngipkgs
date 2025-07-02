@@ -190,12 +190,11 @@ let
 
         </details>
       '';
-      many =
-        examples:
-        optionalString (!empty examples) ''
-          ${heading 2 "examples" "Examples"}
-          ${concatLines (map one examples)}
-        '';
+      many = examples: ''
+        ${heading 2 "examples" "Examples"}
+        ${concatLines (map one examples)}
+        <button class="button example"><a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Add example</a></button>
+      '';
     };
 
     subgrants = rec {
