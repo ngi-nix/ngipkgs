@@ -16,6 +16,14 @@ let
         (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
         ./shell.nix
         ./vm
+        {
+          options.demo = lib.mkOption {
+            type = lib.types.bool;
+            description = "Whether the configuration should run as a demo.";
+            default = false;
+          };
+          config.demo = true;
+        }
       ] ++ extendedNixosModules;
       specialArgs = { inherit sources; };
     };
