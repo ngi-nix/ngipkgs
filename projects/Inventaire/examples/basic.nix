@@ -12,6 +12,7 @@ let
   couchdbPassword = "ThisIsNotSecurelyManagedAndImFullyAwareOfThis";
   couchdbPort = 5984;
   elasticPort = 9200;
+  inventairePort = 3006;
 
   inventaireServiceDeps = [
     "couchdb.service"
@@ -100,10 +101,11 @@ in
   services.inventaire = {
     enable = true;
     inProductionMode = false; # production mode expects to be running behind nginx, breaks some asset serving
+    openFirewall = true;
 
     settings = {
       hostname = "0.0.0.0";
-      port = 3006;
+      port = inventairePort;
 
       # CouchDB
       db = {
