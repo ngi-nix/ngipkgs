@@ -42,9 +42,9 @@
           GiB = 1024 * 1024 * 1024;
         in
         4 * GiB;
-      max-jobs = lib.mkDefault 16;
+      max-jobs = lib.mkDefault 4;
       allowed-uris = "https://github.com/ https://git.savannah.gnu.org/ github: gitlab: git+https:";
-      cores = 0;
+      cores = 4;
       experimental-features = [
         "nix-command"
         "flakes"
