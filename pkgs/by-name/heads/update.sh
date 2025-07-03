@@ -72,6 +72,30 @@ checkArgCount() {
   fi
 }
 
+# Certain URLs just don't work (inconsistent results, permanently dead)
+# This will apply some replacements to such URLs, in an effort to make fetching results more consistent
+fixUrl() {
+  checkArgCount "${FUNCNAME[0]}" 1 "$#"
+
+  fixedUrl="$1"
+
+  # ftpmirror.gnu.org sends us through mirror roulette, but some mirrors seem misconfigured and cause nix-prefetch-url
+  # to save a .tar file instead of the original .tar.gz
+  # Current hypothesis: headers content-type=application/x-gzip + content-encoding=x-gzip make Nix unzip the archive
+  # For example: mirror.checkdomain.de
+  # For this reason, we can't rely on it, and need to use GNU's main server - response times be damned
+  #
+  # Some URLs have /gnu/ already included, others need it added in.
+  fixedUrl="${fixedUrl/#"https://ftpmirror.gnu.org/gnu"/"https://ftp.gnu.org/gnu"}"
+  fixedUrl="${fixedUrl/#"https://ftpmirror.gnu.org"/"https://ftp.gnu.org/gnu"}"
+
+  # Old acpica sources are painful, Intel downloadmirror gives access denied for acpica-unix2-20220331
+  # This source mirror is used for other versions, don't know why upstream isn't using it for this one as well
+  fixedUrl="${fixedUrl/#"https://downloadmirror.intel.com/774879"/"https://mirror.math.princeton.edu/pub/libreboot/misc/acpica"}"
+
+  echo "$fixedUrl"
+}
+
 # nix-prefetch-url doesn't give us a nice SRI hash
 # This will run the resulting hash through nix hash (convert) to print an SRI one
 getSriHash() {
@@ -79,8 +103,11 @@ getSriHash() {
 
   url="$1"
 
-  hashRaw="$(nix-prefetch-url "$url" --type sha256)"
-  nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$hashRaw"
+  # In case of temporary gnu.org failure, let's not loose tons of progress - a human can re-attempt this manually
+  hashRaw="$(nix-prefetch-url "$url" --type sha256 || true)"
+  if [ "x" != "x${hashRaw}" ]; then
+    nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$hashRaw"
+  fi
 }
 
 # Given a package name, url & hash, substitute them into a template for a downloaded file and add the resulting
@@ -110,25 +137,48 @@ collectCorebootCrossgccDeps() {
   corebootSrc="$2"
   appendToFile="$3"
 
+  # If there are patches available, apply them. They may affect download URLs
+  corebootPatchesDir="${srcDir}/patches/${corebootName}"
+  if [ -d "${corebootPatchesDir}" ]; then
+    # Need to apply changes to src, so need modifiable version
+    modifiableCorebootSrc="${tmpDir}/${corebootName}"
+    cp -r "$corebootSrc" "$modifiableCorebootSrc"
+    chmod -R +w "$modifiableCorebootSrc"
+    corebootSrc="$modifiableCorebootSrc"
+
+    # Apply all found patch files
+    pushd "$corebootSrc"
+    for patch in "${corebootPatchesDir}"/*; do
+      git apply --verbose --reject --binary < "$patch"
+    done
+    popd
+  fi
+
   crossgccSrc="$corebootSrc"/util/crossgcc/buildgcc
 
   echo "\"${corebootName}\" = [" >> "$appendToFile"
 
   while IFS= read -r -d ' ' crossgccDepUrl; do
     crossgccDepArchive="$(basename "$crossgccDepUrl")"
-    echo "Handling ${corebootName} crossgcc package: ${crossgccDepArchive}"
 
-    # ftpmirror.gnu.org sends us through mirror roulette, but some mirrors seem misconfigured and cause nix-prefetch-url
-    # to save a .tar file instead of the original .tar.gz
-    # Current hypothesis: headers content-type=application/x-gzip + content-encoding=x-gzip make Nix unzip the archive
-    # For example: mirror.checkdomain.de
-    # For this reason, we can't rely on it, and need to use GNU's main server - response times be damned
-    crossGccDepUrl="${crossgccDepUrl/#"https://ftpmirror.gnu.org"/"https://ftp.gnu.org/gnu"}"
+    if [ "$crossgccDepArchive" == "acpica-unix2-20220331.tar.gz" ]; then
+      echo "Skipping due to no known safe mirror: ${crossgccDepArchive}"
+      echo "
+        # Skipping ${crossgccDepArchive} because we don't have a known-good mirror
+        # Candidate (Heads explicitly *doesn't* use this one for this version): https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-unix2-20220331.tar.gz
+        # Candidate (involves an archive rename): https://distfiles.macports.org/acpica/acpica-unix-20220331.tar.gz
+      " >> "$appendToFile"
+    else
+      echo "Handling ${corebootName} crossgcc package: ${crossgccDepArchive}"
 
-    # nix-prefetch-url doesn't give the hash in SRI format :(
-    crossgccDepHash="$(getSriHash "$crossGccDepUrl")"
+      # Apply some common URL fixes
+      crossGccDepUrl="$(fixUrl "$crossgccDepUrl")"
 
-    addPackageDefinition "coreboot-crossgcc-${crossgccDepArchive}" "$crossGccDepUrl" "$crossgccDepHash" "$appendToFile"
+      # nix-prefetch-url doesn't give the hash in SRI format :(
+      crossgccDepHash="$(getSriHash "$crossGccDepUrl")"
+
+      addPackageDefinition "coreboot-crossgcc-${crossgccDepArchive}" "$crossGccDepUrl" "$crossgccDepHash" "$appendToFile"
+    fi
   done < <(echo "$(env CROSSGCC_VERSION="$corebootName" "$crossgccSrc" --urls) " | tr -d '\t') # CROSSGCC_VERSION so git isn't invoked, trailing space for read to get last entry
 
   echo "];" >> "$appendToFile"
@@ -229,6 +279,9 @@ while IFS= read -r packageVersion; do
       archiveUrl="https://web.archive.org/web/20240910005455/https://fukuchi.org/works/qrencode/qrencode-${archiveVersion}.tar.gz"
     fi
 
+    # Apply some common URL fixes
+    archiveUrl="$(fixUrl "$archiveUrl")"
+
     # nix-prefetch-url doesn't give the hash in SRI format :(
     archiveHash="$(getSriHash "$archiveUrl")"
 
@@ -268,8 +321,12 @@ while IFS= read -r packageVersion; do
 
         # nix-prefetch-url doesn't give the hash in SRI format :(
         # Need to override name, contains illegal ";"
-        configSubHashRaw="$(nix-prefetch-url "$configSubUrl" --type sha256 --name "config.sub")"
-        configSubHash="$(nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$configSubHashRaw")"
+        # In case of temporary gnu.org failure, let's not loose tons of progress - a human can re-attempt this manually
+        configSubHashRaw="$(nix-prefetch-url "$configSubUrl" --type sha256 --name "config.sub" || true)"
+        configSubHash=""
+        if [ "x" != "x${configSubHashRaw}" ]; then
+          configSubHash="$(nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$configSubHashRaw")"
+        fi
 
         addPackageDefinition "config.sub" "$configSubUrl" "$configSubHash" "$muslCrossMakeTmpFile"
       }
@@ -292,6 +349,9 @@ while IFS= read -r packageVersion; do
         fi
 
         muslCrossMakeDepUrl="${muslCrossMakeDepSite}/${muslCrossMakeDepArchive}"
+
+        # Apply some common URL fixes
+        muslCrossMakeDepUrl="$(fixUrl "$muslCrossMakeDepUrl")"
 
         # nix-prefetch-url doesn't give the hash in SRI format :(
         muslCrossMakeDepHash="$(getSriHash "$muslCrossMakeDepUrl")"

@@ -386,6 +386,7 @@ let
           runtimeInputs = [
             envsubst
             getopt # running crossgcc's script to get list of archives
+            git
             gnumake
             jq
             nix
