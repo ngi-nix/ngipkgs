@@ -439,5 +439,5 @@ lib.makeScope newScope (
   {
     inherit allowedBoards generateBoards;
   }
-  // generateBoards allowedBoards
+  // generateBoards deps.boards
 )
