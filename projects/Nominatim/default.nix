@@ -77,7 +77,6 @@
       $ open https://localhost:8443
     '';
 
-    # FIXME:
-    # tests.demo.module = import "${sources.inputs.nixpkgs}/nixos/tests/nominatim.nix" args;
+    tests.demo.module = import ./services/nominatim/tests/basic.nix args;
   };
 }
