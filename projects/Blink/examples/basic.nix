@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.blink.enable = true;
+}
