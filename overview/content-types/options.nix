@@ -12,7 +12,6 @@ let
     optionalString
     join
     concatLines
-    attrValues
     ;
 in
 {
@@ -31,6 +30,7 @@ in
     };
     __toString = mkOption {
       type = with types; functionTo str;
+      readOnly = true;
       default =
         self:
         optionalString (self.project-options != [ ]) ''

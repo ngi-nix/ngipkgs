@@ -8,13 +8,11 @@ let
   inherit (lib)
     types
     mkOption
-    concatStringsSep
+    join
     drop
     optionalString
     take
     ;
-
-  join = concatStringsSep;
 in
 {
   options = {
@@ -40,6 +38,7 @@ in
     };
     option-prefix = mkOption {
       type = types.str;
+      readOnly = true;
       default =
         let
           prefix-head = take config.prefix-length config.loc;
@@ -51,6 +50,7 @@ in
     };
     option-type = mkOption {
       type = types.str;
+      readOnly = true;
       default = ''
         <dt>Type:</dt>
         <dd class="option-type"><code>${config.type}</code></dd>
@@ -58,6 +58,7 @@ in
     };
     option-default = mkOption {
       type = types.str;
+      readOnly = true;
       default = optionalString (config.default ? text) ''
         <dt>Default:</dt>
         <dd class="option-default"><code>${config.default.text}</code></dd>
@@ -65,6 +66,7 @@ in
     };
     option-description = mkOption {
       type = types.str;
+      readOnly = true;
       default =
         let
           # This doesn't actually produce a HTML string but a Jinja2 template string
@@ -80,12 +82,14 @@ in
     };
     alert-readonly = mkOption {
       type = types.str;
+      readOnly = true;
       default = optionalString config.readOnly ''
         <span class="option-alert" title="This option can't be set by users">Read-only</span>
       '';
     };
     alert-update-script = mkOption {
       type = types.str;
+      readOnly = true;
       description = "Derivation has a missing update script.";
       default =
         let
@@ -99,6 +103,7 @@ in
     };
     __toString = mkOption {
       type = with types; functionTo str;
+      readOnly = true;
       default = self: ''
         <dt class="option-name">
           ${self.option-prefix}
