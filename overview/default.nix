@@ -88,11 +88,11 @@ let
         inherit prefix;
         project-options = map (option: {
           inherit (option)
-            loc
             type
             description
             readOnly
             ;
+          attrpath = option.loc;
           default = option.default or { };
         }) projectOptions;
       };
@@ -157,14 +157,17 @@ let
               type:
               lib.concatMapAttrsStringSep "\n" (
                 name: val:
-                optionalString (val.module != null) (
-                  render.options [ type name ] (
-                    pick.options [
-                      type
-                      name
-                    ]
-                  )
-                )
+                let
+                  project-options = pick.options [
+                    type
+                    name
+                  ];
+                  attrpath-prefix = [
+                    type
+                    name
+                  ];
+                in
+                render.options attrpath-prefix project-options
               ) project.nixos.modules.${type}
             )
             [
