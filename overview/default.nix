@@ -93,7 +93,13 @@ let
         eval {
           imports = [ ./content-types/option.nix ];
           _module.args.pkgs = pkgs;
-          inherit option;
+          inherit (option)
+            loc
+            type
+            description
+            readOnly
+            ;
+          default = option.default or { };
         };
       many =
         prefix: projectOptions:

@@ -22,15 +22,28 @@ in
       type = types.int;
       default = 2;
     };
-    option = mkOption {
+    loc = mkOption {
+      type = with types; listOf str;
+    };
+    type = mkOption {
+      type = types.str;
+    };
+    default = mkOption {
       type = types.attrs;
+      default = { };
+    };
+    description = mkOption {
+      type = types.str;
+    };
+    readOnly = mkOption {
+      type = types.bool;
     };
     option-prefix = mkOption {
       type = types.str;
       default =
         let
-          prefix-head = take config.prefix-length config.option.loc;
-          prefix-tail = drop config.prefix-length config.option.loc;
+          prefix-head = take config.prefix-length config.loc;
+          prefix-tail = drop config.prefix-length config.loc;
         in
         ''
           <span class="option-prefix">${join "." prefix-head}.</span><span>${join "." prefix-tail}</span>
@@ -40,14 +53,14 @@ in
       type = types.str;
       default = ''
         <dt>Type:</dt>
-        <dd class="option-type"><code>${config.option.type}</code></dd>
+        <dd class="option-type"><code>${config.type}</code></dd>
       '';
     };
     option-default = mkOption {
       type = types.str;
-      default = optionalString (config.option ? default.text) ''
+      default = optionalString (config.default ? text) ''
         <dt>Default:</dt>
-        <dd class="option-default"><code>${config.option.default.text}</code></dd>
+        <dd class="option-default"><code>${config.default.text}</code></dd>
       '';
     };
     option-description = mkOption {
@@ -61,13 +74,13 @@ in
         in
         ''
           <div class="option-description">
-          ${markdownToHtml config.option.description}
+          ${markdownToHtml config.description}
           </div>
         '';
     };
     alert-readonly = mkOption {
       type = types.str;
-      default = optionalString config.option.readOnly ''
+      default = optionalString config.readOnly ''
         <span class="option-alert" title="This option can't be set by users">Read-only</span>
       '';
     };
@@ -76,8 +89,8 @@ in
       description = "Derivation has a missing update script.";
       default =
         let
-          isDrv = config.option.type == "package";
-          optionName = lib.removePrefix "pkgs." config.option.default.text;
+          isDrv = config.type == "package";
+          optionName = lib.removePrefix "pkgs." config.default.text;
         in
         optionalString (isDrv && !pkgs ? ${optionName}.passthru.updateScript) ''
           <dt>Notes:</dt>
