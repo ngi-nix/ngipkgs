@@ -87,12 +87,14 @@ let
   markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
 
   render = {
-    options = rec {
-      one =
-        option:
-        eval {
-          imports = [ ./content-types/option.nix ];
-          _module.args.pkgs = pkgs;
+    options =
+      prefix: projectOptions:
+      eval {
+        imports = [ ./content-types/options.nix ];
+        _module.args.pkgs = pkgs;
+
+        inherit prefix;
+        project-options = map (option: {
           inherit (option)
             loc
             type
@@ -100,15 +102,8 @@ let
             readOnly
             ;
           default = option.default or { };
-        };
-      many =
-        prefix: projectOptions:
-        optionalString (!empty projectOptions) ''
-          <details><summary><code>${join "." prefix}</code></summary><dl>
-          ${concatLines (map one projectOptions)}
-          </dl></details>
-        '';
-    };
+        }) projectOptions;
+      };
 
     examples = rec {
       one = example: ''
@@ -171,7 +166,7 @@ let
               lib.concatMapAttrsStringSep "\n" (
                 name: val:
                 optionalString (val.module != null) (
-                  render.options.many [ type name ] (
+                  render.options [ type name ] (
                     pick.options [
                       type
                       name
