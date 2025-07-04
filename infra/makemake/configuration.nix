@@ -75,6 +75,7 @@
       ];
       remotebuild = with keys; [
         getpsyched
+        prince213
       ];
     in
     {
