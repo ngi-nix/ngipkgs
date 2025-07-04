@@ -82,7 +82,7 @@ let
     options =
       prefix: projectOptions:
       eval {
-        imports = [ ./content-types/options.nix ];
+        imports = [ ./content-types/option-list.nix ];
         _module.args.pkgs = pkgs;
 
         inherit prefix;
