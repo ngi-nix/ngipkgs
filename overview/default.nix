@@ -14,7 +14,6 @@ let
     isList
     isInt
     substring
-    toJSON
     toString
     ;
 
@@ -27,8 +26,6 @@ let
     filterAttrs
     mapAttrs'
     nameValuePair
-    drop
-    join
     ;
 
   empty =
@@ -80,11 +77,6 @@ let
         )
       );
   };
-
-  # This doesn't actually produce a HTML string but a Jinja2 template string
-  # literal, that is then replaced by it's HTML translation at the last build
-  # step.
-  markdownToHtml = markdown: "{{ markdown_to_html(${toJSON markdown}) }}";
 
   render = {
     options =
