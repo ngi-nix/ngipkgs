@@ -31,7 +31,7 @@
   nixos.modules.programs = {
     nominatim = {
       name = "nominatim";
-      module = null;
+      module = ./programs/nominatim/module.nix;
     };
   };
 
