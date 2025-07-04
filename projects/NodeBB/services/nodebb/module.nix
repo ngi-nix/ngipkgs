@@ -76,6 +76,12 @@ in
       };
     };
 
+    openFirewall = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether to open ports in the firewall.";
+    };
+
     databasePasswordFile = lib.mkOption {
       type = lib.types.path;
       description = "Path to a file containing the database password.";
@@ -238,6 +244,8 @@ in
             isSystemUser = true;
           };
         };
+
+        networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.settings.port;
       }
       (lib.mkIf (cfg.enableLocalDB && cfg.settings.database == "postgres") {
         systemd.services.nodebb.after = [ "postgresql.service" ];
