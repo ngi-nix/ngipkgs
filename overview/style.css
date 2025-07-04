@@ -339,11 +339,15 @@ div.code > pre /* for pygments output */
 .button.example {
   margin-bottom: 15px;
   border-radius: 5px;
+  background-color: darkgreen;
   padding: 5px
 }
 
-.button.example:hover {
-  background-color: darkgreen;
+.button.missing {
+  background-color: red;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  padding: 5px
 }
 
 details > summary > h2, details > summary > h3 {
