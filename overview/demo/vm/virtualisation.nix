@@ -2,6 +2,7 @@
 {
   virtualisation = {
     memorySize = 4096;
+    diskSize = 4096;
     cores = 4;
     graphics = false;
 
