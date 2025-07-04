@@ -97,24 +97,6 @@ let
         }) projectOptions;
       };
 
-    examples = rec {
-      one = example: ''
-        <details><summary>${example.description}</summary>
-
-        ${eval {
-          imports = [ ./content-types/code-snippet.nix ];
-          filepath = example.module;
-        }}
-
-        </details>
-      '';
-      many = examples: ''
-        ${heading 2 "examples" "Examples"}
-        ${concatLines (map one examples)}
-        <button class="button example"><a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#how-to-add-an-example">Add an example</a></button>
-      '';
-    };
-
     subgrants = rec {
       one = subgrant: ''
         <li>
@@ -151,6 +133,11 @@ let
     projects.one =
       name: project:
       let
+        examples = eval {
+          imports = [ ./content-types/example-list.nix ];
+          examples = map (value: { inherit (value) description module tests; }) (pick.examples project);
+        };
+
         optionsRender =
           lib.concatMapStringsSep "\n"
             (
@@ -186,7 +173,7 @@ let
           )}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
-          ${render.examples.many (pick.examples project)}
+          ${examples}
         </article>
       '';
 
@@ -202,10 +189,7 @@ let
 
         demo = {
           inherit type;
-          inherit (demo)
-            tests
-            module
-            ;
+          inherit (demo) tests module;
           problem = demo.problem or null;
           _module.args.pkgs = pkgs;
         };
@@ -230,11 +214,7 @@ let
             (eval {
               imports = [ ./content-types/demo.nix ];
               inherit type;
-              inherit (demo)
-                tests
-                module
-                problem
-                ;
+              inherit (demo) tests module problem;
               _module.args.pkgs = pkgs;
             }).filepath
           ) project.nixos.demo;
@@ -289,7 +269,7 @@ let
         <meta property="og:title" content="${args.pagetitle}" />
         ${optionalString (
           args.summary != null
-        ) "<meta property=\"og:description\" content=\"${args.summary}\" />"}
+        ) ''<meta property="og:description" content="${args.summary}" />''}
         <meta property="og:url" content="https://ngi.nixos.org/${path}" />
         <meta property="og:type" content="website" />
         <link rel="stylesheet" href="/style.css">
@@ -356,21 +336,19 @@ let
       python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
     '';
 
-  fonts =
-    pkgs.runCommand "fonts"
-      {
-        nativeBuildInputs = with pkgs; [ woff2 ];
-      }
-      ''
-        mkdir -vp $out
-        cp -v ${pkgs.ibm-plex}/share/fonts/opentype/IBMPlex{Sans,Mono}-* $out/
-        for otf in $out/*.otf; do
-          woff2_compress "$otf"
-        done
-      '';
+  fonts = pkgs.runCommand "fonts" { nativeBuildInputs = with pkgs; [ woff2 ]; } ''
+    mkdir -vp $out
+    cp -v ${pkgs.ibm-plex}/share/fonts/opentype/IBMPlex{Sans,Mono}-* $out/
+    for otf in $out/*.otf; do
+      woff2_compress "$otf"
+    done
+  '';
 
   highlightingCss =
-    pkgs.runCommand "pygments-css-rules.css" { nativeBuildInputs = [ pkgs.python3Packages.pygments ]; }
+    pkgs.runCommand "pygments-css-rules.css"
+      {
+        nativeBuildInputs = [ pkgs.python3Packages.pygments ];
+      }
       ''
         pygmentize -S default -f html -a .code > $out
       '';
