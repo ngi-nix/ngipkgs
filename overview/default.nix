@@ -88,6 +88,9 @@ let
 
   render = {
     options = rec {
+      /**
+        TODO(@fricklerhandwerk): modularize
+      */
       one =
         prefix: option:
         let
@@ -193,14 +196,17 @@ let
               type:
               lib.concatMapAttrsStringSep "\n" (
                 name: val:
-                optionalString (val.module != null) (
-                  render.options.many [ type name ] (
-                    pick.options [
-                      type
-                      name
-                    ]
-                  )
-                )
+                let
+                  project-options = pick.options [
+                    type
+                    name
+                  ];
+                  attrpath-prefix = [
+                    type
+                    name
+                  ];
+                in
+                render.options.many attrpath-prefix project-options
               ) project.nixos.modules.${type}
             )
             [

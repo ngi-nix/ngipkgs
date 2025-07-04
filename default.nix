@@ -175,7 +175,9 @@ rec {
     class = "nixos";
     modules = [
       {
-        nixpkgs.hostPlatform = { inherit system; };
+        nixpkgs.hostPlatform = {
+          inherit system;
+        };
 
         networking = {
           domain = "invalid";
@@ -296,7 +298,7 @@ rec {
     packages = [
       # live overview watcher
       (pkgs.devmode.override {
-        buildArgs = "-A overview --show-trace";
+        buildArgs = "-A overview --show-trace -v";
       })
     ];
   };
