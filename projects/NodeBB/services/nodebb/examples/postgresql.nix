@@ -4,6 +4,7 @@
   services.nodebb = {
     enable = true;
     enableLocalDB = true;
+    openFirewall = true;
     admin = {
       username = "admin";
       email = "admin@example.com";
@@ -21,7 +22,6 @@
   '';
 
   # demo-vm
-  networking.firewall.allowedTCPPorts = [ 4567 ];
   programs.bash.interactiveShellInit = ''
     echo "NodeBB is starting. Please wait ..."
     until systemctl show nodebb.service | grep -q ActiveState=active; do sleep 1; done
