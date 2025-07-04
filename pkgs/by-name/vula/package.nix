@@ -17,6 +17,7 @@ in
 python3.pkgs.buildPythonApplication {
   pname = "vula";
   version = "0.2-unstable-2024-05-17";
+  format = "setuptools";
 
   src = fetchgit {
     url = "https://codeberg.org/vula/vula";
