@@ -243,11 +243,26 @@ let
     projects = lib.mapAttrsToList (name: project: {
       inherit name;
       description = project.metadata.summary or null;
-      deliverables = {
-        service = any (service: service.module != null) (attrValues project.nixos.modules.services);
-        program = any (program: program.module != null) (attrValues project.nixos.modules.programs);
-        demo = project.nixos.demo != null;
-      };
+      deliverables =
+        (lib.mapAttrsToList (name: value: {
+          inherit name;
+          type = "program";
+          hasProblem = value.module == null;
+        }) project.nixos.modules.programs)
+        ++ (lib.mapAttrsToList (name: value: {
+          inherit name;
+          type = "service";
+          hasProblem = value.module == null;
+        }) project.nixos.modules.services)
+        ++ [
+          {
+            name = project.name;
+            type = "demo";
+            hasProblem =
+              project.nixos.demo == null
+              || lib.any (demo: demo.module == null || demo.problem != null) (attrValues project.nixos.demo);
+          }
+        ];
     }) projects;
     inherit version;
     inherit lastModified;
