@@ -412,6 +412,10 @@ article.project .deliverable-tag {
   font-weight: 500;
 }
 
+article.project .deliverable-tag.deliverable-has-problem {
+  background-color: lightpink;
+}
+
 .option-name {
   font-weight: 600;
   font-family: "IBM Plex Mono";

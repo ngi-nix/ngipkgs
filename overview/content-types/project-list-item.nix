@@ -19,25 +19,25 @@ in
     deliverables = mkOption {
       type =
         with types;
-        # XXX(@fricklerhandwerk): this is very simple-minded. we'll need to think
-        # about how to deal with cases where there are multiple services etc.
-        submodule {
+        listOf (submodule {
           options = {
-            service = mkOption {
-              type = types.bool;
-              default = false;
+            name = mkOption {
+              type = str;
             };
-            program = mkOption {
-              type = types.bool;
-              default = false;
+            type = mkOption {
+              type = enum [
+                "program"
+                "service"
+                "demo"
+              ];
             };
-            demo = mkOption {
-              type = types.bool;
-              default = false;
+            hasProblem = mkOption {
+              type = nullOr bool;
+              default = null;
             };
           };
-        };
-      default = { };
+        });
+      default = [ ];
     };
     __toString = mkOption {
       type = with types; functionTo str;
@@ -50,10 +50,15 @@ in
                 <a href="/project/${self.name}">${self.name}</a>
               </h2>
               ${concatStringsSep "\n" (
-                mapAttrsToList (
-                  deliverable: exists:
-                  optionalString exists ''<a class="deliverable-tag" href="/project/${self.name}#${deliverable}">${deliverable}</a>''
-                ) self.deliverables
+                map (deliverable: ''
+                  <a
+                    class="deliverable-tag ${optionalString (deliverable.hasProblem) "deliverable-has-problem"}"
+                    title="${deliverable.name} ${deliverable.type}${optionalString (deliverable.hasProblem) " has a problem"}"
+                    href="/project/${self.name}#${deliverable.type}"
+                  >
+                    ${deliverable.type}
+                  </a>
+                '') self.deliverables
               )}
             </div>
             ${optionalString (!isNull self.description) ''
