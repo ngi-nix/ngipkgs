@@ -26,5 +26,9 @@
     };
   };
 
-  # no service module as this is strictly a program
+  nixos.demo.shell = {
+    module = ./programs/jaq/examples/basic.nix;
+    description = "jaq example";
+    tests.basic.module = import ./programs/jaq/tests/shell.nix args;
+  };
 }
