@@ -16,7 +16,7 @@ buildNpmPackage rec {
     owner = "inventaire";
     repo = "inventaire";
     tag = "v${version}";
-    hash = "sha256-5k6Qb236GT+HwELlRlXDBsmFbTLbf+27ctIyditjBYc=";
+    hash = "sha256-tYVz/elb9AbqdMDBgiyQtOrQzas+It3hhgBc2wzl74w=";
   };
 
   # Cannot handle git+https://codeberg.org source url, but it later gets fetched manually anyway
