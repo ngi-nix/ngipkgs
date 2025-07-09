@@ -4,7 +4,7 @@ about: "Implement in-code metadata for an NGI project"
 title: "Implement project metadata for PROJECT_NAME"
 projects: Nix@NGI
 type: task
-labels: ''
+labels: 'metadata'
 assignees: ''
 ---
 

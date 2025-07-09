@@ -4,7 +4,7 @@ about: "Implement a NixOS program module for an NGI project"
 title: "Implement NixOS module for PROJECT_NAME program"
 projects: Nix@NGI
 type: task
-labels: ''
+labels: 'program'
 assignees: ''
 ---
 

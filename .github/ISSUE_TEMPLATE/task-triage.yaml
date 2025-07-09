@@ -1,7 +1,7 @@
 name: "Task: Triage project"
 description: Collect information about an NGI project
 title: "<PROJECT NAME>: Triage metadata"
-labels: ["good first issue"]
+labels: ["good first issue", "triage"]
 projects: ["Nix@NGI"]
 body:
   - type: markdown

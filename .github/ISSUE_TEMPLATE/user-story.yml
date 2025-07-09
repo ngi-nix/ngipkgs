@@ -2,7 +2,7 @@ name: "User Story"
 description: "Create a User Story."
 title: "US: <USER STORY TITLE>"
 projects: ["Nix@NGI"]
-labels: ["User Story"]
+labels: ["User story"]
 body:
   - type: "textarea"
     id: description

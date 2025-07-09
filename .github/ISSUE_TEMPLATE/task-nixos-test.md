@@ -4,7 +4,7 @@ about: "Implement a NixOS VM test for an NGI project example"
 title: "Implement NixOS VM test for PROJECT_NAME example"
 projects: Nix@NGI
 type: task
-labels: ''
+labels: 'test'
 assignees: ''
 ---
 
