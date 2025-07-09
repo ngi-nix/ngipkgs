@@ -4,7 +4,7 @@ about: "Package a derivation for NGIpkgs/Nixpkgs"
 title: "Package DERIVATION_NAME for NGIpkgs/Nixpkgs"
 projects: Nix@NGI
 type: task
-labels: ''
+labels: 'derivation'
 assignees: ''
 ---
 

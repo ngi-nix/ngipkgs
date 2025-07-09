@@ -4,7 +4,7 @@ about: "Implement an example for an NGI project module"
 title: "Implement an example for PROJECT_NAME program service module"
 projects: Nix@NGI
 type: task
-labels: ''
+labels: 'example'
 assignees: ''
 ---
 
