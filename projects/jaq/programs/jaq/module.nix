@@ -17,5 +17,10 @@ in
     environment.systemPackages = with pkgs; [
       cfg.package
     ];
+    demo-shell.jaq = {
+      programs = {
+        jaq = cfg.package;
+      };
+    };
   };
 }
