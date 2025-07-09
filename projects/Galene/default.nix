@@ -18,8 +18,12 @@
       module = ./module.nix;
       examples.galene = {
         module = ./example.nix;
-        description = "";
-        tests.basic.module = import ./test.nix args;
+        description = ''
+          Basic configuration for Galene.
+        '';
+        tests.basic.module = pkgs.nixosTests.galene.basic;
+        tests.file-transfer.module = pkgs.nixosTests.galene.file-transfer;
+        tests.stream.module = pkgs.nixosTests.galene.stream;
       };
       links = {
         build = {
@@ -32,5 +36,10 @@
         };
       };
     };
+  };
+  nixos.demo.vm = {
+    module = ./example.nix;
+    description = "";
+    tests.basic.module = pkgs.nixosTests.galene.basic;
   };
 }
