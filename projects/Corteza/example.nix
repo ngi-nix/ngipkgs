@@ -1,0 +1,3 @@
+{
+  services.corteza.enable = true;
+}
