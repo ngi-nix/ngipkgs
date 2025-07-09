@@ -84,11 +84,15 @@ in
           alert-update-script =
             let
               isDrv = self.type == "package";
-              optionName = lib.removePrefix "pkgs." self.default.text;
+              attrPath = lib.splitString "." self.default.text ++ [
+                "passthru"
+                "updateScript"
+              ];
+              updateScript = lib.attrByPath attrPath null pkgs;
             in
             # TODO: plug a function that recurses into all dependencies,
             # so we'd know how much of the build graph is kept up to date automatically
-            optionalString (isDrv && !pkgs ? ${optionName}.passthru.updateScript) ''
+            optionalString (isDrv && updateScript == null) ''
               <dt>Notes:</dt>
               <dd><span class="option-alert">Missing update script</span> An update script is required for automatically tracking the latest release.</dd>
             '';
