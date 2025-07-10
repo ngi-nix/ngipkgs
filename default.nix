@@ -307,6 +307,15 @@ rec {
     ];
   };
 
+  metrics = import ./maintainers/metrics.nix {
+    inherit
+      lib
+      pkgs
+      ngipkgs
+      ;
+    raw-projects = evaluated-modules.config.projects;
+  };
+
   demo = import ./overview/demo {
     inherit
       lib
