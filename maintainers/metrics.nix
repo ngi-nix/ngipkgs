@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   ngipkgs,
   raw-projects,
 }:
@@ -11,6 +12,7 @@ let
     filterAttrs
     mapAttrs
     count
+    elem
     optionalAttrs
     ;
 in
@@ -50,6 +52,13 @@ rec {
     examples = concatMap (p: attrNames p.nixos.examples) (
       attrValues (filterAttrs (name: p: p ? nixos.examples && p.nixos.examples != null) raw-projects)
     );
+    update-scripts = count (d: d ? passthru.updateScript) (attrValues ngipkgs);
+    nixpkgs-update-scripts = count (
+      d:
+      (builtins.tryEval d).success
+      && (elem lib.teams.ngi d.meta.teams or [ ])
+      && d ? passthru.updateScript
+    ) (attrValues pkgs);
   };
 
   metrics-count = mapAttrs (name: value: count (_: true) value) metrics;
