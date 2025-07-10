@@ -18,6 +18,7 @@ in
 
     demo-shell.ethersync.programs = {
       ethersync = cfg.package;
+      neovim = config.programs.neovim.finalPackage;
     };
   };
 }
