@@ -227,6 +227,10 @@ let
         # Look them up in named subdirs, so archives don't conflict
         substituteInPlace modules/coreboot \
           --replace-fail '"$(COREBOOT_TOOLCHAIN_DIR)" "$(1)" "$(packages)"' '"$(COREBOOT_TOOLCHAIN_DIR)" "$(1)" "$(packages)"/"$(coreboot_module)"'
+
+        # Make Linux build more verbose, so builds on slower hardware don't time out due to lack of output
+        substituteInPlace modules/linux \
+          --replace-fail 'ARCH=' 'V=1 ARCH='
       '';
 
       preConfigure =
