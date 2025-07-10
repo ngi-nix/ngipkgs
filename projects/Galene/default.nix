@@ -15,7 +15,7 @@
   nixos.modules.services = {
     galene = {
       name = "galene";
-      module = lib.moduleLocFromOptionString "services.galene";
+      module = ./module.nix;
       examples.galene = {
         module = ./example.nix;
         description = "";
