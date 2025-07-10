@@ -27,13 +27,12 @@
     ethersync = {
       name = "ethersync";
       module = ./programs/ethersync/module.nix;
-      examples = {
-        demo-shell = {
-          module = ./programs/ethersync/examples/basic.nix;
-          description = "";
-          tests.basic.module = import ./programs/ethersync/tests/basic.nix args;
-        };
-      };
     };
+  };
+
+  nixos.demo.shell = {
+    module = ./programs/ethersync/examples/basic.nix;
+    description = "";
+    tests.basic.module = import ./programs/ethersync/tests/basic.nix args;
   };
 }
