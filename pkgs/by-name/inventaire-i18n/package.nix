@@ -51,7 +51,7 @@ buildNpmPackage rec {
       '';
     };
     updateScript = _experimental-update-script-combinators.sequence [
-      passthru.updateScriptSrc.command
+      passthru.updateScriptSrc
       (lib.getExe passthru.updateScriptNpmDeps)
     ];
   };
