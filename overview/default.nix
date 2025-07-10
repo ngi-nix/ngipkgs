@@ -80,12 +80,13 @@ let
 
   render = {
     options =
-      prefix: projectOptions:
+      prefix: project:
       eval {
         imports = [ ./content-types/option-list.nix ];
         _module.args.pkgs = pkgs;
 
         inherit prefix;
+        module = lib.attrByPath (prefix ++ [ "module" ]) null project.nixos.modules;
         project-options = map (option: {
           inherit (option)
             type
@@ -94,7 +95,7 @@ let
             ;
           attrpath = option.loc;
           default = option.default or { };
-        }) projectOptions;
+        }) (pick.options prefix);
       };
 
     subgrants = rec {
@@ -146,24 +147,12 @@ let
               lib.concatMapAttrsStringSep "\n" (
                 name: val:
                 let
-                  project-options = pick.options [
-                    type
-                    name
-                  ];
                   attrpath-prefix = [
                     type
                     name
                   ];
                 in
-                # TODO: refactor
-                if (val.module != null) then
-                  render.options attrpath-prefix project-options
-                else
-                  ''
-                    <dd><span class="option-alert">${type}.${name}</span>
-                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
-                    </dd>
-                  ''
+                render.options attrpath-prefix project
               ) project.nixos.modules.${type}
             )
             [
