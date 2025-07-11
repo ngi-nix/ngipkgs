@@ -59,6 +59,7 @@ rec {
       && (elem lib.teams.ngi d.meta.teams or [ ])
       && d ? passthru.updateScript
     ) (attrValues pkgs);
+    demo = count (p: p.nixos.demo != null) (attrValues raw-projects);
   };
 
   metrics-count = mapAttrs (name: value: count (_: true) value) metrics;
