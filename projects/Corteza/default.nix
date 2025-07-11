@@ -38,4 +38,10 @@
       tests.basic.module = pkgs.nixosTests.corteza;
     };
   };
+
+  nixos.demo.vm = {
+    module = ./demo-vm.nix;
+    description = "Deployment for demo purposes";
+    tests.basic.module = pkgs.nixosTests.corteza;
+  };
 }
