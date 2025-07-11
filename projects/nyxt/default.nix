@@ -26,4 +26,10 @@
       };
     };
   };
+
+  nixos.demo.shell = {
+    module = ./programs/nyxt/examples/basic.nix;
+    description = "nyxt demo";
+    tests.basic.module = import ./programs/nyxt/tests/shell.nix args;
+  };
 }
