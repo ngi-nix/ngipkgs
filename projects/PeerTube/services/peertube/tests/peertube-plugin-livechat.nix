@@ -17,9 +17,13 @@
           sources.examples.PeerTube.basic
         ];
 
-        services.peertube.plugins.plugins = lib.mkForce [
-          pkgs.peertube-plugin-livechat
-        ];
+        services.peertube = {
+          plugins.plugins = lib.mkForce [
+            pkgs.peertube-plugin-livechat
+          ];
+          # Needed to get output detected by test
+          settings.log.level = "debug";
+        };
 
         boot.kernelPackages = pkgs.linuxPackages_latest;
       };

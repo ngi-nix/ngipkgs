@@ -17,6 +17,32 @@
           sources.examples.PeerTube.basic
         ];
 
+        # Test every plugin
+        services.peertube.plugins.plugins =
+          with pkgs;
+          lib.mkForce [
+            # Official plugins
+            peertube-plugin-akismet
+            peertube-plugin-auth-ldap
+            peertube-plugin-auth-openid-connect
+            peertube-plugin-auth-saml2
+            peertube-plugin-auto-block-videos
+            peertube-plugin-auto-mute
+            peertube-plugin-hello-world
+            peertube-plugin-logo-framasoft
+            peertube-plugin-matomo
+            peertube-plugin-privacy-remover
+            peertube-plugin-transcoding-custom-quality
+            peertube-plugin-transcoding-profile-debug
+            peertube-plugin-video-annotation
+            peertube-theme-background-red
+            peertube-theme-dark
+            peertube-theme-framasoft
+
+            # 3rd party plugins
+            peertube-plugin-livechat
+          ];
+
         boot.kernelPackages = pkgs.linuxPackages_latest;
       };
   };
