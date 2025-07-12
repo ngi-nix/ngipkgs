@@ -199,10 +199,11 @@ let
         demo = {
           inherit type;
           inherit (demo)
-            tests
             module
+            tests
+            problem
+            description
             ;
-          problem = demo.problem or null;
           _module.args.pkgs = pkgs;
         };
       };
