@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.oku.enable = true;
+}
