@@ -19,13 +19,6 @@
   wokkel,
   wrapGAppsHook3,
 }:
-let
-  # FIX: remove after this is solved:
-  # https://github.com/NixOS/nixpkgs/issues/418689
-  lxml-html-clean = python3Packages.lxml-html-clean.overridePythonAttrs {
-    doCheck = false;
-  };
-in
 python3Packages.buildPythonApplication rec {
   pname = "libervia-backend";
   version = "0.8.0-unstable-2024-10-26";

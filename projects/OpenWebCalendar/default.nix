@@ -12,13 +12,8 @@
       module = lib.moduleLocFromOptionString "services.open-web-calendar";
       examples."Enable Open Web Calendar" = {
         module = ./example.nix;
-        # FIX:
         tests.basic = {
           module = pkgs.nixosTests.open-web-calendar;
-          problem.broken.reason = ''
-            Build failure: python3.13-lxml-html-clean
-            https://github.com/NixOS/nixpkgs/issues/418689
-          '';
         };
       };
       links = {
@@ -51,13 +46,8 @@
     demo.vm = {
       module = ./example.nix;
       description = "Deployment for demo purposes";
-      # FIX:
       tests.basic = {
         module = pkgs.nixosTests.open-web-calendar;
-        problem.broken.reason = ''
-          Build failure: python3.13-lxml-html-clean
-          https://github.com/NixOS/nixpkgs/issues/418689
-        '';
       };
     };
   };
