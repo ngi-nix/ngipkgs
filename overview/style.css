@@ -337,7 +337,7 @@ div.code > pre /* for pygments output */
 }
 
 .button.example {
-  margin-bottom: 15px;
+  margin-top: 25px;
   border-radius: 5px;
   background-color: darkgreen;
   padding: 5px
