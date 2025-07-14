@@ -136,7 +136,14 @@ let
       let
         examples = eval {
           imports = [ ./content-types/example-list.nix ];
-          examples = map (value: { inherit (value) description module tests; }) (pick.examples project);
+          examples = map (value: {
+            inherit (value)
+              description
+              module
+              name
+              tests
+              ;
+          }) (pick.examples project);
         };
 
         # TODO: clean up

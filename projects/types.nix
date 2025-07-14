@@ -222,29 +222,36 @@ let
 
     example =
       with types;
-      submodule {
-        options = {
-          module = mkOption {
-            description = "the example must be a NixOS module in a file";
-            type = nullOr path;
+      submodule (
+        { name, ... }:
+        {
+          options = {
+            name = mkOption {
+              type = types.str;
+              default = name;
+            };
+            module = mkOption {
+              description = "the example must be a NixOS module in a file";
+              type = with types; nullOr path;
+            };
+            description = mkOption {
+              description = "description of the example, ideally with further instructions on how to use it";
+              type = with types; nullOr str;
+              default = null;
+            };
+            tests = mkOption {
+              description = "at least one test for the example";
+              type = types.attrsOf types'.test;
+              default = { };
+            };
+            links = mkOption {
+              description = "links to related resources";
+              type = types.attrsOf types'.link;
+              default = { };
+            };
           };
-          description = mkOption {
-            description = "description of the example, ideally with further instructions on how to use it";
-            type = nullOr str;
-            default = null;
-          };
-          tests = mkOption {
-            description = "at least one test for the example";
-            type = attrsOf types'.test;
-            default = { };
-          };
-          links = mkOption {
-            description = "links to related resources";
-            type = attrsOf types'.link;
-            default = { };
-          };
-        };
-      };
+        }
+      );
 
     demo = types.submodule {
       options = {
