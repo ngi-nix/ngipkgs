@@ -42,16 +42,14 @@
       module = ./programs/module.nix;
     };
     # TODO: this absolute basic example, which may show up just about anywhere, can probably extracted into a pattern with two parameters: the program module and the command to run for the smoke test
-    examples.basic = {
+    examples."Enable CryptoLyzer" = {
       module = ./programs/examples/example.nix;
-      description = "";
       tests.basic.module = import ./programs/tests/test.nix args;
     };
 
     demo.shell = {
       module = ./programs/examples/example.nix;
       tests.demo.module = import ./programs/tests/test.nix args;
-      description = "";
     };
   };
 }

@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.nyxt
-          sources.examples.nyxt.basic
+          sources.examples.nyxt."Enable Nyxt"
         ];
 
         # not enough memory for the allocation

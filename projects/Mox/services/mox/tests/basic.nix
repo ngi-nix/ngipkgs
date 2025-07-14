@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.mox
-          sources.examples.Mox.basic
+          sources.examples.Mox."Enable the Mox server"
         ];
 
         environment.systemPackages = with pkgs; [

@@ -16,11 +16,8 @@
     galene = {
       name = "galene";
       module = ./module.nix;
-      examples.galene = {
+      examples."Enable Galene" = {
         module = ./example.nix;
-        description = ''
-          Basic configuration for Galene.
-        '';
         tests.basic.module = pkgs.nixosTests.galene.basic;
         tests.file-transfer.module = pkgs.nixosTests.galene.file-transfer;
         tests.stream.module = pkgs.nixosTests.galene.stream;
@@ -39,7 +36,6 @@
   };
   nixos.demo.vm = {
     module = ./example.nix;
-    description = "";
     tests.basic.module = pkgs.nixosTests.galene.basic;
   };
 }

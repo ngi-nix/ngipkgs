@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.holo
-          sources.examples.holo.basic
+          sources.examples.holo."Enable the holo program"
         ];
       };
   };

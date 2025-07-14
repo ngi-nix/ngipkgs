@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.mox
-          sources.examples.Mox.basic
+          sources.examples.Mox."Enable the Mox program"
         ];
       };
   };
