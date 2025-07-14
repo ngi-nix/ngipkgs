@@ -12,7 +12,12 @@ let
 in
 {
   options = {
-    inherit (types'.example.getSubOptions { }) description module tests;
+    inherit (types'.example.getSubOptions { })
+      description
+      module
+      name
+      tests
+      ;
     example-snippet = mkOption {
       type = types.submodule ./code-snippet.nix;
       default.filepath = config.module;
@@ -30,7 +35,7 @@ in
           '';
         in
         ''
-          <details><summary>${self.description}</summary>
+          <details><summary>${self.name}</summary>
           ${self.example-snippet}
           ${button-missing-test}
           </details>
