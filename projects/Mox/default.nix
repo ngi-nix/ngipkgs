@@ -29,7 +29,7 @@
     mox = {
       name = "mox";
       module = ./programs/mox/module.nix;
-      examples.basic = {
+      examples."Enable the Mox program" = {
         module = ./programs/mox/examples/basic.nix;
         description = "Use Mox subcommands to manage/debug the Mox server";
         tests.basic.module = import ./programs/mox/tests/basic.nix args;
@@ -41,7 +41,7 @@
     mox = {
       name = "mox";
       module = ./services/mox/module.nix;
-      examples.basic = {
+      examples."Enable the Mox server" = {
         module = ./services/mox/examples/basic.nix;
         description = "Mox server with optional hostname and user";
         tests.basic.module = import ./services/mox/tests/basic.nix args;

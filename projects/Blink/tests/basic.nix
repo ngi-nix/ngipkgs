@@ -24,7 +24,7 @@ in
           (sources.inputs.nixpkgs + "/nixos/tests/common/x11.nix")
           sources.modules.ngipkgs
           sources.modules.programs.blink
-          sources.examples.Blink.basic
+          sources.examples.Blink."Enable Blink"
         ];
 
         # Refuses to run as root

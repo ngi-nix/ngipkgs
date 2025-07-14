@@ -22,7 +22,7 @@ in
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.atomic-server
-          sources.examples.AtomicData.base
+          sources.examples.AtomicData."Enable Atomic Server"
         ];
       };
   };

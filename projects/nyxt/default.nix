@@ -19,9 +19,8 @@
     nyxt = {
       name = "nyxt";
       module = ./programs/nyxt/module.nix;
-      examples.basic = {
+      examples."Enable Nyxt" = {
         module = ./programs/nyxt/examples/basic.nix;
-        description = "Enable the nyxt program";
         tests.basic.module = import ./programs/nyxt/tests/basic.nix args;
       };
     };

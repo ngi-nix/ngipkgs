@@ -21,10 +21,7 @@
   nixos = {
     modules.programs.blink = {
       module = ./module.nix;
-      examples.basic = {
-        description = ''
-          Example for how to enable Blink.
-        '';
+      examples."Enable Blink" = {
         module = ./examples/basic.nix;
         tests.basic.module = import ./tests/basic.nix args;
       };

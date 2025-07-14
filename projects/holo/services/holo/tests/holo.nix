@@ -14,7 +14,7 @@
           sources.modules.ngipkgs
           sources.modules.programs.holo
           sources.modules.services.holo-daemon
-          sources.examples.holo.holo
+          sources.examples.holo."Enable the holo daemon service"
         ];
 
         services.getty.autologinUser = "root";

@@ -33,14 +33,12 @@
         name = "NodeBB";
         module = ./services/nodebb/module.nix;
         examples = {
-          postgresql = {
+          "Enable NodeBB with postgresql" = {
             module = ./services/nodebb/examples/postgresql.nix;
-            description = "";
             tests.postgresql.module = import ./services/nodebb/tests/postgresql.nix args;
           };
-          redis = {
+          "Enable NodeBB with redis" = {
             module = ./services/nodebb/examples/redis.nix;
-            description = "";
             tests.redis.module = import ./services/nodebb/tests/redis.nix args;
           };
         };

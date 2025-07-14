@@ -40,7 +40,7 @@ in
         };
       };
       module = ./module.nix;
-      examples.basic = exampleDetails;
+      examples."Enable Inventaire" = exampleDetails;
     };
     demo.vm = exampleDetails;
   };

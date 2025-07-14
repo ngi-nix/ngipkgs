@@ -18,9 +18,8 @@
       name = "holo";
       # if a project has `packages`, add them inside the `module.nix` file
       module = ./programs/holo/module.nix;
-      examples.basic = {
+      examples."Enable the holo program" = {
         module = ./programs/holo/examples/basic.nix;
-        description = "Enable the holo program";
         tests.basic.module = import ./programs/holo/tests/basic.nix args;
       };
     };
@@ -30,9 +29,8 @@
     holo-daemon = {
       name = "holo-daemon";
       module = ./services/holo/module.nix;
-      examples.holo = {
+      examples."Enable the holo daemon service" = {
         module = ./services/holo/examples/holo.nix;
-        description = "Enable the holo daemon service";
         tests.holo.module = import ./services/holo/tests/holo.nix args;
       };
     };

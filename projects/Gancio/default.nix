@@ -14,9 +14,8 @@
   nixos.modules.services = {
     gancio = {
       module = lib.moduleLocFromOptionString "services.gancio";
-      examples.gancio = {
+      examples."Enable Gancio" = {
         module = ./example.nix;
-        description = "";
         tests.gancio.module = pkgs.nixosTests.gancio;
       };
     };

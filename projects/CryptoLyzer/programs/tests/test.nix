@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.cryptolyzer
-          sources.examples.CryptoLyzer.basic
+          sources.examples.CryptoLyzer."Enable CryptoLyzer"
         ];
 
         # set up a dns server -> unbound

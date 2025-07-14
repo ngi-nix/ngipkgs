@@ -12,7 +12,7 @@
     imports = [
       sources.modules.ngipkgs
       sources.modules.services.nodebb
-      sources.examples.NodeBB.redis
+      sources.examples.NodeBB."Enable NodeBB with redis"
     ];
   };
 

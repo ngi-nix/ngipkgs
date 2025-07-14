@@ -32,9 +32,8 @@
   nixos.modules.services.corteza = {
     name = "Corteza";
     module = lib.moduleLocFromOptionString "services.corteza";
-    examples.basic = {
+    examples."Enable Corteza" = {
       module = ./example.nix;
-      description = "Basic example";
       tests.basic.module = pkgs.nixosTests.corteza;
     };
   };

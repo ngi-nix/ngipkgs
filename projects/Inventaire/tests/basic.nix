@@ -20,7 +20,7 @@
           (sources.inputs.nixpkgs + "/nixos/tests/common/x11.nix")
           sources.modules.ngipkgs
           sources.modules.services.inventaire
-          sources.examples.Inventaire.basic
+          sources.examples.Inventaire."Enable Inventaire"
         ];
 
         # couchdb + elasticsearch eats up memory

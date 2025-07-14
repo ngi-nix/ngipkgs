@@ -10,9 +10,8 @@
     modules.services.open-web-calendar = {
       name = "open-web-calendar";
       module = lib.moduleLocFromOptionString "services.open-web-calendar";
-      examples.basic = {
+      examples."Enable Open Web Calendar" = {
         module = ./example.nix;
-        description = "";
         # FIX:
         tests.basic = {
           module = pkgs.nixosTests.open-web-calendar;
