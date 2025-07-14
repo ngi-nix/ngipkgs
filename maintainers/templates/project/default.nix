@@ -41,12 +41,18 @@
   # NOTE: Replace `_programName_` with the actual program name
   nixos.modules.programs = {
     _programName_ = {
-      name = "program name";
+      name = "_programName_";
       # if a project has `packages`, add them inside the `module.nix` file
       module = ./programs/_programName_/module.nix;
-      examples.basic = {
+      examples."Enable _programName_" = {
         module = ./programs/_programName_/examples/basic.nix;
-        description = "";
+        description = ''
+          Usage instructions
+
+          1.
+          2.
+          3.
+        '';
         tests.basic.module = import ./programs/_programName_/tests/basic.nix args;
       };
       # Add relevant links to the program (if they're available)
@@ -86,9 +92,15 @@
       # inside a `module.nix` file, but we can't do both at the same time.
       #
       module = ./services/_serviceName_/module.nix;
-      examples.basic = {
+      examples."Enable _serviceName_" = {
         module = ./services/_serviceName_/examples/basic.nix;
-        description = "";
+        description = ''
+          Usage instructions
+
+          1.
+          2.
+          3.
+        '';
         tests.basic.module = import ./services/_serviceName_/tests/basic.nix args;
       };
       # Add relevant links to the service (if they're available)
