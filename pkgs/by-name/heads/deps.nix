@@ -379,7 +379,7 @@
     }
     {
       name = "purism-blobs-995f66c445841b86e6596e9b297cc4888c0257e5.tar.gz";
-      url = "https://source.puri.sm/coreboot/purism-blobs/-/archive/995f66c445841b86e6596e9b297cc4888c0257e5/purism-blobs-995f66c445841b86e6596e9b297cc4888c0257e5.tar.gz";
+      url = "https://source.puri.sm/firmware/purism-blobs/-/archive/995f66c445841b86e6596e9b297cc4888c0257e5/purism-blobs-995f66c445841b86e6596e9b297cc4888c0257e5.tar.gz";
       hash = "sha256-bSbBKf6NcZpJ9PcmODuq9+22ExGDutpBZ3EbWlMS9RY=";
     }
     {
