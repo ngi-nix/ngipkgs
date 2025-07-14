@@ -190,9 +190,9 @@ A program is a software applications that can be executed in the user's shell, w
    {
      nixos.modules.programs.foobar = {
        module = ./programs/foobar/module.nix;
-       examples.basic = {
+       examples."Enable foobar" = {
          module = ./programs/foobar/examples/basic.nix;
-         description = "Basic configuration example for foobar";
+         description = "Usage instructions for foobar";
          tests.basic.module = import ./programs/foobar/tests/basic.nix args;
        };
      };
