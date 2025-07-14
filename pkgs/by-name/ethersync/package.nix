@@ -2,6 +2,7 @@
   fetchFromGitHub,
   lib,
   rustPlatform,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -18,6 +19,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   sourceRoot = "${finalAttrs.src.name}/daemon";
 
   cargoHash = "sha256-uKtJp4RD0YbOmtzbxebpYQxlBmP+5k88d+76hT4cTI8=";
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Real-time co-editing of local text files";
