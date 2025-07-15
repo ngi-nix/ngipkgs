@@ -1,0 +1,63 @@
+From 2774c9c3d7283d3167b4a4878ebb3fd404dd2f34 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Tue, 15 Jul 2025 15:27:34 +0200
+Subject: [PATCH] Support multiple map tile providers
+
+---
+ app/modules/map/lib/config.ts | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/app/modules/map/lib/config.ts b/app/modules/map/lib/config.ts
+index 3a5699a7c..2b5a6ab52 100644
+--- a/app/modules/map/lib/config.ts
++++ b/app/modules/map/lib/config.ts
+@@ -4,6 +4,26 @@ import type { LatLngTuple } from 'leaflet'
+ // Add some margin to maxBounds to prevent bouncing when displaying a map overlapping the antimeridian
+ const antimeridianMargin = 50
+ 
++// Provider details
++const providerMap = {
++  // MapBox
++  'mapbox': {
++    // Different styles are available https://docs.mapbox.com/api/maps/#styles
++    url: 'https://api.mapbox.com/styles/v1/mapbox/streets-v8/tiles/{z}/{x}/{y}?access_token={accessToken}',
++    attribution: `Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors,
++<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
++Imagery © <a href="http://mapbox.com">Mapbox</a>`,
++  },
++
++  // OpenStreetMap
++  'openstreetmap': {
++    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
++    attribution: `Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors,
++<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>`,
++  },
++}
++
++
+ export default {
+   // Init once Leaflet was fetched
+   init () {
+@@ -21,16 +41,12 @@ export default {
+       [ 90, 180 + antimeridianMargin ] as LatLngTuple,
+     ],
+   },
+-  tileUrl: 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
++  tileUrl: providerMap[config.mapTiles.provider].url,
+   tileLayerOptions: {
+-    attribution: `Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors,
+-<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
+-Imagery © <a href="http://mapbox.com">Mapbox</a>`,
++    attribution: providerMap[config.mapTiles.provider].attribution,
+     minZoom: 2,
+     maxZoom: 18,
+-    // Different styles are available https://docs.mapbox.com/api/maps/#styles
+-    id: 'mapbox/streets-v8',
+-    accessToken: config.mapTilesAccessToken,
++    accessToken: config.mapTiles.accessToken,
+     // Increase the font size, see https://gis.stackexchange.com/a/346383
+     tileSize: 512,
+     zoomOffset: -1,
+-- 
+2.49.0
+
