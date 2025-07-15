@@ -123,6 +123,11 @@ in
         origin = "http://localhost:${toString elasticPort}";
       };
 
+      # OpenStreetMap, so no access token is necessary
+      mapTiles = {
+        provider = "openstreetmap";
+      };
+
       # Storage of downloaded files
       mediaStorage = {
         local = {
