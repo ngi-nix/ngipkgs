@@ -24,9 +24,15 @@
       module = ./module.nix;
       examples.basic = {
         module = ./example.nix;
-        description = "";
-        tests.basic.module = null;
+        description = "Enable the servo program";
+        tests.basic.module = pkgs.nixosTests.servo;
       };
     };
+  };
+
+  nixos.demo.shell = {
+    module = ./example.nix;
+    description = "A demo shell for opening valgrind docs with Servo";
+    tests.basic.module = pkgs.nixosTests.servo;
   };
 }
