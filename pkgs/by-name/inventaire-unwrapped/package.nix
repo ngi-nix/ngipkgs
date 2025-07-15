@@ -27,6 +27,12 @@ buildNpmPackage rec {
     hash = "sha256-y3zX6tfjIX81Fvp01yllIU0C7VudyS3l5l2h4UzRbtQ=";
   };
 
+  patches = [
+    # Allow user to use a map tile provider that doesn't require an access token
+    # Remove when https://codeberg.org/inventaire/inventaire/pulls/862 merged & in release
+    ./1001-Add-config-option-to-pick-tile-provider-for-map.patch
+  ];
+
   postPatch = ''
     cp -v ${npmDeps.src}/package{,-lock}.json ./
 

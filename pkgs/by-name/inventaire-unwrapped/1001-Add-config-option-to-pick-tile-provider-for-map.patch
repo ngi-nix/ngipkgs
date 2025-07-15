@@ -1,0 +1,90 @@
+From 3f5c35ee181245a5b75ce985ef4907476f0d5381 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Tue, 15 Jul 2025 15:13:06 +0200
+Subject: [PATCH] Add config option to pick tile provider for map
+
+---
+ config/default.cjs              | 10 +++++++---
+ docs/configuration/map_tiles.md |  5 ++++-
+ server/controllers/config.ts    |  4 ++--
+ server/types/config.ts          |  5 ++++-
+ 4 files changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/config/default.cjs b/config/default.cjs
+index 0c3508ca6..f2eb96504 100644
+--- a/config/default.cjs
++++ b/config/default.cjs
+@@ -257,9 +257,13 @@ const config = {
+     rec: 1,
+   },
+ 
+-  // Required to use MapBox tiles within leaflet maps
+-  // See https://console.mapbox.com/account/access-tokens/
+-  mapTilesAccessToken: 'youraccesstoken',
++  // Tile provider settings for the map
++  mapTiles: {
++    provider: 'mapbox',
++    // Required to use MapBox tiles within leaflet maps
++    // See https://console.mapbox.com/account/access-tokens/
++    accessToken: 'youraccesstoken',
++  },
+ 
+   // ~~~~~~~
+   // Media storage
+diff --git a/docs/configuration/map_tiles.md b/docs/configuration/map_tiles.md
+index 298c4ef79..a6d472514 100644
+--- a/docs/configuration/map_tiles.md
++++ b/docs/configuration/map_tiles.md
+@@ -19,7 +19,10 @@ Add your Mapbox public access token in your local configuration file (`config/lo
+ ```js
+ module.exports = {
+   ...
+-  mapTilesAccessToken: "yourToken"
++  mapTiles: {
++    provider: "mapbox",
++    accessToken: "yourToken",
++  },
+   ...
+ }
+ ```
+diff --git a/server/controllers/config.ts b/server/controllers/config.ts
+index f477ee152..4d290c871 100644
+--- a/server/controllers/config.ts
++++ b/server/controllers/config.ts
+@@ -2,7 +2,7 @@ import { gitHeadRev, softwareName, version } from '#lib/package'
+ import { sendStaticJson } from '#lib/responses'
+ import config, { publicHost } from '#server/config'
+ 
+-const { env, instanceName, orgName, orgUrl, mapTilesAccessToken, defaultLandingPageMapPosition } = config
++const { env, instanceName, orgName, orgUrl, mapTiles, defaultLandingPageMapPosition } = config
+ const { remoteEntitiesOrigin } = config.federation
+ 
+ const clientConfig = {
+@@ -14,7 +14,7 @@ const clientConfig = {
+   orgName,
+   orgUrl,
+   remoteEntitiesOrigin,
+-  mapTilesAccessToken,
++  mapTiles,
+   publicHost,
+   defaultLandingPageMapPosition,
+ } as const
+diff --git a/server/types/config.ts b/server/types/config.ts
+index 1b5c4d139..81226a099 100644
+--- a/server/types/config.ts
++++ b/server/types/config.ts
+@@ -245,7 +245,10 @@ export type Config = ReadonlyDeep<{
+     suspectKeywords: string[]
+   }
+ 
+-  mapTilesAccessToken: string
++  mapTiles: {
++    provider: 'mapbox' | 'openstreetmap'
++    accessToken: string
++  }
+ 
+   tasks: {
+     minimumScoreToAutogenerate: number
+-- 
+2.49.0
+
