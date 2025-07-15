@@ -24,6 +24,7 @@ let
     mapAttrsToList
     optionalString
     filterAttrs
+    flattenAttrsN
     mapAttrs'
     nameValuePair
     ;
@@ -216,27 +217,21 @@ let
   index = eval {
     imports = [ ./content-types/project-list.nix ];
 
-    projects = lib.mapAttrsToList (name: project: {
-      inherit name;
+    projects = mapAttrsToList (project-name: project: {
+      name = project-name;
       description = project.metadata.summary or null;
       deliverables =
-        (lib.mapAttrsToList (name: value: {
-          inherit name;
-          type = "program";
+        (mapAttrsToList (name: value: {
+          inherit name project-name;
           hasProblem = value.module == null;
-        }) project.nixos.modules.programs)
-        ++ (lib.mapAttrsToList (name: value: {
-          inherit name;
-          type = "service";
-          hasProblem = value.module == null;
-        }) project.nixos.modules.services)
+        }) (flattenAttrsN 2 "." project.nixos.modules))
         ++ [
           {
-            name = project.name;
-            type = "demo";
+            inherit project-name;
+            name = "demo";
             hasProblem =
               project.nixos.demo == null
-              || lib.any (demo: demo.module == null || demo.problem != null) (attrValues project.nixos.demo);
+              || any (demo: demo.module == null || demo.problem != null) (attrValues project.nixos.demo);
           }
         ];
     }) projects;

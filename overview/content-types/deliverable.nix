@@ -9,6 +9,9 @@ let
     types
     mkOption
     optionalString
+    head
+    removeSuffix
+    splitString
     ;
 in
 {
@@ -16,12 +19,9 @@ in
     name = mkOption {
       type = types.str;
     };
-    type = mkOption {
-      type = types.enum [
-        "program"
-        "service"
-        "demo"
-      ];
+    project-name = mkOption {
+      type = types.str;
+      internal = true;
     };
     hasProblem = mkOption {
       type = with types; nullOr bool;
@@ -29,15 +29,24 @@ in
     };
     __toString = mkOption {
       type = with types; functionTo str;
-      default = self: ''
-        <a
-          class="deliverable-tag ${optionalString self.hasProblem "deliverable-has-problem"}"
-          title="${self.name} ${self.type}${optionalString self.hasProblem " has a problem"}"
-          href="/project/${self.name}#${self.type}"
-        >
-          ${self.type}
-        </a>
-      '';
+      default =
+        self:
+        let
+          # NOTE: we can render `self.name` directly, but this might make the
+          # overview feel cluttered
+          #
+          # programs or services
+          type = head (splitString "." self.name);
+        in
+        ''
+          <a
+            class="deliverable-tag ${optionalString self.hasProblem "deliverable-has-problem"}"
+            title="${self.name}${optionalString self.hasProblem " has a problem"}"
+            href="/project/${self.project-name}#${self.name}"
+          >
+            ${removeSuffix "s" type}
+          </a>
+        '';
     };
   };
 }
