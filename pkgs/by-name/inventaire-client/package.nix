@@ -62,6 +62,10 @@ buildNpmPackage rec {
   };
 
   patches = [
+    # Allow user to use a map tile provider that doesn't require an access token
+    # Remove when https://codeberg.org/inventaire/inventaire-client/pulls/554 merged & in release
+    ./1001-Support-multiple-map-tile-providers.patch
+
     (replaceVars ./9901-Use-saved-query-results.patch {
       sparqlQueries = sparql-queries;
     })
@@ -105,9 +109,7 @@ buildNpmPackage rec {
       --replace-fail './scripts/build_i18n' '${lib.getExe copyI18nDataScript}' \
       --replace-fail 'webpack --config ./bundle/webpack.config.prod.cjs --progress' 'webpack --config ./bundle/webpack.config.prod.cjs' \
       --replace-fail 'date -Ins' 'date -d "@$SOURCE_DATE_EPOCH" -Ins' \
-      --replace-fail '$(git rev-parse --short HEAD)' '"${
-        if src.tag != null then src.tag else src.rev
-      }"' \
+      --replace-fail '$(git rev-parse --short HEAD)' '"${if src.tag != null then src.tag else src.rev}"'
   '';
 
   # "Your cache folder contains root-owned files" error from NPM
