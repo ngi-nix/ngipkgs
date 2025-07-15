@@ -65,12 +65,7 @@ python3Packages.buildPythonApplication rec {
       lxml
       lxml-html-clean
       oauth2client
-      # Apply https://github.com/NixOS/nixpkgs/pull/424089
-      (pgpy.overrideAttrs (oa: {
-        patches = (oa.patches or [ ]) ++ [
-          ./pgpy-Fix-compat-with-current-cryptography.patch
-        ];
-      }))
+      pgpy
       pyqt6
       pyqt6-webengine
       python3-application
