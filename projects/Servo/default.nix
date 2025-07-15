@@ -15,7 +15,7 @@
       "Servo-DX"
       "Servo-Multibrowsing"
       "Servo-Script"
-      "Servo-Servo"
+      "Servo-Multiprocess"
     ];
   };
 
