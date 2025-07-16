@@ -33,6 +33,11 @@
         # TODO: render multi-file examples in the overview
         module = ./examples/basic/default.nix;
         tests.basic.module = pkgs.nixosTests.taler.basic;
+        tests.basic.problem.broken.reason = ''
+          Libeufin dependencies need to be updated
+
+          https://github.com/NixOS/nixpkgs/pull/425714
+        '';
       };
       examples."Backup with anastasis" = {
         module = ./examples/backup.nix;

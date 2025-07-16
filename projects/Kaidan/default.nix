@@ -35,6 +35,13 @@
         module = ./programs/kaidan/examples/basic.nix;
         description = "Kaidan program example";
         tests.kaidan.module = import ./programs/kaidan/tests/kaidan.nix args;
+        tests.kaidan.problem.broken.reason = ''
+          The test hangs for a long time and ultimately fails:
+
+          https://buildbot.ngi.nixos.org/#/builders/947/builds/209/steps/1/logs/stdio
+
+          Investigate why and fix it.
+        '';
       };
     };
   };

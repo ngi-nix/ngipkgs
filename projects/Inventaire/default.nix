@@ -11,6 +11,11 @@ let
     '';
     module = ./examples/basic.nix;
     tests.basic.module = import ./tests/basic.nix args;
+    tests.basic.problem.broken.reason = ''
+      couchdb fails to build
+
+      https://github.com/NixOS/nixpkgs/issues/425717
+    '';
   };
 in
 {
