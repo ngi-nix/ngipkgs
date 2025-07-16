@@ -25,28 +25,21 @@
     };
   };
 
-  nixos.modules.programs = {
+  nixos.modules.services = {
     taler = {
-      module = ./program.nix;
-      examples.backup = {
+      module = lib.moduleLocFromOptionString "services.taler";
+      examples."Basic GNU Taler configuration" = {
+        # See https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/taler/common/nodes.nix
+        # TODO: render multi-file examples in the overview
+        module = ./examples/basic/default.nix;
+        tests.basic.module = pkgs.nixosTests.taler.basic;
+      };
+      examples."Backup with anastasis" = {
         module = ./examples/backup.nix;
-        description = "Backup with anastasis";
         tests.anastasis.module = import ../../pkgs/by-name/anastasis/test.nix {
           inherit lib pkgs;
           inherit (pkgs) nixosTest anastasis;
         };
-      };
-    };
-  };
-
-  nixos.modules.services = {
-    taler = {
-      module = lib.moduleLocFromOptionString "services.taler";
-      examples.basic = {
-        # See https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/taler/common/nodes.nix
-        module = ./examples/basic/default.nix;
-        description = "Basic GNU Taler configuration";
-        tests.basic.module = pkgs.nixosTests.taler.basic;
       };
     };
   };
