@@ -40,20 +40,35 @@
       module = ./programs/ethersync/examples/basic.nix;
       description = ''
         Ethersync enables real-time collaborative editing of local text files.
-
-        To test, first create a directory with a subdirectory named `.ethersync` and
-        run `ethersync daemon`, wait a few seconds it will print URLs that can be used
-        to connect to this server.
-
-        Then, create another directory with a subdirectory named `.ethersync` and run
-        `ethersync daemon --peer <URL>`, the two directories are now connected.
-
-        Now you can edit files in one directory and the changes will be synchronized
-        in the other.  If you use Neovim, the instance in this shell has also been
-        configured with the Ethersync plugin, so you can try using :EthersyncInfo and
-        :EthersyncJumpToCursor.
       '';
       tests.basic.module = import ./programs/ethersync/tests/basic.nix args;
+      screenshot-path = ./screenshots;
+      usage-instructions = [
+        {
+          instruction = ''
+            To test, first create a directory with a subdirectory named `.ethersync` and
+            run `ethersync daemon`, wait a few seconds it will print URLs that can be used
+            to connect to this server.
+          '';
+          screenshot = "server-ready.png";
+        }
+        {
+          instruction = ''
+            Then, create another directory with a subdirectory named `.ethersync` and run
+            `ethersync daemon --peer <URL>`, the two directories are now connected.
+          '';
+          screenshot = "server-ready.png";
+        }
+        {
+          instruction = ''
+            Now you can edit files in one directory and the changes will be synchronized
+            in the other.  If you use Neovim, the instance in this shell has also been
+            configured with the Ethersync plugin, so you can try using :EthersyncInfo and
+            :EthersyncJumpToCursor.
+          '';
+          screenshot = "client-editing.png";
+        }
+      ];
     };
   };
 }

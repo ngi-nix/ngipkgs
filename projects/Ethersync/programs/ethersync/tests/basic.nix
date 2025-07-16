@@ -61,7 +61,7 @@
       server.send_chars("chmod 600 .ethersync/key\n")
       server.send_chars("echo server >file.txt\n")
       server.screenshot("server-prepare.png")
-      server.send_chars("ethersync daemon --port 4242 >/dev/null &\n")
+      server.send_chars("ethersync daemon --port 4242\n")
       server.wait_for_open_port(4242)
       server.screenshot("server-ready.png")
 

@@ -199,6 +199,7 @@ let
             tests
             problem
             description
+            usage-instructions
             ;
           _module.args.pkgs = pkgs;
         };
@@ -355,13 +356,15 @@ let
     ''
       mkdir -p "$out/${path}"
     ''
+    # TODO: different path for each project
     + optionalString (page.demoFile != null) ''
+      cp -r ${./screenshots/projects/Ethersync} "$out/${path}/screenshots"
       cp '${page.demoFile}' "$out/${path}/default.nix"
       chmod +w "$out/${path}/default.nix"
       nixfmt "$out/${path}/default.nix"
     ''
     + ''
-      python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
+      python3 ${./render-template.py} '${htmlFile path page}' "$out" "${path}/index.html" './screenshots'
     '';
 
   fonts =
@@ -404,7 +407,7 @@ pkgs.runCommand "overview"
       mkdir -pv $out
       cat ${./style.css} ${highlightingCss} > $out/style.css
       ln -s ${fonts} $out/fonts
-      python3 ${./render-template.py} '${htmlFile "" indexPage}' "$out/index.html"
+      python3 ${./render-template.py} '${htmlFile "" indexPage}' "$out" "index.html" ""
     ''
     + (concatLines (mapAttrsToList (path: page: writeProjectCommand path page) projectPages))
     + ''
