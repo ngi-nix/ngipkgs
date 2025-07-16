@@ -31,7 +31,14 @@
       module = ./services/holo/module.nix;
       examples."Enable the holo daemon service" = {
         module = ./services/holo/examples/holo.nix;
-        tests.holo.module = import ./services/holo/tests/holo.nix args;
+        tests.ietf-bfd-ip-mh.module = null;
+        tests.ietf-bfd-ip-sh.module = null;
+        tests.ietf-bfd.module = null;
+        tests.ietf-bgp-policy.module = null;
+        tests.ietf-ipv4-unicast-routing.module = null;
+        tests.ietf-key-chain.module = null;
+        tests.ietf-ospfv3.module = import ./services/holo/tests/ietf-ospfv3.nix args;
+        tests.ietf-segment-routing.module = null;
       };
     };
   };
@@ -59,6 +66,6 @@
 
       $ holo-cli -c 'show running format json'
     '';
-    tests.demo.module = import ./services/holo/tests/holo.nix args;
+    tests.demo.module = import ./services/holo/tests/ietf-ospfv3.nix args;
   };
 }
