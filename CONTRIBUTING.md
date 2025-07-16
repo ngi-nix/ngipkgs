@@ -448,6 +448,9 @@ Therefore, examples are only displayed to users if they have working tests.
 
 To add an example:
 
+> [!IMPORTANT]
+> If there exists an upstream test in NixOS, split out the configuration under test into a separate file and use those as the example and its test and skip to step 4.
+
 1. Figure out the application module options and how they are configured. For instace, this can be done by looking at the module's source code.
 
 2. Create a new `.nix` file to contain the valid example configuration.
