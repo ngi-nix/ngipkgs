@@ -98,38 +98,6 @@ let
         }) (pick.options prefix);
       };
 
-    subgrants = rec {
-      one = subgrant: ''
-        <li>
-          <a href="https://nlnet.nl/project/${subgrant}">${subgrant}</a>
-        </li>
-      '';
-      many =
-        subgrants:
-        optionalString (!empty subgrants) ''
-          <ul>
-            ${concatLines (map one subgrants)}
-          </ul>
-        '';
-    };
-
-    metadata = {
-      one =
-        metadata:
-        (optionalString (metadata.summary != null) ''
-          <p>
-            ${metadata.summary}
-          </p>
-        '')
-        + (optionalString (metadata.subgrants != null && metadata.subgrants != [ ]) ''
-          <p>
-            This project is funded by NLnet through these subgrants:
-
-            ${render.subgrants.many metadata.subgrants}
-          </p>
-        '');
-    };
-
     # The indivdual page of a project
     projects.one =
       name: project:
@@ -166,11 +134,22 @@ let
               "programs"
               "services"
             ];
+
+        metadata-summary = optionalString (project.metadata != null && project.metadata.summary != null) ''
+          <p>
+            ${project.metadata.summary}
+          </p>
+        '';
+
+        metadata-subgrants = eval {
+          imports = [ ./content-types/metadata-subgrants.nix ];
+          subgrants = project.metadata.subgrants or null;
+        };
       in
       ''
         <article class="page-width">
           ${heading 1 null name}
-          ${optionalString (project.metadata != null) (render.metadata.one project.metadata)}
+          ${metadata-summary}
           ${optionalString (project.nixos.demo != null) (
             lib.concatMapAttrsStringSep "\n" (
               type: demo: toString (render.serviceDemo.one type demo)
@@ -179,6 +158,7 @@ let
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
           ${examples}
+          ${metadata-subgrants}
         </article>
       '';
 
