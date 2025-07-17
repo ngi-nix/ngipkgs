@@ -454,12 +454,14 @@ To add an example:
 1. Figure out the application module options and how they are configured. For instace, this can be done by looking at the module's source code.
 
 2. Create a new `.nix` file to contain the valid example configuration.
+
 > [!NOTE]
 >
 > - Examples should work as-is without requiring additional configuration outside of what's shown.
 > - Include all necessary options and dependent services.
 
 3. In the project's `default.nix`, reference the example with a clear description:
+
 > [!NOTE]
 >
 > - Descriptions are for instructions on playing with the example.
@@ -474,8 +476,58 @@ To add an example:
      };
    };
    ```
+
 4. Ensure the example works by building and running its test.
 <!--TODO: Reference the tests section when it is written -->
+
+## How to add a project demo
+
+A demo is a practical demonstration of an application, providing an easy way for users to test its functionality and assess its suitability for their use cases.
+
+1. To start, implement a NixOS module that adheres to the [demo type](./projects/types.nix):
+
+   ```nix
+   nixos.demo.TYPE = {
+     module = ./path/to/application/configuration.nix;
+     demo-stuff = ./path/to/demo/only/configuration.nix;
+     description = ''
+       Instructions for using the application
+
+       1.
+       2.
+       3.
+     '';
+     tests = { };
+   };
+   ```
+
+   - `TYPE` can be either `vm` or `shell`, indicating the preferred environment for running the application: a NixOS VM or a terminal shell.
+   - `module` is meant for setting up the application, while `demo-stuff` is for demo-specific things, like [demo-shell](./overview/demo/shell.nix) configuration.
+
+1. Test the demo locally, with:
+
+   ```shellSession
+   nix-build -A demos.projectName && ./result
+   ```
+
+   or simply:
+
+   ```shellSession
+   bash $(nix-build -A demos.projectName)
+   ```
+
+   Following the usage instructions needs to produce the expected result.
+
+1. [Run the overview locally](#running-and-testing-the-overview-locally), navigate to the project page and make sure that the demo section shows up correctly
+
+1. [Make a Pull Request on GitHub](#how-to-create-pull-requests-to-ngipkgs)
+
+> [!IMPORTANT]
+> A demo requires tests and usage instructions, else it won't be displayed in the overview.
+
+> [!NOTE]
+>
+> - You can forward ports from the demo to the host by opening them in [the firewall](https://nixos.org/manual/nixos/unstable/index.html#sec-firewall).
 
 ## Running and testing the overview locally
 
