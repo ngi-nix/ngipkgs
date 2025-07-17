@@ -3,29 +3,25 @@
   pkgs,
   system,
   sources,
-  extendedNixosModules,
+  nixos-modules,
+  all-the-demo-modules,
 }:
 let
   eval =
     demo-module:
     import (sources.nixpkgs + "/nixos/lib/eval-config.nix") {
       inherit system;
-      modules = [
-        demo-module
-        (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
-        (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
-        ./shell.nix
-        ./vm
-        {
-          options.demo = lib.mkOption {
-            type = lib.types.bool;
-            description = "Whether the configuration should run as a demo.";
-            default = false;
-          };
-          config.demo = true;
-        }
-      ] ++ extendedNixosModules;
-      specialArgs = { inherit sources; };
+      modules =
+        [
+          demo-module
+          (sources.nixpkgs + "/nixos/modules/profiles/qemu-guest.nix")
+          (sources.nixpkgs + "/nixos/modules/virtualisation/qemu-vm.nix")
+        ]
+        ++ nixos-modules
+        ++ all-the-demo-modules;
+      specialArgs = {
+        inherit sources;
+      };
     };
 in
 {
