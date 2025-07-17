@@ -19,7 +19,7 @@ let
           };
           # TODO: convert all subgrants to `subgrant`, remove listOf
           subgrants = mkOption {
-            type = either (listOf str) types'.subgrant;
+            type = with types; nullOr (either (listOf str) types'.subgrant);
             default = null;
           };
           links = mkOption {
