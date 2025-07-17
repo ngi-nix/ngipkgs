@@ -11,8 +11,8 @@ let
     any
     attrValues
     filter
-    isList
     isInt
+    isList
     substring
     toString
     ;
@@ -21,12 +21,14 @@ let
 
   inherit (lib)
     concatLines
-    mapAttrsToList
-    optionalString
     filterAttrs
     flattenAttrsN
+    hasInfix
+    mapAttrs
     mapAttrs'
+    mapAttrsToList
     nameValuePair
+    optionalString
     ;
 
   empty =
@@ -66,17 +68,18 @@ let
     else
       self.dirtyRev;
 
+  modules = mapAttrs (_: project: flattenAttrsN 4 "." project.nixos.modules) projects;
+
+  pickAttrs =
+    infix:
+    mapAttrs (
+      _: project: filterAttrs (name: value: hasInfix infix name && value != { } && value != null) project
+    ) modules;
+
+  examples = pickAttrs "examples";
+
   pick = {
     options = prefix: filter (option: lib.lists.hasPrefix prefix option.loc) (attrValues options);
-    examples =
-      project:
-      attrValues (
-        filterAttrs (name: example: example.module != null) (
-          project.nixos.examples
-          // (lib.filter-map project.nixos.modules.programs "examples")
-          // (lib.filter-map project.nixos.modules.services "examples")
-        )
-      );
   };
 
   render = {
@@ -103,7 +106,7 @@ let
     projects.one =
       name: project:
       let
-        examples = eval {
+        examplesRender = eval {
           imports = [ ./content-types/example-list.nix ];
           examples = map (value: {
             inherit (value)
@@ -112,7 +115,7 @@ let
               name
               tests
               ;
-          }) (pick.examples project);
+          }) (attrValues examples.${name});
         };
 
         # TODO: clean up
@@ -158,7 +161,7 @@ let
           )}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
-          ${examples}
+          ${examplesRender}
           ${metadata-subgrants}
         </article>
       '';

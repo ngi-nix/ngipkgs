@@ -36,7 +36,7 @@ in
         in
         ''
           <details><summary>${self.name}</summary>
-          ${self.example-snippet}
+          ${optionalString (config.module != null) self.example-snippet}
           ${button-missing-test}
           </details>
         '';
