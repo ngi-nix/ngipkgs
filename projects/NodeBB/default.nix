@@ -46,6 +46,7 @@
     };
     demo.vm = {
       module = ./services/nodebb/examples/postgresql.nix;
+      demo-stuff = ./demo/module.nix;
       description = "Deployment for demo purposes";
       tests.postgresql.module = import ./services/nodebb/tests/postgresql.nix args;
     };
