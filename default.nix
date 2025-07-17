@@ -351,4 +351,9 @@ rec {
     demo-vm
     demo-shell
     ;
+
+  # bash $(nix-build -A demos.projectName)
+  demos = lib.mapAttrs (
+    project: project-demo: demo."demo-${project-demo.type}" project-demo.module
+  ) all-the-demos;
 }
