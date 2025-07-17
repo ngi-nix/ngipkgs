@@ -36,7 +36,7 @@ in
             {{ include_code("${self.language}", "${self.filepath}" ${optionalString self.relative ", relative_path=True"}) }}
             <div class="code-buttons">
               ${optionalString self.downloadable ''
-                <a class="button download" href="${self.filepath}" download>Download</a>
+                <a class="button download" href="default.nix" download>Download</a>
               ''}
               <template scripted>
                 <button class="button copy" onclick="copyToClipboard(this, '${self.filepath}')">
