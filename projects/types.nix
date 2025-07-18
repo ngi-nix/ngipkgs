@@ -270,6 +270,19 @@ let
             };
           };
         };
+        usage-instructions = mkOption {
+          default = [];
+          type = types.listOf (types.submodule {
+            options = {
+              instruction = mkOption {
+                type = types.str;
+              };
+              screenshot = mkOption {
+                type = types.str;
+              };
+            };
+          });
+        };
       };
     };
 

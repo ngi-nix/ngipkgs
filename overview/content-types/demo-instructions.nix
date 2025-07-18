@@ -136,11 +136,27 @@ in
                 <strong>Build and run a virtual machine</strong>
                 ${config.build-instructions}
               </li>
-              ${lib.optionalString (with self.demo; description == null || description == "") ''
-                <li><span class="option-alert">Missing</span>
-                  <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
-                </li>
-              ''}
+              ${
+                if (with self.demo; description == null || description == "") then
+                  ''
+                    <li><span class="option-alert">Missing</span>
+                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
+                    </li>
+                  ''
+                else
+                  ''
+                    <li>
+                      <p>
+                        ${self.demo.description}
+                      </p>
+                      ${lib.optionalString (self.demo.usage-instructions != []) ''
+                        <ul>
+                          {{ generate_usage_instructions(${builtins.toJSON self.demo.usage-instructions}) }}
+                        </ul>
+                      ''}
+                    </li>
+                  ''
+              }
             </ol>
           ''
         else

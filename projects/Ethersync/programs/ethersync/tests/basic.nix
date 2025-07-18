@@ -19,7 +19,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.ethersync
-          sources.examples.Ethersync.demo-shell
+          sources.examples.Ethersync."Using Ethersync"
         ];
         services.getty.autologinUser = "root";
       };
@@ -56,18 +56,22 @@
 
       server.wait_for_unit("default.target")
       # enable ethersync for the directory
-      server.succeed("mkdir -p .ethersync")
-      server.succeed("echo ${key} | base64 -d >.ethersync/key")
-      server.succeed("chmod 600 .ethersync/key")
-      server.succeed("echo server >file.txt")
-      server.execute("ethersync daemon --port 4242 >/dev/null &")
+      server.send_chars("mkdir -p .ethersync\n")
+      server.send_chars("echo ${key} | base64 -d >.ethersync/key\n")
+      server.send_chars("chmod 600 .ethersync/key\n")
+      server.send_chars("echo server >file.txt\n")
+      server.screenshot("server-prepare.png")
+      server.send_chars("ethersync daemon --port 4242\n")
       server.wait_for_open_port(4242)
+      server.screenshot("server-ready.png")
 
       client.wait_for_unit("default.target")
       # enable ethersync for the directory
       client.send_chars("mkdir -p .ethersync\n")
+      client.screenshot("client-prepare.png")
       client.send_chars("ethersync daemon --peer /ip4/192.168.1.1/tcp/4242/p2p/${peer} >/dev/null 2>&1 &\n")
       client.wait_until_succeeds("test -s /root/file.txt")
+      client.screenshot("client-ready.png")
 
       client.send_chars("nvim file.txt\n")
       time.sleep(1)
@@ -75,8 +79,9 @@
       client.send_chars("iclient")
       client.send_key("esc")
       time.sleep(1)
+      client.screenshot("client-editing.png")
       client.send_chars(":wq\n")
 
-      server.wait_until_succeeds("test $(cat /tmp/file.txt) = client")
+      server.wait_until_succeeds("test $(cat ~/file.txt) = client")
     '';
 }
