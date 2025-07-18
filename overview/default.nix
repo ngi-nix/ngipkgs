@@ -192,13 +192,11 @@ let
       pagetitle = "NGIpkgs | ${name}";
       content = render.projects.one name project;
       summary = project.metadata.summary or null;
-      # TODO: do we still need this? originally, we wanted to write a
-      # `default.nix` file in each project directory so CI would test those,
-      # but we're not heading in that direction anymore as we're either gonna
-      # use NixOS VM tests or not test the individual projects at all.
+      # needed for downloading demo code blocks
       demoFile =
         let
-          demoFiles = lib.mapAttrs (
+          demo = project.nixos.demo;
+          mkDemoFile =
             type: demo:
             (eval {
               imports = [ ./content-types/demo.nix ];
@@ -209,17 +207,9 @@ let
                 problem
                 ;
               _module.args.pkgs = pkgs;
-            }).filepath
-          ) project.nixos.demo;
+            }).filepath;
         in
-        if project.nixos.demo == null then
-          null
-        else if project.nixos.demo ? vm then
-          demoFiles.vm
-        else if project.nixos.demo ? shell then
-          demoFiles.shell
-        else
-          null;
+        if demo != null then lib.concatMapAttrs mkDemoFile demo else null;
     }
   ) projects;
 
@@ -336,9 +326,9 @@ let
       mkdir -p "$out/${path}"
     ''
     + optionalString (page.demoFile != null) ''
-      cp '${page.demoFile}' "$out/${path}/default.nix"
-      chmod +w "$out/${path}/default.nix"
-      nixfmt "$out/${path}/default.nix"
+      cp '${page.demoFile}' "$out/${path}/${page.demoFile.name}"
+      chmod +w "$out/${path}/${page.demoFile.name}"
+      nixfmt "$out/${path}/${page.demoFile.name}"
     ''
     + ''
       python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
