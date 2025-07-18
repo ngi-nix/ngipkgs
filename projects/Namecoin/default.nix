@@ -5,6 +5,17 @@
   ...
 }:
 {
+  metadata = {
+    summary = "Namecoin is a blockchain project that provides a decentralized naming system and trust anchor";
+    subgrants = [
+      "Namecoin-Electrum-NMC"
+      "Namecoin-TLS"
+      "Namecoin-ZeroNet"
+      "NamecoinCore"
+      "namecoin"
+    ];
+  };
+
   nixos = {
     modules.services.namecoind.module = lib.moduleLocFromOptionString "services.namecoind";
     modules.services.ncdns.module = lib.moduleLocFromOptionString "services.ncdns";
@@ -38,10 +49,4 @@
 
     tests.ncdns.module = pkgs.nixosTests.ncdns;
   };
-
-  metadata.subgrants = [
-    "Namecoin-ZeroNet"
-    "NamecoinCore"
-    "Namecoin-Electrum-NMC"
-  ];
 }
