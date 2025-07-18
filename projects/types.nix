@@ -254,7 +254,7 @@ let
       );
 
     demo = types.submodule (
-      { name, config, ... }:
+      { name, ... }:
       {
         options = {
           inherit (types'.example.getSubOptions { })
@@ -263,10 +263,11 @@ let
             description
             links
             ;
-          # TODO: why doesn't this work with an enum?
-          type = mkOption {
-            type = types.str;
-            default = name;
+          activate = mkOption {
+            type = with types; functionTo package;
+            default =
+              system:
+              if name == "shell" then system.config.shells.bash.activate else system.config.demo-vm.activate;
           };
           demo-stuff = mkOption {
             description = ''
@@ -275,10 +276,10 @@ let
             type = types.deferredModuleWith {
               staticModules =
                 with lib;
-                optionals (config.type == "vm") [
+                optionals (name == "vm") [
                   ../overview/demo/vm
                 ]
-                ++ optionals (config.type == "shell") [
+                ++ optionals (name == "shell") [
                   ../overview/demo/shell.nix
                 ];
             };

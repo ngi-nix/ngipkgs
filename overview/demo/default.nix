@@ -23,13 +23,14 @@ let
         inherit sources;
       };
     };
+
+  demo-vm = module: (eval module).config.demo-vm.activate;
+  demo-shell = module: (eval module).config.shells.bash.activate;
 in
 {
-  demo-vm =
-    module:
-    pkgs.writeShellScript "demo-vm" ''
-      exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
-    '';
-
-  demo-shell = module: (eval module).config.shells.bash.activate;
+  inherit
+    eval
+    demo-vm
+    demo-shell
+    ;
 }

@@ -354,6 +354,6 @@ rec {
 
   # bash $(nix-build -A demos.projectName)
   demos = lib.mapAttrs (
-    project: project-demo: demo."demo-${project-demo.type}" project-demo.module
+    project: project-demo: project-demo.activate (demo.eval project-demo.module)
   ) all-the-demos;
 }
