@@ -5,7 +5,13 @@
   ...
 }@args:
 {
-  metadata.subgrants = [ "OpenWebCalendar" ];
+  metadata = {
+    summary = "The Open Web Calendar stack is an open-source set of Python libraries and programs which read and write calendars based on the iCalendar standard";
+    subgrants = [
+      "OpenWebCalendar"
+      "OpenWebCalendar-recurring"
+    ];
+  };
   nixos = {
     modules.services.open-web-calendar = {
       name = "open-web-calendar";
