@@ -45,5 +45,10 @@
       };
     };
   };
-  nixos.modules.services.kaidan.module = null;
+
+  nixos.demo.vm = {
+    module = ./programs/kaidan/examples/demo.nix;
+    tests.demo.module = import ./programs/kaidan/tests/kaidan.nix args;
+    description = "Kaidan demo";
+  };
 }
