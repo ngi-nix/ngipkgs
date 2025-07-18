@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   services.openssh = {
     enable = true;
@@ -11,5 +12,5 @@
     };
   };
 
-  networking.firewall.enable = false;
+  networking.firewall.enable = lib.mkDefault false;
 }
