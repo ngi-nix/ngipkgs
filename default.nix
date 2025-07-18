@@ -341,6 +341,9 @@ rec {
       sources
       system
       ;
+    # Collect all the demo-specific modules. This includes each project's
+    # demo-only module and its associated type (vm/shell), available as imports
+    # through the option's `deferredModuleWith` type (see ./projects/types.nix)
     all-the-demo-modules = lib.flatten (
       lib.mapAttrsToList (name: value: value.demo-stuff.imports) all-the-demos
     );
