@@ -6,6 +6,7 @@
 }@args:
 {
   metadata = {
+    summary = "Translation validation for LLVM";
     subgrants = [
       "Alive2"
     ];
