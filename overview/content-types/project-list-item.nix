@@ -16,8 +16,8 @@ in
     description = mkOption {
       type = with types; nullOr str;
     };
-    deliverables = mkOption {
-      type = with types; listOf (submodule ./deliverable.nix);
+    tags = mkOption {
+      type = with types; listOf (submodule ./project-list-item-tag.nix);
       default = [ ];
     };
     __toString = mkOption {
@@ -30,7 +30,7 @@ in
               <h2>
                 <a href="/project/${self.name}">${self.name}</a>
               </h2>
-              ${concatLines (map toString self.deliverables)}
+              ${concatLines (map toString self.tags)}
             </div>
             ${optionalString (!isNull self.description) ''
               <div class="description">

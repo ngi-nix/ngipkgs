@@ -24,6 +24,7 @@ let
     filterAttrs
     flattenAttrsN
     hasInfix
+    hasPrefix
     mapAttrs
     mapAttrs'
     mapAttrsToList
@@ -223,18 +224,18 @@ let
     projects = mapAttrsToList (project-name: project: {
       name = project-name;
       description = project.metadata.summary or null;
-      deliverables =
+      tags =
         (mapAttrsToList (name: value: {
           inherit name project-name;
-          hasProblem = value.module == null;
+          module = value.module or null;
+          type = if hasPrefix "programs" name then "program" else "service";
         }) (flattenAttrsN 2 "." project.nixos.modules))
         ++ [
           {
             inherit project-name;
             name = "demo";
-            hasProblem =
-              project.nixos.demo == null
-              || any (demo: demo.module == null || demo.problem != null) (attrValues project.nixos.demo);
+            type = "demo";
+            module = project.nixos.demo.vm.module or project.nixos.demo.shell.module or null;
           }
         ];
     }) projects;
