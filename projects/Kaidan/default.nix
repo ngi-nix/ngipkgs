@@ -47,8 +47,10 @@
   };
 
   nixos.demo.vm = {
-    module = ./programs/kaidan/examples/demo.nix;
-    tests.demo.module = import ./programs/kaidan/tests/kaidan.nix args;
-    description = "Kaidan demo";
+    module = ./programs/demo.nix;
+    tests.demo.module = null;
+    description = ''
+      How to use Kaidan
+    '';
   };
 }
