@@ -5,6 +5,13 @@
   ...
 }@args:
 {
+  metadata = {
+    summary = "Standards-compliant open-source IMAP server with server-side encryption";
+    subgrants = [
+      "Aerogramme"
+    ];
+  };
+
   nixos = {
     modules.services.aerogramme = {
       links = {
