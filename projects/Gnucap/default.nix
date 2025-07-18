@@ -7,10 +7,14 @@
 
 {
   name = "Gnucap";
-  metadata.subgrants = [
-    "Gnucap-MixedSignals"
-    "Gnucap-VerilogAMS"
-  ];
+  metadata = {
+    summary = "Gnucap is the GNU Circuit Analysis Package";
+    subgrants = [
+      "Gnucap-MixedSignals"
+      "Gnucap-VerilogAMS"
+      "Gnucap-performance"
+    ];
+  };
 
   nixos = {
     modules.programs.gnucap = {
