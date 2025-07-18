@@ -45,5 +45,12 @@
       };
     };
   };
-  nixos.modules.services.kaidan.module = null;
+
+  nixos.demo.vm = {
+    module = ./programs/demo.nix;
+    tests.demo.module = null;
+    description = ''
+      How to use Kaidan
+    '';
+  };
 }
