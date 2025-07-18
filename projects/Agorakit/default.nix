@@ -6,6 +6,7 @@
 }@args:
 {
   metadata = {
+    summary = "Agorakit is a web-based, open source organization tool for collectives";
     subgrants = [
       "Agorakit"
     ];
