@@ -1,5 +1,13 @@
 { pkgs, ... }@args:
 {
+  metadata = {
+    summary = "Modular protocol for sharing, modifying and modeling graph data";
+    subgrants = [
+      "AtomicData"
+      "AtomicTables"
+    ];
+  };
+
   nixos = {
     modules.services.atomic-server = {
       module = ./service.nix;
