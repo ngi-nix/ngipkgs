@@ -8,7 +8,7 @@
 {
   name = "Gnucap";
   metadata = {
-    summary = "Gnucap is the GNU Circuit Analysis Package";
+    summary = "GNU Circuit Analysis Package";
     subgrants = [
       "Gnucap-MixedSignals"
       "Gnucap-VerilogAMS"
