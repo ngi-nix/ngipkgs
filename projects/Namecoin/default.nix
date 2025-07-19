@@ -6,7 +6,7 @@
 }:
 {
   metadata = {
-    summary = "Namecoin is a blockchain project that provides a decentralized naming system and trust anchor";
+    summary = "Blockchain-based decentralized naming system and trust anchor";
     subgrants = [
       "Namecoin-Electrum-NMC"
       "Namecoin-TLS"
