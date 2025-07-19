@@ -15,10 +15,5 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ cfg.package ];
-    demo-shell.cryptolyzer = {
-      programs = {
-        cryptolyzer = cfg.package;
-      };
-    };
   };
 }

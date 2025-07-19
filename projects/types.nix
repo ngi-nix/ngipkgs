@@ -253,25 +253,50 @@ let
         }
       );
 
-    demo = types.submodule {
-      options = {
-        inherit (types'.example.getSubOptions { })
-          module
-          tests
-          description
-          links
-          ;
-        problem = mkOption {
-          type = types.nullOr types'.problem;
-          default = null;
-          example = {
-            problem.broken = {
-              reason = "Does not work as intended. Needs fixing.";
+    demo = types.submodule (
+      { name, ... }:
+      {
+        options = {
+          inherit (types'.example.getSubOptions { })
+            module
+            tests
+            description
+            links
+            ;
+          activate = mkOption {
+            type = with types; functionTo package;
+            default =
+              system:
+              if name == "shell" then system.config.shells.bash.activate else system.config.demo-vm.activate;
+          };
+          demo-stuff = mkOption {
+            description = ''
+              everything needed to use an application demo conveniently
+            '';
+            type = types.deferredModuleWith {
+              staticModules =
+                with lib;
+                optionals (name == "vm") [
+                  ../overview/demo/vm
+                ]
+                ++ optionals (name == "shell") [
+                  ../overview/demo/shell.nix
+                ];
+            };
+            default = { };
+          };
+          problem = mkOption {
+            type = types.nullOr types'.problem;
+            default = null;
+            example = {
+              problem.broken = {
+                reason = "Does not work as intended. Needs fixing.";
+              };
             };
           };
         };
-      };
-    };
+      }
+    );
 
     problem = types.attrTag {
       broken = mkOption {

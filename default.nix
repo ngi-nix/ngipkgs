@@ -157,8 +157,6 @@ rec {
       ngipkgs =
         { ... }:
         {
-          # TODO: properly separate the demo modules from production code
-          imports = [ ./overview/demo/shell.nix ];
           nixpkgs.overlays = [ overlays.default ];
         };
     }
@@ -330,18 +328,35 @@ rec {
     raw-projects = evaluated-modules.config.projects;
   };
 
+  all-the-demos = lib.filterAttrs (name: value: value != null) (
+    lib.mapAttrs (
+      name: value: value.nixos.demo.vm or value.nixos.demo.shell or null
+    ) evaluated-modules.config.projects
+  );
+
   demo = import ./overview/demo {
     inherit
       lib
       pkgs
       sources
-      extendedNixosModules
       system
       ;
+    # Collect all the demo-specific modules. This includes each project's
+    # demo-only module and its associated type (vm/shell), available as imports
+    # through the option's `deferredModuleWith` type (see ./projects/types.nix)
+    all-the-demo-modules = lib.flatten (
+      lib.mapAttrsToList (name: value: value.demo-stuff.imports) all-the-demos
+    );
+    nixos-modules = extendedNixosModules;
   };
 
   inherit (demo)
     demo-vm
     demo-shell
     ;
+
+  # bash $(nix-build -A demos.projectName)
+  demos = lib.mapAttrs (
+    project: project-demo: project-demo.activate (demo.eval project-demo.module)
+  ) all-the-demos;
 }

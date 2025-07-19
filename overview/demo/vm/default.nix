@@ -1,16 +1,42 @@
 {
+  lib,
+  pkgs,
+  config,
+  ...
+}:
+let
+  inherit (lib)
+    types
+    mkOption
+    ;
+in
+{
   imports = [
     ./services.nix
     ./users.nix
     ./virtualisation.nix
   ];
 
-  services.getty.helpLine = ''
+  options = {
+    demo-vm.activate = mkOption {
+      type = with types; nullOr package;
+      default = null;
+      apply =
+        self:
+        pkgs.writeShellScript "demo-vm" ''
+          exec ${config.system.build.vm}/bin/run-nixos-vm "$@"
+        '';
+    };
+  };
 
-    Welcome to NGIpkgs!
+  config = {
+    services.getty.helpLine = ''
 
-    - To exit the demo VM, run: `sudo poweroff`
-  '';
+      Welcome to NGIpkgs!
 
-  system.stateVersion = "25.05";
+      - To exit the demo VM, run: `sudo poweroff`
+    '';
+
+    system.stateVersion = "25.05";
+  };
 }

@@ -24,14 +24,5 @@ in
     environment.systemPackages = with pkgs; [
       cfg.package
     ];
-    environment.variables = {
-      XRSH_PORT = toString cfg.port;
-    };
-    demo-shell.xrsh = {
-      programs = {
-        xrsh = cfg.package;
-      };
-      env.XRSH_PORT = toString cfg.port;
-    };
   };
 }
