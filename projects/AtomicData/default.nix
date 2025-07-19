@@ -1,7 +1,7 @@
 { pkgs, ... }@args:
 {
   metadata = {
-    summary = "Atomic Data is a modular specification for sharing, modifying and modeling graph data";
+    summary = "Modular protocol for sharing, modifying and modeling graph data";
     subgrants = [
       "AtomicData"
       "AtomicTables"
