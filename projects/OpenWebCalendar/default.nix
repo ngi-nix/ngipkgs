@@ -5,7 +5,13 @@
   ...
 }@args:
 {
-  metadata.subgrants = [ "OpenWebCalendar" ];
+  metadata = {
+    summary = "Programs and Python libraries for reading and writing calendars based on the iCalendar standard";
+    subgrants = [
+      "OpenWebCalendar"
+      "OpenWebCalendar-recurring"
+    ];
+  };
   nixos = {
     modules.services.open-web-calendar = {
       name = "open-web-calendar";
