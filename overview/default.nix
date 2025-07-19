@@ -11,8 +11,8 @@ let
     any
     attrValues
     filter
-    isList
     isInt
+    isList
     substring
     toString
     ;
@@ -21,11 +21,15 @@ let
 
   inherit (lib)
     concatLines
-    mapAttrsToList
-    optionalString
     filterAttrs
+    flattenAttrsN
+    hasInfix
+    hasPrefix
+    mapAttrs
     mapAttrs'
+    mapAttrsToList
     nameValuePair
+    optionalString
     ;
 
   empty =
@@ -65,17 +69,18 @@ let
     else
       self.dirtyRev;
 
+  modules = mapAttrs (_: project: flattenAttrsN 4 "." project.nixos.modules) projects;
+
+  pickAttrs =
+    infix:
+    mapAttrs (
+      _: project: filterAttrs (name: value: hasInfix infix name && value != { } && value != null) project
+    ) modules;
+
+  examples = pickAttrs "examples";
+
   pick = {
     options = prefix: filter (option: lib.lists.hasPrefix prefix option.loc) (attrValues options);
-    examples =
-      project:
-      attrValues (
-        filterAttrs (name: example: example.module != null) (
-          project.nixos.examples
-          // (lib.filter-map project.nixos.modules.programs "examples")
-          // (lib.filter-map project.nixos.modules.services "examples")
-        )
-      );
   };
 
   render = {
@@ -102,7 +107,7 @@ let
     projects.one =
       name: project:
       let
-        examples = eval {
+        examplesRender = eval {
           imports = [ ./content-types/example-list.nix ];
           examples = map (value: {
             inherit (value)
@@ -111,7 +116,7 @@ let
               name
               tests
               ;
-          }) (pick.examples project);
+          }) (attrValues examples.${name});
         };
 
         # TODO: clean up
@@ -157,7 +162,7 @@ let
           )}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
-          ${examples}
+          ${examplesRender}
           ${metadata-subgrants}
         </article>
       '';
@@ -216,27 +221,21 @@ let
   index = eval {
     imports = [ ./content-types/project-list.nix ];
 
-    projects = lib.mapAttrsToList (name: project: {
-      inherit name;
+    projects = mapAttrsToList (project-name: project: {
+      name = project-name;
       description = project.metadata.summary or null;
-      deliverables =
-        (lib.mapAttrsToList (name: value: {
-          inherit name;
-          type = "program";
-          hasProblem = value.module == null;
-        }) project.nixos.modules.programs)
-        ++ (lib.mapAttrsToList (name: value: {
-          inherit name;
-          type = "service";
-          hasProblem = value.module == null;
-        }) project.nixos.modules.services)
+      tags =
+        (mapAttrsToList (name: value: {
+          inherit name project-name;
+          module = value.module or null;
+          type = if hasPrefix "programs" name then "program" else "service";
+        }) (flattenAttrsN 2 "." project.nixos.modules))
         ++ [
           {
-            name = project.name;
+            inherit project-name;
+            name = "demo";
             type = "demo";
-            hasProblem =
-              project.nixos.demo == null
-              || lib.any (demo: demo.module == null || demo.problem != null) (attrValues project.nixos.demo);
+            module = project.nixos.demo.vm.module or project.nixos.demo.shell.module or null;
           }
         ];
     }) projects;
@@ -302,7 +301,7 @@ let
           }
 
           ${
-            "" # TODO: this should be the exact same code for copying file content
+            "" # TODO: this hello should be the exact same code for copying file content
           }
           async function copyInlineToClipboard(button) {
             const scriptElement = Array.from(button.children).find(child => child.tagName === "SCRIPT");
@@ -314,6 +313,14 @@ let
               setTimeout(() => label.textContent = "Copy", 2000);
             }
           }
+
+          // Automatically open target element on page load
+          function openTarget() {
+            var hash = location.hash.substring(1);
+            if(hash) var details = document.getElementById(hash);
+            if(details && details.tagName.toLowerCase() === 'details') details.open = true;
+          }
+          window.addEventListener('load', openTarget);
         </script>
       </body>
       </html>

@@ -37,18 +37,20 @@ in
       default =
         self:
         let
+          option-prefix = join "." self.prefix;
           option-header =
             ''
               <span ${optionalString (self.module == null) ''class="option-alert"''}
-              >${join "." self.prefix}</span>
+              >${option-prefix}</span>
             ''
             + optionalString (self.module == null) ''
               <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
             '';
         in
         optionalString (self.project-options != [ ] || self.module == null) ''
-          <details><summary>${option-header}</summary>
-          <dl>${concatLines (map toString self.project-options)}</dl>
+          <details id="${option-prefix}">
+            <summary>${option-header}</summary>
+            <dl class="option-list">${concatLines (map toString self.project-options)}</dl>
           </details>
         '';
     };

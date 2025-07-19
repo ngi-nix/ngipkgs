@@ -25,15 +25,27 @@ let
   extension = rec {
     # Take an attrset of arbitrary nesting and make it flat
     # by concatenating the nested names with the given separator.
-    flattenAttrs =
-      separator:
+    flattenAttrs = separator: flattenAttrsN 0 separator;
+
+    # Take an attrset of a specific nesting and make it flat
+    # by concatenating the nested names with the given separator.
+    # A depth of 0 flattens all attributes recursively.
+    flattenAttrsN =
+      depth: separator:
       let
-        f = path: lib.concatMapAttrs (flatten path);
+        f = path: currentDepth: lib.concatMapAttrs (flatten path currentDepth);
         flatten =
-          path: name: value:
-          if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
+          path: currentDepth: name: value:
+          let
+            nextDepth = currentDepth + 1;
+            recurseCond = depth == 0 || nextDepth < depth;
+          in
+          if lib.isAttrs value && recurseCond then
+            f (path + name + separator) nextDepth value
+          else
+            { ${path + name} = value; };
       in
-      f "";
+      f "" 0;
 
     filter-map =
       attrs: input:
