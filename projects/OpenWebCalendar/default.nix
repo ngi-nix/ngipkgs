@@ -6,7 +6,7 @@
 }@args:
 {
   metadata = {
-    summary = "The Open Web Calendar stack is an open-source set of Python libraries and programs which read and write calendars based on the iCalendar standard";
+    summary = "Programs and Python libraries for reading and writing calendars based on the iCalendar standard";
     subgrants = [
       "OpenWebCalendar"
       "OpenWebCalendar-recurring"
