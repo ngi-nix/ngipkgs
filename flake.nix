@@ -8,6 +8,8 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+  inputs.sbt-derivation.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.sbt-derivation.url = "github:zaninime/sbt-derivation";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
