@@ -16,27 +16,8 @@ in
     description = mkOption {
       type = with types; nullOr str;
     };
-    deliverables = mkOption {
-      type =
-        with types;
-        listOf (submodule {
-          options = {
-            name = mkOption {
-              type = str;
-            };
-            type = mkOption {
-              type = enum [
-                "program"
-                "service"
-                "demo"
-              ];
-            };
-            hasProblem = mkOption {
-              type = nullOr bool;
-              default = null;
-            };
-          };
-        });
+    tags = mkOption {
+      type = with types; listOf (submodule ./project-list-item-tag.nix);
       default = [ ];
     };
     __toString = mkOption {
@@ -49,17 +30,7 @@ in
               <h2>
                 <a href="/project/${self.name}">${self.name}</a>
               </h2>
-              ${concatStringsSep "\n" (
-                map (deliverable: ''
-                  <a
-                    class="deliverable-tag ${optionalString (deliverable.hasProblem) "deliverable-has-problem"}"
-                    title="${deliverable.name} ${deliverable.type}${optionalString (deliverable.hasProblem) " has a problem"}"
-                    href="/project/${self.name}#${deliverable.type}"
-                  >
-                    ${deliverable.type}
-                  </a>
-                '') self.deliverables
-              )}
+              ${concatLines (map toString self.tags)}
             </div>
             ${optionalString (!isNull self.description) ''
               <div class="description">

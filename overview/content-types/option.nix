@@ -96,15 +96,16 @@ in
               <dt>Notes:</dt>
               <dd><span class="option-alert">Missing update script</span> An update script is required for automatically tracking the latest release.</dd>
             '';
+          alert-readonly = optionalString self.readOnly ''
+            <span class="option-alert" title="This option can't be set by users">Read-only</span>
+          '';
         in
         ''
-          <dt class="option-name">
-            ${option-prefix}
-            ${optionalString self.readOnly ''
-              <span class="option-alert" title="This option can't be set by users">Read-only</span>
-            ''}
-          </dt>
+          <details>
+          <summary class="option-name">${option-prefix}</summary>
+          <dt></dt>
           <dd class="option-body">
+            ${alert-readonly}
             ${option-description}
             <dl>
               ${option-type}
@@ -112,6 +113,7 @@ in
               ${alert-update-script}
             </dl>
           </dd>
+          </details>
         '';
     };
   };
