@@ -38,33 +38,31 @@ python3Packages.buildPythonApplication rec {
     "pillow"
   ];
 
-  nativeBuildInputs =
-    [
-      gobject-introspection
-      imagemagick
-      wrapGAppsHook3
-    ]
-    ++ (with python3Packages; [
-      hatchling
-      pythonRelaxDepsHook
-    ]);
+  nativeBuildInputs = [
+    gobject-introspection
+    imagemagick
+    wrapGAppsHook3
+  ]
+  ++ (with python3Packages; [
+    hatchling
+    pythonRelaxDepsHook
+  ]);
 
   buildInputs = with gst_all_1; [
     gst-plugins-good # autoaudiosink
     gst-plugins-bad # Namespace GstWebRTC not available
   ];
 
-  propagatedBuildInputs =
-    [
-      libervia-backend
-    ]
-    ++ (with python3Packages; [
-      kivy
-      kivy-garden-modernmenu
-      pillow
-      plyer
-      pygobject3
-    ]);
+  propagatedBuildInputs = [
+    libervia-backend
+  ]
+  ++ (with python3Packages; [
+    kivy
+    kivy-garden-modernmenu
+    pillow
+    plyer
+    pygobject3
+  ]);
 
   postInstall = ''
     install -Dm644 misc/org.libervia.LiberviaDesktop.metainfo.xml -t $out/share/metainfo/

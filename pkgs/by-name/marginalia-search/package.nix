@@ -117,46 +117,45 @@ stdenv.mkDerivation (finalAttrs: {
     export HOME=$TEMP
   '';
 
-  installPhase =
+  installPhase = ''
+    runHook preInstall
+
+    # Unpack & install built files
+
+    tar -xvf code/services-core/single-service-runner/build/distributions/marginalia.tar
+    mv marginalia $out
+    rm $out/bin/marginalia.bat
+    wrapProgram $out/bin/marginalia \
+      --set JAVA_HOME '${jdk23_headless}'
+
+    mkdir -p run/{model,data}
+    cp -r run{/template,}/conf
+
+    # Script runs mkdir -p too late
+    mkdir -p $out/share/marginalia
+
+    run/install-noninteractive.sh $out/share/marginalia
+
+    install -Dm644 run/setup.sh $out/share/marginalia/setup.sh
+
+    # Install separately-downloaded files needed before execution
+  ''
+  + (lib.strings.concatMapStringsSep "\n" (
+    download:
     ''
-      runHook preInstall
-
-      # Unpack & install built files
-
-      tar -xvf code/services-core/single-service-runner/build/distributions/marginalia.tar
-      mv marginalia $out
-      rm $out/bin/marginalia.bat
-      wrapProgram $out/bin/marginalia \
-        --set JAVA_HOME '${jdk23_headless}'
-
-      mkdir -p run/{model,data}
-      cp -r run{/template,}/conf
-
-      # Script runs mkdir -p too late
-      mkdir -p $out/share/marginalia
-
-      run/install-noninteractive.sh $out/share/marginalia
-
-      install -Dm644 run/setup.sh $out/share/marginalia/setup.sh
-
-      # Install separately-downloaded files needed before execution
+      mkdir -p $out/share/marginalia/${download.dir}
     ''
-    + (lib.strings.concatMapStringsSep "\n" (
-      download:
-      ''
-        mkdir -p $out/share/marginalia/${download.dir}
-      ''
-      + ''
-        ln -s ${
-          fetchurl {
-            inherit (download) name url hash;
-          }
-        } $out/share/marginalia/${download.dir}/${download.name}
-      ''
-    ) (import ./external-downloads.nix))
     + ''
-      runHook postInstall
-    '';
+      ln -s ${
+        fetchurl {
+          inherit (download) name url hash;
+        }
+      } $out/share/marginalia/${download.dir}/${download.name}
+    ''
+  ) (import ./external-downloads.nix))
+  + ''
+    runHook postInstall
+  '';
 
   meta = {
     description = "Internet search engine for text-oriented websites, indexing the small, old and weird web";

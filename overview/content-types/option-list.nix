@@ -37,14 +37,13 @@ in
       default =
         self:
         let
-          option-header =
-            ''
-              <span ${optionalString (self.module == null) ''class="option-alert"''}
-              >${join "." self.prefix}</span>
-            ''
-            + optionalString (self.module == null) ''
-              <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
-            '';
+          option-header = ''
+            <span ${optionalString (self.module == null) ''class="option-alert"''}
+            >${join "." self.prefix}</span>
+          ''
+          + optionalString (self.module == null) ''
+            <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
+          '';
         in
         optionalString (self.project-options != [ ] || self.module == null) ''
           <details><summary>${option-header}</summary>

@@ -72,23 +72,22 @@ phpWithExtensions.buildComposerProject (
       moreutils
     ];
 
-    postPatch =
-      ''
-        # .env file must be used, because it is used to set the default values
-        cp .env.example .env
+    postPatch = ''
+      # .env file must be used, because it is used to set the default values
+      cp .env.example .env
 
-        yq '.oneup_flysystem.adapters.default_adapter.local.location = "/var/lib/kbin/media"' \
-          < config/packages/oneup_flysystem.yaml \
-          | sponge config/packages/oneup_flysystem.yaml
-      ''
-      + (optionalString withS3 ''
-        yq '(
-          .oneup_flysystem.filesystems.public_uploads_filesystem.adapter = "kbin.s3_adapter" |
-          .oneup_flysystem.adapters.kbin.s3_adapter.awss3v3 = {client: "kbin.s3_client", bucket: "%amazon.s3.bucket%"}
-        )' \
-          < config/packages/oneup_flysystem.yaml \
-          | sponge config/packages/oneup_flysystem.yaml
-      '');
+      yq '.oneup_flysystem.adapters.default_adapter.local.location = "/var/lib/kbin/media"' \
+        < config/packages/oneup_flysystem.yaml \
+        | sponge config/packages/oneup_flysystem.yaml
+    ''
+    + (optionalString withS3 ''
+      yq '(
+        .oneup_flysystem.filesystems.public_uploads_filesystem.adapter = "kbin.s3_adapter" |
+        .oneup_flysystem.adapters.kbin.s3_adapter.awss3v3 = {client: "kbin.s3_client", bucket: "%amazon.s3.bucket%"}
+      )' \
+        < config/packages/oneup_flysystem.yaml \
+        | sponge config/packages/oneup_flysystem.yaml
+    '');
 
     vendorHash = "sha256-f+ZjdcM+/cBQm/5Nlt42+4t9LI6WNmum0DFfTWQkS0o=";
 

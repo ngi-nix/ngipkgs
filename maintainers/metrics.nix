@@ -70,25 +70,24 @@ rec {
       derivations = count (_: true) (attrNames p.packages);
     }
     // optionalAttrs (p ? nixos) {
-      nixos =
-        {
-          tests = if p.nixos.tests == null then 0 else count (_: true) (attrNames p.nixos.tests);
-          examples = if p.nixos.examples == null then 0 else count (_: true) (attrNames p.nixos.examples);
-        }
-        // optionalAttrs (p ? nixos.modules.services) {
-          services =
-            if p.nixos.modules.services == null then
-              0
-            else
-              count (_: true) (attrNames p.nixos.modules.services);
-        }
-        // optionalAttrs (p ? nixos.modules.programs) {
-          programs =
-            if p.nixos.modules.programs == null then
-              0
-            else
-              count (_: true) (attrNames p.nixos.modules.programs);
-        };
+      nixos = {
+        tests = if p.nixos.tests == null then 0 else count (_: true) (attrNames p.nixos.tests);
+        examples = if p.nixos.examples == null then 0 else count (_: true) (attrNames p.nixos.examples);
+      }
+      // optionalAttrs (p ? nixos.modules.services) {
+        services =
+          if p.nixos.modules.services == null then
+            0
+          else
+            count (_: true) (attrNames p.nixos.modules.services);
+      }
+      // optionalAttrs (p ? nixos.modules.programs) {
+        programs =
+          if p.nixos.modules.programs == null then
+            0
+          else
+            count (_: true) (attrNames p.nixos.modules.programs);
+      };
     }
   ) raw-projects;
 }

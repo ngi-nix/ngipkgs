@@ -27,26 +27,24 @@ python3Packages.buildPythonPackage {
     setuptools
   ];
 
-  propagatedNativeBuildInputs =
-    [
-      symbiyosys
-      yices
-    ]
-    ++ (with python3Packages; [
-      pyvcd
-    ]);
+  propagatedNativeBuildInputs = [
+    symbiyosys
+    yices
+  ]
+  ++ (with python3Packages; [
+    pyvcd
+  ]);
 
-  nativeCheckInputs =
-    [
-      nmigen
-      symbiyosys
-      yices
-    ]
-    ++ (with python3Packages; [
-      pytestCheckHook
-      pytest-xdist
-      pytest-output-to-files
-    ]);
+  nativeCheckInputs = [
+    nmigen
+    symbiyosys
+    yices
+  ]
+  ++ (with python3Packages; [
+    pytestCheckHook
+    pytest-xdist
+    pytest-output-to-files
+  ]);
 
   pythonImportsCheck = [ "nmutil" ];
 

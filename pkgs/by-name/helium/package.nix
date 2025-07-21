@@ -56,15 +56,14 @@ python3Packages.buildPythonPackage rec {
 
   propagatedBuildInputs = with python3Packages; [ selenium ];
 
-  nativeCheckInputs =
-    [
-      firefox
-      geckodriver
-      which
-    ]
-    ++ (with python3Packages; [
-      pytestCheckHook
-    ]);
+  nativeCheckInputs = [
+    firefox
+    geckodriver
+    which
+  ]
+  ++ (with python3Packages; [
+    pytestCheckHook
+  ]);
 
   checkInputs = with python3Packages; [
     psutil

@@ -58,76 +58,73 @@ pythonPackages.buildPythonPackage rec {
   # Native is the build machine architecture (e.g. x86_64 linux)
   # This will run a python emulator of the target architecture, which is PowerPC for this project
   # The assembler has to run on native but target PowerPC assembly
-  propagatedNativeBuildInputs =
-    [
-      libresoc-pyelftools
-      mdis
-      nmigen
-      nmutil
-      pkgsCross.powernv.buildPackages.gcc
-    ]
-    ++ (with pythonPackages; [
-      astor
-      cached-property
-      cffi
-      ply
-      pygdbmi
-    ]);
+  propagatedNativeBuildInputs = [
+    libresoc-pyelftools
+    mdis
+    nmigen
+    nmutil
+    pkgsCross.powernv.buildPackages.gcc
+  ]
+  ++ (with pythonPackages; [
+    astor
+    cached-property
+    cffi
+    ply
+    pygdbmi
+  ]);
 
   pythonRelaxDeps = [
     "pygdbmi"
   ];
 
   # TODO: potential upstream work
-  postInstall =
+  postInstall = ''
+    # complement of `remove-gitignore-check.patch`
+    mkdir -p $out/${python.sitePackages}/openpower/decoder/isa/generated
+
+    # this file is missed in the installation configuration, manually move into output
+    # potential to upstream fix to configuration that maintains this file
+    cp ./src/openpower/simulator/memmap $out/${python.sitePackages}/openpower/simulator/
+  ''
+  + (
+    # this project's build steps do not map cleanly onto Nix's build stages.
+    # setuptools builds the the `entry_points` into binaries that are used to codegen
+    # directly into the source directory, which is then bundled into a wheel and installed.
+    #
+    # for Nix, there's a chicken-and-egg problem with this:
+    # only once the package has been built can the codegen be run to... build the package from source.
+    # as a result, the installPhase is overloaded to effectively double as the build phase,
+    # so, the majority of build steps actually occur here, at the end:
+    let
+      codegen = writeShellApplication {
+        name = "run-codegen";
+        runtimeInputs = [
+          gnumake
+          pkgsCross.powernv.buildPackages.gcc
+        ];
+        text = "make generate";
+      };
+    in
     ''
-      # complement of `remove-gitignore-check.patch`
-      mkdir -p $out/${python.sitePackages}/openpower/decoder/isa/generated
+      # copy special-purpose python modules into path expected by codegen
+      cp -rT ./openpower $out/${python.sitePackages}/../openpower/
 
-      # this file is missed in the installation configuration, manually move into output
-      # potential to upstream fix to configuration that maintains this file
-      cp ./src/openpower/simulator/memmap $out/${python.sitePackages}/openpower/simulator/
+      # complement of `prefixed-openpower-isa-tools.patch`
+      OPENPOWER=$out/bin ${codegen}/bin/run-codegen
+
+      # ...again now including codegen source
+      cp -rT ./openpower $out/${python.sitePackages}/../openpower/
     ''
-    + (
-      # this project's build steps do not map cleanly onto Nix's build stages.
-      # setuptools builds the the `entry_points` into binaries that are used to codegen
-      # directly into the source directory, which is then bundled into a wheel and installed.
-      #
-      # for Nix, there's a chicken-and-egg problem with this:
-      # only once the package has been built can the codegen be run to... build the package from source.
-      # as a result, the installPhase is overloaded to effectively double as the build phase,
-      # so, the majority of build steps actually occur here, at the end:
-      let
-        codegen = writeShellApplication {
-          name = "run-codegen";
-          runtimeInputs = [
-            gnumake
-            pkgsCross.powernv.buildPackages.gcc
-          ];
-          text = "make generate";
-        };
-      in
-      ''
-        # copy special-purpose python modules into path expected by codegen
-        cp -rT ./openpower $out/${python.sitePackages}/../openpower/
+  );
 
-        # complement of `prefixed-openpower-isa-tools.patch`
-        OPENPOWER=$out/bin ${codegen}/bin/run-codegen
-
-        # ...again now including codegen source
-        cp -rT ./openpower $out/${python.sitePackages}/../openpower/
-      ''
-    );
-
-  nativeCheckInputs =
-    [
-      pytest-output-to-files
-      pkgsCross.powernv.buildPackages.gcc
-    ]
-    ++ (with pythonPackages; [
-      pytestCheckHook
-      pytest-xdist
-    ]);
+  nativeCheckInputs = [
+    pytest-output-to-files
+    pkgsCross.powernv.buildPackages.gcc
+  ]
+  ++ (with pythonPackages; [
+    pytestCheckHook
+    pytest-xdist
+  ]);
 
   disabledTests = [
     # listed failures seem unlikely to result from packaging errors, assumed present upstream

@@ -58,23 +58,23 @@ python3Packages.buildPythonApplication rec {
 
   strictDeps = true;
 
-  nativeBuildInputs =
-    [
-      gobject-introspection
-      wrapGAppsHook3
-    ]
-    ++ (with python3Packages; [
-      hatchling
-      setuptools-scm
-      pythonRelaxDepsHook
-    ]);
+  nativeBuildInputs = [
+    gobject-introspection
+    wrapGAppsHook3
+  ]
+  ++ (with python3Packages; [
+    hatchling
+    setuptools-scm
+    pythonRelaxDepsHook
+  ]);
 
-  buildInputs =
-    [ libnice ]
-    ++ (with gst_all_1; [
-      gst-plugins-good # autoaudiosink
-      gst-plugins-bad # Namespace GstWebRTC not available
-    ]);
+  buildInputs = [
+    libnice
+  ]
+  ++ (with gst_all_1; [
+    gst-plugins-good # autoaudiosink
+    gst-plugins-bad # Namespace GstWebRTC not available
+  ]);
 
   pythonRelaxDeps = [
     "dbus-python"
@@ -87,73 +87,74 @@ python3Packages.buildPythonApplication rec {
     "rich"
   ];
 
-  propagatedBuildInputs =
-    [
-      libervia-templates
-      sat-tmp
-      urwid-satext
-      wokkel
-      oldmemo
-      omemo
-      twomemo
-    ]
-    ++ (with python3Packages; [
-      aiosqlite
-      alembic
-      babel
-      cairosvg
-      cbor2
-      cryptography
-      dbus-python
-      emoji
-      gpgme
-      gst-python
-      html2text
-      jinja2
-      langid
-      lxml-html-clean
-      lxml
-      markdown
-      miniupnpc
-      mutagen
-      netifaces
-      oldmemo
-      pillow
-      potr
-      progressbar2
-      prompt-toolkit
-      pydantic
-      pygments
-      pygobject3
-      pyopenssl
-      python-dateutil
-      xlib
-      pyxdg
-      pyyaml
-      rich
-      setuptools
-      shortuuid
-      sqlalchemy
-      twisted
-      treq
-      txdbus
-      urwid
-      xmlschema
-    ]);
+  propagatedBuildInputs = [
+    libervia-templates
+    sat-tmp
+    urwid-satext
+    wokkel
+    oldmemo
+    omemo
+    twomemo
+  ]
+  ++ (with python3Packages; [
+    aiosqlite
+    alembic
+    babel
+    cairosvg
+    cbor2
+    cryptography
+    dbus-python
+    emoji
+    gpgme
+    gst-python
+    html2text
+    jinja2
+    langid
+    lxml-html-clean
+    lxml
+    markdown
+    miniupnpc
+    mutagen
+    netifaces
+    oldmemo
+    pillow
+    potr
+    progressbar2
+    prompt-toolkit
+    pydantic
+    pygments
+    pygobject3
+    pyopenssl
+    python-dateutil
+    xlib
+    pyxdg
+    pyyaml
+    rich
+    setuptools
+    shortuuid
+    sqlalchemy
+    twisted
+    treq
+    txdbus
+    urwid
+    xmlschema
+  ]);
 
   nativeCheckInputs = [
     firefox
     geckodriver
     which
-  ] ++ (with python3Packages; [ pytestCheckHook ]);
+  ]
+  ++ (with python3Packages; [ pytestCheckHook ]);
 
-  checkInputs =
-    [ helium ]
-    ++ (with python3Packages; [
-      aiosmtpd
-      sh
-      pytest-twisted
-    ]);
+  checkInputs = [
+    helium
+  ]
+  ++ (with python3Packages; [
+    aiosmtpd
+    sh
+    pytest-twisted
+  ]);
 
   dontWrapGApps = true;
 

@@ -20,17 +20,16 @@ python3Packages.buildPythonPackage rec {
     setuptools
   ];
 
-  dependencies =
-    [
-      omemo
-    ]
-    ++ (with python3Packages; [
-      doubleratchet
-      protobuf
-      typing-extensions
-      x3dh
-      xeddsa
-    ]);
+  dependencies = [
+    omemo
+  ]
+  ++ (with python3Packages; [
+    doubleratchet
+    protobuf
+    typing-extensions
+    x3dh
+    xeddsa
+  ]);
 
   pythonImportsCheck = [
     "twomemo"
