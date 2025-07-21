@@ -35,7 +35,8 @@ in
           '';
         in
         ''
-          <details><summary>${self.name}</summary>
+          <details open>
+          <summary>${self.name}</summary>
           ${self.example-snippet}
           ${button-missing-test}
           </details>
