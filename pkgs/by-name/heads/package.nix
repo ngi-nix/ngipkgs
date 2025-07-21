@@ -437,7 +437,9 @@ lib.makeScope newScope (
     # only allow a fixed list of boards and slowly increase it
     # (see: https://github.com/NixOS/nixpkgs/pull/286228#issuecomment-2779598354)
     allowedBoards = [
-      "qemu-coreboot-fbwhiptail-tpm1-hotp"
+      # install: cannot change permissions of '/build/source/install/x86/sbin/dmsetup.static': No such file or directory
+      # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
+      # "qemu-coreboot-fbwhiptail-tpm1-hotp"
     ];
   in
   {
