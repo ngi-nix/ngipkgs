@@ -30,18 +30,17 @@ python3Packages.buildPythonPackage rec {
 
   propagatedBuildInputs = [ nmutil ];
 
-  nativeCheckInputs =
-    [
-      pytest-output-to-files
-      nmigen
-      symbiyosys
-      sfpy
-      bigfloat
-    ]
-    ++ (with python3Packages; [
-      pytestCheckHook
-      pytest-xdist
-    ]);
+  nativeCheckInputs = [
+    pytest-output-to-files
+    nmigen
+    symbiyosys
+    sfpy
+    bigfloat
+  ]
+  ++ (with python3Packages; [
+    pytestCheckHook
+    pytest-xdist
+  ]);
 
   disabledTests = [
     "test_fadd_f16_rna_formal"

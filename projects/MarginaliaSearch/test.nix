@@ -79,19 +79,18 @@ in
             };
           in
           {
-            "99-marginalia-test-setup" =
-              {
-                "/var/lib/marginalia-search".d = dirSettings;
-                "/var/lib/marginalia-search/data".d = dirSettings;
-              }
-              // (builtins.listToAttrs (
-                builtins.map (name: {
-                  name = "/var/lib/marginalia-search/data/${name}";
-                  value = {
-                    L.argument = "${unpackedData}/${name}";
-                  };
-                }) downloadedData.names
-              ));
+            "99-marginalia-test-setup" = {
+              "/var/lib/marginalia-search".d = dirSettings;
+              "/var/lib/marginalia-search/data".d = dirSettings;
+            }
+            // (builtins.listToAttrs (
+              builtins.map (name: {
+                name = "/var/lib/marginalia-search/data/${name}";
+                value = {
+                  L.argument = "${unpackedData}/${name}";
+                };
+              }) downloadedData.names
+            ));
           };
       };
   };

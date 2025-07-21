@@ -91,7 +91,8 @@ let
                   nixpkgs.hostPlatform = builtins.currentSystem or "x86_64-linux";
                 };
               }
-            ] ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
+            ]
+            ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
           })
           options
           ;
@@ -192,7 +193,8 @@ rec {
       }
       ./overview/demo/shell.nix
       raw-projects # for checks
-    ] ++ extendedNixosModules;
+    ]
+    ++ extendedNixosModules;
     specialArgs = {
       modulesPath = "${sources.nixpkgs}/nixos/modules";
     };

@@ -24,7 +24,8 @@ let
           };
           config.demo = true;
         }
-      ] ++ extendedNixosModules;
+      ]
+      ++ extendedNixosModules;
       specialArgs = { inherit sources; };
     };
 in

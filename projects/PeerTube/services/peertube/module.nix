@@ -189,7 +189,8 @@ in
             WorkingDirectory = peerCfg.package;
             ReadWritePaths = [
               "/var/lib/peertube" # NPM stuff
-            ] ++ peerCfg.dataDirs;
+            ]
+            ++ peerCfg.dataDirs;
 
             # User and group
             User = peerCfg.user;
@@ -204,7 +205,8 @@ in
               "pipe"
               "pipe2"
             ];
-          } // cfgService;
+          }
+          // cfgService;
         }
         // (
           if configured then { before = [ "peertube.service" ]; } else { after = [ "peertube.service" ]; }
@@ -214,12 +216,10 @@ in
       services.peertube.package = cfg.package.overrideAttrs (oa: {
         # yarn can't handle npm caches, and we can't build npm packages with our yarn tooling
         # Working on getting declarative plugin management into upstream to avoid this: https://github.com/Chocobozzz/PeerTube/issues/6428
-        postPatch =
-          (oa.postPatch or "")
-          + ''
-            substituteInPlace server/core/lib/plugins/yarn.ts \
-              --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
-          '';
+        postPatch = (oa.postPatch or "") + ''
+          substituteInPlace server/core/lib/plugins/yarn.ts \
+            --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
+        '';
       });
 
       systemd.services = {

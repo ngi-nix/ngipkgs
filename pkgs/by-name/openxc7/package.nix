@@ -76,24 +76,23 @@ let
   # Adapted from upstream's flake.nix outputs.devShell
   shellScript = writeShellApplication {
     name = "openxc7-env";
-    runtimeInputs =
-      [
-        fasm
-        prjxray
-        nextpnr-xilinx
+    runtimeInputs = [
+      fasm
+      prjxray
+      nextpnr-xilinx
 
-        yosys
-        ghdl
-        yosys-ghdl
-        openfpgaloader
-        pypy310
-      ]
-      ++ (with python3Packages; [
-        pyyaml
-        textx
-        simplejson
-        intervaltree
-      ]);
+      yosys
+      ghdl
+      yosys-ghdl
+      openfpgaloader
+      pypy310
+    ]
+    ++ (with python3Packages; [
+      pyyaml
+      textx
+      simplejson
+      intervaltree
+    ]);
     runtimeEnv = {
       "NEXTPNR_XILINX_DIR" = "${nextpnr-xilinx}";
       "NEXTPNR_XILINX_PYTHON_DIR" = "${nextpnr-xilinx}/share/nextpnr/python/";

@@ -35,17 +35,17 @@ python3Packages.buildPythonPackage rec {
     libresoc-openpower-isa
     nmigen-soc
     yosys
-  ] ++ (with python3Packages; [ cached-property ]);
+  ]
+  ++ (with python3Packages; [ cached-property ]);
 
-  nativeCheckInputs =
-    [
-      power-instruction-analyzer
-      pytest-output-to-files
-    ]
-    ++ (with python3Packages; [
-      pytest-xdist
-      pytestCheckHook
-    ]);
+  nativeCheckInputs = [
+    power-instruction-analyzer
+    pytest-output-to-files
+  ]
+  ++ (with python3Packages; [
+    pytest-xdist
+    pytestCheckHook
+  ]);
 
   disabledTests = [
     # listed failures seem unlikely to result from packaging errors, assumed present upstream

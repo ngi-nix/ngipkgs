@@ -51,29 +51,28 @@ python3Packages.buildPythonApplication rec {
     qt6Packages.qtsvg
   ];
 
-  dependencies =
-    [
-      python3-sipsimple
-      python3-msrplib
-      python3-otr
-      python3-xcaplib
-    ]
-    ++ (with python3Packages; [
-      dateutils
-      dnspython
-      google-api-python-client
-      lxml
-      lxml-html-clean
-      oauth2client
-      pgpy
-      pyqt6
-      pyqt6-webengine
-      python3-application
-      python3-eventlib
-      python3-gnutls
-      sqlobject
-      standard-imghdr
-    ]);
+  dependencies = [
+    python3-sipsimple
+    python3-msrplib
+    python3-otr
+    python3-xcaplib
+  ]
+  ++ (with python3Packages; [
+    dateutils
+    dnspython
+    google-api-python-client
+    lxml
+    lxml-html-clean
+    oauth2client
+    pgpy
+    pyqt6
+    pyqt6-webengine
+    python3-application
+    python3-eventlib
+    python3-gnutls
+    sqlobject
+    standard-imghdr
+  ]);
 
   dontWrapQrApps = true;
 

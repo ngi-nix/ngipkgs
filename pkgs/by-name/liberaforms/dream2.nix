@@ -151,7 +151,8 @@ in
           dontBuild = true;
         };
       };
-    } // pyprojectOverrides;
+    }
+    // pyprojectOverrides;
     flattenDependencies = true;
   };
 

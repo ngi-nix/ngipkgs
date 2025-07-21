@@ -233,96 +233,94 @@ let
           --replace-fail 'ARCH=' 'V=1 ARCH='
       '';
 
-      preConfigure =
+      preConfigure = ''
+        mkdir -p build/x86 packages/x86
+      ''
+      + lib.strings.concatMapStringsSep "\n" (
+        details:
+        let
+          download = fetchgit {
+            inherit (details) url rev hash;
+            fetchSubmodules = true;
+          };
+          pinnedRev = if details.pinned then details.rev else "";
+        in
         ''
-          mkdir -p build/x86 packages/x86
+          echo "'${download}' -> '$PWD/build/x86/${details.name}'"
+          cp -r ${download} build/x86/${details.name}
+
+          # We copy from store, and need to keep mode for scripts to continue being executable
+          # But we also want to write into this copy (i.e. the .canary), so make everything writable
+          chmod -R +w build/x86/${details.name}
+
+          echo '${details.url}|${pinnedRev}' > build/x86/${details.name}/.canary
         ''
-        + lib.strings.concatMapStringsSep "\n" (
-          details:
-          let
-            download = fetchgit {
-              inherit (details) url rev hash;
-              fetchSubmodules = true;
-            };
-            pinnedRev = if details.pinned then details.rev else "";
-          in
-          ''
-            echo "'${download}' -> '$PWD/build/x86/${details.name}'"
-            cp -r ${download} build/x86/${details.name}
-
-            # We copy from store, and need to keep mode for scripts to continue being executable
-            # But we also want to write into this copy (i.e. the .canary), so make everything writable
-            chmod -R +w build/x86/${details.name}
-
-            echo '${details.url}|${pinnedRev}' > build/x86/${details.name}/.canary
-          ''
-        ) deps.modules
+      ) deps.modules
+      + lib.strings.concatMapStringsSep "\n" (details: ''
+        cp -vr --no-preserve=mode ${
+          fetchurl {
+            inherit (details) url hash;
+          }
+        } packages/x86/${details.name}
+      '') deps.pkgs
+      + lib.strings.concatMapAttrsStringSep "\n" (
+        corebootName: crossgccArchives:
+        ''
+          mkdir -p packages/x86/${corebootName}
+        ''
         + lib.strings.concatMapStringsSep "\n" (details: ''
           cp -vr --no-preserve=mode ${
             fetchurl {
               inherit (details) url hash;
             }
-          } packages/x86/${details.name}
-        '') deps.pkgs
-        + lib.strings.concatMapAttrsStringSep "\n" (
-          corebootName: crossgccArchives:
-          ''
-            mkdir -p packages/x86/${corebootName}
-          ''
-          + lib.strings.concatMapStringsSep "\n" (details: ''
-            cp -vr --no-preserve=mode ${
-              fetchurl {
-                inherit (details) url hash;
-              }
-            } packages/x86/${corebootName}/${details.name}
-          '') crossgccArchives
-        ) deps.crossgcc-deps
-        + lib.strings.concatMapAttrsStringSep "\n" (
-          dirname: patchesInDir:
-          ''
-            mkdir -p patches/${dirname}
-          ''
-          + lib.strings.concatMapStringsSep "\n" (details: ''
-            cp -vr ${details.patch} patches/${dirname}/${details.name}
-          '') patchesInDir
-        ) patches
-        + ''
-          # Couldn't patchShebangs before, as they're from a dependency that would've been fetched during build
-          patchShebangs \
-            build/x86/coreboot-*/util/xcompile/xcompile \
-            build/x86/coreboot-*/util/genbuild_h/genbuild_h.sh
-        '';
+          } packages/x86/${corebootName}/${details.name}
+        '') crossgccArchives
+      ) deps.crossgcc-deps
+      + lib.strings.concatMapAttrsStringSep "\n" (
+        dirname: patchesInDir:
+        ''
+          mkdir -p patches/${dirname}
+        ''
+        + lib.strings.concatMapStringsSep "\n" (details: ''
+          cp -vr ${details.patch} patches/${dirname}/${details.name}
+        '') patchesInDir
+      ) patches
+      + ''
+        # Couldn't patchShebangs before, as they're from a dependency that would've been fetched during build
+        patchShebangs \
+          build/x86/coreboot-*/util/xcompile/xcompile \
+          build/x86/coreboot-*/util/genbuild_h/genbuild_h.sh
+      '';
 
       strictDeps = true;
 
-      nativeBuildInputs =
-        [
-          autoconf # autom4te
-          bc
-          binwalk
-          bison
-          ccache # only required (for some reason?) by coreboot build
-          cmake
-          cpio
-          curl # coreboot toolchain complains if it's missing
-          flex
-          gnum4
-          git # applying patch files to fetched repos
-          imagemagick
-          innoextract
-          ncurses # tic / infocmp when building on non-x86
-          perl
-          pkg-config
-          python3
-          rsync
-          uefi-firmware-parser
-          unzip
-          zip
-        ]
-        # gnat-bootstrap is limited to specific platforms, only include bootstrapped gnat when it should be available
-        ++ lib.optionals (lib.meta.availableOn stdenv.buildPlatform gnat-bootstrap) [
-          gnat
-        ];
+      nativeBuildInputs = [
+        autoconf # autom4te
+        bc
+        binwalk
+        bison
+        ccache # only required (for some reason?) by coreboot build
+        cmake
+        cpio
+        curl # coreboot toolchain complains if it's missing
+        flex
+        gnum4
+        git # applying patch files to fetched repos
+        imagemagick
+        innoextract
+        ncurses # tic / infocmp when building on non-x86
+        perl
+        pkg-config
+        python3
+        rsync
+        uefi-firmware-parser
+        unzip
+        zip
+      ]
+      # gnat-bootstrap is limited to specific platforms, only include bootstrapped gnat when it should be available
+      ++ lib.optionals (lib.meta.availableOn stdenv.buildPlatform gnat-bootstrap) [
+        gnat
+      ];
 
       buildInputs = [
         elfutils
@@ -333,20 +331,19 @@ let
 
       enableParallelBuilding = true;
 
-      makeFlags =
-        [
-          "BRAND_NAME=${brandName}"
-          "HEADS_GIT_VERSION=${finalAttrs.passthru.gitRev}"
-          "VERBOSE_REDIRECT=" # Don't hide build output
-          "SHELL=${lib.getExe bashNonInteractive}" # Don't look for /usr/bin/env bash
-          "AVAILABLE_MEM_GB=4" # Don't inspect system for available memory (gets printed)
-          "BOARD=${board}"
-        ]
-        ++ lib.optionals finalAttrs.enableParallelBuilding [
-          # parallelism at global level breaks inter-project deps
-          # (i.e. configuring json-c via CMake before the cross compiler it looks for is built)
-          "-j1"
-        ];
+      makeFlags = [
+        "BRAND_NAME=${brandName}"
+        "HEADS_GIT_VERSION=${finalAttrs.passthru.gitRev}"
+        "VERBOSE_REDIRECT=" # Don't hide build output
+        "SHELL=${lib.getExe bashNonInteractive}" # Don't look for /usr/bin/env bash
+        "AVAILABLE_MEM_GB=4" # Don't inspect system for available memory (gets printed)
+        "BOARD=${board}"
+      ]
+      ++ lib.optionals finalAttrs.enableParallelBuilding [
+        # parallelism at global level breaks inter-project deps
+        # (i.e. configuring json-c via CMake before the cross compiler it looks for is built)
+        "-j1"
+      ];
 
       preBuild = ''
         # parallelise individual project builds

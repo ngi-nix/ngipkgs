@@ -186,35 +186,34 @@ in
       vula-desktop
     ];
 
-    services.dbus.packages =
+    services.dbus.packages = [
+      (writeTextFile {
+        name = "vula-dbus.conf";
+        destination = "/share/dbus-1/system.d/local.vula.services.conf";
+        text = import ./dbus.conf.nix { inherit (cfg) userPrefix operatorsGroup; };
+      })
+    ]
+    ++ (map
+      (
+        name:
+        writeTextFile {
+          name = "local.vula.${name}.service";
+          destination = "/share/dbus-1/system-services/local.vula.${name}.service";
+          text = ''
+            [D-BUS Service]
+            Name=local.vula.${name}
+            Exec=${coreutils}/bin/false
+            User=${cfg.userPrefix}-${name}
+            SystemdService=vula-${name}.service
+          '';
+        }
+      )
       [
-        (writeTextFile {
-          name = "vula-dbus.conf";
-          destination = "/share/dbus-1/system.d/local.vula.services.conf";
-          text = import ./dbus.conf.nix { inherit (cfg) userPrefix operatorsGroup; };
-        })
+        "organize"
+        "discover"
+        "publish"
       ]
-      ++ (map
-        (
-          name:
-          writeTextFile {
-            name = "local.vula.${name}.service";
-            destination = "/share/dbus-1/system-services/local.vula.${name}.service";
-            text = ''
-              [D-BUS Service]
-              Name=local.vula.${name}
-              Exec=${coreutils}/bin/false
-              User=${cfg.userPrefix}-${name}
-              SystemdService=vula-${name}.service
-            '';
-          }
-        )
-        [
-          "organize"
-          "discover"
-          "publish"
-        ]
-      );
+    );
 
     networking.firewall.allowedUDPPorts = mkIf cfg.openFirewall [
       5353 # mdns

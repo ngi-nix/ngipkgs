@@ -39,15 +39,13 @@ in
               imagemagick
             ]);
 
-          postInstall =
-            (oa.postInstall or "")
-            + ''
-              cp $out/share/blink/icons/blink.png blink.png
-              magick blink.png \
-                -background "${iconColour}" \
-                -alpha remove -alpha off \
-                $out/share/blink/icons/blink.png
-            '';
+          postInstall = (oa.postInstall or "") + ''
+            cp $out/share/blink/icons/blink.png blink.png
+            magick blink.png \
+              -background "${iconColour}" \
+              -alpha remove -alpha off \
+              $out/share/blink/icons/blink.png
+          '';
         });
 
         environment.systemPackages = with pkgs; [

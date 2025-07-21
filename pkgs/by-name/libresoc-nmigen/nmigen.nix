@@ -34,18 +34,20 @@ python3Packages.buildPythonPackage rec {
 
   nativeBuildInputs = [ git ] ++ (with python3Packages; [ setuptools-scm ]);
 
-  propagatedBuildInputs =
-    [ yosys ]
-    ++ (with python3Packages; [
-      jinja2
-      pyvcd
-    ]);
+  propagatedBuildInputs = [
+    yosys
+  ]
+  ++ (with python3Packages; [
+    jinja2
+    pyvcd
+  ]);
 
   nativeCheckInputs = [
     symbiyosys
     yices
     yosys
-  ] ++ (with python3Packages; [ pytestCheckHook ]);
+  ]
+  ++ (with python3Packages; [ pytestCheckHook ]);
 
   pythonRelaxDeps = [
     "pyvcd"

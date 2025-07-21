@@ -20,16 +20,15 @@ python3Packages.buildPythonPackage rec {
 
   nativeBuildInputs = with python3Packages; [ setuptools ];
 
-  propagatedBuildInputs =
-    [
-      omemo
-    ]
-    ++ (with python3Packages; [
-      cryptography
-      doubleratchet
-      protobuf
-      x3dh
-    ]);
+  propagatedBuildInputs = [
+    omemo
+  ]
+  ++ (with python3Packages; [
+    cryptography
+    doubleratchet
+    protobuf
+    x3dh
+  ]);
 
   pythonImportsCheck = [
     "oldmemo"

@@ -41,18 +41,17 @@ python3Packages.buildPythonPackage {
     poetry-core
   ];
 
-  dependencies =
-    [
-      py-tlsh
-    ]
-    ++ (with python3Packages; [
-      click
-      flask
-      gevent
-      gunicorn
-      pyyaml
-      requests
-    ]);
+  dependencies = [
+    py-tlsh
+  ]
+  ++ (with python3Packages; [
+    click
+    flask
+    gevent
+    gunicorn
+    pyyaml
+    requests
+  ]);
 
   pythonRelaxDeps = [
     "flask"

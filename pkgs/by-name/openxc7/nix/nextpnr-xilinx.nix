@@ -30,7 +30,8 @@ stdenv.mkDerivation rec {
     python312Packages.boost
     python312
     eigen
-  ] ++ (lib.optionals stdenv.cc.isClang [ llvmPackages.openmp ]);
+  ]
+  ++ (lib.optionals stdenv.cc.isClang [ llvmPackages.openmp ]);
 
   cmakeFlags = [
     "-DCURRENT_GIT_VERSION=${lib.substring 0 7 src.rev}"
