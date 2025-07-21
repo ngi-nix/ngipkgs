@@ -2,3 +2,5 @@
 c93855ba5533059df21f1936b08c55b465f651a7
 # Format all files in /infra with `nixfmt-rfc-style`
 41b6d87c33f5112eb439beeefcfa63c526a5dbea
+# Format all files treewide with nixfmt 1.0.0
+c0f9a472803cdb43fc2d05875fa5256d9e5337ef
