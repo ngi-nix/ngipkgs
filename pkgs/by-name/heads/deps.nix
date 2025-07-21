@@ -75,28 +75,28 @@
       url = "https://github.com/coreboot/coreboot";
       pinned = true;
       rev = "2f1e4e5e8515dd350cc9d68b48d32a5b6b02ae6a";
-      hash = "sha256-EJrr9Spzbpdio7gwqtajkcOvojkit9VZAwVGbzvA6jA=";
+      hash = "sha256-NA0yN4igJR7QTmdLzvvI2p21ObslqU8iFHynEWpLM5I=";
     }
     {
       name = "coreboot-dasharo";
       url = "https://github.com/dasharo/coreboot";
       pinned = true;
       rev = "94e5f5d5b808cf8d8fd5c70d4ef6a08a054f8986";
-      hash = "sha256-DFn3jB+3+YbNDOjz5ctFOg1SKq02vlF9Kk+sd47P+VY=";
+      hash = "sha256-n0wlP7thamybBDAwY1/SAWvwsW7NIJOiaAs406GCuV8=";
     }
     {
       name = "coreboot-purism";
       url = "https://source.puri.sm/firmware/coreboot.git";
       pinned = true;
       rev = "bea9947a1279be7d4a72b38a601d0288d10d1cb8";
-      hash = "sha256-Ml0/1tdk/d2SntrWcNcLLPoANlMpBCcynQRFBDg8CtY=";
+      hash = "sha256-AyyAC8OM1B8qE6Bs47SyCEFyVeyIGrVEWDqf2xb3cDo=";
     }
     {
       name = "coreboot-talos_2";
       url = "https://github.com/Dasharo/coreboot";
       pinned = true;
       rev = "fc47236e9877f4113dfcce07fa928f52d4d2c8ee";
-      hash = "sha256-/3YnbfgD+0L0grXGk0fkvwwQlpRq1mIc0By/6hoEZew=";
+      hash = "sha256-wvb2ln2XfE8plTp7mYBCcv3EhX2QSAzPf0h7mTh+wis=";
     }
     {
       name = "linuxboot";
