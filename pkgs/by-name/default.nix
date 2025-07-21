@@ -2,6 +2,7 @@
   pkgs,
   lib,
   dream2nix,
+  mkSbtDerivation,
 }:
 let
   inherit (builtins)
@@ -63,8 +64,12 @@ let
       callPackage (directory + "/package.nix") { }
     else if pathExists (directory + "/dream2.nix") then
       callModule (directory + "/dream2.nix")
+    else if pathExists (directory + "/sbt-derivation.nix") then
+      callPackage (directory + "/sbt-derivation.nix") {
+        inherit mkSbtDerivation;
+      }
     else
-      throw "No package.nix or dream2.nix found in ${directory}"
+      throw "No package.nix, dream2.nix or sbt-derivation.nix found in ${directory}"
   ) packageDirectories;
 in
 self
