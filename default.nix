@@ -21,6 +21,19 @@ in
 }:
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
+  mkSbtDerivation =
+    x:
+    import sources.sbt-derivation (
+      x
+      // {
+        inherit pkgs;
+        overrides = {
+          sbt = pkgs.sbt.override {
+            jre = pkgs.jdk17_headless;
+          };
+        };
+      }
+    );
 
   extension = rec {
     # Take an attrset of arbitrary nesting and make it flat
@@ -143,7 +156,7 @@ rec {
     final: prev:
     import ./pkgs/by-name {
       pkgs = prev;
-      inherit lib dream2nix;
+      inherit lib dream2nix mkSbtDerivation;
     };
 
   examples =
@@ -207,7 +220,14 @@ rec {
     name: value: pkgs.writeText "${name}-eval-check" (lib.strings.toJSON value)
   ) eval-projects;
 
-  ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
+  ngipkgs = import ./pkgs/by-name {
+    inherit
+      pkgs
+      lib
+      dream2nix
+      mkSbtDerivation
+      ;
+  };
 
   raw-projects = import ./projects {
     inherit lib system;
