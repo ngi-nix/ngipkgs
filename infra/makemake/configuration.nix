@@ -53,6 +53,7 @@
       sandbox = true;
       trusted-users = [ "remotebuild" ];
     };
+    extraOptions = "max-silent-time = 3600";
   };
 
   time.timeZone = "Europe/Amsterdam";
