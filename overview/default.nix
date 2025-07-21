@@ -145,6 +145,11 @@ let
           imports = [ ./content-types/metadata-subgrants.nix ];
           subgrants = project.metadata.subgrants or null;
         };
+
+        metadata-links = eval {
+          imports = [ ./content-types/metadata-links.nix ];
+          links = project.metadata.links or null;
+        };
       in
       ''
         <article class="page-width">
@@ -159,6 +164,7 @@ let
           ${optionsRender}
           ${examples}
           ${metadata-subgrants}
+          ${metadata-links}
         </article>
       '';
 
