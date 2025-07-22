@@ -63,10 +63,15 @@
             inherit system;
           };
 
-          inherit (classic) pkgs ngipkgs optionsDoc;
+          inherit (classic)
+            pkgs
+            ngipkgs
+            ngipkgs-no-nixpkgs
+            optionsDoc
+            ;
         in
         rec {
-          packages = ngipkgs // {
+          packages = ngipkgs-no-nixpkgs // {
             inherit (classic) overview;
 
             options =
@@ -87,7 +92,7 @@
           checks =
             let
               # everything must evaluate for checks to run
-              nonBrokenPackages = filterAttrs (_: v: !v.meta.broken or false) ngipkgs;
+              nonBrokenPackages = filterAttrs (_: v: !v.meta.broken or false) ngipkgs-no-nixpkgs;
 
               checksForAllProjects =
                 let

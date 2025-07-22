@@ -205,7 +205,8 @@ rec {
     name: value: pkgs.writeText "${name}-eval-check" (lib.strings.toJSON value)
   ) eval-projects;
 
-  ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
+  ngipkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; } // pkgs;
+  ngipkgs-no-nixpkgs = import ./pkgs/by-name { inherit pkgs lib dream2nix; };
 
   raw-projects = import ./projects {
     inherit lib system;
