@@ -11,12 +11,17 @@
       "omnom"
       "omnom-ActivityPub"
     ];
+    links = {
+      config = {
+        text = "Configuration options";
+        url = "https://github.com/asciimoo/omnom/blob/master/config/config.go";
+      };
+    };
   };
 
   nixos = {
     modules.services = {
       omnom = {
-        # https://github.com/asciimoo/omnom/blob/master/config/config.go
         module = lib.moduleLocFromOptionString "services.omnom";
         examples.base = {
           module = ./example.nix;
