@@ -1,6 +1,4 @@
-{
-  ...
-}:
+{ ... }:
 {
   programs.kaidan.enable = true;
 }
