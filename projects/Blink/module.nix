@@ -16,5 +16,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ cfg.package ];
+
+    demo-shell.blink.programs.blink = cfg.package;
   };
 }
