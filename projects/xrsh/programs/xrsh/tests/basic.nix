@@ -12,7 +12,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.xrsh
-          sources.examples.xrsh.demo-shell
+          sources.examples.xrsh."Enable xrsh and set a port to serve on"
         ];
       };
   };
