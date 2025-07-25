@@ -114,6 +114,7 @@ in
         let
           tests = lib.attrValues self.demo.tests;
           nullTests = lib.any (test: test.module == null) tests;
+          markdownToHtml = markdown: "{{ markdown_to_html(${builtins.toJSON markdown}) }}";
         in
         if (self.demo.problem == null && !nullTests) then
           ''
@@ -136,11 +137,21 @@ in
                 <strong>Build and run a virtual machine</strong>
                 ${config.build-instructions}
               </li>
-              ${lib.optionalString (with self.demo; description == null || description == "") ''
-                <li><span class="option-alert">Missing</span>
-                  <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
-                </li>
-              ''}
+              ${
+                if (with self.demo; description == null || description == "") then
+                  ''
+                    <li><span class="option-alert">Missing</span>
+                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
+                    </li>
+                  ''
+                else
+                  ''
+                    <li>
+                      <strong>Usage Instructions</strong>
+                      ${markdownToHtml self.demo.description}
+                    </li>
+                  ''
+              }
             </ol>
           ''
         else

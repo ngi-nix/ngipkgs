@@ -210,6 +210,7 @@ let
               inherit (demo)
                 tests
                 module
+                description
                 problem
                 ;
               _module.args.pkgs = pkgs;
