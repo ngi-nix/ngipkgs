@@ -48,6 +48,7 @@
   zlib,
 
   brandName ? "Heads",
+  withBlobs ? false,
 }:
 
 let
@@ -126,19 +127,21 @@ let
     ''
       mkdir -p $out
     ''
-    + lib.strings.concatMapStringsSep "\n" (details: ''
-      ln -vs ${
-        fetchurl (
-          {
-            inherit (details) url hash;
-          }
-          # For some websites (looking at you Dell), we may need a more normal-looking user agent
-          // lib.optionalAttrs (lib.attrsets.hasAttr "curlOptsList" details) {
-            inherit (details) curlOptsList;
-          }
-        )
-      } $out/${details.name}
-    '') blobs
+    + lib.strings.optionalString withBlobs (
+      lib.strings.concatMapStringsSep "\n" (details: ''
+        ln -vs ${
+          fetchurl (
+            {
+              inherit (details) url hash;
+            }
+            # For some websites (looking at you Dell), we may need a more normal-looking user agent
+            // lib.optionalAttrs (lib.attrsets.hasAttr "curlOptsList" details) {
+              inherit (details) curlOptsList;
+            }
+          )
+        } $out/${details.name}
+      '') blobs
+    )
   );
   deps = import ./deps.nix;
   patches = import ./patches {
@@ -411,10 +414,20 @@ let
       meta = {
         description = "Minimal Linux boot payload that provides a secure, flexible boot environment";
         homepage = "https://osresearch.net";
-        license = lib.licenses.gpl2Only;
+        license = if withBlobs then lib.licenses.unfree else lib.licenses.gpl2Only;
         platforms = lib.platforms.linux;
-        # Depends on coreboot-4.11, which wants to pull in an insecure expat version
-        broken = board == "librem_l1um";
+        broken =
+          let
+            # Depends on coreboot-4.11, which wants to pull in an insecure expat version
+            coreboot-411-boards = [
+              "librem_l1um"
+              "UNMAINTAINED_kgpe-d16_server"
+              "UNMAINTAINED_kgpe-d16_server-whiptail"
+              "UNMAINTAINED_kgpe-d16_workstation"
+              "UNMAINTAINED_kgpe-d16_workstation-usb_keyboard"
+            ];
+          in
+          lib.lists.elem board coreboot-411-boards;
       };
     });
 
@@ -431,13 +444,22 @@ lib.makeScope newScope (
   self:
   let
     # To cut down on CI load, and because boards may fail during the final steps because of missing firmware,
-    # only allow a fixed list of boards and slowly increase it
+    # only allow a fixed list of boards and slowly increase it.
     # (see: https://github.com/NixOS/nixpkgs/pull/286228#issuecomment-2779598354)
+    # These are also boards for which we can definitely distribute the results: no extracting of proprietary firmware needed.
+    # Maybe some flakiness in here, keep an eye on this
+    # install: cannot change permissions of '/build/source/install/x86/sbin/dmsetup.static': No such file or directory
+    # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
     allowedBoards = [
-      # Maybe flaky, keep an eye on this
-      # install: cannot change permissions of '/build/source/install/x86/sbin/dmsetup.static': No such file or directory
-      # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
+      "qemu-coreboot-fbwhiptail-tmp1"
       "qemu-coreboot-fbwhiptail-tpm1-hotp"
+      "qemu-coreboot-fbwhiptail-tpm1-hotp-prod"
+      "qemu-coreboot-fbwhiptail-tpm1-hotp-prod_quiet"
+      "qemu-coreboot-fbwhiptail-tpm1-prod"
+      "qemu-coreboot-whiptail-tmp1"
+      "qemu-coreboot-whiptail-tpm1-hotp"
+      "qemu-coreboot-whiptail-tpm1-hotp-prod"
+      "qemu-coreboot-whiptail-tmp1-prod"
     ];
   in
   {
