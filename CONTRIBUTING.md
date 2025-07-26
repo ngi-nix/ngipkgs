@@ -177,44 +177,6 @@ Instead, write one sentence per line, as this makes it easier to review changes.
 1. After the build succeeds, verify that the package works, if possible.
    This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
 
-## Implementing a program
-
-A program is a software applications that can be executed in the user's shell, which may have a Command-Line Interface (CLI), Terminal User Interface (TUI), or Graphical User Interface (GUI).
-
-1. To start, implement a NixOS module that adheres to the [program type](./projects/types.nix):
-
-<!-- TODO: figure out how to get this automatically from types.nix -->
-<!-- TODO: link to docs section on implementing an example? -->
-
-   ```nix
-   {
-     nixos.modules.programs.foobar = {
-       module = ./programs/foobar/module.nix;
-       examples."Enable foobar" = {
-         module = ./programs/foobar/examples/basic.nix;
-         description = "Usage instructions for foobar";
-         tests.basic.module = import ./programs/foobar/tests/basic.nix args;
-       };
-     };
-   }
-   ```
-
-1. Verify that the module is valid:
-
-   ```shellSession
-   nix-build -A checks.PROJECT_NAME
-   ```
-
-1. Run the tests, if they exist, and make sure they pass:
-
-   ```shellSession
-   nix-build -A projects.PROJECT_NAME.nixos.tests.TEST_NAME
-   ```
-
-1. [Run the overview locally](#running-and-testing-the-overview-locally), navigate to the project page and make sure that the program options and examples shows up correctly.
-
-1. [Make a Pull Request on GitHub](#how-to-create-pull-requests-to-ngipkgs)
-
 ## Triaging an NGI application
 
 An NGI-funded application is triaged by collecting relevant information and resources related to its packaging, which can be in the form of links to source repositories, documentation, previous packaging attempts, ...
@@ -440,6 +402,44 @@ In order to display a project on <ngi.nixos.org>, its metadata must be added to 
 1. Run the Nix code formatter with `nix fmt`
 1. Commit your changes and [create a new PR](#how-to-create-pull-requests-to-ngipkgs)
 
+## Implementing a program
+
+A program is a software applications that can be executed in the user's shell, which may have a Command-Line Interface (CLI), Terminal User Interface (TUI), or Graphical User Interface (GUI).
+
+1. To start, implement a NixOS module that adheres to the [program type](./projects/types.nix):
+
+<!-- TODO: figure out how to get this automatically from types.nix -->
+<!-- TODO: link to docs section on implementing an example? -->
+
+   ```nix
+   {
+     nixos.modules.programs.foobar = {
+       module = ./programs/foobar/module.nix;
+       examples."Enable foobar" = {
+         module = ./programs/foobar/examples/basic.nix;
+         description = "Usage instructions for foobar";
+         tests.basic.module = import ./programs/foobar/tests/basic.nix args;
+       };
+     };
+   }
+   ```
+
+1. Verify that the module is valid:
+
+   ```shellSession
+   nix-build -A checks.PROJECT_NAME
+   ```
+
+1. Run the tests, if they exist, and make sure they pass:
+
+   ```shellSession
+   nix-build -A projects.PROJECT_NAME.nixos.tests.TEST_NAME
+   ```
+
+1. [Run the overview locally](#running-and-testing-the-overview-locally), navigate to the project page and make sure that the program options and examples shows up correctly
+
+1. [Make a Pull Request on GitHub](#how-to-create-pull-requests-to-ngipkgs)
+
 ## How to add an example
 
 An example, is a valid configuration of an existing application module that illustrates how to use it.
@@ -454,12 +454,14 @@ To add an example:
 1. Figure out the application module options and how they are configured. For instace, this can be done by looking at the module's source code.
 
 2. Create a new `.nix` file to contain the valid example configuration.
+
 > [!NOTE]
 >
 > - Examples should work as-is without requiring additional configuration outside of what's shown.
 > - Include all necessary options and dependent services.
 
 3. In the project's `default.nix`, reference the example with a clear description:
+
 > [!NOTE]
 >
 > - Descriptions are for instructions on playing with the example.
@@ -474,8 +476,58 @@ To add an example:
      };
    };
    ```
+
 4. Ensure the example works by building and running its test.
 <!--TODO: Reference the tests section when it is written -->
+
+## How to add a project demo
+
+A demo is a practical demonstration of an application, providing an easy way for users to test its functionality and assess its suitability for their use cases.
+
+1. To start, implement a NixOS module that adheres to the [demo type](./projects/types.nix):
+
+   ```nix
+   nixos.demo.TYPE = {
+     module = ./path/to/application/configuration.nix;
+     demo-stuff = ./path/to/demo/only/configuration.nix;
+     description = ''
+       Instructions for using the application
+
+       1.
+       2.
+       3.
+     '';
+     tests = { };
+   };
+   ```
+
+   - `TYPE` can be either `vm` or `shell`, indicating the preferred environment for running the application: a NixOS VM or a terminal shell.
+   - `module` is meant for setting up the application, while `demo-stuff` is for demo-specific things, like [demo-shell](./overview/demo/shell.nix) configuration.
+
+1. Test the demo locally, with:
+
+   ```shellSession
+   nix-build -A demos.projectName && ./result
+   ```
+
+   or simply:
+
+   ```shellSession
+   bash $(nix-build -A demos.projectName)
+   ```
+
+   Following the usage instructions needs to produce the expected result.
+
+1. [Run the overview locally](#running-and-testing-the-overview-locally), navigate to the project page and make sure that the demo section shows up correctly
+
+1. [Make a Pull Request on GitHub](#how-to-create-pull-requests-to-ngipkgs)
+
+> [!IMPORTANT]
+> A demo requires tests and usage instructions, else it won't be displayed in the overview.
+
+> [!NOTE]
+>
+> - You can forward ports from the demo to the host by opening them in [the firewall](https://nixos.org/manual/nixos/unstable/index.html#sec-firewall).
 
 ## Running and testing the overview locally
 
