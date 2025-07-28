@@ -1,0 +1,34 @@
+From d3d782d7ffa0dfd15e7c872b46d3e1ead7e8dda1 Mon Sep 17 00:00:00 2001
+From: OPNA2608 <opna2608@protonmail.com>
+Date: Mon, 28 Jul 2025 21:38:28 +0200
+Subject: [PATCH] src/redis/mcaptcha_redis: Allow redis module to not be first
+ in list
+
+---
+ src/redis/mcaptcha_redis.rs | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/src/redis/mcaptcha_redis.rs b/src/redis/mcaptcha_redis.rs
+index 63eacd3..9d2adac 100644
+--- a/src/redis/mcaptcha_redis.rs
++++ b/src/redis/mcaptcha_redis.rs
+@@ -70,13 +70,9 @@ impl MCaptchaRedis {
+ impl MCaptchaRedisConnection {
+     async fn is_module_loaded(&self) -> CaptchaResult<()> {
+         if let Value::Bulk(s) = self.0.exec(redis::cmd("MODULE").arg("LIST")).await.unwrap() {
+-            if let Some(Value::Bulk(s)) = s.first() {
+-                match s.iter().find(|i| format!("{:?}", i).contains(MODULE_NAME)) {
+-                    Some(_) => (),
+-                    None => return Err(CaptchaError::MCaptchaRedisModuleIsNotLoaded),
+-                }
+-            } else {
+-                return Err(CaptchaError::MCaptchaRedisModuleIsNotLoaded);
++            match s.iter().find(|i| format!("{:?}", i).contains(MODULE_NAME)) {
++                Some(_) => (),
++                None => return Err(CaptchaError::MCaptchaRedisModuleIsNotLoaded),
+             }
+         }
+ 
+-- 
+2.50.0
+
