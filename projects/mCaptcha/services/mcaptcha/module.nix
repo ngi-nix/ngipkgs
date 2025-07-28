@@ -242,9 +242,11 @@ in
 
     systemd.services.mcaptcha.environment.MCAPTCHA_CONFIG = builtins.toString configFile;
     systemd.services.mcaptcha.after = [
+      "network-online.target"
       "syslog.target"
     ]
-    ++ lib.optionals cfg.database.createLocally [ "postgresql.service" ];
+    ++ lib.optionals cfg.database.createLocally [ "postgresql.target" ]
+    ++ lib.optionals cfg.redis.createLocally [ "redis-mcaptcha.service" ];
     systemd.services.mcaptcha.bindsTo = lib.optionals cfg.database.createLocally [
       "postgresql.service"
     ];
