@@ -80,7 +80,9 @@ in
 
       my_own_services.start()
       my_own_services.wait_for_unit("redis-mcaptcha.service")
-      my_own_services.wait_for_unit("postgresql.target")
+      # Waiting for postgresql in multiple steps to avoid timeouts under load
+      my_own_services.wait_for_unit("postgresql.service") # startup
+      my_own_services.wait_for_unit("postgresql.target") # initial setup finished
 
       mcaptcha.start()
 
