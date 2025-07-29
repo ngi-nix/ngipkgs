@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.owasp.enable = true;
+}
