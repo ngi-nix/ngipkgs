@@ -1,11 +1,13 @@
 {
-  stdenvNoCC,
+  stdenv,
   lib,
   fetchFromGitHub,
   runCommandNoCC,
   mkSbtDerivation,
+  bashNonInteractive,
   dpkg,
   fakeroot,
+  fpm,
   makeWrapper,
   jdk,
 }:
@@ -255,7 +257,60 @@ let
       runHook postInstall
     '';
   };
+
+  bbb-config = stdenv.mkDerivation (finalAttrs: {
+    pname = "bbb-config";
+    version = "3.0.10-bigbluebutton";
+
+    inherit src;
+
+    postPatch = ''
+      patchShebangs build/setup-inside-docker.sh build/packages-template
+
+      # This is for setting up cache persistency in docker across runs. We don't want this.
+      substituteInPlace build/setup-inside-docker.sh \
+        --replace-fail 'ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' '#ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' \
+        --replace-fail 'CACHE_DIR="/root/"' 'CACHE_DIR="''${SOURCE}/cache/"'
+    '';
+
+    strictDeps = true;
+
+    nativeBuildInputs = [
+      dpkg
+      fpm
+    ];
+
+    buildInputs = [
+      bashNonInteractive
+    ];
+
+    buildPhase = ''
+      runHook preBuild
+
+      env LOCAL_BUILD=1 build/setup-inside-docker.sh bbb-config
+
+      runHook postBuild
+    '';
+
+    # FIXME Missing dependencies of installed scripts
+    installPhase = ''
+      runHook preInstall
+
+      dpkg -x artifacts/*.deb $out
+
+      # Fix up Debian-isms
+
+      # No usr please, we have the prefix for that
+      mv -vt $out/ $out/usr/*
+      rmdir $out/usr
+
+      # Add Nix-isms
+
+      runHook postInstall
+    '';
+
+  });
 in
 {
-  inherit bbb-common-message bbb-apps-akka;
+  inherit bbb-common-message bbb-apps-akka bbb-config;
 }
