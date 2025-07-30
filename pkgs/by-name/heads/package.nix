@@ -13,6 +13,7 @@
   _experimental-update-script-combinators,
 
   autoconf,
+  automake,
   bashNonInteractive,
   bc,
   binwalk,
@@ -33,6 +34,7 @@
   imagemagick,
   innoextract,
   jq,
+  libtool,
   ncurses,
   nix,
   nixfmt-rfc-style,
@@ -48,7 +50,6 @@
   zlib,
 
   brandName ? "Heads",
-  withBlobs ? false,
 }:
 
 let
@@ -123,26 +124,28 @@ let
       hash = "sha256-AQLVaSOf3BTKhqevxLFtKxJwNAGJC4PhiPNNI4RIcNw=";
     }
   ];
-  blobsDir = runCommandNoCC "blobs-collected" { } (
-    ''
-      mkdir -p $out
-    ''
-    + lib.strings.optionalString withBlobs (
-      lib.strings.concatMapStringsSep "\n" (details: ''
-        ln -vs ${
-          fetchurl (
-            {
-              inherit (details) url hash;
-            }
-            # For some websites (looking at you Dell), we may need a more normal-looking user agent
-            // lib.optionalAttrs (lib.attrsets.hasAttr "curlOptsList" details) {
-              inherit (details) curlOptsList;
-            }
-          )
-        } $out/${details.name}
-      '') blobs
-    )
-  );
+  makeBlobsDir =
+    withBlobs:
+    runCommandNoCC "blobs-collected" { } (
+      ''
+        mkdir -p $out
+      ''
+      + lib.strings.optionalString withBlobs (
+        lib.strings.concatMapStringsSep "\n" (details: ''
+          ln -vs ${
+            fetchurl (
+              {
+                inherit (details) url hash;
+              }
+              # For some websites (looking at you Dell), we may need a more normal-looking user agent
+              // lib.optionalAttrs (lib.attrsets.hasAttr "curlOptsList" details) {
+                inherit (details) curlOptsList;
+              }
+            )
+          } $out/${details.name}
+        '') blobs
+      )
+    );
   deps = import ./deps.nix;
   patches = import ./patches {
     inherit lib replaceVars;
@@ -171,7 +174,11 @@ let
     perlInterpreter = lib.getExe perl;
   };
   generic =
-    board:
+    {
+      board,
+      withBlobs ? false,
+      arch ? "x86",
+    }:
     stdenv.mkDerivation (finalAttrs: {
       pname = "heads-${board}";
       version = "0.2.1-unstable-2025-04-03";
@@ -185,7 +192,7 @@ let
 
       patches = [
         (replaceVars ./2001-heads-Take-blobs-from-prefetched-blobsDir.patch.in {
-          inherit blobsDir;
+          blobsDir = makeBlobsDir withBlobs;
         })
 
         ./2002-heads-Adjust-to-binwalk-3.x.patch
@@ -237,7 +244,7 @@ let
       '';
 
       preConfigure = ''
-        mkdir -p build/x86 packages/x86
+        mkdir -p build/${arch} packages/${arch}
       ''
       + lib.strings.concatMapStringsSep "\n" (
         details:
@@ -249,14 +256,14 @@ let
           pinnedRev = if details.pinned then details.rev else "";
         in
         ''
-          echo "'${download}' -> '$PWD/build/x86/${details.name}'"
-          cp -r ${download} build/x86/${details.name}
+          echo "'${download}' -> '$PWD/build/${arch}/${details.name}'"
+          cp -r ${download} build/${arch}/${details.name}
 
           # We copy from store, and need to keep mode for scripts to continue being executable
           # But we also want to write into this copy (i.e. the .canary), so make everything writable
-          chmod -R +w build/x86/${details.name}
+          chmod -R +w build/${arch}/${details.name}
 
-          echo '${details.url}|${pinnedRev}' > build/x86/${details.name}/.canary
+          echo '${details.url}|${pinnedRev}' > build/${arch}/${details.name}/.canary
         ''
       ) deps.modules
       + lib.strings.concatMapStringsSep "\n" (details: ''
@@ -264,19 +271,19 @@ let
           fetchurl {
             inherit (details) url hash;
           }
-        } packages/x86/${details.name}
+        } packages/${arch}/${details.name}
       '') deps.pkgs
       + lib.strings.concatMapAttrsStringSep "\n" (
         corebootName: crossgccArchives:
         ''
-          mkdir -p packages/x86/${corebootName}
+          mkdir -p packages/${arch}/${corebootName}
         ''
         + lib.strings.concatMapStringsSep "\n" (details: ''
           cp -vr --no-preserve=mode ${
             fetchurl {
               inherit (details) url hash;
             }
-          } packages/x86/${corebootName}/${details.name}
+          } packages/${arch}/${corebootName}/${details.name}
         '') crossgccArchives
       ) deps.crossgcc-deps
       + lib.strings.concatMapAttrsStringSep "\n" (
@@ -291,14 +298,15 @@ let
       + ''
         # Couldn't patchShebangs before, as they're from a dependency that would've been fetched during build
         patchShebangs \
-          build/x86/coreboot-*/util/xcompile/xcompile \
-          build/x86/coreboot-*/util/genbuild_h/genbuild_h.sh
+          build/${arch}/coreboot-*/util/xcompile/xcompile \
+          build/${arch}/coreboot-*/util/genbuild_h/genbuild_h.sh
       '';
 
       strictDeps = true;
 
       nativeBuildInputs = [
-        autoconf # autom4te
+        autoconf
+        automake
         bc
         binwalk
         bison
@@ -311,6 +319,7 @@ let
         git # applying patch files to fetched repos
         imagemagick
         innoextract
+        libtool
         ncurses # tic / infocmp when building on non-x86
         perl
         pkg-config
@@ -374,7 +383,7 @@ let
       installPhase = ''
         runHook preInstall
 
-        install -t $out -Dm644 build/x86/${board}/${finalAttrs.passthru.romName}
+        install -t $out -Dm644 build/${arch}/${board}/${finalAttrs.passthru.romName}
 
         runHook postInstall
       '';
@@ -431,12 +440,25 @@ let
       };
     });
 
+  # Change change settings that are passed to genericbuilder function for certain boards
+  boardSettingsOverrides = {
+    # Talos II is a POWER board
+    "UNTESTED_talos-2" = {
+      arch = "ppc64";
+    };
+  };
+
   generateBoards =
     allowedBoards:
     lib.attrsets.listToAttrs (
       lib.lists.map (board: {
         name = "${board}";
-        value = generic board;
+        value = generic (
+          {
+            inherit board;
+          }
+          // lib.optionalAttrs (boardSettingsOverrides ? ${board}) boardSettingsOverrides.${board}
+        );
       }) (lib.lists.intersectLists deps.boards allowedBoards)
     );
 in
@@ -456,14 +478,23 @@ lib.makeScope newScope (
       "qemu-coreboot-fbwhiptail-tpm1-hotp-prod"
       "qemu-coreboot-fbwhiptail-tpm1-hotp-prod_quiet"
       "qemu-coreboot-fbwhiptail-tpm1-prod"
+      "qemu-coreboot-fbwhiptail-tmp2"
+      "qemu-coreboot-fbwhiptail-tpm2-hotp"
+      "qemu-coreboot-fbwhiptail-tpm2-hotp-prod"
+      "qemu-coreboot-fbwhiptail-tpm2-hotp-prod_quiet"
+      "qemu-coreboot-fbwhiptail-tpm2-prod"
       "qemu-coreboot-whiptail-tmp1"
       "qemu-coreboot-whiptail-tpm1-hotp"
       "qemu-coreboot-whiptail-tpm1-hotp-prod"
       "qemu-coreboot-whiptail-tmp1-prod"
+      "qemu-coreboot-whiptail-tmp2"
+      "qemu-coreboot-whiptail-tpm2-hotp"
+      "qemu-coreboot-whiptail-tpm2-hotp-prod"
+      "qemu-coreboot-whiptail-tmp2-prod"
     ];
   in
   {
-    inherit allowedBoards generateBoards;
+    inherit allowedBoards boardSettingsOverrides generateBoards;
   }
   // generateBoards allowedBoards
 )
