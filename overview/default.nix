@@ -150,16 +150,30 @@ let
           imports = [ ./content-types/metadata-links.nix ];
           links = project.metadata.links or null;
         };
+
+        breadcrumbs = ''
+          <nav aria-label="Breadcrumb" class="breadcrumb">
+            <ol>
+              <li>
+                <a href="/">Projects</a>
+              </li>
+              <li"><a href="/project/${name}" aria-current="page">${name}</a></li>
+            </ol>
+          </nav>
+        '';
+
+        demo-instructions = optionalString (project.nixos.demo != null) (
+          lib.concatMapAttrsStringSep "\n" (
+            type: demo: toString (render.serviceDemo.one type demo)
+          ) project.nixos.demo
+        );
       in
       ''
         <article class="page-width">
+          ${breadcrumbs}
           ${heading 1 null name}
           ${metadata-summary}
-          ${optionalString (project.nixos.demo != null) (
-            lib.concatMapAttrsStringSep "\n" (
-              type: demo: toString (render.serviceDemo.one type demo)
-            ) project.nixos.demo
-          )}
+          ${demo-instructions}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
           ${examples}
