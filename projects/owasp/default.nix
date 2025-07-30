@@ -23,9 +23,7 @@
         module = ./programs/owasp/examples/basic.nix;
         description = "Enable the owasp tools";
         tests.blint.module = import ./programs/owasp/tests/blint.nix args;
-        # I'm having trouble writing a dep-scan test that doesn't rely on the internet.
-        # I'm trying to get some support from upstream, so I'll leave this commented out
-        # for now and will write one when I figure it out.
+        tests.depscan.module = import ./programs/owasp/tests/depscan.nix args;
       };
     };
   };
@@ -34,8 +32,6 @@
     module = ./programs/owasp/examples/basic.nix;
     description = "owasp usage examples";
     tests.blint.module = import ./programs/owasp/tests/blint.nix args;
-    # I'm having trouble writing a dep-scan test that doesn't rely on the internet.
-    # I'm trying to get some support from upstream, so I'll leave this commented out
-    # for now and will write one when I figure it out.
+    tests.depscan.module = import ./programs/owasp/tests/depscan.nix args;
   };
 }
