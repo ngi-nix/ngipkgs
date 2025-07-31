@@ -52,11 +52,25 @@
       services = {
         peertube = {
           module = ./services/peertube/module.nix;
-          examples.basic = {
+          examples.basic-server = {
             module = ./services/peertube/examples/basic.nix;
             description = "Basic server configuration";
             tests.peertube-plugins.module = import ./services/peertube/tests/peertube-plugins.nix args;
             tests.peertube-plugin-livechat.module = import ./services/peertube/tests/peertube-plugin-livechat.nix args;
+          };
+        };
+        peertube-runner = {
+          module = lib.moduleLocFromOptionString "services.peertube-runner";
+          examples.basic-runner = {
+            module = ./services/peertube-runner/examples/basic.nix;
+            description = "Basic peertube-runner configuration";
+            tests.basic-runner.module = import ./services/peertube-runner/tests/basic.nix args;
+          };
+          links = {
+            docs = {
+              text = "Documentation";
+              url = "https://docs.joinpeertube.org/admin/remote-runners";
+            };
           };
         };
       };
