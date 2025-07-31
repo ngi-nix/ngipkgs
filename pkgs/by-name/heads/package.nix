@@ -440,6 +440,8 @@ let
               "UNMAINTAINED_kgpe-d16_workstation-usb_keyboard"
             ];
           in
+          # Not a user input, but let's make sure this doesn't silently bitrot
+          assert lib.asserts.assertEachOneOf "meta.broken (boards list)" coreboot-411-boards deps.boards;
           lib.lists.elem board coreboot-411-boards;
       };
     });
@@ -454,6 +456,10 @@ let
 
   generateBoards =
     allowedBoards:
+    assert lib.asserts.assertEachOneOf "allowedBoards" allowedBoards deps.boards;
+    assert lib.asserts.assertEachOneOf "boardSettingsOverrides"
+      (builtins.attrNames boardSettingsOverrides)
+      deps.boards;
     lib.attrsets.listToAttrs (
       lib.lists.map (board: {
         name = "${board}";
@@ -463,7 +469,7 @@ let
           }
           // lib.optionalAttrs (boardSettingsOverrides ? ${board}) boardSettingsOverrides.${board}
         );
-      }) (lib.lists.intersectLists deps.boards allowedBoards)
+      }) allowedBoards
     );
 in
 lib.makeScope newScope (
@@ -486,24 +492,24 @@ lib.makeScope newScope (
       "librem_l1um_v2"
       "librem_mini"
       "librem_mini_v2"
-      "qemu-coreboot-fbwhiptail-tmp1"
+      "qemu-coreboot-fbwhiptail-tpm1"
       "qemu-coreboot-fbwhiptail-tpm1-hotp"
       "qemu-coreboot-fbwhiptail-tpm1-hotp-prod"
       "qemu-coreboot-fbwhiptail-tpm1-hotp-prod_quiet"
       "qemu-coreboot-fbwhiptail-tpm1-prod"
-      "qemu-coreboot-fbwhiptail-tmp2"
+      "qemu-coreboot-fbwhiptail-tpm2"
       "qemu-coreboot-fbwhiptail-tpm2-hotp"
       "qemu-coreboot-fbwhiptail-tpm2-hotp-prod"
       "qemu-coreboot-fbwhiptail-tpm2-hotp-prod_quiet"
       "qemu-coreboot-fbwhiptail-tpm2-prod"
-      "qemu-coreboot-whiptail-tmp1"
+      "qemu-coreboot-whiptail-tpm1"
       "qemu-coreboot-whiptail-tpm1-hotp"
       "qemu-coreboot-whiptail-tpm1-hotp-prod"
-      "qemu-coreboot-whiptail-tmp1-prod"
-      "qemu-coreboot-whiptail-tmp2"
+      "qemu-coreboot-whiptail-tpm1-prod"
+      "qemu-coreboot-whiptail-tpm2"
       "qemu-coreboot-whiptail-tpm2-hotp"
       "qemu-coreboot-whiptail-tpm2-hotp-prod"
-      "qemu-coreboot-whiptail-tmp2-prod"
+      "qemu-coreboot-whiptail-tpm2-prod"
     ];
   in
   {
