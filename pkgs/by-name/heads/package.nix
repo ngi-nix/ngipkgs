@@ -39,6 +39,8 @@
   nix,
   nixfmt-rfc-style,
   nix-prefetch-scripts,
+  nss,
+  openssl,
   perl,
   pkg-config,
   python3,
@@ -336,6 +338,8 @@ let
 
       buildInputs = [
         elfutils
+        nss
+        openssl
         zlib
       ];
 
@@ -473,6 +477,15 @@ lib.makeScope newScope (
     # install: cannot change permissions of '/build/source/install/x86/sbin/dmsetup.static': No such file or directory
     # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
     allowedBoards = [
+      "librem_11"
+      "librem_13v2"
+      "librem_13v4"
+      "librem_14"
+      "librem_15v3"
+      "librem_15v4"
+      "librem_l1um_v2"
+      "librem_mini"
+      "librem_mini_v2"
       "qemu-coreboot-fbwhiptail-tmp1"
       "qemu-coreboot-fbwhiptail-tpm1-hotp"
       "qemu-coreboot-fbwhiptail-tpm1-hotp-prod"
