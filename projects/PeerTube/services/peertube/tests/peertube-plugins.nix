@@ -14,7 +14,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.peertube
-          sources.examples.PeerTube.basic
+          sources.examples.PeerTube.basic-server
         ];
 
         # Test every plugin
