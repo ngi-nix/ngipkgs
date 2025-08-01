@@ -150,11 +150,17 @@ let
           imports = [ ./content-types/metadata-links.nix ];
           links = project.metadata.links or null;
         };
+
+        download-binary = eval {
+          imports = [ ./content-types/download-instructions.nix ];
+          heading = heading 2 "binary" ("Download Binary");
+        };
       in
       ''
         <article class="page-width">
           ${heading 1 null name}
           ${metadata-summary}
+          ${download-binary}
           ${optionalString (project.nixos.demo != null) (
             lib.concatMapAttrsStringSep "\n" (
               type: demo: toString (render.serviceDemo.one type demo)
