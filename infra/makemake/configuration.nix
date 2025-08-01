@@ -76,6 +76,7 @@
       ];
       remotebuild = with keys; [
         getpsyched
+        lonerOrz
         prince213
       ];
     in
