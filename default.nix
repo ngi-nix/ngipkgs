@@ -171,8 +171,6 @@ rec {
       ngipkgs =
         { ... }:
         {
-          # TODO: properly separate the demo modules from production code
-          imports = [ ./overview/demo/shell.nix ];
           nixpkgs.overlays = [ overlays.default ];
         };
     }
@@ -308,14 +306,23 @@ rec {
     raw-projects = evaluated-modules.config.projects;
   };
 
+  project-demos = lib.filterAttrs (name: value: value != null) (
+    lib.mapAttrs (
+      name: value: value.nixos.demo.vm or value.nixos.demo.shell or null
+    ) evaluated-modules.config.projects
+  );
+
   demo = import ./overview/demo {
     inherit
       lib
       pkgs
       sources
-      extendedNixosModules
       system
       ;
+    demo-modules = lib.flatten (
+      lib.mapAttrsToList (name: value: value.module-demo.imports) project-demos
+    );
+    nixos-modules = extendedNixosModules;
   };
 
   inherit (demo)
