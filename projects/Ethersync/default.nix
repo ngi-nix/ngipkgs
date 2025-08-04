@@ -30,6 +30,10 @@
       examples."Enable Ethersync" = {
         module = ./programs/ethersync/examples/basic.nix;
         tests.basic.module = import ./programs/ethersync/tests/basic.nix args;
+        tests.basic.problem.broken.reason = ''
+          Needs a self-hosted relay server to work non-interactively (without internet).
+          Requires: https://github.com/ethersync/ethersync/issues/344
+        '';
       };
     };
   };
@@ -53,5 +57,9 @@
       :EthersyncJumpToCursor.
     '';
     tests.demo.module = import ./programs/ethersync/tests/basic.nix args;
+    tests.demo.problem.broken.reason = ''
+      Needs a self-hosted relay server to work non-interactively (without internet).
+      Requires: https://github.com/ethersync/ethersync/issues/344
+    '';
   };
 }
