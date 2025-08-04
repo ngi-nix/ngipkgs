@@ -49,6 +49,7 @@
 
     demo.shell = {
       module = ./programs/examples/example.nix;
+      demo-config = ./demo/module.nix;
       tests.demo.module = import ./programs/tests/test.nix args;
     };
   };
