@@ -17,9 +17,5 @@ in
     environment.systemPackages = with pkgs; [
       cfg.package
     ];
-
-    demo-shell.owi.programs = {
-      owi = cfg.package;
-    };
   };
 }

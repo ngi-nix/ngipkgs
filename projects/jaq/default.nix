@@ -28,6 +28,7 @@
 
   nixos.demo.shell = {
     module = ./programs/jaq/examples/basic.nix;
+    module-demo = ./module-demo.nix;
     description = ''
       A demo shell for testing jaq, a data wrangling tool with formal semantics similar to jq.
 

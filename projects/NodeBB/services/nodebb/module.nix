@@ -246,12 +246,6 @@ in
         };
 
         networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.settings.port;
-
-        programs.bash.interactiveShellInit = lib.mkIf (config ? demo && config.demo) ''
-          echo "NodeBB is starting. Please wait ..."
-          until systemctl show nodebb.service | grep -q ActiveState=active; do sleep 1; done
-          echo "NodeBB is ready at http://localhost:${toString cfg.settings.port}"
-        '';
       }
       (lib.mkIf (cfg.enableLocalDB && cfg.settings.database == "postgres") {
         systemd.services.nodebb.after = [ "postgresql.service" ];

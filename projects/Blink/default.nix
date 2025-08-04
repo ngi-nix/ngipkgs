@@ -35,6 +35,7 @@
         It should either open the application as a window, or add an entry to your desktop's indicator bar.
       '';
       module = ./examples/basic.nix;
+      module-demo = ./module-demo.nix;
       tests.basic.module = import ./tests/basic.nix args;
     };
   };
