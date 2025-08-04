@@ -1,5 +1,4 @@
 {
-  sources,
   config,
   pkgs,
   lib,
@@ -17,8 +16,8 @@ let
     demo-shell:
     pkgs.writeShellApplication rec {
       name = "demo-shell";
-      runtimeInputs = lib.attrValues (lib.concatMapAttrs (name: value: value.programs) demo-shell);
-      runtimeEnv = lib.concatMapAttrs (name: value: value.env) demo-shell;
+      runtimeInputs = lib.attrValues demo-shell.programs;
+      runtimeEnv = demo-shell.env;
       passthru.inheritManPath = false;
       # HACK: start shell from ./result
       derivationArgs.postCheck = ''
@@ -40,7 +39,7 @@ in
   options.demo-shell = mkOption {
     type =
       with types;
-      attrsOf (submodule {
+      submodule {
         options = {
           programs = mkOption {
             type = attrsOf package;
@@ -60,7 +59,8 @@ in
             default = { };
           };
         };
-      });
+      };
+    default = { };
   };
 
   options.shells = mkOption {
@@ -75,10 +75,8 @@ in
           bash.activate = mkOption {
             type = nullOr package;
             default = null;
+            apply = self: activate config.demo-shell;
           };
-        };
-        config = lib.mkIf config.shells.bash.enable {
-          bash.activate = activate config.demo-shell;
         };
       };
     default = { };
