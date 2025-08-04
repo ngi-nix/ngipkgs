@@ -1,0 +1,32 @@
+diff --git a/client/src/app/+admin/admin-settings.component.ts b/client/src/app/+admin/admin-settings.component.ts
+index 5f0ec2e12..2d398b3df 100644
+--- a/client/src/app/+admin/admin-settings.component.ts
++++ b/client/src/app/+admin/admin-settings.component.ts
+@@ -76,13 +76,6 @@ export class AdminSettingsComponent implements OnInit {
+               pluginType: PluginType.PLUGIN
+             }
+           },
+-          {
+-            label: $localize`Search plugins`,
+-            routerLink: '/admin/settings/plugins/search',
+-            queryParams: {
+-              pluginType: PluginType.PLUGIN
+-            }
+-          },
+           {
+             label: $localize`Installed themes`,
+             routerLink: '/admin/settings/plugins/list-installed',
+@@ -90,13 +83,6 @@ export class AdminSettingsComponent implements OnInit {
+               pluginType: PluginType.THEME
+             }
+           },
+-          {
+-            label: $localize`Search themes`,
+-            routerLink: '/admin/settings/plugins/search',
+-            queryParams: {
+-              pluginType: PluginType.THEME
+-            }
+-          }
+         ]
+       })
+     }

@@ -1,0 +1,16 @@
+diff --git a/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html b/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html
+index 3dc651b16..59eacf1ba 100644
+--- a/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html
++++ b/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html
+@@ -17,11 +26,6 @@
+           [label]="getUpdateLabel(plugin)" icon="refresh" [responsiveLabel]="true"
+         ></my-button>
+ 
+-        <my-delete-button
+-          (click)="uninstall(plugin)"
+-          label="Uninstall" i18n-label [responsiveLabel]="true"
+-          [disabled]="isUpdating(plugin) || isUninstalling(plugin)"
+-        ></my-delete-button>
+       </div>
+     </my-plugin-card>
+   </ng-container>
