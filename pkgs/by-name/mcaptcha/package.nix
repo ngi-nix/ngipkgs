@@ -122,7 +122,6 @@ let
       pname = "cache-bust";
       inherit version;
 
-      useFetchCargoVendor = true;
       cargoHash = "sha256-e18PJFmvUf3droMT26Q0ZCgVFCwG9y/efPFO0SlILW0=";
     };
 

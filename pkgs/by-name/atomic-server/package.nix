@@ -21,7 +21,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-iZRKgRQL/+6RavFMWEugpd8+sWgXgE+itqak5BZe51s=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-Lf3IjITpfAhPAznUNZyl1WJtWxNUmySPlzvsPHl7t68=";
 
   # server/assets_tmp is the directory atomic-server's build will check for
