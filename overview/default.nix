@@ -321,6 +321,14 @@ let
               setTimeout(() => label.textContent = "Copy", 2000);
             }
           }
+
+          // Automatically open target element on page load
+          function openTarget() {
+            var hash = location.hash.substring(1);
+            if(hash) var details = document.getElementById(hash);
+            if(details && details.tagName.toLowerCase() === 'details') details.open = true;
+          }
+          window.addEventListener('load', openTarget);
         </script>
       </body>
       </html>
