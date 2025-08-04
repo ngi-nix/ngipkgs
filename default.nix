@@ -295,11 +295,12 @@ rec {
                 in
                 if lib.isDerivation test then test else pkgs.nixosTest args;
               # TODO: refactor
-              tests =
-                (empty-if-null project.nixos.tests or { })
-                // (filter-map (nixos.examples or { }) "tests")
-                // (filter-map (nixos.demo.vm or { }) "tests")
-                // (filter-map (nixos.demo.shell or { }) "tests");
+              tests = foldl recursiveUpdate { } [
+                (project.nixos.tests or { })
+                (nixos.demo.vm.tests or { })
+                (nixos.demo.shell.tests or { })
+                (filter-map (nixos.examples or { }) "tests")
+              ];
               filtered-tests = filterAttrs (
                 _: test: (!test ? problem.broken) && (test ? module && test.module != null)
               ) tests;
