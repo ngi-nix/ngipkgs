@@ -144,7 +144,7 @@ rec {
     inherit lib;
     projects = evaluated-modules.config.projects;
     self = flake;
-    pkgs = pkgs // ngipkgs;
+    pkgs = pkgs.extend overlays.default;
     options = optionsDoc.optionsNix;
   };
 
@@ -231,7 +231,7 @@ rec {
 
   raw-projects = import ./projects {
     inherit lib system;
-    pkgs = pkgs // ngipkgs;
+    pkgs = pkgs.extend overlays.default;
     sources = {
       inputs = sources;
       modules = nixos-modules;
