@@ -19,7 +19,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.ethersync
-          sources.examples.Ethersync.demo-shell
+          sources.examples.Ethersync."Enable Ethersync"
         ];
         services.getty.autologinUser = "root";
       };
@@ -47,7 +47,7 @@
   testScript =
     let
       key = "CAESQGurlr9XTdGuz2nXI6esucINWpDoLBIW2qlYhOKGrggLrd9aLlCdAp1iQE6ZEMzFFVv5KQXp7sTB+YhllBZ/NgQ=";
-      peer = "12D3KooWMX6EYnLXfWs3vsGhtWgqBfRSoWqs4GiDMu3rB4qSjRpX";
+      secret-address = "320e79a691e6f605c04d3579bac1870947898658bd27e8d4ceb60f80bf0fefc2#86ae080baddf5a2e509d029d62404e9910ccc5155bf92905e9eec4c1f9886594";
     in
     ''
       import time
@@ -58,15 +58,17 @@
       # enable ethersync for the directory
       server.succeed("mkdir -p .ethersync")
       server.succeed("echo ${key} | base64 -d >.ethersync/key")
+      server.succeed("chmod go-rwx .ethersync")
       server.succeed("chmod 600 .ethersync/key")
       server.succeed("echo server >file.txt")
-      server.execute("ethersync daemon --port 4242 >/dev/null &")
-      server.wait_for_open_port(4242)
+      server.execute("ethersync share >/dev/null &")
 
       client.wait_for_unit("default.target")
       # enable ethersync for the directory
       client.send_chars("mkdir -p .ethersync\n")
-      client.send_chars("ethersync daemon --peer /ip4/192.168.1.1/tcp/4242/p2p/${peer} >/dev/null 2>&1 &\n")
+      client.send_chars("chmod go-rwx .ethersync\n")
+      client.send_chars("echo peer=${secret-address} >.ethersync/config\n")
+      client.send_chars("ethersync join >/dev/null 2>&1 &\n")
       client.wait_until_succeeds("test -s /root/file.txt")
 
       client.send_chars("nvim file.txt\n")
