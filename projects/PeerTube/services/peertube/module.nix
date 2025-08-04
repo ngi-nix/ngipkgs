@@ -213,14 +213,23 @@ in
         );
     in
     lib.mkIf (peerCfg.enable && cfg.enable) {
-      services.peertube.package = cfg.package.overrideAttrs (oa: {
-        # yarn can't handle npm caches, and we can't build npm packages with our yarn tooling
-        # Working on getting declarative plugin management into upstream to avoid this: https://github.com/Chocobozzz/PeerTube/issues/6428
-        postPatch = (oa.postPatch or "") + ''
-          substituteInPlace server/core/lib/plugins/yarn.ts \
-            --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
-        '';
-      });
+      services.peertube = {
+        settings.plugins.index.enabled = false;
+        package = cfg.package.overrideAttrs (previousAttrs: {
+          patches = (previousAttrs.patches or [ ]) ++ [
+            ./disable-plugin-uninstall.patch
+            ./disable-plugin-browsing.patch
+            ./plugins-managed-by-nix-message.patch
+          ];
+
+          # yarn can't handle npm caches, and we can't build npm packages with our yarn tooling
+          # Working on getting declarative plugin management into upstream to avoid this: https://github.com/Chocobozzz/PeerTube/issues/6428
+          postPatch = (previousAttrs.postPatch or "") + ''
+            substituteInPlace server/core/lib/plugins/yarn.ts \
+              --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
+          '';
+        });
+      };
 
       systemd.services = {
         peertube-plugins-initial = mkPluginService false;
