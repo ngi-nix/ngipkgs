@@ -46,8 +46,9 @@ in
           '';
         in
         optionalString (self.project-options != [ ] || self.module == null) ''
-          <details><summary>${option-header}</summary>
-          <dl>${concatLines (map toString self.project-options)}</dl>
+          <details id="${join "." self.prefix}">
+            <summary>${option-header}</summary>
+            <dl class="option-list">${concatLines (map toString self.project-options)}</dl>
           </details>
         '';
     };

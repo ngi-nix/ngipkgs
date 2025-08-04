@@ -54,7 +54,9 @@ in
                   <a
                     class="deliverable-tag ${optionalString (deliverable.hasProblem) "deliverable-has-problem"}"
                     title="${deliverable.name} ${deliverable.type}${optionalString (deliverable.hasProblem) " has a problem"}"
-                    href="/project/${self.name}#${deliverable.type}"
+                    href="/project/${self.name}#${
+                      if deliverable.type != "demo" then "${deliverable.type}s.${deliverable.name}" else "demo"
+                    }"
                   >
                     ${deliverable.type}
                   </a>
