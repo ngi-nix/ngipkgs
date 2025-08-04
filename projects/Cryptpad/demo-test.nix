@@ -12,7 +12,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.cryptpad
-          sources.examples.Cryptpad.demo
+          sources.examples.Cryptpad."Enable Cryptpad"
         ];
       };
   };
