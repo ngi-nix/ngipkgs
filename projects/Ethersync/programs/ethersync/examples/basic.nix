@@ -4,6 +4,7 @@
   programs.ethersync.enable = true;
 
   programs.vscode = {
+    enable = true;
     # vscodium because vscode is unfree
     package = pkgs.vscodium;
     extensions = [
@@ -16,7 +17,7 @@
     configure = {
       packages.ethersync = {
         start = [
-          pkgs.nvim-ethersync
+          pkgs.vimPlugins.ethersync
         ];
       };
     };
