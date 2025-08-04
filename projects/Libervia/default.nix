@@ -41,7 +41,15 @@
         backend = {
           description = "Enables manually starting Libervia's backend and the use of its CLI and TUI clients.";
           module = ./examples/backend.nix;
-          tests.backend.module = import ./tests/backend.nix args;
+          tests.backend = {
+            module = import ./tests/backend.nix args;
+            problem.broken.reason = ''
+              Fetching times out given the slow source repo: https://repos.goffi.org
+
+              https://buildbot.ngi.nixos.org/#/builders/264/builds/2251
+              https://buildbot.ngi.nixos.org/#/builders/260/builds/2254
+            '';
+          };
         };
         desktop = {
           description = "Enables the use of the Kivy desktop client for Libervia.";

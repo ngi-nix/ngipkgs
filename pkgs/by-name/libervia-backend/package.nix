@@ -180,5 +180,7 @@ python3Packages.buildPythonApplication rec {
     changelog = "https://repos.goffi.org/libervia-backend/file/${src.rev}/CHANGELOG";
     license = lib.licenses.agpl3Plus;
     maintainers = [ ];
+    # FIX: The source repo is slow, so fetching times out
+    broken = true;
   };
 }
