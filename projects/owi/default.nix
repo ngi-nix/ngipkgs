@@ -28,6 +28,7 @@
 
   nixos.demo.shell = {
     module = ./programs/owi/examples/basic.nix;
+    module-demo = ./module-demo.nix;
     description = "owi usage example";
     tests.basic.module = pkgs.nixosTests.owi;
   };

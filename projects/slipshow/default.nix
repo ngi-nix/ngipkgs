@@ -27,6 +27,7 @@
 
   nixos.demo.shell = {
     module = ./programs/slipshow/examples/basic.nix;
+    module-demo = ./module-demo.nix;
     description = "slipshow example";
     tests.basic.module = import ./programs/slipshow/tests/shell.nix args;
   };

@@ -15,11 +15,5 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ cfg.package ];
-
-    demo-shell.ethersync.programs = {
-      ethersync = cfg.package;
-      neovim = config.programs.neovim.finalPackage;
-      vscode = config.programs.vscode.finalPackage;
-    };
   };
 }

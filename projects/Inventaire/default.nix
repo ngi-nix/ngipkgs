@@ -4,15 +4,6 @@
   sources,
   ...
 }@args:
-let
-  exampleDetails = {
-    description = ''
-      A (very insecure!) example of setting up Inventaire and its dependencies on the local machine.
-    '';
-    module = ./examples/basic.nix;
-    tests.basic.module = import ./tests/basic.nix args;
-  };
-in
 {
   metadata = {
     summary = ''
@@ -40,8 +31,18 @@ in
         };
       };
       module = ./module.nix;
-      examples."Enable Inventaire" = exampleDetails;
+      examples."Enable Inventaire" = {
+        description = ''
+          A (very insecure!) example of setting up Inventaire and its dependencies on the local machine.
+        '';
+        module = ./examples/basic.nix;
+        tests.basic.module = import ./tests/basic.nix args;
+      };
     };
-    demo.vm = exampleDetails;
+    demo.vm = {
+      module = ./examples/basic.nix;
+      module-demo = ./module-demo.nix;
+      tests.basic.module = import ./tests/basic.nix args;
+    };
   };
 }

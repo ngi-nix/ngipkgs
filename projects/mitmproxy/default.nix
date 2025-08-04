@@ -25,6 +25,7 @@
   };
   nixos.demo.shell = {
     module = ./demo.nix;
+    module-demo = ./module-demo.nix;
     description = "";
     tests.demo.module = pkgs.nixosTests.mitmproxy;
   };

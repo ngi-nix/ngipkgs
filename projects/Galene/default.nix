@@ -40,6 +40,7 @@ in
   };
   nixos.demo.vm = {
     module = ./example.nix;
+    module-demo = ./module-demo.nix;
     description = ''
       A demo VM for testing Galène.
 
