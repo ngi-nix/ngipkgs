@@ -170,11 +170,5 @@ in
         );
       };
     };
-
-    programs.bash.interactiveShellInit = lib.mkIf (config ? demo && config.demo) ''
-      echo "Inventaire is starting. Please wait ..."
-      until systemctl show inventaire.service | grep -q ActiveState=active; do sleep 1; done
-      echo "Inventaire is ready at http://localhost:${toString cfg.settings.port}"
-    '';
   };
 }

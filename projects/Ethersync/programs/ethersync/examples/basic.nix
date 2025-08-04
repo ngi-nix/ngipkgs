@@ -4,6 +4,7 @@
   programs.ethersync.enable = true;
 
   programs.vscode = {
+    enable = true;
     # vscodium because vscode is unfree
     package = pkgs.vscodium;
     extensions = [

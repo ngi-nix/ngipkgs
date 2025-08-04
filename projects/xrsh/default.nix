@@ -38,6 +38,7 @@
 
   nixos.demo.shell = {
     module = ./programs/xrsh/examples/basic.nix;
+    demo-config = ./demo/module.nix;
     description = ''
       Run `xrsh` in the demo shell.
 

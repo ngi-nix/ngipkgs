@@ -20,7 +20,7 @@
   };
   nixos.demo.shell = {
     module = ./demo.nix;
-    description = "";
+    demo-config = ./demo/module.nix;
     tests.demo.module = null;
   };
 }

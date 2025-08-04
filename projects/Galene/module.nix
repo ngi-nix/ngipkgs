@@ -22,13 +22,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.bash.interactiveShellInit = lib.mkIf (config ? demo && config.demo) ''
-      echo "Galène is starting. Please wait ..."
-      until systemctl show galene.service | grep -q ActiveState=active; do sleep 1; done
-      echo "Galène is ready at http://localhost:${toString cfg.httpPort}"
-      echo "Galène group dir is: ${cfg.groupsDir}"
-    '';
-
     networking.firewall.allowedTCPPorts = lib.optionals cfg.openFirewall [
       cfg.httpPort
     ];

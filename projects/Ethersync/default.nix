@@ -32,6 +32,7 @@
 
   nixos.demo.shell = {
     module = ./programs/ethersync/examples/basic.nix;
+    demo-config = ./demo/module.nix;
     description = ''
       Ethersync enables real-time collaborative editing of local text files.
 
