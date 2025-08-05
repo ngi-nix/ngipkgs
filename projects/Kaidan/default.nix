@@ -36,9 +36,9 @@
         description = "Kaidan example with local XMPP Server";
         tests.kaidan.module = import ./programs/kaidan/tests/kaidan.nix args;
         tests.kaidan.problem.broken.reason = ''
-          The test hangs for a long time and ultimately fails:
+          Prosody hangs for a long time:
 
-          https://buildbot.ngi.nixos.org/#/builders/947/builds/209/steps/1/logs/stdio
+          https://buildbot.ngi.nixos.org/#/builders/1231/builds/1/steps/1/logs/stdio
 
           Investigate why and fix it.
         '';
@@ -49,6 +49,13 @@
   nixos.demo.vm = {
     module = ./programs/kaidan/examples/demo.nix;
     tests.demo.module = import ./programs/kaidan/tests/kaidan.nix args;
+    tests.demo.problem.broken.reason = ''
+      Prosody hangs for a long time:
+
+      https://buildbot.ngi.nixos.org/#/builders/1231/builds/1/steps/1/logs/stdio
+
+      Investigate why and fix it.
+    '';
     description = ''
       Once the graphical environment is running, open Kaidan from Menu > Network.
 
