@@ -102,17 +102,26 @@ let
     projects.one =
       name: project:
       let
-        examples = eval {
-          imports = [ ./content-types/example-list.nix ];
-          examples = map (value: {
-            inherit (value)
-              description
-              module
-              name
-              tests
-              ;
-          }) (pick.examples project);
-        };
+        breadcrumbs = ''
+          <nav aria-label="Breadcrumb" class="breadcrumb">
+            <ol>
+              <li><a href="/">Projects</a></li>
+              <li>${name}</li>
+            </ol>
+          </nav>
+        '';
+
+        metadata-summary = optionalString (project.metadata != null && project.metadata.summary != null) ''
+          <p>
+            ${project.metadata.summary}
+          </p>
+        '';
+
+        demo-instructions = optionalString (project.nixos.demo != null) (
+          lib.concatMapAttrsStringSep "\n" (
+            type: demo: toString (render.serviceDemo.one type demo)
+          ) project.nixos.demo
+        );
 
         # TODO: clean up
         optionsRender =
@@ -135,11 +144,17 @@ let
               "services"
             ];
 
-        metadata-summary = optionalString (project.metadata != null && project.metadata.summary != null) ''
-          <p>
-            ${project.metadata.summary}
-          </p>
-        '';
+        examples = eval {
+          imports = [ ./content-types/example-list.nix ];
+          examples = map (value: {
+            inherit (value)
+              description
+              module
+              name
+              tests
+              ;
+          }) (pick.examples project);
+        };
 
         metadata-subgrants = eval {
           imports = [ ./content-types/metadata-subgrants.nix ];
@@ -150,16 +165,14 @@ let
           imports = [ ./content-types/metadata-links.nix ];
           links = project.metadata.links or null;
         };
+
       in
       ''
         <article class="page-width">
+          ${breadcrumbs}
           ${heading 1 null name}
           ${metadata-summary}
-          ${optionalString (project.nixos.demo != null) (
-            lib.concatMapAttrsStringSep "\n" (
-              type: demo: toString (render.serviceDemo.one type demo)
-            ) project.nixos.demo
-          )}
+          ${demo-instructions}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
           ${examples}

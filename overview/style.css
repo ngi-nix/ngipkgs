@@ -461,6 +461,18 @@ dd {
   margin-bottom: 1.5em;
 }
 
+nav.breadcrumb ol {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav.breadcrumb li:not(:last-child):after {
+  content: "/" / "";
+  margin: 0 0.5em;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background: #3c3434;
