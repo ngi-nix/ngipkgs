@@ -34,6 +34,7 @@ let
       allowedFiles = [
         "README.md"
         "default.nix"
+        "tests.nix"
         "types.nix"
       ];
     in
