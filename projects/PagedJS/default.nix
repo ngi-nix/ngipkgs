@@ -28,5 +28,16 @@
     };
   };
 
-  nixos.modules.programs.pagedjs.module = null;
+  nixos.modules.programs = {
+    pagedjs = {
+      module = ./programs/pagedjs/module.nix;
+      examples."Enable PagedJS" = {
+        module = ./programs/pagedjs/examples/pagedjs.nix;
+        description = ''
+          Enables PagedJS program.
+        '';
+        tests.basic.module = null;
+      };
+    };
+  };
 }
