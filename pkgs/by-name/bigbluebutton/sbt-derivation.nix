@@ -22,6 +22,8 @@
 let
   pnpm = pnpm_9;
 
+  version = "3.0.10";
+
   # Defined as git clone commands in the *.placeholder.sh files in BBB root
   externalDeps = [
     {
@@ -115,6 +117,9 @@ let
   };
 
   sharedBbbThings = {
+    # For software that isn't BBB itself, to be clear about whose version this is
+    version = "${version}-bigbluebutton";
+
     src = runCommand "bigbluebutton-src" { } ''
       cp -vr ${srcBare} $out
       chmod +w $out
@@ -130,13 +135,22 @@ let
         --replace-fail 'ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' '#ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' \
         --replace-fail 'CACHE_DIR="/root/"' 'CACHE_DIR="''${SOURCE}/cache/"'
     '';
+
+    meta = {
+      description = "Complete web conferencing system for virtual classes and more";
+      homepage = "https://bigbluebutton.org";
+      license = lib.licenses.lgpl3Only;
+      teams = [
+        lib.teams.ngi
+      ];
+      platforms = lib.platforms.linux;
+    };
   };
 
   bbb-common-message = mkSbtDerivation {
     pname = "bbb-common-message";
-    version = "3.0.10-bigbluebutton";
 
-    inherit (sharedBbbThings) src postPatch;
+    inherit (sharedBbbThings) version src postPatch;
 
     overrideDepsAttrs = final: prev: {
       preBuild = ''
@@ -171,13 +185,16 @@ let
 
       runHook postInstall
     '';
+
+    meta = sharedBbbThings.meta // {
+      description = sharedBbbThings.meta.description + " (bbb-common-message)";
+    };
   };
 
   bbb-apps-akka = mkSbtDerivation {
     pname = "bbb-apps-akka";
-    version = "3.0.10-bigbluebutton";
 
-    inherit (sharedBbbThings) src;
+    inherit (sharedBbbThings) version src;
 
     overrideDepsAttrs = final: prev: {
       preBuild = ''
@@ -261,13 +278,16 @@ let
 
       runHook postInstall
     '';
+
+    meta = sharedBbbThings.meta // {
+      description = sharedBbbThings.meta.description + " (bbb-apps-akka)";
+    };
   };
 
   bbb-config = stdenv.mkDerivation (finalAttrs: {
     pname = "bbb-config";
-    version = "3.0.10-bigbluebutton";
 
-    inherit (sharedBbbThings) src postPatch;
+    inherit (sharedBbbThings) version src postPatch;
 
     strictDeps = true;
 
@@ -305,6 +325,9 @@ let
       runHook postInstall
     '';
 
+    meta = sharedBbbThings.meta // {
+      description = sharedBbbThings.meta.description + " (bbb-config)";
+    };
   });
 
   bbb-etherpad =
@@ -447,9 +470,8 @@ let
     in
     buildNpmPackage {
       pname = "bbb-etherpad";
-      version = "3.0.10-bigbluebutton";
 
-      inherit (sharedBbbThings) src;
+      inherit (sharedBbbThings) version src;
 
       # > Error: Git dependency node_modules/sqlite3 contains install scripts, but has no lockfile, which is something that will probably break. Open an issue if you can't feasibly patch this dependency out, and we'll come up with a workaround.
       # > If you'd like to attempt to try to use this dependency anyways, set `forceGitDeps = true`.
@@ -545,6 +567,10 @@ let
 
       passthru = {
         inherit npmExtraDeps bbb-etherpad-skin;
+      };
+
+      meta = sharedBbbThings.meta // {
+        description = sharedBbbThings.meta.description + " (bbb-etherpad)";
       };
     };
 in
