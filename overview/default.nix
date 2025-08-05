@@ -117,11 +117,16 @@ let
           </p>
         '';
 
-        demo-instructions = optionalString (project.nixos.demo != null) (
-          lib.concatMapAttrsStringSep "\n" (
-            type: demo: toString (render.serviceDemo.one type demo)
-          ) project.nixos.demo
-        );
+        demo-instructions =
+          if (project.nixos.demo == null) then
+            ''
+              ${heading 2 "demo" "Demo"}
+              <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing demo</a>
+            ''
+          else
+            (lib.concatMapAttrsStringSep "\n" (
+              type: demo: toString (render.serviceDemo.one type demo)
+            ) project.nixos.demo);
 
         # TODO: clean up
         optionsRender =
