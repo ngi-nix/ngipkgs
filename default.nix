@@ -268,55 +268,10 @@ rec {
             // (filter-map (project.nixos.modules.programs or { }) "examples")
             // (filter-map (project.nixos.modules.services or { }) "examples")
           );
-          nixos.tests =
-            let
-              nixosTest =
-                test:
-                let
-                  # Amenities for interactive tests
-                  tools =
-                    { pkgs, ... }:
-                    {
-                      environment.systemPackages = with pkgs; [
-                        vim
-                        tmux
-                        jq
-                      ];
-                      # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
-                      # to provide a slightly nicer console.
-                      # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
-                      services.kmscon = {
-                        enable = true;
-                        autologinUser = "root";
-                      };
-                    };
-                  debugging.interactive.nodes = mapAttrs (_: _: tools) test.nodes;
-                  args = debugging // test;
-                in
-                if lib.isDerivation test then test else pkgs.nixosTest args;
-              # TODO: refactor
-              tests = foldl recursiveUpdate { } [
-                (project.nixos.tests or { })
-                (nixos.demo.vm.tests or { })
-                (nixos.demo.shell.tests or { })
-                (filter-map (nixos.examples or { }) "tests")
-              ];
-              filtered-tests = filterAttrs (
-                _: test: (!test ? problem.broken) && (test ? module && test.module != null)
-              ) tests;
-            in
-            mapAttrs (
-              _: test:
-              if lib.isString test.module then
-                nixosTest (
-                  import test.module {
-                    inherit pkgs lib;
-                    inherit (pkgs) system;
-                  }
-                )
-              else
-                nixosTest test.module
-            ) filtered-tests;
+          nixos.tests = import ./projects/tests.nix {
+            inherit lib pkgs project;
+            inherit (nixos) examples;
+          };
         };
     in
     mapAttrs (name: project: hydrate project) projects;
