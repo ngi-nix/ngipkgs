@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.pagedjs.enable = true;
+}
