@@ -89,22 +89,7 @@ in
 {
   programs.kaidan.enable = true;
 
-  # Setup x11 with auto login
-  services.xserver = {
-    enable = true;
-    displayManager.lightdm.enable = true;
-    windowManager.icewm.enable = true;
-  };
-
-  services.displayManager = {
-    defaultSession = lib.mkDefault "none+icewm";
-    autoLogin.user = "nixos";
-  };
-
-  virtualisation.graphics = lib.mkForce true;
-
-  # Enable spice-vdagentd for better integration with the desktop
-  services.spice-vdagentd.enable = true;
+  services.xserver.enable = true;
 
   # TODO: Abstract the extra configurations from user facing example
 
