@@ -1,10 +1,10 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   virtualisation = {
     memorySize = 4096;
     diskSize = 4096;
     cores = 4;
-    graphics = false;
+    graphics = lib.mkIf (!config.services.xserver.enable) false;
 
     qemu.options = [
       "-cpu host"
@@ -19,4 +19,7 @@
       proto = "tcp";
     }) config.networking.firewall.allowedTCPPorts;
   };
+
+  # better integration with the desktop
+  services.spice-vdagentd.enable = lib.mkIf config.virtualisation.graphics true;
 }

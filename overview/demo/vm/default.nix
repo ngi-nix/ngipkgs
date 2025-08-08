@@ -1,4 +1,4 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   imports = [
     ./services.nix
@@ -14,6 +14,14 @@
 
     To exit the demo VM, run: `sudo poweroff`
   '';
+
+  services.xserver = {
+    enable = lib.mkDefault false;
+    windowManager.icewm.enable = true;
+  };
+  services.displayManager = {
+    defaultSession = lib.mkDefault "none+icewm";
+  };
 
   system.stateVersion = "25.05";
 }
