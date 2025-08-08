@@ -41,11 +41,19 @@
     mox = {
       name = "mox";
       module = ./services/mox/module.nix;
-      examples."Enable the Mox server" = {
-        module = ./services/mox/examples/basic.nix;
+      examples.basic = {
+        module = ./services/mox/examples/demo.nix;
         description = "Mox server with optional hostname and user";
         tests.basic.module = import ./services/mox/tests/basic.nix args;
       };
     };
+  };
+
+  nixos.demo.vm = {
+    module = ./services/mox/examples/demo.nix;
+    description = ''
+      How to use Mox Demo
+    '';
+    tests.demo.module = import ./services/mox/tests/basic.nix args;
   };
 }
