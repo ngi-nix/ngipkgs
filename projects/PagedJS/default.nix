@@ -31,13 +31,31 @@
   nixos.modules.programs = {
     pagedjs = {
       module = ./programs/pagedjs/module.nix;
-      examples."Enable PagedJS" = {
+      examples."Enable pagedjs" = {
         module = ./programs/pagedjs/examples/pagedjs.nix;
         description = ''
           Enables PagedJS program.
         '';
-        tests.basic.module = null;
+        tests.basic.module = import ./programs/pagedjs/tests/pagedjs.nix args;
       };
     };
+  };
+
+  nixos.demo.shell = {
+    module = ./programs/pagedjs/examples/pagedjs.nix;
+    description = ''
+      A simple HTML file has been created at `/etc/pagedjs.html` for testing.
+
+      Run `pagedjs-cli --help` to see available commands.
+
+      To create a PDF from the HTML file, use:
+
+      `$ pagedjs-cli -i /etc/pagedjs.html -o ~/pagedjs-example.pdf`
+
+      View the PDF using evince:
+
+      `$ evince ~/pagedjs-example.pdf`
+    '';
+    tests.basic.module = import ./programs/pagedjs/tests/pagedjs.nix args;
   };
 }
