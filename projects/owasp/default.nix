@@ -22,8 +22,8 @@
       examples."Enable owasp" = {
         module = ./programs/owasp/examples/basic.nix;
         description = "Enable the owasp tools";
-        tests.blint.module = import ./programs/owasp/tests/blint.nix args;
-        tests.depscan.module = import ./programs/owasp/tests/depscan.nix args;
+        tests.blint.module = pkgs.nixosTests.blint;
+        tests.depscan.module = pkgs.nixosTests.dep-scan;
       };
     };
   };
@@ -31,7 +31,7 @@
   nixos.demo.shell = {
     module = ./programs/owasp/examples/basic.nix;
     description = "owasp usage examples";
-    tests.blint.module = import ./programs/owasp/tests/blint.nix args;
-    tests.depscan.module = import ./programs/owasp/tests/depscan.nix args;
+    tests.blint.module = pkgs.nixosTests.blint;
+    tests.depscan.module = pkgs.nixosTests.dep-scan;
   };
 }
