@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.verso.enable = true;
+}
