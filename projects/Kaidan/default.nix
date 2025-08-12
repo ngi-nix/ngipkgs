@@ -64,17 +64,17 @@
       NOTE: You need an XMPP user account to use Kaidan.
       If you have an account, use that to login and you should be able to send/receive a message.
 
-      If you don't have one, two demo user accounts have been created (`alice` and `john`).
+      If you don't have one, two demo-user accounts, `alice` and `john`, are available.
 
-      Login with the following credentials:
-      - User: `john@example.org`
+      Login as the first user:
+      - Chat address: `john@example.org`
       - Password: `foobar`
 
       When logged in, choose "add contact by chat address" on the hamburger menu.
       Add `alice@example.com`, and a chat will be started. Send a message to `alice`.
 
       You can verify that `alice` has received the message by logging out `john` and logging in as `alice`
-      - User: `alice@example.org`
+      - Chat address: `alice@example.org`
       - Password: `foobar`
     '';
   };
