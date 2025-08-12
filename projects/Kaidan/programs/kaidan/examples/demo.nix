@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   ...
@@ -104,7 +105,7 @@ in
       ssl.key = "/etc/prosody/certs/example.org.key";
     };
     muc = [ { domain = "conference.example.org"; } ];
-    uploadHttp = {
+    httpFileShare = {
       domain = "upload.example.org";
     };
     # Additional config to ensure certificates work
@@ -142,11 +143,13 @@ in
   # Auto create Kaidan XMPP users at system startup
   systemd.services.setup-kaidan-prosody-users = {
     description = "Setup Kaidan XMPP users";
-    after = [ "prosody-cert-setup.service" ];
-    wantedBy = [ "multi-user.target" ];
+    after = [ "prosody.service" ];
+    wantedBy = [ "prosody.service" ];
     serviceConfig = {
+      User = config.services.prosody.user;
       Type = "oneshot";
-      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "5s";
     };
     script = "${setup-kaidan-prosody-users}/bin/setup-kaidan-prosody-users";
   };
