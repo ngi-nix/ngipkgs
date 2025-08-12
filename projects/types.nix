@@ -265,6 +265,17 @@ let
             description
             links
             ;
+          activate = mkOption {
+            type = with lib.types; functionTo package;
+            default =
+              eval:
+              if name == "vm" then
+                eval._module.args.pkgs.writeShellScript "demo-vm" ''
+                  exec ${eval.config.system.build.vm}/bin/run-nixos-vm "$@"
+                ''
+              else
+                eval.config.shells.bash.activate;
+          };
           module-demo = mkOption {
             description = ''
               NixOS module that contains everything needed to use an application demo conveniently

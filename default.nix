@@ -329,4 +329,9 @@ rec {
     demo-vm
     demo-shell
     ;
+
+  # bash $(nix-build -A demos.projectName)
+  demos = lib.mapAttrs (
+    project: project-demo: project-demo.activate (demo.eval project-demo.module)
+  ) project-demos;
 }

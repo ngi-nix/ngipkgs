@@ -21,6 +21,7 @@ rec {
       specialArgs = { inherit sources; };
     };
 
+  # TODO: remove
   demo-vm =
     module:
     pkgs.writeShellScript "demo-vm" ''
