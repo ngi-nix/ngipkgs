@@ -315,7 +315,6 @@ rec {
   demo = import ./overview/demo {
     inherit
       lib
-      pkgs
       sources
       system
       ;
@@ -332,6 +331,6 @@ rec {
 
   # bash $(nix-build -A demos.projectName)
   demos = lib.mapAttrs (
-    project: project-demo: project-demo.activate (demo.eval project-demo.module)
+    project: project-demo: (demo.eval project-demo.module).config.activate
   ) project-demos;
 }

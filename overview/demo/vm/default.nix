@@ -4,6 +4,7 @@
     ./services.nix
     ./users.nix
     ./virtualisation.nix
+    ./activate.nix
   ];
 
   # not relevant for our purposes

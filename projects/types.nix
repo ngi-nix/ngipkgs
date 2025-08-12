@@ -260,21 +260,26 @@ let
       {
         options = {
           inherit (types'.example.getSubOptions { })
-            module
             tests
             description
             links
             ;
-          activate = mkOption {
-            type = with lib.types; functionTo package;
-            default =
-              eval:
-              if name == "vm" then
-                eval._module.args.pkgs.writeShellScript "demo-vm" ''
-                  exec ${eval.config.system.build.vm}/bin/run-nixos-vm "$@"
-                ''
-              else
-                eval.config.shells.bash.activate;
+          module = mkOption {
+            description = ''
+              NixOS module that contains the application configuration
+            '';
+            type =
+              with types;
+              nullOr (deferredModuleWith {
+                staticModules = [
+                  {
+                    options.activate = mkOption {
+                      type = with types; nullOr package;
+                      default = null;
+                    };
+                  }
+                ];
+              });
           };
           module-demo = mkOption {
             description = ''
