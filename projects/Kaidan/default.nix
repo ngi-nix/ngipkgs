@@ -48,6 +48,7 @@
 
   nixos.demo.vm = {
     module = ./programs/kaidan/examples/demo.nix;
+    module-demo = ./module-demo.nix;
     tests.demo.module = import ./programs/kaidan/tests/kaidan.nix args;
     tests.demo.problem.broken.reason = ''
       Prosody hangs for a long time:
