@@ -26,14 +26,14 @@
         examples.base = {
           module = ./example.nix;
           description = "Basic Omnom configuration, mainly used for testing purposes";
-          tests.basic.module = null;
+          tests.basic.module = pkgs.nixosTests.omnom;
         };
       };
     };
     demo.vm = {
       module = ./demo.nix;
       description = "Deployment for demo purposes";
-      tests.basic.module = null;
+      tests.basic.module = pkgs.nixosTests.omnom;
     };
   };
 }
