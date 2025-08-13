@@ -21,6 +21,6 @@ in
     environment.systemPackages = [
       cfg.package
     ]
-    + lib.optional cfg.swagger.enable cfg.swagger.package;
+    ++ lib.optional cfg.swagger.enable cfg.swagger.package;
   };
 }
