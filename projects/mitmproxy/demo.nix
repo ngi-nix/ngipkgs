@@ -1,4 +1,7 @@
 { ... }:
 {
-  programs.mitmproxy.enable = true;
+  programs.mitmproxy = {
+    enable = true;
+    swagger.enable = true;
+  };
 }
