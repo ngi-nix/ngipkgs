@@ -289,6 +289,18 @@ let
               };
             };
           };
+          usage-instructions = mkOption {
+            default = [ ];
+            type = types.listOf (
+              types.submodule {
+                options = {
+                  instruction = mkOption {
+                    type = types.str;
+                  };
+                };
+              }
+            );
+          };
         };
       }
     );

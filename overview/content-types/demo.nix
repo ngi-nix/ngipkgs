@@ -17,6 +17,7 @@ in
       tests
       problem
       description
+      usage-instructions
       ;
     module = mkOption {
       type = types.path;

@@ -203,6 +203,7 @@ let
             tests
             problem
             description
+            usage-instructions
             ;
           _module.args.pkgs = pkgs;
         };
