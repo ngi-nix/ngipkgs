@@ -1,0 +1,11 @@
+--- a/config/config.exs
++++ b/config/config.exs
+@@ -9,6 +9,8 @@
+ # General application configuration
+ import Config
+ 
++:public_key.cacerts_load System.fetch_env!("NIX_SSL_CERT_FILE")
++
+ config :kazarma, env: config_env()
+ 
+ config :kazarma,

@@ -1,0 +1,12 @@
+--- a/config/config.exs
++++ b/config/config.exs
+@@ -51,7 +51,8 @@
+ 
+ config :ex_cldr,
+   default_backend: KazarmaWeb.Cldr,
+-  default_locale: "en"
++  default_locale: "en",
++  data_dir: "cldr"
+ 
+ # ActivityPub configuration
+ config :activity_pub, :adapter, Kazarma.ActivityPub.Adapter

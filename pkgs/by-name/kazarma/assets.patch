@@ -1,0 +1,9 @@
+--- a/package.json
++++ b/package.json
+@@ -1,4 +1,6 @@
+ {
++  "name": "assets",
++  "version": "0.1.0",
+   "repository": {},
+   "description": " ",
+   "license": "MIT",
