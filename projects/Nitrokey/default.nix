@@ -9,10 +9,14 @@
 {
   metadata = {
     summary = "Open hardware for encryption and authentication";
-    subgrants = [
-      "Nitrokey"
-      "Nitrokey-3"
-    ];
+    subgrants = {
+      Review = [ "Nitrokey" ];
+      Entrust = [ "Nitrokey-3" ];
+      Commons = [
+        "Nitrokey-Storage"
+        "Nitrokey3-FIDO-L2"
+      ];
+    };
   };
 
   nixos.modules.programs = {
