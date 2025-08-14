@@ -1,0 +1,11 @@
+--- a/config/releases.exs
++++ b/config/releases.exs
+@@ -32,6 +32,8 @@
+ 
+ config :activity_pub, :domain, System.fetch_env!("ACTIVITY_PUB_DOMAIN")
+ 
++config :kazarma, :matrix_domain, System.fetch_env!("MATRIX_DOMAIN")
++
+ config :kazarma, prefix_puppet_username: System.get_env("PUPPET_PREFIX", "_ap_")
+ 
+ #######################

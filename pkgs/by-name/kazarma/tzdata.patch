@@ -1,0 +1,11 @@
+--- a/config/releases.exs
++++ b/config/releases.exs
+@@ -3,6 +3,8 @@
+ 
+ import Config
+ 
++config :tzdata, :autoupdate, :disabled
++
+ ########################
+ # Database configuration
+ ########################
