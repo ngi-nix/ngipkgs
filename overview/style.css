@@ -456,6 +456,16 @@ article.project .deliverable-tag.deliverable-has-problem {
   margin: 0.3em 1.2em;
 }
 
+.subgrant-list dt {
+  margin-top: 1.5em;
+  font-weight: 600;
+}
+
+.subgrant-list dd {
+  margin-left: 2em;
+  margin-bottom: 0em;
+}
+
 dd {
   margin-left: 2em;
   margin-bottom: 1.5em;
