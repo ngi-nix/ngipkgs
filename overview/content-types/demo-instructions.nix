@@ -149,6 +149,11 @@ in
                     <li>
                       <strong>Usage Instructions</strong>
                       ${markdownToHtml self.demo.description}
+                      ${lib.optionalString (self.demo.usage-instructions != [ ]) ''
+                        <ul>
+                          {{ generate_usage_instructions(${builtins.toJSON self.demo.usage-instructions}) }}
+                        </ul>
+                      ''}
                     </li>
                   ''
               }

@@ -24,7 +24,7 @@ let
     mapAttrsToList
     optionalString
     filterAttrs
-    mapAttrs'
+    mapAttrs
     nameValuePair
     ;
 
@@ -203,6 +203,7 @@ let
             tests
             problem
             description
+            usage-instructions
             ;
           _module.args.pkgs = pkgs;
         };
@@ -210,33 +211,30 @@ let
   };
 
   # HTML project pages
-  projectPages = mapAttrs' (
-    name: project:
-    nameValuePair "project/${name}" {
-      pagetitle = "NGIpkgs | ${name}";
-      content = render.projects.one name project;
-      summary = project.metadata.summary or null;
-      # needed for downloading demo code blocks
-      demoFile =
-        let
-          demo = project.nixos.demo;
-          mkDemoFile =
-            type: demo:
-            (eval {
-              imports = [ ./content-types/demo.nix ];
-              inherit type;
-              inherit (demo)
-                tests
-                module
-                description
-                problem
-                ;
-              _module.args.pkgs = pkgs;
-            }).filepath;
-        in
-        if demo != null then lib.concatMapAttrs mkDemoFile demo else null;
-    }
-  ) projects;
+  projectPages = mapAttrs (name: project: {
+    pagetitle = "NGIpkgs | ${name}";
+    content = render.projects.one name project;
+    summary = project.metadata.summary or null;
+    # needed for downloading demo code blocks
+    demoFile =
+      let
+        demo = project.nixos.demo;
+        mkDemoFile =
+          type: demo:
+          (eval {
+            imports = [ ./content-types/demo.nix ];
+            inherit type;
+            inherit (demo)
+              tests
+              module
+              description
+              problem
+              ;
+            _module.args.pkgs = pkgs;
+          }).filepath;
+      in
+      if demo != null then lib.concatMapAttrs mkDemoFile demo else null;
+  }) projects;
 
   index = eval {
     imports = [ ./content-types/project-list.nix ];
@@ -354,7 +352,7 @@ let
 
   # Ensure that directories exist and render the jinja2 template that we composed with Nix so far
   writeProjectCommand =
-    path: page:
+    project: path: page:
     ''
       mkdir -p "$out/${path}"
     ''
@@ -364,7 +362,7 @@ let
       nixfmt "$out/${path}/${page.demoFile.name}"
     ''
     + ''
-      python3 ${./render-template.py} '${htmlFile path page}' "$out/${path}/index.html"
+      python3 ${./render-template.py} '${htmlFile path page}' "$out" "${path}/index.html"
     '';
 
   fonts =
@@ -407,9 +405,11 @@ pkgs.runCommand "overview"
       mkdir -pv $out
       cat ${./style.css} ${highlightingCss} > $out/style.css
       ln -s ${fonts} $out/fonts
-      python3 ${./render-template.py} '${htmlFile "" indexPage}' "$out/index.html"
+      python3 ${./render-template.py} '${htmlFile "" indexPage}' "$out" "index.html"
     ''
-    + (concatLines (mapAttrsToList (path: page: writeProjectCommand path page) projectPages))
+    + (concatLines (
+      mapAttrsToList (name: writeProjectCommand "TODO_PROJECT" "project/${name}") projectPages
+    ))
     + ''
 
       vnu -Werror --format json $out/*.html | jq
