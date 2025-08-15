@@ -5,6 +5,7 @@
   ...
 }:
 let
+  cfg = config.programs.kaidan;
   # Create two xmpp users: john and alice
   # used to login to Kaidan
   userJohn = "john@example.org";
@@ -87,68 +88,69 @@ let
     '';
 in
 {
+  config = lib.mkIf cfg.enable {
+    # Configure Prosody with self-signed certificates
+    services.prosody = {
+      enable = true;
+      admins = [ "root@example.org" ];
+      virtualHosts."example.org" = {
+        enabled = true;
+        domain = "example.org";
+        ssl.cert = "/etc/prosody/certs/example.org.crt";
+        ssl.key = "/etc/prosody/certs/example.org.key";
+      };
+      muc = [ { domain = "conference.example.org"; } ];
+      httpFileShare = {
+        domain = "upload.example.org";
+      };
+      # Additional config to ensure certificates work
+      extraConfig = ''
+        -- Set certificate directory
+        certificates = "/etc/prosody/certs"
+      '';
+    };
 
-  # Configure Prosody with self-signed certificates
-  services.prosody = {
-    enable = true;
-    admins = [ "root@example.org" ];
-    virtualHosts."example.org" = {
-      enabled = true;
-      domain = "example.org";
-      ssl.cert = "/etc/prosody/certs/example.org.crt";
-      ssl.key = "/etc/prosody/certs/example.org.key";
+    networking.hosts."127.0.0.1" = [ "example.org" ];
+
+    # Make the self-signed certificates work
+    security.pki.certificateFiles = [ "${certs}/ca.crt" ];
+
+    # Setup certificate directory for prosody
+    systemd.services.prosody-cert-setup = {
+      description = "Setup prosody certificate directory";
+      before = [ "prosody.service" ];
+      wantedBy = [ "prosody.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        mkdir -p /etc/prosody/certs
+        cp ${certs}/server.crt /etc/prosody/certs/example.org.crt
+        cp ${certs}/server.key /etc/prosody/certs/example.org.key
+        cp ${certs}/ca.crt /etc/prosody/certs/ca.crt
+        chown -R prosody:prosody /etc/prosody/certs
+        chmod 600 /etc/prosody/certs/*.key
+        chmod 644 /etc/prosody/certs/*.crt
+      '';
     };
-    muc = [ { domain = "conference.example.org"; } ];
-    httpFileShare = {
-      domain = "upload.example.org";
+
+    # Auto create Kaidan XMPP users at system startup
+    systemd.services.setup-kaidan-prosody-users = {
+      description = "Setup Kaidan XMPP users";
+      after = [ "prosody.service" ];
+      wantedBy = [ "prosody.service" ];
+      serviceConfig = {
+        User = config.services.prosody.user;
+        Type = "oneshot";
+        Restart = "on-failure";
+        RestartSec = "5s";
+      };
+      script = "${setup-kaidan-prosody-users}/bin/setup-kaidan-prosody-users";
     };
-    # Additional config to ensure certificates work
-    extraConfig = ''
-      -- Set certificate directory
-      certificates = "/etc/prosody/certs"
-    '';
+
+    environment.systemPackages = with pkgs; [
+      prosody
+    ];
   };
-
-  networking.hosts."127.0.0.1" = [ "example.org" ];
-
-  # Make the self-signed certificates work
-  security.pki.certificateFiles = [ "${certs}/ca.crt" ];
-
-  # Setup certificate directory for prosody
-  systemd.services.prosody-cert-setup = {
-    description = "Setup prosody certificate directory";
-    before = [ "prosody.service" ];
-    wantedBy = [ "prosody.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      mkdir -p /etc/prosody/certs
-      cp ${certs}/server.crt /etc/prosody/certs/example.org.crt
-      cp ${certs}/server.key /etc/prosody/certs/example.org.key
-      cp ${certs}/ca.crt /etc/prosody/certs/ca.crt
-      chown -R prosody:prosody /etc/prosody/certs
-      chmod 600 /etc/prosody/certs/*.key
-      chmod 644 /etc/prosody/certs/*.crt
-    '';
-  };
-
-  # Auto create Kaidan XMPP users at system startup
-  systemd.services.setup-kaidan-prosody-users = {
-    description = "Setup Kaidan XMPP users";
-    after = [ "prosody.service" ];
-    wantedBy = [ "prosody.service" ];
-    serviceConfig = {
-      User = config.services.prosody.user;
-      Type = "oneshot";
-      Restart = "on-failure";
-      RestartSec = "5s";
-    };
-    script = "${setup-kaidan-prosody-users}/bin/setup-kaidan-prosody-users";
-  };
-
-  environment.systemPackages = with pkgs; [
-    prosody
-  ];
 }
