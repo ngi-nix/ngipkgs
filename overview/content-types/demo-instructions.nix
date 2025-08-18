@@ -77,7 +77,7 @@ in
       type = types.submodule ./shell-instructions.nix;
       default.instructions = [
         {
-          platform = "Arch Linux, Debian Sid and Ubuntu 25.04";
+          platform = "Arch Linux, Debian Sid/Trixie and Ubuntu 25.04";
           shell-session.bash = [
             {
               input = ''
@@ -87,7 +87,7 @@ in
           ];
         }
         {
-          platform = "Debian 12 and Ubuntu 24.04/24.10";
+          platform = "Ubuntu 24.04/24.10";
           shell-session.bash = [
             {
               input = ''
