@@ -1,0 +1,6 @@
+{
+  ...
+}:
+{
+  services.aerogramme.enable = true;
+}
