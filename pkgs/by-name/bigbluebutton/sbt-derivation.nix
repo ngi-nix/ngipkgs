@@ -889,7 +889,13 @@ let
       patches = [
         (replaceVars ./bbb-freeswitch-core-9901-Use-prebuilt-projects.patch {
           lndirExe = lib.getExe lndir;
-          inherit sofia-sip spandsp libks libwebsockets drachtio-freeswitch-modules;
+          inherit
+            sofia-sip
+            spandsp
+            libks
+            libwebsockets
+            drachtio-freeswitch-modules
+            ;
           sofiaSipCheckout = sofia-sip.src.tag;
           spandspCheckout = spandsp.src.rev;
           libksCheckout = libks.src.tag;
@@ -1007,7 +1013,13 @@ let
       '';
 
       passthru = {
-        inherit sofia-sip spandsp libks libwebsockets drachtio-freeswitch-modules;
+        inherit
+          sofia-sip
+          spandsp
+          libks
+          libwebsockets
+          drachtio-freeswitch-modules
+          ;
       };
 
       meta = sharedBbbThings.meta // {
