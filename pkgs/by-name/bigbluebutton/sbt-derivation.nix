@@ -14,21 +14,25 @@
   curl,
   dpkg,
   fakeroot,
+  fftw,
   fpm,
   jdk,
   ldns,
   libedit,
   libjpeg,
   libogg,
+  libpcap,
   libsecret,
   libsndfile,
   libtiff,
   libtool,
   libuuid,
   libxcrypt,
+  libxml2,
   lndir,
   lua,
   makeWrapper,
+  netpbm,
   nodejs,
   npmHooks,
   openal,
@@ -43,6 +47,7 @@
   replaceVars,
   speex,
   speexdsp,
+  sox,
   sqlite,
   util-linux,
   valgrind,
@@ -701,6 +706,10 @@ let
 
         postPatch = ''
           patchShebangs autogen.sh
+
+          # pkg-config? What's that?
+          substituteInPlace configure.ac \
+            --replace-fail '$xml2_include_dir /usr/include /usr/local/include /usr/include/libxml2 /usr/local/include/libxml2' '$xml2_include_dir ${lib.getDev libxml2}/include ${lib.getDev libxml2}/include/libxml2 /usr/local/include/libxml2'
         '';
 
         strictDeps = true;
@@ -718,14 +727,35 @@ let
           libtiff
         ];
 
+        nativeCheckInputs = [
+          libtiff
+          netpbm
+          sox
+        ];
+
+        checkInputs = [
+          fftw
+          libpcap
+          libsndfile
+          libxml2
+        ];
+
         preConfigure = ''
           ./bootstrap.sh
         '';
 
+        configureFlags = [
+          (lib.strings.enableFeature finalAttrs.finalPackage.doCheck "tests")
+        ];
+
+        env.NIX_CFLAGS_COMPILE = toString [
+          # Missing const conversion on some calls
+          "-Wno-error=incompatible-pointer-types"
+        ];
+
         enableParallelBuilding = true;
 
-        # Untested
-        #doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+        doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
 
         meta = {
           description = "Low-level signal processing library that modulates and demodulates signals commonly used in telephony";
