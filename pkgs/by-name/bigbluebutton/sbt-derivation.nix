@@ -11,6 +11,7 @@
   bashNonInteractive,
   check,
   cmake,
+  ctestCheckHook,
   curl,
   dpkg,
   fakeroot,
@@ -43,12 +44,14 @@
   perl,
   pkg-config,
   pnpm_9,
+  procps,
   postgresql,
   replaceVars,
   speex,
   speexdsp,
   sox,
   sqlite,
+  time,
   util-linux,
   valgrind,
   which,
@@ -805,8 +808,16 @@ let
           openssl
         ];
 
-        # Untested
-        #doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+        nativeCheckInputs = [
+          ctestCheckHook
+        ];
+
+        doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+
+        disabledTests = [
+          # [ERROR] [...] testhttp.c:95    init_ssl [...] SSL ERR: CERT CHAIN FILE ERROR
+          "testhttp"
+        ];
 
         meta = {
           description = "Foundational support for signalwire C products";
@@ -831,7 +842,18 @@ let
           hash = "sha256-hIkZ/NH3vjLZF3i1MGvFZGXV6d5wpydO964tMvkvWCQ=";
         };
 
+        postPatch = ''
+          patchShebangs minimal-examples/selftests.sh
+
+          substituteInPlace minimal-examples/selftests-library.sh \
+            --replace-fail '/usr/bin/time' 'time'
+        '';
+
         strictDeps = true;
+
+        cmakeFlags = [
+          (lib.cmakeBool "LWS_WITH_MINIMAL_EXAMPLES" finalAttrs.finalPackage.doCheck)
+        ];
 
         nativeBuildInputs = [
           cmake
@@ -842,13 +864,27 @@ let
           openssl
         ];
 
+        nativeCheckInputs = [
+          procps
+          time
+        ];
+
         # BBB builds this by forcing -Wno-error, fetched version lacks commit to disable -Werror
         env.NIX_CFLAGS_COMPILE = toString [
           "-Wno-error"
         ];
 
-        # Untested
-        #doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+        # Has some network-related tests that fail. Newer versions have a CMake option to skip
+        # tests that require internet, so maybe that's what'smaking these fail.
+        doCheck = false;
+
+        checkPhase = ''
+          runHook preCheck
+
+          ../minimal-examples/selftests.sh
+
+          runHook postCheck
+        '';
 
         meta = {
           description = "Canonical libwebsockets.org networking library";
