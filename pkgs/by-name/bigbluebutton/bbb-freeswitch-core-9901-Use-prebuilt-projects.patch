@@ -1,0 +1,90 @@
+diff '--color=auto' -ruN a/build/packages-template/bbb-freeswitch-core/build.sh b/build/packages-template/bbb-freeswitch-core/build.sh
+--- a/build/packages-template/bbb-freeswitch-core/build.sh	2025-08-17 20:45:30.061873026 +0200
++++ b/build/packages-template/bbb-freeswitch-core/build.sh	2025-08-17 21:01:42.173102250 +0200
+@@ -27,81 +27,27 @@
+ pushd .
+ 
+ # sofia-sip start
+-if [ ! -d sofia-sip ]; then
+-  git clone https://github.com/freeswitch/sofia-sip.git
+-fi
+-cd sofia-sip/
+-git checkout @sofiaSipCheckout@
+-./bootstrap.sh
+-./configure
+-
+-make -j $(nproc)
+-make install
+-cd ..
++@lndirExe@ @sofia-sip@ $DESTDIR
+ # sofia-sip end
+ 
+ # spandsp start
+-if [ ! -d spandsp ]; then
+-  git clone https://github.com/freeswitch/spandsp.git
+-fi
+-cd spandsp/
+-git checkout @spandspCheckout@
+-./bootstrap.sh
+-./configure
+-
+-make -j $(nproc)
+-make install
+-
+-popd
++@lndirExe@ @spandsp@ $DESTDIR
+ # spandsp end
+ 
+ 
+ 
+ # libks start
+-if [ ! -d libks ]; then
+-  git clone https://github.com/signalwire/libks.git
+-fi
+-cd libks/
+-git checkout @libksCheckout@
+-
+-cmake .
+-make
+-
+-make install
+-cd ..
++@lndirExe@ @libks@ $DESTDIR
+ # libks end
+ 
+-ldconfig
+ 
+-# libwebsockets start
+ # mod_audio_fork needs it (used in built-in speech transcription)
+-if [ ! -d libwebsockets ]; then
+-  git clone https://github.com/bigbluebutton/libwebsockets.git
+-fi
+-cd libwebsockets/
+-git checkout @libwebsocketsCheckout@
+-
+-mkdir -p build
+-cd build
+-
+-cmake .. -DCMAKE_C_FLAGS="-Wno-error" -DCMAKE_CXX_FLAGS="-Wno-error"
+-make -j $(nproc)
+-make install
+-cd ../../
+-
+-ldconfig
++@lndirExe@ @libwebsockets@ $DESTDIR
+ # libwebsockets end
+ 
+ # mod_audio_fork start
+ # copy mod_audio_fork into place (used in built-in speech transcription)
+-if [ ! -d drachtio-freeswitch-modules ]; then
+-  git clone https://github.com/bigbluebutton/drachtio-freeswitch-modules.git
+-fi
+-
+-cd drachtio-freeswitch-modules
+-git checkout @drachtioFreeswitchModulesCheckout@
+-cp -r modules/mod_audio_fork $BUILDDIR/freeswitch/src/mod/applications/mod_audio_fork
+-cd ..
++cp -vr --no-preserve=all @drachtio-freeswitch-modules@/modules/mod_audio_fork $BUILDDIR/freeswitch/src/mod/applications/mod_audio_fork
+ # mod_audio_fork end
+ 
+ # we already cloned the FS repo in freeswitch.placeholder.sh and selected tag/branch
