@@ -4,6 +4,10 @@
 }:
 {
   name = "briar";
+  description = ''
+    This is still a WIP.
+    Need to figure out how to connect the two peers through Wi-Fi.
+  '';
 
   nodes = {
     peer1 =

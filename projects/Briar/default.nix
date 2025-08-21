@@ -32,6 +32,9 @@
         module = ./programs/briar/examples/basic.nix;
         description = "";
         tests.basic.module = import ./programs/briar/tests/basic.nix args;
+        tests.basic.problem.broken.reason = ''
+          Peers can't connect through WiFi.
+        '';
       };
     };
   };
@@ -41,5 +44,8 @@
     module-demo = ./module-demo.nix;
     description = "";
     tests.demo.module = import ./programs/briar/tests/basic.nix args;
+    tests.demo.problem.broken.reason = ''
+      Peers can't connect through WiFi in the test.
+    '';
   };
 }
