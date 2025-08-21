@@ -756,7 +756,8 @@ let
           "-Wno-error=incompatible-pointer-types"
         ];
 
-        enableParallelBuilding = true;
+        # Issues with asset generation under heavy parallelism
+        enableParallelBuilding = false;
 
         doCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
 
