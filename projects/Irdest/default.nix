@@ -7,17 +7,19 @@
 
 {
   metadata = {
-    summary = "Local P2P mesh discovery of devices and users";
-    subgrants = [
-      "Irdest"
-      "Irdest-OpenWRT-BLE"
-      "Irdest-Proxy"
-      "Irdest-Spec"
-    ];
+    summary = "Modular decentralized peer-to-peer packet router and associated tools";
+    subgrants = {
+      Review = [ "Irdest" ];
+      Core = [ "Irdest-Proxy" ];
+      Entrust = [
+        "Irdest-OpenWRT-BLE"
+        "Irdest-Spec"
+      ];
+    };
     links = {
       documentation = {
         text = "Documentation";
-        url = "https://github.com/irdest/irdest/tree/develop/docs";
+        url = "https://codeberg.org/irdest/irdest/src/branch/main/docs/user/src/SUMMARY.md";
       };
       website = {
         text = "Website";
