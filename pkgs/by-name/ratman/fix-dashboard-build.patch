@@ -1,0 +1,34 @@
+From 0908f244ba330a5574ee20c563b1bf9a29365cf8 Mon Sep 17 00:00:00 2001
+From: June Stepp <git@junestepp.me>
+Date: Sat, 23 Aug 2025 21:09:19 -0500
+Subject: [PATCH] fix(ratman/dashboard): fix SettingsView errors
+
+---
+ ratman/dashboard/src/components/SettingsView.vue | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ratman/dashboard/src/components/SettingsView.vue b/ratman/dashboard/src/components/SettingsView.vue
+index 265c37a8..481fc249 100644
+--- a/ratman/dashboard/src/components/SettingsView.vue
++++ b/ratman/dashboard/src/components/SettingsView.vue
+@@ -24,7 +24,7 @@ const saveUpdates = async (newConfig: SerializedSettings | null) => {
+
+     // Map serializedSettings to RootConfig
+     const newRootConfig = serializedSettingsToRootConfig(newConfig);
+-    updating.value = await client.value.setConfig(newRootConfig);
++    updating.value = (await client.value.setConfig(newRootConfig)).data;
+
+     setTimeout(() => {
+         updating.value = null;
+@@ -59,7 +59,7 @@ const getSettingsSubset = (
+         which happens automatically after you press the Apply button!
+     </p>
+
+-    <p v-if="updating.value">{{ updating }}</p>
++    <p v-if="updating">{{ updating }}</p>
+
+     <div class="button-row">
+         <button @click="saveUpdates(config)">Apply changes</button>
+--
+2.47.3
+

@@ -1,0 +1,24 @@
+From c824d066e902fb124c5683d953391ae2e397608d Mon Sep 17 00:00:00 2001
+From: June Stepp <git@junestepp.me>
+Date: Sat, 23 Aug 2025 21:14:50 -0500
+Subject: [PATCH] fix(ratman/config): fix `ratmand generate` command
+
+---
+ ratman/src/bin/ratmand.rs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ratman/src/bin/ratmand.rs b/ratman/src/bin/ratmand.rs
+index 14eb37d9..d8193e78 100644
+--- a/ratman/src/bin/ratmand.rs
++++ b/ratman/src/bin/ratmand.rs
+@@ -35,6 +35,7 @@ fn main() {
+     // configuration, then execute this and exit afterwards.
+     if let Some(generate_matches) = arg_matches.subcommand_matches("generate") {
+         let mut cfg = ConfigTree::default_in_memory();
++        cfg.set_origin(&cfg_path);
+         if let Some(patches) = generate_matches.get_many::<String>("CONFIG_PATCH") {
+             for patch in patches {
+                 let (key, value) = patch.split_once('=').unwrap_or_else(|| ("", ""));
+--
+2.47.3
+
