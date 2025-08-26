@@ -28,6 +28,17 @@
     };
   };
 
-  nixos.modules.programs.irdest.module = null;
-  nixos.modules.services.irdest.module = null;
+  nixos.modules = {
+    services.ratmand = {
+      module = ./services/ratmand/module.nix;
+      examples.basic-ratmand = {
+        module = ./services/ratmand/examples/basic.nix;
+        description = "Basic ratmand configuration";
+        tests = {
+          ratmand-config.module = import ./services/ratmand/tests/config.nix args;
+          peer-communication.module = import ./services/ratmand/tests/peer-communication.nix args;
+        };
+      };
+    };
+  };
 }
