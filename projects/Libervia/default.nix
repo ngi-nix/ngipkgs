@@ -64,5 +64,30 @@
         };
       };
     };
+
+    demo.vm = {
+      module = ./examples/desktop.nix;
+      module-demo = ./demo.nix;
+      tests.demo.module = import ./tests/desktop.nix args;
+      description = ''
+        Once the graphical desktop has loaded, navigate to and click:
+
+        `iceWM` (in the bottom-left of the desktop) -> `Network` -> `Libervia Desktop (Cagou) [Chat]`
+
+        Give the client some time to load.
+
+        Once it has fully loaded, you need to create a new profile and enter some details. Use whichever name you want.
+
+        - If you have an existing XMPP account, enter your JID and password
+        - If you don't already have an XMPP account and just want to test the client, a local XMPP server has been
+          set up with the following user:
+          - JID: alice@example.org
+          - Password: foobar
+
+        Once the profile is created, select it in the list and click on "Connect".
+
+        You can now try out Libervia's Kivy desktop client.
+      '';
+    };
   };
 }
