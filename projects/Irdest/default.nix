@@ -52,4 +52,17 @@
       irdest-echo.module = null;
     };
   };
+  nixos.demo.vm = {
+    module = ./services/ratmand/examples/basic.nix;
+    module-demo = ./demo/module-demo.nix;
+    usage-instructions = [
+      {
+        instruction = "`ratman-tools` are available in the shell.";
+      }
+      {
+        instruction = "The ratmand dashboard is available at http://localhost:5850.";
+      }
+    ];
+    tests.demo-basic.module = import ./demo/tests/basic.nix args;
+  };
 }
