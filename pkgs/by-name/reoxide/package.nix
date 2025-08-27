@@ -2,8 +2,6 @@
   lib,
   stdenv,
   fetchFromGitea,
-  fetchurl,
-  fetchzip,
 
   meson,
   ninja,
@@ -14,8 +12,6 @@
   libllvm,
   libclang,
   cppzmq,
-  cacert,
-  git,
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "reoxide";
@@ -25,11 +21,9 @@ stdenv.mkDerivation (finalAttrs: {
     domain = "codeberg.org";
     owner = "ReOxide";
     repo = "reoxide";
-    rev = "v${finalAttrs.version}";
+    tag = "v${finalAttrs.version}";
     hash = "sha256-Oa+au6EOXyuRMIDeLwRgJKPeLMTYTYoOep8TRed8a+w=";
     nativeBuildInputs = [
-      cacert
-      git
       meson
     ];
     postFetch = ''
