@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitea,
+  cacert,
 
   meson,
   ninja,
@@ -21,10 +22,11 @@ stdenv.mkDerivation (finalAttrs: {
     domain = "codeberg.org";
     owner = "ReOxide";
     repo = "reoxide";
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-Oa+au6EOXyuRMIDeLwRgJKPeLMTYTYoOep8TRed8a+w=";
+    rev = "0ba38caa8656aaf109f674c868bff708a7288bb0";
+    hash = "sha256-Pnqr4SuupGk0Fa9d5eJ/zWeJiE9gMxBeHvI2cZV60ew=";
     nativeBuildInputs = [
       meson
+      cacert
     ];
     postFetch = ''
       (
@@ -78,5 +80,6 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     teams = with lib.teams; [ ngi ];
     mainProgram = "reoxide";
+    platforms = lib.platforms.linux;
   };
 })
