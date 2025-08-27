@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchgit,
+  fetchFromGitea,
   fetchurl,
   fetchzip,
 
@@ -14,28 +14,33 @@
   libllvm,
   libclang,
   cppzmq,
-
+  cacert,
+  git,
 }:
-let
-  ghidra-src = fetchurl {
-    url = "https://github.com/NationalSecurityAgency/ghidra/archive/Ghidra_11.4.1_build/Ghidra_11.4.1_build.tar.gz";
-    sha256 = "sha256-ij+VXwT0opRa/FcacPHCFABSzdIw+6uZYVsd6EgM5PA=";
-  };
-
-  ghidra-patches = fetchzip {
-    url = "https://codeberg.org/ReOxide/ghidra-wrap/releases/download/v11.4.1/ghidra_11.4.1_patch.zip";
-    sha256 = "sha256-DbWaIYMj+edBuEzF1Pw9TyyCKAeT8ade9fot1idtzBA=";
-  };
-in
 stdenv.mkDerivation (finalAttrs: {
   name = "reoxide";
   version = "0.6.1";
 
-  src = fetchgit {
-    url = "https://codeberg.org/ReOxide/reoxide.git";
-    leaveDotGit = false;
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-/BhwDkbhA/RjDdE+QxZwSQ8e+o2kGVsxIBFss8g1tHg=";
+  src = fetchFromGitea {
+    domain = "codeberg.org";
+    owner = "ReOxide";
+    repo = "reoxide";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-Oa+au6EOXyuRMIDeLwRgJKPeLMTYTYoOep8TRed8a+w=";
+    nativeBuildInputs = [
+      cacert
+      git
+      meson
+    ];
+    postFetch = ''
+      (
+        cd "$out"
+        for prj in subprojects/*.wrap; do
+          meson subprojects download "$(basename "$prj" .wrap)"
+          rm -rf subprojects/$(basename "$prj" .wrap)/.git
+        done
+      )
+    '';
   };
 
   nativeBuildInputs = [
@@ -58,17 +63,16 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   postPatch = ''
-      # Replace version.py with a version that returns the package version
-      cat > scripts/version.py << 'EOF'
-    #!/usr/bin/env python3
+    # Replace version.py with a version that returns the package version
+    cat > scripts/version.py << 'EOF'
+    #! ${python3.interpreter}
+
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == 'get-vcs':
         print('${finalAttrs.version}')
     else:
         exit(1)
     EOF
-
-    # TODO: figure how to process subprojects manually
   '';
 
   meta = {
