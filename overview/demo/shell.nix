@@ -81,4 +81,6 @@ in
       };
     default = { };
   };
+
+  # config.activate = config.shells.bash.activate;
 }

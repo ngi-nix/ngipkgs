@@ -260,11 +260,27 @@ let
       {
         options = {
           inherit (types'.example.getSubOptions { })
-            module
             tests
             description
             links
             ;
+          module = mkOption {
+            description = ''
+              NixOS module that contains the application configuration
+            '';
+            type =
+              with types;
+              nullOr (deferredModuleWith {
+                staticModules = [
+                  {
+                    options.activate = mkOption {
+                      type = with types; nullOr package;
+                      default = null;
+                    };
+                  }
+                ];
+              });
+          };
           module-demo = mkOption {
             description = ''
               NixOS module that contains everything needed to use an application demo conveniently
