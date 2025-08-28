@@ -39,6 +39,7 @@ in
         name = "ngi";
         auth.authToken.file = config.sops.secrets."cachix".path;
       };
+      showTrace = true;
     };
 
     buildbot-nix.worker = {
