@@ -7,17 +7,19 @@
 
 {
   metadata = {
-    summary = "Local P2P mesh discovery of devices and users";
-    subgrants = [
-      "Irdest"
-      "Irdest-OpenWRT-BLE"
-      "Irdest-Proxy"
-      "Irdest-Spec"
-    ];
+    summary = "Modular decentralized peer-to-peer packet router and associated tools";
+    subgrants = {
+      Review = [ "Irdest" ];
+      Core = [ "Irdest-Proxy" ];
+      Entrust = [
+        "Irdest-OpenWRT-BLE"
+        "Irdest-Spec"
+      ];
+    };
     links = {
       documentation = {
         text = "Documentation";
-        url = "https://github.com/irdest/irdest/tree/develop/docs";
+        url = "https://codeberg.org/irdest/irdest/src/branch/main/docs/user/src/SUMMARY.md";
       };
       website = {
         text = "Website";
@@ -26,6 +28,41 @@
     };
   };
 
-  nixos.modules.programs.irdest.module = null;
-  nixos.modules.services.irdest.module = null;
+  # https://github.com/ngi-nix/ngipkgs/issues/1512
+  binary.lora-modem-firmware.data = null;
+
+  nixos.modules = {
+    # https://github.com/ngi-nix/ngipkgs/issues/1514
+    programs.irdest-mblog.module = null;
+    services = {
+      ratmand = {
+        module = ./services/ratmand/module.nix;
+        examples.basic-ratmand = {
+          module = ./services/ratmand/examples/basic.nix;
+          description = "Basic ratmand configuration";
+          tests = {
+            ratmand-config.module = import ./services/ratmand/tests/config.nix args;
+            peer-communication.module = import ./services/ratmand/tests/peer-communication.nix args;
+          };
+        };
+      };
+      # https://github.com/ngi-nix/ngipkgs/issues/1511
+      irdest-proxy.module = null;
+      # https://github.com/ngi-nix/ngipkgs/issues/1513
+      irdest-echo.module = null;
+    };
+  };
+  nixos.demo.vm = {
+    module = ./services/ratmand/examples/basic.nix;
+    module-demo = ./demo/module-demo.nix;
+    usage-instructions = [
+      {
+        instruction = "`ratman-tools` are available in the shell.";
+      }
+      {
+        instruction = "The ratmand dashboard is available at http://localhost:5850.";
+      }
+    ];
+    tests.demo-basic.module = import ./demo/tests/basic.nix args;
+  };
 }
