@@ -6,6 +6,8 @@
 {
   name = "Icosa Gallery";
 
+  interactive.sshBackdoor.enable = true;
+
   nodes = {
     machine =
       { ... }:
@@ -20,9 +22,15 @@
 
   testScript =
     { nodes, ... }:
+    let
+      inherit (nodes.machine.services.icosa-gallery) port;
+    in
     ''
       start_all()
 
-      machine.succeed()
+      machine.wait_for_unit("icosa-gallery.service")
+      machine.wait_for_open_port(${port})
+
+      machine.succeed("curl -v http://localhost:${port} >&2")
     '';
 }
