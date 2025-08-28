@@ -1,6 +1,6 @@
 {
   lib,
-  stdenv,
+  clangStdenv,
   fetchFromGitea,
   cacert,
 
@@ -14,7 +14,7 @@
   libclang,
   cppzmq,
 }:
-stdenv.mkDerivation (finalAttrs: {
+clangStdenv.mkDerivation (finalAttrs: {
   name = "reoxide";
   version = "0.6.1";
 
