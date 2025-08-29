@@ -40,7 +40,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       cc0 # notification sounds
       # test audio claims it's from https://musopen.org/music/14914-hungarian-rhapsody-no-4-s-2444/ and publicDomain, but site has no audio?
     ];
-    # FIX: The source repo is slow, so fetching times out
-    broken = true;
+    teams = [
+      lib.teams.ngi
+    ];
   };
 })
