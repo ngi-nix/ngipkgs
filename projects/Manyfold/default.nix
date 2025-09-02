@@ -1,0 +1,59 @@
+{
+  lib,
+  pkgs,
+  sources,
+  ...
+}@args:
+
+{
+  metadata = {
+    summary = "ActivityPub-powered tool for storing and sharing 3d models";
+    subgrants = {
+      Commons = [
+        "Manyfold-Discovery"
+      ];
+      Entrust = [
+        "Personal-3D-archive"
+      ];
+    };
+    links = {
+      website = {
+        text = "Website";
+        url = "https://manyfold.app/";
+      };
+      src = {
+        text = "Source code";
+        url = "https://github.com/manyfold3d/manyfold";
+      };
+      example = {
+        text = "Usage examples";
+        url = "https://manyfold.app/get-started/installation";
+      };
+    };
+  };
+
+  nixos = {
+    modules.services.manyfold = {
+      name = "Manyfold";
+      module = ./services/manyfold/module.nix;
+      examples = {
+        "Enable Manyfold with PostgreSQL" = {
+          module = ./services/manyfold/examples/postgresql.nix;
+          description = null;
+          tests.postgresql.module = import ./services/manyfold/tests/postgresql.nix args;
+        };
+        "Enable Manyfold with SQLite" = {
+          module = ./services/manyfold/examples/sqlite.nix;
+          description = null;
+          tests.sqlite.module = import ./services/manyfold/tests/sqlite.nix args;
+        };
+      };
+    };
+    demo.vm = {
+      module = ./services/manyfold/examples/postgresql.nix;
+      module-demo = ./demo/module-demo.nix;
+      description = "Deployment for demo purposes";
+      tests.postgresql.module = import ./services/manyfold/tests/postgresql.nix args;
+    };
+  };
+}
