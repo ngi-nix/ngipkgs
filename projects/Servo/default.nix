@@ -26,6 +26,11 @@
         module = ./example.nix;
         description = "Enable the servo program";
         tests.basic.module = pkgs.nixosTests.servo;
+        tests.basic.problem.broken.reason = ''
+          Servo fails to build because of incompatabilities with Rust 1.89
+
+          See https://github.com/NixOS/nixpkgs/issues/439547
+        '';
       };
     };
   };
@@ -34,5 +39,10 @@
     module = ./example.nix;
     description = "A demo shell for opening valgrind docs with Servo";
     tests.basic.module = pkgs.nixosTests.servo;
+    tests.basic.problem.broken.reason = ''
+      Servo fails to build because of incompatabilities with Rust 1.89
+
+      See https://github.com/NixOS/nixpkgs/issues/439547
+    '';
   };
 }
