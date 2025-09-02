@@ -27,7 +27,6 @@
     };
   };
 
-  nixos.modules.services.wax.module = null;
   nixos.modules.programs = {
     wax-client = {
       name = "wax-client";
@@ -36,6 +35,17 @@
       examples."Enable Wax web client" = {
         module = ./programs/wax-client/examples/basic.nix;
         tests.basic.module = null;
+      };
+    };
+  };
+  nixos.modules.services = {
+    wax-server = {
+      name = "wax-server";
+      # if a project has `packages`, add them inside the `module.nix` file
+      module = ./services/wax-server/module.nix;
+      examples."Enable Wax web server" = {
+        module = ./services/wax-server/examples/basic.nix;
+        tests.basic.module = import ./services/wax-server/tests/basic.nix args;
       };
     };
   };
