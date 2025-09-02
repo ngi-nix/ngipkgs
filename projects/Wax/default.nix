@@ -27,6 +27,16 @@
     };
   };
 
-  nixos.modules.programs.wax.module = null;
   nixos.modules.services.wax.module = null;
+  nixos.modules.programs = {
+    wax-client = {
+      name = "wax-client";
+      # if a project has `packages`, add them inside the `module.nix` file
+      module = ./programs/wax-client/module.nix;
+      examples."Enable Wax web client" = {
+        module = ./programs/wax-client/examples/basic.nix;
+        tests.basic.module = null;
+      };
+    };
+  };
 }
