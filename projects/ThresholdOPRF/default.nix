@@ -8,11 +8,16 @@
 {
   metadata = {
     summary = "Oblivious Pseudo-random Functions (OPRFs) and Threshold constructions implementations";
-    subgrants = [
-      "OpaqueSphinxServer"
-      "OpaqueStore-Sphinx2.0"
-      "ThresholdOPRF"
-    ];
+    subgrants = {
+      Entrust = [
+        "ThresholdOPRF"
+      ];
+      Review = [
+        "OpaqueSphinx"
+        "OpaqueSphinxServer"
+        "OpaqueStore-Sphinx2.0"
+      ];
+    };
   };
 
   nixos.modules.programs = {
