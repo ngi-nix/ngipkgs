@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "OpenPGP keyserver";
-    subgrants = [
+    subgrants.Core = [
       "Hockeypuck"
     ];
   };
