@@ -7,7 +7,7 @@
 
 {
   metadata = {
-    summary = "Next generation OpenPGP keyserver";
+    summary = "OpenPGP keyserver";
     subgrants = [
       "Hockeypuck"
     ];
