@@ -1,11 +1,9 @@
 # This is the nixpkgs derivation updated to use the latest Irdest commit. The last
 # stable release as of this time (0.7.0) had some issues. The project is also still
 # alpha and undergoing many changes.
-# There are also a few bug-fix patches applied.
 {
   lib,
   fetchFromGitea,
-  fetchpatch,
   fetchNpmDeps,
   installShellFiles,
   pkg-config,
@@ -18,22 +16,15 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "ratman";
-  version = "0-unstable-2025-08-24";
+  version = "0-unstable-2025-09-14";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "irdest";
     repo = "irdest";
-    rev = "6d074d45a9d5e6fefe9a2c9f60e1dedcbd8840a2";
-    hash = "sha256-h6XA3UhsvE3V0Ybr9TrbDzMuIIcU6hX6auCBOe+kERk=";
+    rev = "b0e2113b2194e5bbef2d227f2a151fe05db0de44";
+    hash = "sha256-q9MO+xfxT5tbiEV3L7qb3LefYS+cWXVFD2BGt8ftoh4=";
   };
-
-  patches = [
-    # https://codeberg.org/irdest/irdest/pulls/269
-    ./fix-ratmand-generate-command.patch
-    # https://codeberg.org/irdest/irdest/pulls/270
-    ./fix-inet-peering.patch
-  ];
 
   cargoHash = "sha256-Bemqfjm4yeen0c3vVlJxpVW2Tatfvm4dvkAf6SjXGFk=";
 
@@ -62,15 +53,6 @@ rustPlatform.buildRustPackage rec {
     pname = "ratman-dashboard";
     inherit version src;
     sourceRoot = "${src.name}/ratman/dashboard";
-
-    patches = [
-      # https://codeberg.org/irdest/irdest/pulls/268
-      (fetchpatch {
-        url = "file://${./fix-dashboard-build.patch}";
-        relative = "ratman/dashboard";
-        hash = "sha256-vN7DjWisDM5JInHMKfg3HCs/C4OPc70RVRsZueTXOig=";
-      })
-    ];
 
     npmDeps = fetchNpmDeps {
       name = "${pname}-${version}-npm-deps";
