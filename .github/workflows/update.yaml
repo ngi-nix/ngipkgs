@@ -1,5 +1,7 @@
 name: update
 
+permissions: {}
+
 on:
   workflow_dispatch:
   schedule:
@@ -13,8 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v31
-      - uses: DeterminateSystems/update-flake-lock@v23
+        with: { persist-credentials: false }
+      - uses: cachix/install-nix-action@7be5dee1421f63d07e71ce6e0a9f8a4b07c2a487 # v31.6.1
+      - uses: DeterminateSystems/update-flake-lock@db4ee38117a597ea8df8f7f75a187dd65093eade # v23
         with:
           token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
           pr-title: "flake: Update flake.lock"
