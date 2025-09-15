@@ -87,7 +87,7 @@ in
           ];
         }
         {
-          platform = "Ubuntu 24.04/24.10";
+          platform = "Ubuntu 24.04";
           shell-session.bash = [
             {
               input = ''
