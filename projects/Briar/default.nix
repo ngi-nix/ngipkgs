@@ -17,6 +17,10 @@
         text = "Briar project website";
         url = "https://briarproject.org/";
       };
+      quickstart = {
+        text = "Quick start";
+        url = "https://briarproject.org/quick-start";
+      };
     };
   };
 
@@ -24,11 +28,24 @@
     briar = {
       name = "briar";
       module = ./programs/briar/module.nix;
-      examples.basic = {
+      examples."Enable briar" = {
         module = ./programs/briar/examples/basic.nix;
         description = "";
-        tests.basic.module = null;
+        tests.basic.module = import ./programs/briar/tests/basic.nix args;
+        tests.basic.problem.broken.reason = ''
+          Peers can't connect through WiFi.
+        '';
       };
     };
+  };
+
+  nixos.demo.shell = {
+    module = ./programs/briar/examples/basic.nix;
+    module-demo = ./module-demo.nix;
+    description = "";
+    tests.demo.module = import ./programs/briar/tests/basic.nix args;
+    tests.demo.problem.broken.reason = ''
+      Peers can't connect through WiFi in the test.
+    '';
   };
 }
