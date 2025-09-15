@@ -32,7 +32,7 @@
   nixos.modules.programs = {
     eris-go = {
       name = "ERIS Go";
-      module = ./programs/eris-go/module.nix;
+      module = null; # removed, upstream
       examples.basic = {
         module = ./programs/eris-go/examples/basic.nix;
         description = "";
@@ -50,11 +50,14 @@
   nixos.modules.services = {
     eris-server = {
       name = "ERIS server";
-      module = lib.moduleLocFromOptionString "services.eris-server";
+      module = null; # removed, upstream
       examples.basic = {
         module = ./services/eris-server/examples/basic.nix;
         description = "";
         tests.basic.module = import ./services/eris-server/tests/basic.nix args;
+        tests.basic.problem.broken.reason = ''
+          Removed, upstream: https://github.com/NixOS/nixpkgs/pull/439158
+        '';
       };
       links = {
         build = {
