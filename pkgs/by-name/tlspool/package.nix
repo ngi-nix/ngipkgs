@@ -1,5 +1,7 @@
 {
+  lib,
   stdenv,
+  fetchFromGitLab,
   cmake,
   arpa2common,
   arpa2cm,
@@ -13,32 +15,42 @@
   unbound,
   libkrb5,
   openldap,
-  fetchFromGitLab,
+  openssl,
 }:
-stdenv.mkDerivation rec {
+# TODO: this has been migrated upstream, so remove after:
+# https://github.com/NixOS/nixpkgs/pull/443114
+stdenv.mkDerivation (finalAttrs: {
   pname = "tlspool";
   version = "0.9.7";
 
   src = fetchFromGitLab {
     owner = "arpa2";
     repo = "tlspool";
-    rev = "v${version}";
+    rev = "v${finalAttrs.version}";
     hash = "sha256-nODnRoFlgCTtBjPief9SkVlLgD3g+2zbwM0V9pt3Crk=";
   };
 
+  strictDeps = true;
+
   nativeBuildInputs = [
-    cmake
-    arpa2common
     arpa2cm
-    quickder
-    gnutls
-    db
-    ldns
-    libtasn1
-    p11-kit
-    unbound
-    libkrb5
-    openldap
+    arpa2common
+    cmake
     pkg-config
+    libkrb5
   ];
-}
+
+  buildInputs = [
+    arpa2cm
+    db
+    gnutls
+    ldns
+    libkrb5
+    libtasn1
+    openldap
+    openssl
+    p11-kit
+    quickder
+    unbound
+  ];
+})
