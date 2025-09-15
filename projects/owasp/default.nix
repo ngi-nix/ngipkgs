@@ -23,6 +23,12 @@
         module = ./programs/owasp/examples/basic.nix;
         description = "Enable the owasp tools";
         tests.blint.module = pkgs.nixosTests.blint;
+        tests.blint.problem.broken.reason = ''
+          Dependency (lief) is failing to build:
+
+          - https://hydra.nixos.org/build/306884435
+          - https://github.com/NixOS/nixpkgs/issues/443121
+        '';
         tests.depscan.module = pkgs.nixosTests.dep-scan;
       };
     };
@@ -32,6 +38,12 @@
     module = ./programs/owasp/examples/basic.nix;
     description = "owasp usage examples";
     tests.blint.module = pkgs.nixosTests.blint;
+    tests.blint.problem.broken.reason = ''
+      Dependency (lief) is failing to build:
+
+      - https://hydra.nixos.org/build/306884435
+      - https://github.com/NixOS/nixpkgs/issues/443121
+    '';
     tests.depscan.module = pkgs.nixosTests.dep-scan;
   };
 }
