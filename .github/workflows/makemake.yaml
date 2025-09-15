@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: cachix/install-nix-action@v31
         name: 'Install Nix'
-        with: { extra_nix_config: 'experimental-features = no-url-literals' }
+        with: { extra_nix_config: 'experimental-features = flakes nix-command no-url-literals' }
 
       - name: Prepare SSH
         run: |
