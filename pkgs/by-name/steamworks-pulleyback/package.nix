@@ -1,24 +1,25 @@
 {
-  stdenv,
   lib,
+  stdenv,
+  fetchFromGitLab,
   cmake,
   arpa2common,
   arpa2cm,
-  steamworks,
-  lua,
   doxygen,
   graphviz,
   libuuid,
-  fetchFromGitLab,
+  lua,
+  openssl,
+  steamworks,
 }:
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "steamworks-pulleyback";
   version = "0.3.0";
 
   src = fetchFromGitLab {
     owner = "arpa2";
     repo = "steamworks-pulleyback";
-    rev = "v${version}";
+    tag = "v${finalAttrs.version}";
     hash = "sha256-MtZDwWLcKVrNlNqhsT9tnT6qEpt2rR5S37UhHS232XI=";
   };
 
@@ -29,11 +30,12 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    steamworks
-    lua
     doxygen
     graphviz
     libuuid
+    lua
+    openssl
+    steamworks
   ];
 
   patches = [ ./install-dirs.patch ];
@@ -42,4 +44,4 @@ stdenv.mkDerivation rec {
     (lib.cmakeFeature "CMAKE_PREFIX_PATH" "${placeholder "out"}")
     (lib.cmakeFeature "PULLEY_BACKEND_DIR" "${placeholder "out"}/share/steamworks/pulleyback")
   ];
-}
+})
