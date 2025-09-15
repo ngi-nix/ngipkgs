@@ -12,9 +12,9 @@ jobs:
       FLAKE_REF_TOPLEVEL: github:${{ github.repository }}/${{ github.sha }}#nixosConfigurations.makemake.config.system.build.toplevel
       SSH_HOST: root@makemake.ngi.nixos.org
     steps:
-      - uses: 'DeterminateSystems/nix-installer-action@main'
+      - uses: cachix/install-nix-action@v31
         name: 'Install Nix'
-        with: { extra-conf: 'experimental-features = no-url-literals' }
+        with: { extra_nix_config: 'experimental-features = no-url-literals' }
 
       - name: Prepare SSH
         run: |
