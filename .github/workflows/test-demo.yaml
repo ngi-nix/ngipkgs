@@ -30,7 +30,7 @@ jobs:
       - uses: 'actions/checkout@v4'
         with: { persist-credentials: false }
 
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@7be5dee1421f63d07e71ce6e0a9f8a4b07c2a487 # v31.6.1
 
       - name: Build projects overview
         run: nix build .#overview
