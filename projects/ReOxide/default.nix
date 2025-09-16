@@ -27,6 +27,25 @@
     };
   };
 
-  nixos.modules.programs.reoxide.module = null;
-  nixos.modules.services.reoxide.module = null;
+  nixos.modules.programs = {
+    reoxide = {
+      name = "reoxide";
+      module = ./programs/reoxide/module.nix;
+      examples."Enable reoxide" = {
+        module = ./programs/reoxide/examples/basic.nix;
+        tests.basic.module = null;
+      };
+    };
+  };
+
+  nixos.modules.services = {
+    reoxided = {
+      name = "reoxided";
+      module = ./services/reoxided/module.nix;
+      examples."Enable reoxided" = {
+        module = ./services/reoxided/examples/basic.nix;
+        tests.basic.module = import ./services/reoxided/tests/basic.nix args;
+      };
+    };
+  };
 }
