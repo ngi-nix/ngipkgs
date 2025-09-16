@@ -10,6 +10,7 @@ on:
 
 jobs:
   lockfile:
+    if: github.repository_owner == 'ngi-nix'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
