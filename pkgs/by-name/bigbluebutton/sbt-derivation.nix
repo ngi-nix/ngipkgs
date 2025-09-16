@@ -57,6 +57,8 @@ let
 
       bbb-freeswitch-sounds = callPackage ./bbb-freeswitch-sounds { };
 
+      bbb-fsesl-akka = callPackage ./bbb-fsesl-akka { };
+
       bbb-fsesl-client = callPackage ./bbb-fsesl-client { };
     };
 in
