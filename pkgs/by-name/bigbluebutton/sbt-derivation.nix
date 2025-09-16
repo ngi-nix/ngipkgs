@@ -56,6 +56,8 @@ let
       bbb-freeswitch-core = callPackage ./bbb-freeswitch-core { };
 
       bbb-freeswitch-sounds = callPackage ./bbb-freeswitch-sounds { };
+
+      bbb-fsesl-client = callPackage ./bbb-fsesl-client { };
     };
 in
 lib.makeScope newScope packages
