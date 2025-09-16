@@ -21,6 +21,7 @@ in
 }:
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
+  nixdoc-to-github = pkgs.callPackage sources.nixdoc-to-github { };
   mkSbtDerivation =
     x:
     import sources.sbt-derivation (
@@ -172,6 +173,14 @@ rec {
 
           nix-update --flake update.${system}."$package" "$@"
         '';
+      })
+
+      # nix-shell --run nixdoc-to-github
+      (nixdoc-to-github.lib.nixdoc-to-github.run {
+        description = "";
+        category = "";
+        file = "${toString ./projects/types.nix}";
+        output = "${toString ./maintainers/docs/project.md}";
       })
     ];
   };
