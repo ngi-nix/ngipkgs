@@ -42,6 +42,6 @@ let
     concatMapAttrs names (readDir baseDirectory);
 in
 {
-  options.projects = types.projects;
+  options.projects = types.options.projects;
   config.projects = mapAttrs (name: directory: import directory args) projectDirectories;
 }
