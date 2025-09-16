@@ -105,7 +105,7 @@
                     in
                     checksForNixosTests // checksForNixosTypes;
                 in
-                concatMapAttrs checksForProject classic.projects;
+                concatMapAttrs checksForProject classic.hydrated-projects;
 
               checksForAllPackages =
                 let

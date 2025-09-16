@@ -1,6 +1,7 @@
 {
   lib,
   sources,
+  system,
   ...
 }@args:
 rec {
@@ -65,13 +66,7 @@ rec {
           class = "nixos";
           specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
           modules = [
-            {
-              config = {
-                # remove this after nixpkgs is separated: https://github.com/ngi-nix/ngipkgs/pull/968#discussion_r2067929098
-                # nixpkgs.hostPlatform = if builtins.isNull system then builtins.currentSystem else system;
-                nixpkgs.hostPlatform = builtins.currentSystem or "x86_64-linux";
-              };
-            }
+            { nixpkgs.hostPlatform = system; }
           ]
           ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
         })
