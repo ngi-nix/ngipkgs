@@ -48,6 +48,8 @@ let
       bbb-apps-akka = callPackage ./bbb-apps-akka { };
 
       bbb-common-message = callPackage ./bbb-common-message { };
+
+      bbb-config = callPackage ./bbb-config { };
     };
 in
 lib.makeScope newScope packages
