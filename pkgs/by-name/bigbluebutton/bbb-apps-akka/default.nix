@@ -4,6 +4,7 @@
   fakeroot,
   makeWrapper,
   jdk,
+  lndir,
   bbb-shared-utils,
   bbb-common-message,
 }:
@@ -22,8 +23,8 @@ mkSbtDerivation {
 
   depsWarmupCommand = ''
     mkdir -p $SBT_DEPS/project/.ivy/local
-    for thing in ${bbb-common-message}/*; do
-      ln -vs "$thing" $SBT_DEPS/project/.ivy/local/"$(basename "$thing")"
+    for dep in ${bbb-common-message}; do
+      lndir "$dep" $SBT_DEPS/project/.ivy/local
     done
 
     sbt compile
@@ -46,6 +47,7 @@ mkSbtDerivation {
   nativeBuildInputs = [
     dpkg
     fakeroot
+    lndir
     makeWrapper
   ];
 
@@ -55,8 +57,8 @@ mkSbtDerivation {
     cd akka-bbb-apps
 
     mkdir -p $SBT_DEPS/project/.ivy/local
-    for thing in ${bbb-common-message}/*; do
-      ln -vs "$thing" $SBT_DEPS/project/.ivy/local/"$(basename "$thing")"
+    for dep in ${bbb-common-message}; do
+      lndir "$dep" $SBT_DEPS/project/.ivy/local
     done
 
     sbt debian:packageBin
