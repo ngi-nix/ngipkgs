@@ -5,6 +5,8 @@
 }:
 
 let
+  version = "3.0.10";
+
   # Defined as git clone commands in the *.placeholder.sh files in BBB root
   externalDeps = [
     {
@@ -93,13 +95,17 @@ let
   srcBare = fetchFromGitHub {
     owner = "bigbluebutton";
     repo = "bigbluebutton";
-    tag = "v3.0.10";
+    tag = "v${version}";
     hash = "sha256-r1s+5AFwBrbIUOC+zuWPWNWqiuzHWgBDrWV8JN5bNGM=";
   };
 in
-runCommand "bigbluebutton-src" { } ''
-  cp -vr ${srcBare} $out
-  chmod +w $out
+runCommand "bigbluebutton-src"
+  {
+    inherit version;
+  }
+  ''
+    cp -vr ${srcBare} $out
+    chmod +w $out
 
-  ${lib.strings.concatMapStringsSep "\n" (dep: "cp -vr ${dep.src} $out/${dep.name}") externalDeps}
-''
+    ${lib.strings.concatMapStringsSep "\n" (dep: "cp -vr ${dep.src} $out/${dep.name}") externalDeps}
+  ''

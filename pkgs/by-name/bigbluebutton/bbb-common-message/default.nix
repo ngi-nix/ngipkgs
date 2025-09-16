@@ -1,13 +1,13 @@
 {
   mkSbtDerivation,
-  bbb-src,
+  bbb-shared-utils,
 }:
 
 mkSbtDerivation {
   pname = "bbb-common-message";
-  version = "3.0.10-bigbluebutton";
+  version = bbb-shared-utils.versionComponent;
 
-  src = bbb-src;
+  inherit (bbb-shared-utils) src;
 
   overrideDepsAttrs = final: prev: {
     preBuild = ''
@@ -22,14 +22,7 @@ mkSbtDerivation {
   depsOptimize = false;
   depsSha256 = "sha256-SwtcQrEicIggDBAL51xeHnnPg21Z4wlq8ZyatcFe320=";
 
-  postPatch = ''
-    patchShebangs build/setup-inside-docker.sh build/packages-template
-
-    # This is for setting up cache persistency in docker across runs. We don't want this.
-    substituteInPlace build/setup-inside-docker.sh \
-      --replace-fail 'ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' '#ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' \
-      --replace-fail 'CACHE_DIR="/root/"' 'CACHE_DIR="''${SOURCE}/cache/"'
-  '';
+  inherit (bbb-shared-utils) postPatch;
 
   strictDeps = true;
 
@@ -51,4 +44,8 @@ mkSbtDerivation {
 
     runHook postInstall
   '';
+
+  meta = bbb-shared-utils.meta // {
+    description = bbb-shared-utils.meta.description + " (bbb-common-message)";
+  };
 }

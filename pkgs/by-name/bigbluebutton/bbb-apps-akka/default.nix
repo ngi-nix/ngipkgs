@@ -4,15 +4,15 @@
   fakeroot,
   makeWrapper,
   jdk,
-  bbb-src,
+  bbb-shared-utils,
   bbb-common-message,
 }:
 
 mkSbtDerivation {
   pname = "bbb-apps-akka";
-  version = "3.0.10-bigbluebutton";
+  version = bbb-shared-utils.versionComponent;
 
-  src = bbb-src;
+  inherit (bbb-shared-utils) src;
 
   overrideDepsAttrs = final: prev: {
     preBuild = ''
@@ -34,14 +34,7 @@ mkSbtDerivation {
   depsOptimize = false;
   depsSha256 = "sha256-duIlX1aEOIfM66Eo4+A0ZdJJ3PLnAbSEC8N9DUUH8Y0=";
 
-  postPatch = ''
-    patchShebangs build/setup-inside-docker.sh build/packages-template
-
-    # This is for setting up cache persistency in docker across runs. We don't want this.
-    substituteInPlace build/setup-inside-docker.sh \
-      --replace-fail 'ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' '#ln -s "''${SOURCE}/cache/''${dir}" "/root/''${dir}"' \
-      --replace-fail 'CACHE_DIR="/root/"' 'CACHE_DIR="''${SOURCE}/cache/"'
-
+  postPatch = bbb-shared-utils.postPatch + ''
     # Skipping version mangling & building of dependencies
     substituteInPlace build/packages-template/bbb-apps-akka/build.sh \
       --replace-fail 'EPHEMERAL_VERSION=0.0.$(date +%s)-SNAPSHOT' 'cat <<EOF >/dev/null' \
@@ -103,4 +96,8 @@ mkSbtDerivation {
 
     runHook postInstall
   '';
+
+  meta = bbb-shared-utils.meta // {
+    description = bbb-shared-utils.meta.description + " (bbb-apps-akka)";
+  };
 }
