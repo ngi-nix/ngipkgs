@@ -50,6 +50,8 @@ let
       bbb-common-message = callPackage ./bbb-common-message { };
 
       bbb-config = callPackage ./bbb-config { };
+
+      bbb-etherpad = callPackage ./bbb-etherpad { };
     };
 in
 lib.makeScope newScope packages

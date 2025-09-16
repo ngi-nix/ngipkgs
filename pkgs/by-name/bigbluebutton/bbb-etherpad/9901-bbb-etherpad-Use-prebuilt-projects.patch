@@ -1,0 +1,58 @@
+diff '--color=auto' -ruN a/build/packages-template/bbb-etherpad/build.sh b/build/packages-template/bbb-etherpad/build.sh
+--- a/build/packages-template/bbb-etherpad/build.sh	2025-09-18 16:23:17.100775344 +0200
++++ b/build/packages-template/bbb-etherpad/build.sh	2025-09-18 16:32:40.273908402 +0200
+@@ -22,45 +22,37 @@
+ # however, it seems bbb-etherpad has troubles building with npm as high.
+ # Setting npm to 6.14.11 which was used successfully for building in BigBlueButton 2.4.x
+ npm -v
+-npm i -g npm@6.14.11
++echo "[Nix] Not installing another NPM version"
+ npm -v
+ 
+ ls -l node_modules/
+ ls -l node_modules/ep_etherpad-lite
+ ls -l src/
+ # rm -f node_modules/ep_etherpad-lite/package.json # Was preventing npm ci running, see https://github.com/ether/etherpad-lite/issues/4962#issuecomment-916642078
+-bin/installDeps.sh
++echo "[Nix] Base NPM deps should already be set up"
+ set -e
+ 
+ rm -rf ep_pad_ttl
+-git clone https://github.com/mconf/ep_pad_ttl.git
+-npm pack ./ep_pad_ttl
+-npm install ./ep_pad_ttl-*.tgz
++ln -vs @ep_pad_ttl@/lib/node_modules/@epPadTtlPackageName@ src/node_modules/@epPadTtlPackageName@
+ 
+ rm -rf bbb-etherpad-plugin
+-git clone https://github.com/alangecker/bbb-etherpad-plugin.git
+-npm pack ./bbb-etherpad-plugin
+-npm install ./ep_bigbluebutton_patches-*.tgz
++ln -vs @bbb-etherpad-plugin@/lib/node_modules/@bbbEtherpadPluginPackageName@ src/node_modules/@bbbEtherpadPluginPackageName@
+ 
+ rm -rf ep_redis_publisher
+-git clone https://github.com/mconf/ep_redis_publisher.git
+-npm pack ./ep_redis_publisher
+-npm install ./ep_redis_publisher-*.tgz
++ln -vs @ep_redis_publisher@/lib/node_modules/@epRedisPublisherPackageName@ src/node_modules/@epRedisPublisherPackageName@
+ 
+ rm -rf ep_cursortrace
+-git clone https://github.com/mconf/ep_cursortrace.git
+-npm pack ./ep_cursortrace
+-npm install ./ep_cursortrace-*.tgz
++ln -vs @ep_cursortrace@/lib/node_modules/@epCursortracePackageName@ src/node_modules/@epCursortracePackageName@
+ 
+-npm install ep_disable_chat
+-npm install --no-save --legacy-peer-deps ep_auth_session
++ln -vs @ep_disable_chat@/lib/node_modules/@epDisableChatPackageName@ src/node_modules/@epDisableChatPackageName@
++ln -vs @ep_auth_session@/lib/node_modules/@epAuthSessionPackageName@ src/node_modules/@epAuthSessionPackageName@
+ 
+ mkdir -p staging/usr/share/etherpad-lite
+ 
+ cp -r CHANGELOG.md CONTRIBUTING.md LICENSE README.md bin doc src tests var node_modules staging/usr/share/etherpad-lite
+ 
+ cp settings.json staging/usr/share/etherpad-lite
+-git clone https://github.com/alangecker/bbb-etherpad-skin.git staging/usr/share/etherpad-lite/src/static/skins/bigbluebutton
++cp -vr --no-preserve=all @bbb-etherpad-skin@ staging/usr/share/etherpad-lite/src/static/skins/bigbluebutton
+ chmod -R a+rX staging/usr/share/etherpad-lite
+ 
+ mkdir -p staging/usr/lib/systemd/system
