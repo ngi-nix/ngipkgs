@@ -339,10 +339,9 @@ rec {
 
       :::
 
-      :::{.note}
-      - Each program must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
-      - Examples must be tested (see [test](#libtest)).
-      :::
+      > [!NOTE]
+      > - Each program must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
+      > - Examples must be tested (see [test](#libtest)).
 
       After implementing the program, run the [checks](#checks) to make sure that everything is correct.
   */
@@ -398,6 +397,9 @@ rec {
             type = attrsOf example;
             description = ''
               Configurations that illustrate how to set up the program.
+
+              > [!NOTE]
+              > program must include at least one example, so users get an idea of what to do with it.
             '';
             example = lib.literalExpression ''
               nixos.modules.programs.examples."Enable foobar" = {
@@ -454,10 +456,9 @@ rec {
 
       :::
 
-      :::{.note}
-      - Each service must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
-      - Examples must be tested (see [test](#libtest)).
-      :::
+      > [!NOTE]
+      > - Each service must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
+      > - Examples must be tested (see [test](#libtest)).
 
       After implementing the service, run the [checks](#checks) to make sure that everything is correct.
   */

@@ -179,6 +179,22 @@
         "type": "github"
       }
     },
+    "nixdoc-to-github": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1717409038,
+        "narHash": "sha256-P4ZfOrlnRPNiZwiQn2pY44nPfk9cqI7FxOVaTnZwDCI=",
+        "owner": "fricklerhandwerk",
+        "repo": "nixdoc-to-github",
+        "rev": "47054a3b3a0f072ecd0402de3911d0979d09a7ab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fricklerhandwerk",
+        "repo": "nixdoc-to-github",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1760164275,
@@ -266,6 +282,7 @@
         "buildbot-nix": "buildbot-nix",
         "dream2nix": "dream2nix",
         "flake-utils": "flake-utils",
+        "nixdoc-to-github": "nixdoc-to-github",
         "nixpkgs": "nixpkgs",
         "pre-commit-hooks": "pre-commit-hooks",
         "sbt-derivation": "sbt-derivation",
