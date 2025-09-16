@@ -85,7 +85,7 @@ python3.pkgs.buildPythonApplication rec {
     popd
     chmod +x $out/opt/ghidra/ghidraRun
     chmod +x $out/opt/ghidra/support/launch.sh
-    ln -s $out/opt/ghidra/ghidraRun $out/bin/reoxided-ghidra
+    ln -s $out/opt/ghidra/ghidraRun $out/bin/reoxide-ghidra
   '';
 
   pythonImportsCheck = [
