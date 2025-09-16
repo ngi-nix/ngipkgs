@@ -9,6 +9,7 @@ let
   xmppId = "${xmppUser}@example.org";
   xmppPassword = "foobar";
   xmppMessage = "This is a test message.";
+  setupServiceDescription = "Setup Libervia XMPP users";
   setup-initial-libervia-user = pkgs.writeShellApplication {
     name = "setup-initial-libervia-user";
     runtimeInputs = with pkgs; [ prosody ];
@@ -137,7 +138,7 @@ in
             ssl.key = "${certs}/server.key";
           };
           muc = [ { domain = "conference.example.org"; } ];
-          uploadHttp = {
+          httpFileShare = {
             domain = "upload.example.org";
           };
         };
@@ -147,6 +148,20 @@ in
 
         # Make the self-signed certificates work
         security.pki.certificateFiles = [ "${certs}/ca.crt" ];
+
+        # Auto create Libervia XMPP users at system startup
+        systemd.services.setup-libervia-prosody-users = {
+          description = setupServiceDescription;
+          after = [ "prosody.service" ];
+          wantedBy = [ "prosody.service" ];
+          serviceConfig = {
+            User = config.services.prosody.user;
+            Type = "oneshot";
+            Restart = "on-failure";
+            RestartSec = "5s";
+          };
+          script = "${lib.getExe setup-initial-libervia-user}";
+        };
 
         environment = {
           etc = {
@@ -163,11 +178,6 @@ in
             # Input for message sending command
             "xmppMessage".text = xmppMessage;
           };
-
-          # Small script to register our test user in prosody
-          systemPackages = [
-            setup-initial-libervia-user
-          ];
         };
       };
   };
@@ -203,8 +213,7 @@ in
       machine.wait_for_file("/home/alice/.Xauthority")
 
       # Setup prosody so we can connect
-      machine.wait_for_console_text("Started Prosody XMPP server")
-      machine.succeed("sudo -su prosody ${lib.getExe setup-initial-libervia-user}")
+      machine.wait_for_console_text("Finished ${setupServiceDescription}")
 
       # We use in-session terminals for running commands, but relying on OCR to view results is slow
       # Create some output files for commands to pipe outputs into

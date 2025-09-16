@@ -31,7 +31,7 @@ backendTest
 
       environment = backendTestConfig.environment // {
         systemPackages =
-          backendTestConfig.environment.systemPackages
+          (backendTestConfig.environment.systemPackages or [ ])
           ++ (with pkgs; [
             xdotool # Control the mouse
           ]);
