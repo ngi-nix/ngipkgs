@@ -20,7 +20,7 @@
   testScript =
     { nodes, ... }:
     let
-      XRSH_PORT = toString nodes.machine.config.programs.xrsh.port;
+      XRSH_PORT = toString nodes.machine.programs.xrsh.port;
     in
     ''
       start_all()
