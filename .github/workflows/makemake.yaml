@@ -4,6 +4,7 @@ on: { push: { branches: [ 'main' ] } }
 
 jobs:
   deploy:
+    if: github.repository_owner == 'ngi-nix'
     environment: makemake
     runs-on: ubuntu-latest
     env:
