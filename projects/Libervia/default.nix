@@ -43,12 +43,6 @@
           module = ./examples/backend.nix;
           tests.backend = {
             module = import ./tests/backend.nix args;
-            problem.broken.reason = ''
-              Fetching times out given the slow source repo: https://repos.goffi.org
-
-              https://buildbot.ngi.nixos.org/#/builders/264/builds/2251
-              https://buildbot.ngi.nixos.org/#/builders/260/builds/2254
-            '';
           };
         };
         desktop = {
@@ -57,9 +51,6 @@
           # FIX:
           tests.desktop = {
             module = import ./tests/desktop.nix args;
-            problem.broken.reason = ''
-              https://buildbot.ngi.nixos.org/#/builders/473/builds/1182
-            '';
           };
         };
       };
