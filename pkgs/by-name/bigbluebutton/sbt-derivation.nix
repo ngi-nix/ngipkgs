@@ -52,6 +52,8 @@ let
       bbb-config = callPackage ./bbb-config { };
 
       bbb-etherpad = callPackage ./bbb-etherpad { };
+
+      bbb-freeswitch-core = callPackage ./bbb-freeswitch-core { };
     };
 in
 lib.makeScope newScope packages
