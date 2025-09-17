@@ -13,7 +13,7 @@
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
   inputs.buildbot-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.buildbot-nix.url = "github:nix-community/buildbot-nix?ref=refactoring";
+  inputs.buildbot-nix.url = "github:nix-community/buildbot-nix";
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
