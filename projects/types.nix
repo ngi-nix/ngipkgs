@@ -38,7 +38,28 @@ let
             default = null;
           };
           links = mkOption {
-            type = attrsOf types'.link;
+            type = types.submodule {
+              freeformType = attrsOf types'.link;
+              # mandatory links
+              # TODO: add all mandatory links to projects, then remove `default = null`
+              options = {
+                homepage = mkOption {
+                  type = types.nullOr types'.link;
+                  description = "Project homepage";
+                  default = null;
+                };
+                repo = mkOption {
+                  type = types.nullOr types'.link;
+                  description = "Main source repository";
+                  default = null;
+                };
+                docs = mkOption {
+                  type = types.nullOr types'.link;
+                  description = "Documentation";
+                  default = null;
+                };
+              };
+            };
             default = { };
           };
         };
