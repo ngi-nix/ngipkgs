@@ -18,7 +18,10 @@ in
       readOnly = true;
       default =
         self:
-        (optionalString (self.links != null && self.links != { })) ''
+        let
+          links = lib.filterAttrs (_: v: v != null) self.links;
+        in
+        (optionalString (links != null && links != { })) ''
           <p>
           Related links:
             <ul>
@@ -26,7 +29,7 @@ in
               <li>
                 <a href="${attr.url}">${attr.text}</a>
               </li>
-            '') self.links}
+            '') links}
             </ul>
           </p>
         '';
