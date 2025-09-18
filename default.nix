@@ -177,7 +177,7 @@ rec {
 
       # nix-shell --run nixdoc-to-github
       (nixdoc-to-github.lib.nixdoc-to-github.run {
-        description = "";
+        description = "NGI Project Types";
         category = "";
         file = "${toString ./projects/types.nix}";
         output = "${toString ./maintainers/docs/project.md}";
