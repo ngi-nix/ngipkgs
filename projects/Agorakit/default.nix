@@ -7,9 +7,23 @@
 {
   metadata = {
     summary = "A web-based, open source organization tool for collectives";
-    subgrants = [
+    subgrants.Entrust = [
       "Agorakit"
     ];
+    links = {
+      homepage = {
+        text = "Homepage";
+        url = "https://agorakit.org/en";
+      };
+      repo = {
+        text = "Source repository";
+        url = "https://github.com/agorakit/agorakit";
+      };
+      docs = {
+        text = "Documentation";
+        url = "https://docs.agorakit.org";
+      };
+    };
   };
 
   nixos = {

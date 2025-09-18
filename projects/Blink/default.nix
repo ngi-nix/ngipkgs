@@ -11,11 +11,26 @@
       based on the IETF SIP standard. It offers audio, video, instant messaging and desktop sharing. It supports
       end-to-end asynchronous messaging and end-to-end encryption which works both online (OTR) and offline (OpenPGP).
     '';
-    subgrants = [
-      "BlinkRELOAD"
-      "Blink-OTR-OpenPGP"
-      "Blink-Windows"
-    ];
+    subgrants = {
+      Entrust = [
+        "Blink-Windows"
+      ];
+      Review = [
+        "BlinkRELOAD"
+        "Blink-OTR-OpenPGP"
+      ];
+    };
+    links = {
+      homepage = {
+        text = "Homepage";
+        url = "https://icanblink.com";
+      };
+      repo = {
+        text = "Source repository";
+        url = "http://devel.ag-projects.com/repositories/blink-qt";
+      };
+      docs = null;
+    };
   };
 
   nixos = {

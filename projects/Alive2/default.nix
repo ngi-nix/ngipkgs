@@ -7,9 +7,17 @@
 {
   metadata = {
     summary = "Translation validation for LLVM";
-    subgrants = [
+    subgrants.Core = [
       "Alive2"
     ];
+    links = {
+      repo = {
+        text = "Source repository";
+        url = "https://github.com/AliveToolkit/alive2";
+      };
+      homepage = null;
+      docs = null;
+    };
   };
 
   nixos.modules.programs.alive2 = {

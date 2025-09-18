@@ -8,14 +8,26 @@
 {
   metadata = {
     summary = "A censorship-resistant peer-to-peer secure messaging app with offline capabilities";
-    subgrants = [
+    subgrants.Review = [
       "Briar"
       "Briar-beyond-Android"
     ];
     links = {
-      website = {
-        text = "Briar project website";
+      homepage = {
+        text = "Homepage";
         url = "https://briarproject.org/";
+      };
+      repo = {
+        text = "Source repository";
+        url = "https://code.briarproject.org/briar/briar-desktop";
+      };
+      repo-mobile = {
+        text = "Source repository (mobile)";
+        url = "https://code.briarproject.org/briar/briar";
+      };
+      docs = {
+        text = "Documentation";
+        url = "https://briarproject.org/manual";
       };
     };
   };
