@@ -7,21 +7,21 @@
 {
   metadata = {
     summary = "Standards-compliant open-source IMAP server with server-side encryption";
-    subgrants = [
+    subgrants.Review = [
       "Aerogramme"
     ];
     links = {
-      config = {
-        text = "Configuration reference";
-        url = "https://aerogramme.deuxfleurs.fr/documentation/reference/config/";
+      homepage = {
+        text = "Homepage";
+        url = "https://aerogramme.deuxfleurs.fr";
       };
-      service-manager = {
+      repo = {
+        text = "Source repository";
+        url = "https://git.deuxfleurs.fr/Deuxfleurs/aerogramme";
+      };
+      docs = {
         text = "Using with service managers";
-        url = "https://aerogramme.deuxfleurs.fr/documentation/cookbook/service-manager/";
-      };
-      nixpkgs = {
-        text = "Nixpkgs derivation";
-        url = "https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/ae/aerogramme/package.nix";
+        url = "https://aerogramme.deuxfleurs.fr/documentation/cookbook/service-manager";
       };
     };
   };

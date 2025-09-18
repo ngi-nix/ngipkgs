@@ -2,10 +2,31 @@
 {
   metadata = {
     summary = "Modular protocol for sharing, modifying and modeling graph data";
-    subgrants = [
-      "AtomicData"
-      "AtomicTables"
-    ];
+    subgrants = {
+      Commons = [
+        "AtomicServer-LocalFirst"
+      ];
+      Entrust = [
+        "AtomicTables"
+      ];
+      Review = [
+        "AtomicData"
+      ];
+    };
+    links = {
+      homepage = {
+        text = "Homepage";
+        url = "https://atomicdata.dev";
+      };
+      repo = {
+        text = "Source repository";
+        url = "https://github.com/atomicdata-dev/atomic-server";
+      };
+      docs = {
+        text = "Documentation";
+        url = "https://docs.atomicdata.dev";
+      };
+    };
   };
 
   nixos = {
