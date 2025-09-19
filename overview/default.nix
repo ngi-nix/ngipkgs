@@ -92,7 +92,7 @@ let
       self.dirtyRev or "dev";
 
   utils = {
-    inherit submoduleWithArgs;
+    inherit eval submoduleWithArgs;
 
     # This doesn't actually produce a HTML string but a Jinja2 template string
     # literal, that is then replaced by it's HTML translation at the last build
@@ -237,6 +237,11 @@ let
           }) (pick.examples project);
         };
 
+        binaries = eval {
+          imports = [ ./content-types/binary-list.nix ];
+          binaries = project.binary;
+        };
+
         metadata-subgrants = eval {
           imports = [ ./content-types/metadata-subgrants.nix ];
           subgrants = project.metadata.subgrants or null;
@@ -257,6 +262,7 @@ let
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
           ${examples}
+          ${binaries}
           ${metadata-subgrants}
           ${metadata-links}
         </article>
