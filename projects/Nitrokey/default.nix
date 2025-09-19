@@ -30,12 +30,13 @@
     };
   };
 
-  binary = lib.mkIf (system != "aarch64-linux") {
+  binary = {
     # TODO: nitrokey-3-firmware
     "nitrokey-fido2-firmware".data = pkgs.nitrokey-fido2-firmware;
     "nitrokey-pro-firmware".data = pkgs.nitrokey-pro-firmware;
     "nitrokey-start-firmware".data = pkgs.nitrokey-start-firmware;
-    "nitrokey-storage-firmware".data = pkgs.nitrokey-storage-firmware;
+    "nitrokey-storage-firmware".data =
+      if (system != "aarch64-linux") then pkgs.nitrokey-storage-firmware else null;
     "nitrokey-trng-rs232-firmware".data = pkgs.nitrokey-trng-rs232-firmware;
   };
 }
