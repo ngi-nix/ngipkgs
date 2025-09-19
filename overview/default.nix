@@ -182,6 +182,7 @@ let
           ${optionsRender}
           ${examples}
           ${binaries}
+          ${heading 2 "metadata" "Metadata"}
           ${metadata-subgrants}
           ${metadata-links}
         </article>
