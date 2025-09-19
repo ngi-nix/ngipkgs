@@ -43,7 +43,8 @@
       };
     };
   };
-  binary = lib.attrsets.mapAttrs' (
-    board: pkg: lib.attrsets.nameValuePair "${board}.rom" { data = "${pkg}/${pkg.passthru.romName}"; }
-  ) (lib.attrsets.filterAttrs (_: lib.attrsets.isDerivation) pkgs.heads);
+  binary = lib.attrsets.mapAttrs (board: pkg: {
+    name = "heads.${board}";
+    data = "${pkg}/${pkg.passthru.romName}";
+  }) (lib.attrsets.filterAttrs (_: lib.attrsets.isDerivation) pkgs.heads);
 }

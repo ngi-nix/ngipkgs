@@ -160,6 +160,7 @@ let
 
       :::
     */
+    # TODO: add binary data type (e.g. rom)
     binary =
       with types;
       submodule (
