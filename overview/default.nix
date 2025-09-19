@@ -8,10 +8,8 @@
 }:
 let
   inherit (builtins)
-    any
     attrValues
     filter
-    isList
     isInt
     substring
     toString
@@ -27,11 +25,6 @@ let
     mapAttrs'
     nameValuePair
     ;
-
-  empty =
-    xs:
-    assert isList xs;
-    xs == [ ];
 
   heading =
     i: anchor: text:
@@ -161,6 +154,14 @@ let
           }) (pick.examples project);
         };
 
+        binaries = eval {
+          imports = [ ./content-types/binary-list.nix ];
+          binaries = project.binary;
+          _module.args = {
+            inherit pkgs eval;
+          };
+        };
+
         metadata-subgrants = eval {
           imports = [ ./content-types/metadata-subgrants.nix ];
           subgrants = project.metadata.subgrants or null;
@@ -170,7 +171,6 @@ let
           imports = [ ./content-types/metadata-links.nix ];
           links = project.metadata.links or null;
         };
-
       in
       ''
         <article class="page-width">
@@ -181,6 +181,7 @@ let
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
           ${examples}
+          ${binaries}
           ${metadata-subgrants}
           ${metadata-links}
         </article>
