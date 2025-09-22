@@ -5,7 +5,7 @@
   fetchFromGitLab,
   unstableGitUpdater,
 
-  llvmPackages_14,
+  llvmPackages,
   m4,
   pkg-config,
   python3,
@@ -82,7 +82,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   nativeBuildInputs = [
-    llvmPackages_14.llvm
+    llvmPackages.llvm
     m4
     python3
     rustPlatform.bindgenHook
