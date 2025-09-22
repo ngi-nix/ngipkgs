@@ -98,9 +98,13 @@ in
         '';
         DynamicUser = true;
         Restart = "always";
-        RestartSec = 1;
+        RestartSec = 5;
         StateDirectory = "ratmand";
         StateDirectoryMode = "0700";
+      };
+      unitConfig = {
+        StartLimitBurst = 5;
+        StartLimitInterval = 100;
       };
     };
   };
