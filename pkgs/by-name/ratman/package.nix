@@ -12,9 +12,8 @@
   stdenv,
   nodejs,
   udev,
-  llvmPackages_19,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ratman";
   version = "0-unstable-2025-09-14";
 
@@ -28,8 +27,6 @@ rustPlatform.buildRustPackage rec {
 
   cargoHash = "sha256-Bemqfjm4yeen0c3vVlJxpVW2Tatfvm4dvkAf6SjXGFk=";
 
-  LIBCLANG_PATH = "${llvmPackages_19.libclang}/lib";
-
   nativeBuildInputs = [
     pkg-config
     rustPlatform.bindgenHook
@@ -37,7 +34,6 @@ rustPlatform.buildRustPackage rec {
   ];
 
   buildInputs = [
-    llvmPackages_19.libclang
     udev
   ];
 
@@ -47,11 +43,11 @@ rustPlatform.buildRustPackage rec {
     "-p"
     "ratman-tools"
   ];
-  cargoTestFlags = cargoBuildFlags;
+  cargoTestFlags = finalAttrs.cargoBuildFlags;
 
   dashboard = stdenv.mkDerivation rec {
     pname = "ratman-dashboard";
-    inherit version src;
+    inherit (finalAttrs) version src;
     sourceRoot = "${src.name}/ratman/dashboard";
 
     npmDeps = fetchNpmDeps {
@@ -75,7 +71,7 @@ rustPlatform.buildRustPackage rec {
   };
 
   prePatch = ''
-    cp -r ${dashboard} ratman/dashboard/dist
+    cp -r ${finalAttrs.dashboard} ratman/dashboard/dist
   '';
 
   meta = {
@@ -84,4 +80,4 @@ rustPlatform.buildRustPackage rec {
     platforms = lib.platforms.unix;
     license = lib.licenses.agpl3Only;
   };
-}
+})
