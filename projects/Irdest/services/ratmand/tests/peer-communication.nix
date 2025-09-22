@@ -54,13 +54,13 @@ in
     ''
       server.start()
       server.wait_for_unit("ratmand.service")
-      # API isn't available immediately after the service is ready.
-      server.succeed("sleep 3")
+      server.wait_for_console_text("Listening to API socket")
+      server.sleep(3)
 
       client.start()
       client.wait_for_unit("ratmand.service")
-      # API isn't available immediately after the service is ready.
-      client.succeed("sleep 3")
+      client.wait_for_console_text("Listening to API socket")
+      client.sleep(3)
 
       server.succeed("ratctl addr create", "ratctl addr up")
       server_address = server.succeed("ratctl addr list").strip()
