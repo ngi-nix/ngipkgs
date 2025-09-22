@@ -25,7 +25,7 @@
       start_all()
 
       machine.wait_for_unit("ratmand.service")
-      # API isn't available immediately after the service is ready.
-      machine.wait_until_succeeds("ratctl status system")
+      machine.wait_for_console_text("Listening to API socket")
+      machine.succeed("ratctl status system")
     '';
 }
