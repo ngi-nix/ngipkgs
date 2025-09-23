@@ -87,6 +87,7 @@ rec {
             // (filter-map (project.nixos.modules.programs or { }) "examples")
             // (filter-map (project.nixos.modules.services or { }) "examples")
           );
+          binary = project.binary or { };
           nixos.tests = import ./tests.nix {
             inherit lib pkgs project;
             inherit (nixos) examples;
