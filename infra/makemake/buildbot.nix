@@ -28,10 +28,8 @@ in
         oauthId = "Ov23linNGNKJg5zddrwX";
         oauthSecretFile = secret "github/oauth";
         webhookSecretFile = secret "github/webhook";
-        authType.app = {
-          id = 994441;
-          secretKeyFile = secret "buildbot.pem";
-        };
+        appId = 994441;
+        appSecretKeyFile = secret "buildbot.pem";
       };
       useHTTPS = true;
       cachix = {
