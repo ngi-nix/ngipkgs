@@ -4,13 +4,10 @@
 {
   lib,
   fetchFromGitea,
-  fetchNpmDeps,
   installShellFiles,
   pkg-config,
   rustPlatform,
-  npmHooks,
-  stdenv,
-  nodejs,
+  buildNpmPackage,
   udev,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -45,28 +42,20 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
   cargoTestFlags = finalAttrs.cargoBuildFlags;
 
-  dashboard = stdenv.mkDerivation rec {
+  dashboard = buildNpmPackage {
     pname = "ratman-dashboard";
     inherit (finalAttrs) version src;
-    sourceRoot = "${src.name}/ratman/dashboard";
+    sourceRoot = "${finalAttrs.src.name}/ratman/dashboard";
 
-    npmDeps = fetchNpmDeps {
-      name = "${pname}-${version}-npm-deps";
-      src = "${src}/ratman/dashboard";
-      hash = "sha256-Sj1UMz5Gv5l2IIxXBREDbetRo+FF2M/QpCyf5Ke2c5U=";
-    };
-
-    nativeBuildInputs = [
-      nodejs
-      npmHooks.npmConfigHook
-      npmHooks.npmBuildHook
-    ];
-
-    npmBuildScript = "build";
+    npmDepsHash = "sha256-Sj1UMz5Gv5l2IIxXBREDbetRo+FF2M/QpCyf5Ke2c5U=";
 
     installPhase = ''
+      runHook preInstall
+
       mkdir $out
       cp -r dist/* $out/
+
+      runHook postInstall
     '';
   };
 
