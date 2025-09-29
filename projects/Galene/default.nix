@@ -34,6 +34,11 @@ in
         tests.basic.module = pkgs.nixosTests.galene.basic;
         tests.file-transfer.module = pkgs.nixosTests.galene.file-transfer;
         tests.stream.module = pkgs.nixosTests.galene.stream;
+        tests.stream.problem.broken.reason = ''
+          Times out after a lot of rtpsession warnings and errors.
+
+          https://buildbot.ngi.nixos.org/#/builders/1059/builds/609
+        '';
       };
       inherit links;
     };
