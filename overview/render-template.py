@@ -1,5 +1,7 @@
 import sys
 import os
+import itertools
+from functools import partial
 
 from jinja2 import Template
 from markdown_it import MarkdownIt
@@ -31,7 +33,11 @@ md = MarkdownIt("commonmark")
 with open(jinja2_template_file) as file:
     jinja2_template = Template(file.read())
 
-rendered = jinja2_template.render(markdown_to_html=md.render, include_code=include_code)
+rendered = jinja2_template.render(
+    markdown_to_html=md.render,
+    include_code=include_code,
+    unique_id=partial(lambda iter: f"id-{next(iter)}", itertools.count()),
+)
 
 with open(output_file, "w") as file:
     file.write(rendered)
