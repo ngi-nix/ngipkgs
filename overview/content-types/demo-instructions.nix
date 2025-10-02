@@ -16,16 +16,6 @@ in
       type = types.submodule ./shell-instructions.nix;
       default.instructions = [
         {
-          platform = "Arch Linux";
-          shell-session.bash = [
-            {
-              input = ''
-                pacman --sync --refresh --noconfirm curl git jq nix
-              '';
-            }
-          ];
-        }
-        {
           platform = "Debian";
           shell-session.bash = [
             {
@@ -41,6 +31,16 @@ in
             {
               input = ''
                 apt install --yes curl git jq nix
+              '';
+            }
+          ];
+        }
+        {
+          platform = "Arch";
+          shell-session.bash = [
+            {
+              input = ''
+                pacman --sync --refresh --noconfirm curl git jq nix
               '';
             }
           ];
@@ -77,7 +77,17 @@ in
       type = types.submodule ./shell-instructions.nix;
       default.instructions = [
         {
-          platform = "Arch Linux, Debian Sid/Trixie and Ubuntu 25.04";
+          platform = "Debian Sid/Trixie";
+          shell-session.bash = [
+            {
+              input = ''
+                nix-build ./default.nix && ./result
+              '';
+            }
+          ];
+        }
+        {
+          platform = "Ubuntu 25.04";
           shell-session.bash = [
             {
               input = ''
@@ -97,6 +107,16 @@ in
             {
               input = ''
                 nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz --packages nix --run "nix-build ./default.nix && ./result"
+              '';
+            }
+          ];
+        }
+        {
+          platform = "Arch";
+          shell-session.bash = [
+            {
+              input = ''
+                nix-build ./default.nix && ./result
               '';
             }
           ];
