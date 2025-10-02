@@ -23,10 +23,11 @@
           (sources.inputs.nixpkgs + "/nixos/tests/common/user-account.nix")
         ];
 
-        # programs.tau-radio.settings.audio_interface = "BlackHole 2ch";
-
         environment.systemPackages = with pkgs; [
           alsa-utils
+          neovim
+          pipewire.jack
+          sox
         ];
 
         # services.getty.autologinUser = "alice";
@@ -50,8 +51,7 @@
 
         virtualisation.graphics = true;
 
-        services.pulseaudio.enable = false;
-        security.rtkit.enable = false;
+        security.rtkit.enable = true;
         services.pipewire = {
           enable = true;
           alsa.enable = true;
@@ -69,6 +69,10 @@
           # Enable audio
           "-device intel-hda"
           "-device hda-duplex"
+
+          "-vga none"
+          "-enable-kvm"
+          "-device virtio-gpu-pci"
         ];
       };
   };
@@ -82,18 +86,31 @@
       machine.wait_for_unit("tau-tower.service")
       machine.wait_for_console_text("Broadcasting on")
 
-      machine.succeed("mkdir -p $HOME/.config/tau")
-      machine.succeed("cp /etc/tau/config.toml $HOME/.config/tau/config.toml")
+      machine.succeed("install -D /etc/tau/config.toml -t $HOME/.config/tau")
+      machine.succeed("sed -i 's/@password@/superSecretPassword/' $HOME/.config/tau/config.toml")
 
+      # wait for pipewire setup to finish
       machine.wait_for_unit("multi-user.target")
 
-      machine.systemctl("--machine=alice@.host --user unmask pipewire")
-      machine.systemctl("--machine=alice@.host --user unmask pipewire.socket")
-      machine.systemctl("--machine=alice@.host --user unmask wireplumber")
+      # create a virtual microphone for playing back audio
+      machine.succeed("pw-loopback -n sine-loopback --capture-props='media.class=Audio/Source' >/dev/null &")
 
-      machine.execute("tau-radio -f $HOME/test.ogg")
-      machine.sleep(5)
-      machine.send_key("ctrl-c")
+      # generate sine wave file
+      machine.succeed("sox -n $HOME/sine.wav synth 2 sine 10 rate 48000")
+
+      # capture virtual microphone audio
+      # NOTE: file name is automatically appended with `.ogg`
+      machine.succeed("tau-radio -f $HOME/test >/dev/null &")
+      machine.sleep(2)
+
+      # play sine wave, which is picked up by the virtual mic, and thus
+      # captured by tau-radio
+      machine.succeed("pw-play --target sine-loopback $HOME/sine.wav")
+
+      # close tau-radio
+      machine.send_key("pkill -SIGINT tau-radio")
+
+      # check if audio is captured successfully
       machine.succeed("test -s $HOME/test.ogg")
     '';
 }
