@@ -36,14 +36,22 @@ in
         self:
         if lib.isList self.instructions then
           ''
-            <dl>
-            ${lib.concatMapStringsSep "\n" (i: ''
-              <dt>${i.platform}</dt>
-              <dd>
-                ${toString i.shell-session}
-              </dd>
-            '') self.instructions}
-            </dl>
+            <div class=tabs>
+              {% set input_group_name = unique_id() %}
+              ${lib.concatStringsSep "\n" (
+                # Enumerate over `self.instructions`.
+                lib.zipListsWith (i: instruction: ''
+                  {% set input_id = unique_id() %}
+                  <input id="{{ input_id }}" type="radio" name="{{ input_group_name }}" ${
+                    lib.optionalString (i == 1) "checked"
+                  }>
+                  <label for="{{ input_id }}" >${instruction.platform}</label>
+                  <div class="tab-content">
+                    ${toString instruction.shell-session}
+                  </div>
+                '') (lib.range 1 (lib.length self.instructions)) self.instructions
+              )}
+            </div>
           ''
         else
           toString self.instructions;
