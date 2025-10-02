@@ -272,7 +272,47 @@
     font-style: italic;
 }
 
+:root {
+  --ngi-text-color: #000000;
+  --ngi-bg-color: #ffffff;
+  --ngi-code-bg-color: #eee;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ngi-text-color: #f0decb;
+    --ngi-bg-color: #3c3434;
+    --ngi-code-bg-color: #242222;
+  }
+  a:link {
+    color: #9595ff;
+  }
+  a:visited {
+    color: #dc6edf;
+  }
+  .code .ss {
+    color: #5D5AFF !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 50em) {
+}
+
+/* Smartphone */
+@media (max-width: 50em) {
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
+  dd {
+    margin-left: 0;
+  }
+}
+
 body {
+    color: var(--ngi-text-color);
+    background: var(--ngi-bg-color);
     font-family: "IBM Plex Sans";
     padding-bottom: 25em;
 }
@@ -282,7 +322,7 @@ body > section {
 
 code, pre {
   font-family: "IBM Plex Mono";
-  background: #eee;
+  background: var(--ngi-code-bg-color);
   overflow-x: auto;
 }
 
@@ -482,38 +522,3 @@ nav.breadcrumb li:not(:last-child):after {
   content: "/" / "";
   margin: 0 0.5em;
 }
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #3c3434;
-    color: #f0decb;
-  }
-  a:link {
-    color: #9595ff;
-  }
-  a:visited {
-    color: #dc6edf;
-  }
-  code, pre {
-    background: #242222;
-  }
-  .code .ss {
-    color: #5D5AFF !important;
-  }
-}
-
-/* Desktop */
-@media (min-width: 50em) {
-}
-
-/* Smartphone */
-@media (max-width: 50em) {
-  h1 {
-    font-size: 2rem;
-    text-align: center;
-  }
-  dd {
-    margin-left: 0;
-  }
-}
-
