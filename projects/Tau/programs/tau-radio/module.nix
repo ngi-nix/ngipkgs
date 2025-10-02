@@ -60,12 +60,13 @@ in
           # TODO: verify that this is an enum and that these are the variants
           audio_interface = mkOption {
             type = types.enum [
+              "BlackHole 2ch"
+              "alsa"
               "jack"
               "oss"
               "pcm.sysdefault"
               "pipewire"
               "pulse"
-              "alsa"
             ];
             default = "pipewire";
             description = "Audio interface.";
@@ -90,6 +91,18 @@ in
           It's insecure to enter your password as cleartext.
 
           Use `services.tau-tower.passwordFile`, instead.
+        '';
+      }
+      {
+        assertion = cfg.settings.audio_interface == "BlackHole 2ch" -> pkgs.stdenv.hostPlatform.isDarwin;
+        message = ''
+          The BlackHole audio backend is only available on Darwin.
+        '';
+      }
+      {
+        assertion = cfg.settings.audio_interface == "pipewire" -> pkgs.stdenv.hostPlatform.isLinux;
+        message = ''
+          The Pipewire audio backend is only available on Linux.
         '';
       }
     ];

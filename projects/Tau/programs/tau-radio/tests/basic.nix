@@ -23,6 +23,8 @@
           (sources.inputs.nixpkgs + "/nixos/tests/common/user-account.nix")
         ];
 
+        # programs.tau-radio.settings.audio_interface = "BlackHole 2ch";
+
         environment.systemPackages = with pkgs; [
           alsa-utils
         ];
@@ -49,18 +51,18 @@
         virtualisation.graphics = true;
 
         services.pulseaudio.enable = false;
-        security.rtkit.enable = true;
+        security.rtkit.enable = false;
         services.pipewire = {
           enable = true;
           alsa.enable = true;
           alsa.support32Bit = true;
+          pulse.enable = true;
+          jack.enable = true;
 
           # not recommended in a normal setup, but is required for pipewire to work in the test
           systemWide = true;
 
-          wireplumber = {
-            enable = true;
-          };
+          wireplumber.enable = true;
         };
 
         virtualisation.qemu.options = [
@@ -89,12 +91,9 @@
       machine.systemctl("--machine=alice@.host --user unmask pipewire.socket")
       machine.systemctl("--machine=alice@.host --user unmask wireplumber")
 
-      machine.execute("tau-radio \
-      --no-recording \
-      --port ${toString nodes.machine.services.tau-tower.settings.mount_port} \
-      &> $HOME/tau.log")
+      machine.execute("tau-radio -f $HOME/test.ogg")
       machine.sleep(5)
       machine.send_key("ctrl-c")
-      machine.succeed("grep 'HTTP error: 200 OK' $HOME/tau.log")
+      machine.succeed("test -s $HOME/test.ogg")
     '';
 }
