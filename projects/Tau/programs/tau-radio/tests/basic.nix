@@ -96,7 +96,7 @@
       machine.succeed("pw-loopback -n sine-loopback --capture-props='media.class=Audio/Source' >/dev/null &")
 
       # generate sine wave file
-      machine.succeed("sox -n $HOME/sine.wav synth 2 sine 10 rate 48000")
+      machine.succeed("sox -n $HOME/sine.wav synth 5 sine 10 rate 48000")
 
       # capture virtual microphone audio
       # NOTE: file name is automatically appended with `.ogg`
@@ -106,9 +106,11 @@
       # play sine wave, which is picked up by the virtual mic, and thus
       # captured by tau-radio
       machine.succeed("pw-play --target sine-loopback $HOME/sine.wav")
+      machine.sleep(2)
 
       # close tau-radio
-      machine.send_key("pkill -SIGINT tau-radio")
+      machine.succeed("pgrep -io 'tau-radio' | xargs kill -SIGINT ")
+      machine.sleep(2)
 
       # check if audio is captured successfully
       machine.succeed("test -s $HOME/test.ogg")
