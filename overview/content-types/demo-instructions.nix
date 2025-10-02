@@ -16,16 +16,6 @@ in
       type = types.submodule ./shell-instructions.nix;
       default.instructions = [
         {
-          platform = "Arch Linux";
-          shell-session.bash = [
-            {
-              input = ''
-                pacman --sync --refresh --noconfirm curl git jq nix
-              '';
-            }
-          ];
-        }
-        {
           platform = "Debian";
           shell-session.bash = [
             {
@@ -41,6 +31,26 @@ in
             {
               input = ''
                 apt install --yes curl git jq nix
+              '';
+            }
+          ];
+        }
+        {
+          platform = "Arch";
+          shell-session.bash = [
+            {
+              input = ''
+                pacman --sync --refresh --noconfirm curl git jq nix
+              '';
+            }
+          ];
+        }
+        {
+          platform = "Other";
+          shell-session.bash = [
+            {
+              input = ''
+                sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
               '';
             }
           ];
@@ -87,7 +97,7 @@ in
           ];
         }
         {
-          platform = "Ubuntu 24.04";
+          platform = "Ubuntu 24.04/24.10";
           shell-session.bash = [
             {
               input = ''
