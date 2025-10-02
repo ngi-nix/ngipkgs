@@ -18,38 +18,11 @@
           sources.modules.services.tau-tower
           sources.examples.Tau."Enable tau-radio"
           sources.examples.Tau."Enable tau-tower"
-
-          # add users alice and bob (passwords: foobar)
-          (sources.inputs.nixpkgs + "/nixos/tests/common/user-account.nix")
         ];
 
         environment.systemPackages = with pkgs; [
-          alsa-utils
-          neovim
-          pipewire.jack
           sox
         ];
-
-        # services.getty.autologinUser = "alice";
-        security.sudo.wheelNeedsPassword = false;
-        users.users.alice.extraGroups = [
-          "audio"
-          "pipewire"
-          "wheel"
-        ];
-
-        # required for pipewire
-        services.xserver = {
-          enable = true;
-          windowManager.icewm.enable = true;
-        };
-
-        services.displayManager = {
-          defaultSession = lib.mkDefault "none+icewm";
-          autoLogin.user = "nixos";
-        };
-
-        virtualisation.graphics = true;
 
         security.rtkit.enable = true;
         services.pipewire = {
@@ -69,17 +42,13 @@
           # Enable audio
           "-device intel-hda"
           "-device hda-duplex"
-
-          "-vga none"
-          "-enable-kvm"
-          "-device virtio-gpu-pci"
         ];
       };
   };
 
   testScript =
     { nodes, ... }:
-    # py
+    # python
     ''
       start_all()
 
