@@ -39,9 +39,9 @@
         };
 
         virtualisation.qemu.options = [
-          # Enable audio
-          "-device intel-hda"
-          "-device hda-duplex"
+          # enable dummy audio
+          "-audiodev none,id=my_audiodev"
+          "-device virtio-sound-pci,audiodev=my_audiodev"
         ];
       };
   };
