@@ -1,8 +1,7 @@
 {
   lib,
-  name,
-  config,
   pkgs,
+  flake,
   ...
 }:
 let
@@ -28,6 +27,7 @@ in
         listOf (submodule {
           imports = [ ./option.nix ];
           _module.args.pkgs = pkgs;
+          _module.args.flake = flake;
         });
       default = [ ];
     };

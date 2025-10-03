@@ -84,6 +84,7 @@ let
       eval {
         imports = [ ./content-types/option-list.nix ];
         _module.args.pkgs = pkgs;
+        _module.args.flake = self;
 
         inherit prefix;
         module = lib.attrByPath (prefix ++ [ "module" ]) null project.nixos.modules;
@@ -95,6 +96,7 @@ let
             ;
           attrpath = option.loc;
           default = option.default or { };
+          declarations = option.declarations;
         }) (pick.options prefix);
       };
 
