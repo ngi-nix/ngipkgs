@@ -272,7 +272,47 @@
     font-style: italic;
 }
 
+:root {
+  --ngi-text-color: #000000;
+  --ngi-bg-color: #ffffff;
+  --ngi-code-bg-color: #eee;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ngi-text-color: #f0decb;
+    --ngi-bg-color: #3c3434;
+    --ngi-code-bg-color: #242222;
+  }
+  a:link {
+    color: #9595ff;
+  }
+  a:visited {
+    color: #dc6edf;
+  }
+  .code .ss {
+    color: #5D5AFF !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 50em) {
+}
+
+/* Smartphone */
+@media (max-width: 50em) {
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
+  dd {
+    margin-left: 0;
+  }
+}
+
 body {
+    color: var(--ngi-text-color);
+    background: var(--ngi-bg-color);
     font-family: "IBM Plex Sans";
     padding-bottom: 25em;
 }
@@ -282,7 +322,7 @@ body > section {
 
 code, pre {
   font-family: "IBM Plex Mono";
-  background: #eee;
+  background: var(--ngi-code-bg-color);
   overflow-x: auto;
 }
 
@@ -483,37 +523,36 @@ nav.breadcrumb li:not(:last-child):after {
   margin: 0 0.5em;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #3c3434;
-    color: #f0decb;
-  }
-  a:link {
-    color: #9595ff;
-  }
-  a:visited {
-    color: #dc6edf;
-  }
-  code, pre {
-    background: #242222;
-  }
-  .code .ss {
-    color: #5D5AFF !important;
-  }
+.tabs {
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
-/* Desktop */
-@media (min-width: 50em) {
+.tabs > label {
+  order: 1;
+  cursor: pointer;
+  padding: 0.75em;
+  border-bottom: 0.05em solid color-mix(in srgb, var(--ngi-text-color) 40%, transparent);
 }
 
-/* Smartphone */
-@media (max-width: 50em) {
-  h1 {
-    font-size: 2rem;
-    text-align: center;
-  }
-  dd {
-    margin-left: 0;
-  }
+.tabs > [type=radio] {
+  display: none;
 }
 
+.tabs > [type=radio]:checked + label {
+  font-weight: 600;
+  border-bottom: 0.05em solid var(--ngi-text-color);
+}
+
+.tabs > .tab-content {
+  width: 100%;
+  order: 2;
+  margin: 0.5em;
+}
+
+.tabs > [type=radio]:not(:checked) + label + .tab-content {
+  display: none;
+}
