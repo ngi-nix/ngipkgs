@@ -6,39 +6,40 @@
 }@args:
 
 {
-  # NOTE:
-  # - Each program/service must have at least one example
-  # - Set attributes to `null` to indicate that they're needed, but not available
-  # - Remove comments that are only relevant to the template when using it
+  /**
+    NOTE
+    - Each program/service must have at least one example
+    - Each example must be tested
+    - If something is needed but not available, set its attribute to `null`
+    - Remove template comments before committing changes
+
+    See the [project reference document](https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md) for more details on how to implement each component.
+  */
   metadata = {
     summary = "Short summary that describes the project";
-    subgrants = [
-      # 1. Navigate to the [NLnet project list](https://nlnet.nl/project/)
-      # 2. Enter the project name in the search bar
-      # 3. Review all the entries returned by the search
-      # 4. Collect the links to entries that relate to the project
-      #
-      # For example, for a project called `Foobar`, this can be something like:
-      #
-      #   - https://nlnet.nl/project/Foobar
-      #   - https://nlnet.nl/project/Foobar-mobile
-      #
-      # The subgrants will then be:
-      #
-      "Foobar"
-      "Foobar-mobile"
-    ];
-    # Top-level links for things that are in common across the whole project
-    # Remove the `links` attribute below if no such links exist
+    subgrants = {
+      Commons = [ ];
+      Core = [ ];
+      Entrust = [ ];
+      Review = [ ];
+    };
+    # Top-level links for things that are in common across the whole project (mandatory)
     links = {
-      exampleLink = {
+      repo = {
+        text = "Title";
+        url = "<URL>";
+      };
+      homepage = {
+        text = "Title";
+        url = "<URL>";
+      };
+      docs = {
         text = "Title";
         url = "<URL>";
       };
     };
   };
 
-  # NOTE: Replace `_programName_` with the actual program name
   nixos.modules.programs = {
     _programName_ = {
       name = "_programName_";
@@ -55,8 +56,7 @@
         '';
         tests.basic.module = import ./programs/_programName_/tests/basic.nix args;
       };
-      # Add relevant links to the program (if they're available)
-      # else, remove the `links` attribute below
+      # Add relevant links to the program (optional)
       links = {
         build = {
           text = "Build from source";
@@ -70,27 +70,9 @@
     };
   };
 
-  # NOTE: Replace `_serviceName_` with the actual service name
   nixos.modules.services = {
     _serviceName_ = {
       name = "service name";
-      # Check if the service exists in https://search.nixos.org/options?
-      # If it does, click on one of its options and copy the text in the `Name` field
-      # into the `module` attribute (use the root option name):
-      #
-      # ```nix
-      # module = lib.moduleLocFromOptionString "<NAME>";
-      # ```
-      #
-      # Example (Cryptpad):
-      #
-      # ```nix
-      # module = lib.moduleLocFromOptionString "services.cryptpad";
-      # ```
-      #
-      # Note: we can either use the module in nixpkgs or make one ourselves
-      # inside a `module.nix` file, but we can't do both at the same time.
-      #
       module = ./services/_serviceName_/module.nix;
       examples."Enable _serviceName_" = {
         module = ./services/_serviceName_/examples/basic.nix;
@@ -103,8 +85,7 @@
         '';
         tests.basic.module = import ./services/_serviceName_/tests/basic.nix args;
       };
-      # Add relevant links to the service (if they're available)
-      # else, remove the `links` attribute below
+      # Add relevant links to the program (optional)
       links = {
         build = {
           text = "Build from source";
@@ -116,5 +97,23 @@
         };
       };
     };
+  };
+
+  nixos.demo.shell = {
+    module = ./demo/module.nix;
+    module-demo = ./demo/module-demo.nix;
+    usage-instructions = [
+      {
+        instruction = ''
+          Run `foobar` in the terminal
+        '';
+      }
+      {
+        instruction = ''
+          Visit [http://127.0.0.1:8080](http://127.0.0.1:8080) in your browser
+        '';
+      }
+    ];
+    tests.demo.module = import ./programs/_programName_/tests/basic.nix args;
   };
 }

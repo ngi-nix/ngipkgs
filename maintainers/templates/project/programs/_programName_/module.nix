@@ -16,7 +16,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       cfg.package
-      # put the `packages` here
+      # put extra `packages` here
     ];
   };
 }
