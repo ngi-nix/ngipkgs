@@ -1,10 +1,13 @@
 {
-  sources,
   lib,
+  sources,
   ...
 }:
-let
-  sharedConfig = {
+{
+  name = "ratmand-peer-communication";
+
+  # common config between all nodes
+  defaults = {
     imports = [
       sources.modules.ngipkgs
       sources.modules.services.ratmand
@@ -18,35 +21,29 @@ let
     virtualisation.memorySize = 1536;
   };
 
-  serverIP = "192.168.2.10";
-  clientIP = "192.168.2.11";
-in
-{
-  name = "ratmand-peer-communication";
-
   nodes = {
-    server = lib.recursiveUpdate sharedConfig {
-      networking.interfaces.eth1 = {
-        ipv4.addresses = [
-          {
-            address = serverIP;
-            prefixLength = 24;
-          }
-        ];
+    server =
+      { nodes, ... }:
+      {
+        services.ratmand.settings = {
+          ratmand = {
+            accept_unknown_peers = true;
+            # TODO: This is not required for the server, but the test breaks if this is not specified because of issues with the config file. Investigate further.
+            peers = [ "inet:${nodes.client.networking.primaryIPAddress}:5860" ];
+          };
+        };
       };
-      services.ratmand.settings.ratmand.accept_unknown_peers = true;
-    };
-    client = lib.recursiveUpdate sharedConfig {
-      networking.interfaces.eth1 = {
-        ipv4.addresses = [
-          {
-            address = clientIP;
-            prefixLength = 24;
-          }
-        ];
+
+    client =
+      { nodes, ... }:
+      {
+        services.ratmand.settings = {
+          ratmand = {
+            accept_unknown_peers = true;
+            peers = [ "inet:${nodes.server.networking.primaryIPAddress}:5860" ];
+          };
+        };
       };
-      services.ratmand.settings.ratmand.peers = [ "inet:${serverIP}:5860" ];
-    };
   };
 
   testScript =
