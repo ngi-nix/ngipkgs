@@ -1,7 +1,7 @@
 {
   lib,
   pkgs,
-  config,
+  flake,
   ...
 }:
 let
@@ -37,6 +37,9 @@ in
     default = mkOption {
       type = types.attrs;
       default = { };
+    };
+    declarations = mkOption {
+      type = with types; listOf path;
     };
     description = mkOption {
       type = types.str;
@@ -99,6 +102,32 @@ in
           alert-readonly = optionalString self.readOnly ''
             <span class="option-alert" title="This option can't be set by users">Read-only</span>
           '';
+          option-path =
+            with lib;
+            let
+              declaration = head self.declarations;
+
+              ngipkgs-path = toString ./../../. + "/";
+              nixpkgs-path = toString flake.inputs.nixpkgs + "/";
+
+              inNixpkgs = hasPrefix "/nix/store" declaration;
+
+              relative-file-path = removePrefix (if inNixpkgs then nixpkgs-path else ngipkgs-path) declaration;
+
+              ngipkgs-rev = flake.rev or "main";
+
+              src-url =
+                if inNixpkgs then
+                  "https://github.com/nixos/nixpkgs/blob/${flake.inputs.nixpkgs.rev}/${relative-file-path}"
+                else
+                  "https://github.com/ngi-nix/ngipkgs/blob/${ngipkgs-rev}/${relative-file-path}";
+            in
+            optionalString (self.declarations != [ ]) ''
+              <dt>Declared in:</dt>
+              <dd class="option-type">
+                <a href="${src-url}">${relative-file-path}</a>
+              </dd>
+            '';
         in
         ''
           <details>
@@ -110,6 +139,7 @@ in
             <dl>
               ${option-type}
               ${option-default}
+              ${option-path}
               ${alert-update-script}
             </dl>
           </dd>
