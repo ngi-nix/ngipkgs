@@ -26,6 +26,7 @@ in
     };
     snippet-text = mkOption {
       type = types.str;
+      # TODO: this causes an IFD; refactor
       default = builtins.readFile config.filepath;
     };
     __toString = mkOption {
