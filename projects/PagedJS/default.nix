@@ -43,19 +43,30 @@
 
   nixos.demo.shell = {
     module = ./programs/pagedjs/examples/pagedjs.nix;
-    description = ''
-      A simple HTML file has been created at `/etc/pagedjs.html` for testing.
-
-      Run `pagedjs-cli --help` to see available commands.
-
-      To create a PDF from the HTML file, use:
-
-      `$ pagedjs-cli -i /etc/pagedjs.html -o ~/pagedjs-example.pdf`
-
-      View the PDF using evince:
-
-      `$ evince ~/pagedjs-example.pdf`
-    '';
+    usage-instructions = [
+      {
+        instruction = ''
+          A simple HTML file has been created at `/etc/pagedjs.html` for testing.
+        '';
+      }
+      {
+        instruction = ''
+          Run `pagedjs-cli --help` to see available commands.
+        '';
+      }
+      {
+        instruction = ''
+          To create a PDF from the HTML file, use:
+          `$ pagedjs-cli -i /etc/pagedjs.html -o ~/pagedjs-example.pdf`
+        '';
+      }
+      {
+        instruction = ''
+          View the PDF using evince:
+          `$ evince ~/pagedjs-example.pdf`
+        '';
+      }
+    ];
     tests.basic.module = import ./programs/pagedjs/tests/pagedjs.nix args;
   };
 }

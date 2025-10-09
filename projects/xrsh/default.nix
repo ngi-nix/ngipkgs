@@ -39,13 +39,25 @@
   nixos.demo.shell = {
     module = ./programs/xrsh/examples/basic.nix;
     module-demo = ./module-demo.nix;
-    description = ''
-      Run `xrsh` in the demo shell.
+    usage-instructions = [
+      {
+        instruction = ''
+          Run `xrsh` in the demo shell.
+        '';
+      }
 
-      Visit [http://127.0.0.1:8090](http://127.0.0.1:8090) on the browser to access the WebXR terminal.
+      {
+        instruction = ''
+          Visit [http://127.0.0.1:8090](http://127.0.0.1:8090) on the browser to access the WebXR terminal.
+        '';
+      }
+      {
+        instruction = ''
+          To change the web service port, set the environment variable `XRSH_PORT` before running the demo shell.
+        '';
+      }
 
-      To change the web service port, set the environment variable `XRSH_PORT` before running the demo shell.
-    '';
+    ];
     tests.basic.module = import ./programs/xrsh/tests/basic.nix args;
   };
 }

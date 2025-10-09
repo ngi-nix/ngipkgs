@@ -46,23 +46,34 @@ in
   nixos.demo.vm = {
     module = ./example.nix;
     module-demo = ./module-demo.nix;
-    description = ''
-      A demo VM for testing Galène.
-
-      To use Galène, you have to set up a group, and permissions & users within this group.
-      For full details, take a look at: ${links.test.url}#group-definitions
-
-      After Galène has finished starting up, the on-screen text in the VM will inform you about the exact directory
-      that your group configs need to be put into.
-
-      An example config is available within the VM under `/etc/galene-test-config.json`. If you copy this file to
-      the group directory and name it `test.json`, then a group named `test` will be available in the web interface
-      for you to use.
-
-      A known issue with specifically this demo is that WebRTC doesn't seem to be working: You can join the group and
-      get familiar with the interface, but audio and video is unlikely to work. Installing Galène properly on a local
-      system will get rid of this issue.
-    '';
+    usage-instructions = [
+      {
+        instruction = ''
+          To use Galène, you have to set up a group, and permissions & users within this group.
+          For full details, take a look at: [${links.test.url}#group-definitions](${links.test.url}#group-definitions)
+        '';
+      }
+      {
+        instruction = ''
+          After Galène has finished starting up, the on-screen text in the VM will inform you about the exact directory
+          that your group configs need to be put into.
+        '';
+      }
+      {
+        instruction = ''
+          An example config is available within the VM under `/etc/galene-test-config.json`. If you copy this file to
+          the group directory and name it `test.json`, then a group named `test` will be available in the web interface
+          for you to use.
+        '';
+      }
+      {
+        instruction = ''
+          A known issue with specifically this demo is that WebRTC doesn't seem to be working: You can join the group and
+          get familiar with the interface, but audio and video is unlikely to work. Installing Galène properly on a local
+          system will get rid of this issue.
+        '';
+      }
+    ];
     tests.basic.module = pkgs.nixosTests.galene.basic;
   };
 }

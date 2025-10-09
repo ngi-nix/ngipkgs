@@ -584,22 +584,26 @@ let
             };
           };
           usage-instructions = mkOption {
-            type = types.listOf (
-              types.submodule {
-                options = {
-                  instruction = mkOption {
-                    type = types.str;
-                    description = ''
-                      Markdown text that describes a single step
-                    '';
-                  };
-                };
-              }
-            );
+            type =
+              with types;
+              nullOr (
+                listOf (
+                  types.submodule {
+                    options = {
+                      instruction = mkOption {
+                        type = types.str;
+                        description = ''
+                          Markdown text that describes a single step
+                        '';
+                      };
+                    };
+                  }
+                )
+              );
             description = ''
               Steps that users should follow to use the demo
             '';
-            default = [ ];
+            default = null;
           };
         };
       }

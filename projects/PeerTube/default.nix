@@ -77,15 +77,20 @@
     };
     demo.vm = {
       module = ./services/peertube/examples/basic.nix;
-      description = ''
-        PeerTube service demo.
-
-        The web UI is available at http://localhost:9000/.
-
-        You can log in with:
-          - username: root
-          - password: changeme
-      '';
+      usage-instructions = [
+        {
+          instruction = ''
+            The web UI is available at http://localhost:9000/.
+          '';
+        }
+        {
+          instruction = ''
+            You can log in with:
+            - username: `root`
+            - password: `changeme`
+          '';
+        }
+      ];
       tests.peertube-plugins.module = import ./services/peertube/tests/peertube-plugins.nix args;
       tests.peertube-plugin-livechat.module = import ./services/peertube/tests/peertube-plugin-livechat.nix args;
     };

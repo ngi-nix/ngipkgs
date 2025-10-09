@@ -26,15 +26,20 @@
 
   nixos.demo.shell = {
     module = ./programs/oku/examples/basic.nix;
-    description = ''
-      A demo for testing Oku, a browser designed to use IPFS
+    usage-instructions = [
+      {
+        instruction = ''
+          Open oku and enter your favorite website into the URL.
+        '';
+      }
+      {
+        instruction = ''
+          Alternatively, run:
 
-      Open oku and enter your favorite website into the URL.
-
-      Alternatively, run:
-
-      $ oku -n 'https://www.fsf.org'
-    '';
+          $ oku -n 'https://www.fsf.org'
+        '';
+      }
+    ];
 
     tests.basic.module = pkgs.nixosTests.oku;
   };

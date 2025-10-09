@@ -43,12 +43,18 @@
     };
 
     demo.shell = {
-      description = ''
-        An environment with Blink installed.
-
-        Try running `blink`!
-        It should either open the application as a window, or add an entry to your desktop's indicator bar.
-      '';
+      usage-instructions = [
+        {
+          instruction = ''
+            Run `blink` to open the application.
+          '';
+        }
+        {
+          instruction = ''
+            It should either open the application as a window, or add an entry to your desktop's indicator bar.
+          '';
+        }
+      ];
       module = ./examples/basic.nix;
       module-demo = ./module-demo.nix;
       tests.basic.module = import ./tests/basic.nix args;

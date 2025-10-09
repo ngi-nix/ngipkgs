@@ -46,21 +46,29 @@
 
   nixos.demo.vm = {
     module = ./examples/basic.nix;
-    description = ''
-      A `ntpd-rs` service demo.
-
-      To use `ntpd-rs`, you need to first disable systemd-timesyncd
-      (the default NTP client on NixOS).
-
-      Then pick your time sources and configure them as described
-      (https://docs.ntpd-rs.pendulum-project.org/man/ntp.toml.5/).
-
-      The default `synchronization.minimum-agreeing-sources` is 3,
-      override it to a lower value if have fewer sources.
-      If you start `ntpd-rs` in client mode and having less sources
-      than the configured value, the service will exit with an error.
-      To check the synchronization status, use `ntp-ctl status`.
-    '';
+    usage-instructions = [
+      {
+        instruction = ''
+          To use `ntpd-rs`, you need to first disable systemd-timesyncd
+          (the default NTP client on NixOS).
+        '';
+      }
+      {
+        instruction = ''
+          Then pick your time sources and configure them as described
+          [in the documentation](https://docs.ntpd-rs.pendulum-project.org/man/ntp.toml.5/).
+        '';
+      }
+      {
+        instruction = ''
+          The default `synchronization.minimum-agreeing-sources` is 3,
+          override it to a lower value if have fewer sources.
+          If you start `ntpd-rs` in client mode and having less sources
+          than the configured value, the service will exit with an error.
+          To check the synchronization status, use `ntp-ctl status`.
+        '';
+      }
+    ];
     tests.basic.module = import ./tests/basic.nix args;
   };
 }
