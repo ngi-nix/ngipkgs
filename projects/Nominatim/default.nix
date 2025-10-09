@@ -48,34 +48,60 @@
 
   nixos.demo.vm = {
     module = ./services/nominatim/examples/basic.nix;
-    description = ''
-      A demo VM for testing Nominatim.
+    usage-instructions = [
+      {
+        instruction = ''
+          First, download some OpenStreetMap data from
+          [Geofabrik.de](https://download.geofabrik.de/), for example Andorra.
+        '';
+      }
+      {
+        instruction = ''
+          Then, import the data to Nominatim database.
+          ```
+          $ cd /tmp
+          $ wget https://download.geofabrik.de/europe/andorra-latest.osm.pbf
 
-      1. First, download some OpenStreetMap data from
-      [Geofabrik.de](https://download.geofabrik.de/), for example Andorra.
-
-      $ cd /tmp
-      $ wget https://download.geofabrik.de/europe/andorra-latest.osm.pbf
-
-      2. Import data to Nominatim database
-
-      $ sudo -u nominatim \
-        NOMINATIM_DATABASE_WEBUSER=nominatim-api \
-        nominatim import --continue import-from-file --osm-file andorra-latest.osm.pbf
-
-      3. Restart Nominatim service
-
-      $ sudo systemctl restart nominatim.service
-
-      4. Test Nominatim API in terminal
-
-      $ curl -k https://localhost:8443/status
-      $ curl -k "https://localhost:8443/search?q=Andorra&format=geojson"
-
-      5. Test Nominatim UI in browser
-
-      $ open https://localhost:8443
-    '';
+          $ sudo -u nominatim \
+            NOMINATIM_DATABASE_WEBUSER=nominatim-api \
+            nominatim import --continue import-from-file --osm-file andorra-latest.osm.pbf
+          ```
+        '';
+      }
+      {
+        instruction = ''
+          Restart the Nominatim service.
+          ```
+          $ sudo systemctl restart nominatim.service
+          ```
+        '';
+      }
+      {
+        instruction = ''
+          Test Nominatim API in terminal.
+          ```
+          $ curl -k https://localhost:8443/status
+          $ curl -k "https://localhost:8443/search?q=Andorra&format=geojson"
+          ```
+        '';
+      }
+      {
+        instruction = ''
+          Test Nominatim UI in browser.
+          ```
+          $ open https://localhost:8443
+          ```
+        '';
+      }
+      {
+        instruction = ''
+          Restart Nominatim service.
+          ```
+          $ sudo systemctl restart nominatim.service
+          ```
+        '';
+      }
+    ];
 
     tests.demo.module = import ./services/nominatim/tests/basic.nix args;
   };
