@@ -158,7 +158,7 @@ in
                 ${config.build-instructions}
               </li>
               ${
-                if (with self.demo; (description == null || description == "") && usage-instructions == [ ]) then
+                if (with self.demo; usage-instructions == null || usage-instructions == [ ]) then
                   ''
                     <li><span class="option-alert">Missing</span>
                       <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
@@ -168,20 +168,15 @@ in
                   ''
                     <li>
                       <strong>Usage Instructions</strong>
-                      ${
-                        if (self.demo.usage-instructions != [ ]) then
-                          ''
-                            <ol>
-                              ${lib.concatMapStrings (i: ''
-                                <li>
-                                <p>${markdownToHtml i.instruction}</p>
-                                </li>
-                              '') self.demo.usage-instructions}
-                            </ol>
-                          ''
-                        else
-                          self.demo.description
-                      }
+                      ${''
+                        <ol>
+                          ${lib.concatMapStrings (i: ''
+                            <li>
+                            <p>${markdownToHtml i.instruction}</p>
+                            </li>
+                          '') self.demo.usage-instructions}
+                        </ol>
+                      ''}
                     </li>
                   ''
               }
