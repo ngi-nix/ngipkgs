@@ -57,26 +57,43 @@
 
       Investigate why and fix it.
     '';
-    description = ''
-      Once the graphical environment is running, open Kaidan from Menu > Network.
-
-      Right-click on its entry on the window bar and choose "Maximize Alt+f10" to fit the Kaidan window to the screen size.
-
-      NOTE: You need an XMPP user account to use Kaidan.
-      If you have an account, use that to login and you should be able to send/receive a message.
-
-      If you don't have one, two demo-user accounts, `alice` and `john`, are available.
-
-      Login as the first user:
-      - Chat address: `john@example.org`
-      - Password: `foobar`
-
-      When logged in, choose "add contact by chat address" on the hamburger menu.
-      Add `alice@example.com`, and a chat will be started. Send a message to `alice`.
-
-      You can verify that `alice` has received the message by logging out `john` and logging in as `alice`
-      - Chat address: `alice@example.org`
-      - Password: `foobar`
-    '';
+    usage-instructions = [
+      {
+        instruction = ''
+          Once the graphical environment is running, open Kaidan from 'Menu > Network'.
+        '';
+      }
+      {
+        instruction = ''
+          Right-click on its entry on the window bar and choose "Maximize Alt+f10" to fit the Kaidan window to the screen size.
+        '';
+      }
+      {
+        instruction = ''
+          NOTE: You need an XMPP user account to use Kaidan.
+          If you don't have one, two demo-user accounts, `alice` and `john`, are available.
+        '';
+      }
+      {
+        instruction = ''
+          Login as the first user:
+          - Chat address: `john@example.org`
+          - Password: `foobar`
+        '';
+      }
+      {
+        instruction = ''
+          When logged in, choose "add contact by chat address" on the hamburger menu.
+          Add `alice@example.com`, and a chat will be started. Send a message to `alice`.
+        '';
+      }
+      {
+        instruction = ''
+          You can verify that `alice` has received the message by logging out `john` and logging in as `alice`
+          - Chat address: `alice@example.org`
+          - Password: `foobar`
+        '';
+      }
+    ];
   };
 }
