@@ -36,7 +36,7 @@
 
   nixos.demo.shell = {
     module = ./programs/owasp/examples/basic.nix;
-    description = "owasp usage examples";
+    usage-instructions = null;
     tests.blint.module = pkgs.nixosTests.blint;
     tests.blint.problem.broken.reason = ''
       Dependency (lief) is failing to build:
