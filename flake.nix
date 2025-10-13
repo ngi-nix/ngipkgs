@@ -68,6 +68,9 @@
           inherit (classic) pkgs ngipkgs optionsDoc;
         in
         rec {
+          # nix run github:Mic92/nix-update -- --flake -u update.x86_64-linux.PACKAGE_NAME
+          update = ngipkgs;
+
           packages = ngipkgs // {
             inherit (classic) overview;
 
