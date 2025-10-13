@@ -7,17 +7,17 @@
 }:
 maven.buildMavenPackage rec {
   pname = "openfire";
-  version = "4.9.2";
+  version = "5.0.2";
 
   src = fetchFromGitHub {
     owner = "igniterealtime";
     repo = "Openfire";
     tag = "v${version}";
-    hash = "sha256-mnniMlLvz3Iq/MIWe/legVUVy1TIkNQzvagzgSbZ1is=";
+    hash = "sha256-VwHDujd3A2f1MtLnbmg6Zp9ITKumg7idQ2RC+gioErU=";
   };
 
   mvnJdk = jdk_headless;
-  mvnHash = "sha256-PovHnAR10IxDTyoXCH4LCWZzIv6cNMl9JI0B4stDBo8=";
+  mvnHash = "sha256-chUGNP0h9Qpxa3Rfc7awHY3BtLsi0S/Ps3T7p4/QiGs=";
 
   # some deps require internet for tests
   mvnParameters = "-Dmaven.test.skip";
@@ -48,9 +48,10 @@ maven.buildMavenPackage rec {
   meta = {
     description = "An XMPP server licensed under the Open Source Apache License";
     homepage = "https://github.com/igniterealtime/Openfire";
+    changelog = "https://github.com/igniterealtime/Openfire/releases/tag/v${version}";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ ];
-    mainProgram = "openfire";
     platforms = lib.platforms.all;
+    teams = with lib.teams; [ ngi ];
+    mainProgram = "openfire";
   };
 }
