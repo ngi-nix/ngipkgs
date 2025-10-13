@@ -84,5 +84,9 @@ beamPackages'.mixRelease {
     license = lib.licenses.agpl3Only;
     teams = [ lib.teams.ngi ];
     mainProgram = "kazarma";
+    # elixir 1.17 requires erlang >= 25 and <= 27
+    # even when that's true, cldr compilation still fails
+    # https://github.com/ngi-nix/ngipkgs/issues/1096
+    broken = true;
   };
 }
