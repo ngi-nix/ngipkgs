@@ -294,6 +294,11 @@ let
       patchShebangs minimal-examples/selftests.sh
       substituteInPlace minimal-examples/selftests-library.sh \
         --replace-fail '/usr/bin/time' 'time'
+
+      # https://github.com/NixOS/nixpkgs/commit/5c92060a39799da7a6edaae78ac7e982e5121188
+      for f in $(find . -name CMakeLists.txt); do
+        sed '/^cmake_minimum_required/Is/VERSION [0-9]\.[0-9]/VERSION 3.5/' -i "$f"
+      done
     '';
 
     strictDeps = true;
