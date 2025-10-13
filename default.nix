@@ -64,6 +64,12 @@ rec {
       ;
   };
 
+  # NOTE: currently, this only works with flakes, because `nix-update` can't
+  # find `maintainers/scripts/update.nix` otherwise
+  #
+  # nix run github:Mic92/nix-update -- --flake -u update.x86_64-linux.PACKAGE_NAME
+  update.${system} = ngipkgs;
+
   examples =
     with lib;
     mapAttrs (
