@@ -161,6 +161,18 @@ rec {
           nix build --override-input nixpkgs "github:NixOS/nixpkgs?ref=pull/$pr/merge" .#checks.x86_64-linux.projects/"$proj"/nixos/tests/"$test" "$args"
         '';
       })
+
+      # nix-shell --run 'update PACKAGE_NAME --use-update-script'
+      (pkgs.writeShellApplication {
+        name = "update";
+        runtimeInputs = with pkgs; [ nix-update ];
+        text = ''
+          package=$1
+          shift # past value
+
+          nix-update --flake update.${system}."$package" "$@"
+        '';
+      })
     ];
   };
 
