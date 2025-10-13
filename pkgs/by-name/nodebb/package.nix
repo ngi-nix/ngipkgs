@@ -1,10 +1,11 @@
 {
-  buildNpmPackage,
-  dart-sass,
-  fetchFromGitHub,
   lib,
+  buildNpmPackage,
+  fetchFromGitHub,
   pkg-config,
+  dart-sass,
   vips,
+  nix-update-script,
 }:
 
 buildNpmPackage (finalAttrs: {
@@ -15,11 +16,13 @@ buildNpmPackage (finalAttrs: {
     owner = "NodeBB";
     repo = "NodeBB";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-HZalI+mUEt76lKM/oXPQBu9yvj7ZBx3Dd/lS1Fsv3t0=";
+    hash = "sha256-Y3+Qr/Sm8LgAfb3g1S2v1FzoBWn/YtqgZZj9FcNw5dg=";
+    postFetch = ''
+      cp $out/install/package.json $out
+    '';
   };
 
   postPatch = ''
-    cp ./install/package.json .
     cp ${./package-lock.json} ./package-lock.json
   '';
 
@@ -42,11 +45,15 @@ buildNpmPackage (finalAttrs: {
     runHook postBuild
   '';
 
+  # FIX: this doesn't update npmDepsHash automatically
+  passthru.updateScript = nix-update-script { extraArgs = [ "--generate-lockfile" ]; };
+
   meta = {
     description = "Forum software";
     homepage = "https://nodebb.org/";
     license = lib.licenses.gpl3Plus;
     maintainers = with lib.maintainers; [ prince213 ];
+    teams = with lib.teams; [ ngi ];
     platforms = lib.platforms.all;
   };
 })
