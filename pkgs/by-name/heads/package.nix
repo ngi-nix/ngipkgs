@@ -498,23 +498,12 @@ lib.makeScope newScope (
       "librem_l1um_v2"
       "librem_mini"
       "librem_mini_v2"
-      "qemu-coreboot-fbwhiptail-tpm1"
-      "qemu-coreboot-fbwhiptail-tpm1-hotp"
-      "qemu-coreboot-fbwhiptail-tpm1-hotp-prod"
-      "qemu-coreboot-fbwhiptail-tpm1-hotp-prod_quiet"
-      "qemu-coreboot-fbwhiptail-tpm1-prod"
-      "qemu-coreboot-fbwhiptail-tpm2"
-      "qemu-coreboot-fbwhiptail-tpm2-hotp"
-      "qemu-coreboot-fbwhiptail-tpm2-hotp-prod"
+
+      # Too many targets with mostly similar configs, blows up build times on CI
+      # Only enable afew to test some combinations of settings
+      "qemu-coreboot-fbwhiptail-tpm1-hotp" # Used in VM test
       "qemu-coreboot-fbwhiptail-tpm2-hotp-prod_quiet"
-      "qemu-coreboot-fbwhiptail-tpm2-prod"
       "qemu-coreboot-whiptail-tpm1"
-      "qemu-coreboot-whiptail-tpm1-hotp"
-      "qemu-coreboot-whiptail-tpm1-hotp-prod"
-      "qemu-coreboot-whiptail-tpm1-prod"
-      "qemu-coreboot-whiptail-tpm2"
-      "qemu-coreboot-whiptail-tpm2-hotp"
-      "qemu-coreboot-whiptail-tpm2-hotp-prod"
       "qemu-coreboot-whiptail-tpm2-prod"
     ];
   in
