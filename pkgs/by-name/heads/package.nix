@@ -361,6 +361,12 @@ let
         "-j1"
       ];
 
+      env = {
+        # CMake 4 errors out on old version policies.
+        # This is in fetched package sources so very annoying to patch, and Heads so far as no fix for this either.
+        CMAKE_POLICY_VERSION_MINIMUM = "3.5";
+      };
+
       preBuild = ''
         # parallelise individual project builds
         # Cannot pass in makeFlags, ncurses subproject "forgets" to expand this and generates invalid bash syntax:
