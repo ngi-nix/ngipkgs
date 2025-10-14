@@ -4,7 +4,6 @@
   libayatana-appindicator,
   python3,
   fetchgit,
-  highctidh,
   hkdf,
   wrapGAppsHook,
 }:
@@ -36,6 +35,7 @@ python3.pkgs.buildPythonApplication {
     (with python3.pkgs; [
       click
       cryptography
+      highctidh
       packaging
       pillow
       pydbus
@@ -51,7 +51,6 @@ python3.pkgs.buildPythonApplication {
       zeroconf
     ])
     ++ [
-      highctidh
       hkdf
     ];
 
