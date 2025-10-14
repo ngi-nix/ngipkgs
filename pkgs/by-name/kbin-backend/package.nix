@@ -1,13 +1,14 @@
 {
   lib,
-  fetchgit,
-  fetchFromGitHub,
   php82,
+  fetchFromGitHub,
+  fetchgit,
   moreutils,
   yq,
-  withS3 ? false,
   unstableGitUpdater,
   writeShellScript,
+
+  withS3 ? false,
 }:
 let
   inherit (lib)
@@ -17,6 +18,7 @@ let
   php = php82.override {
     packageOverrides = final: prev: {
       extensions = prev.extensions // {
+        # newer versions don't seem to work with kbin
         redis = prev.extensions.redis.overrideAttrs (
           finalAttrs: previousAttrs: {
             version = "6.0.2";
@@ -31,22 +33,10 @@ let
       };
     };
   };
-
-  phpWithExtensions = php.withExtensions (
-    {
-      enabled,
-      all,
-    }:
-    enabled
-    ++ (with all; [
-      amqp
-      redis
-    ])
-  );
 in
 # NOTE: when updating this:
 # - also update the `kbin-frontend` yarn deps hash and its `package.json`
-phpWithExtensions.buildComposerProject (
+php.buildComposerProject (
   finalAttrs:
   let
     pname = "kbin";
@@ -81,9 +71,21 @@ phpWithExtensions.buildComposerProject (
     doInstallCheck = false;
 
     nativeBuildInputs = [
-      yq
       moreutils
+      yq
     ];
+
+    php = php.withExtensions (
+      {
+        enabled,
+        all,
+      }:
+      enabled
+      ++ (with all; [
+        amqp
+        redis
+      ])
+    );
 
     postPatch = ''
       # .env file must be used, because it is used to set the default values
@@ -120,7 +122,7 @@ phpWithExtensions.buildComposerProject (
 
     passthru = {
       inherit withS3;
-      php = phpWithExtensions;
+      inherit (finalAttrs) php;
       updateScript = unstableGitUpdater {
         tagConverter = writeShellScript "${pname}-tag-converter.sh" ''
           read -r input_tag
