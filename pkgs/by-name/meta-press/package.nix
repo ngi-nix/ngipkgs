@@ -1,17 +1,19 @@
 {
   lib,
   stdenv,
-  fetchgit,
+  fetchFromGitLab,
   p7zip,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "meta-press";
   version = "1.8.17.4";
 
-  src = fetchgit {
-    url = "https://framagit.org/Siltaar/meta-press-ext.git";
+  src = fetchFromGitLab {
+    domain = "framagit.org";
+    owner = "Siltaar";
+    repo = "meta-press-ext";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-sl84E38swbzdlAd6zfm/wwYgzmMwSttri2Gi8Ljcn/k=";
+    hash = "sha256-pJSSauUnam7ScECmx93G9rBIy+Q29U3sfnJrVyc3b4c=";
   };
 
   # The Makefile moves the output to the enclosing folder
