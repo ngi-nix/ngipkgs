@@ -7,13 +7,13 @@
 mkYarnPackage rec {
   inherit (kbin-backend) version src passthru;
 
-  pname = "${kbin-backend.pname}-frontend";
+  pname = "kbin-frontend";
 
   packageJSON = ./package.json;
 
   offlineCache = fetchYarnDeps {
     yarnLock = "${src}/yarn.lock";
-    hash = "sha256-mH5E5WjEzrC+UL4yk9hwRYD1J81+hLgjHb7poPWuiFQ=";
+    hash = "sha256-5N+/Hqis9PYLLbI1fOfhRwtH2vJWbV1ocFqb++FZN2s=";
   };
 
   packageResolutions = builtins.listToAttrs (
@@ -26,6 +26,8 @@ mkYarnPackage rec {
         "stimulus-bundle"
         "ux-autocomplete"
         "ux-chartjs"
+        "ux-live-component"
+        "ux-turbo"
       ]
   );
 
