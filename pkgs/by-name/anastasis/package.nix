@@ -20,6 +20,7 @@
   texinfo,
   which,
   callPackage,
+  gitUpdater,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis";
@@ -99,6 +100,7 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   passthru.tests.vmTest = callPackage ./test.nix { };
+  passthru.updateScript = gitUpdater { rev-prefix = "v"; };
 
   meta = {
     description = ''
