@@ -22,9 +22,13 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [ setuptools ];
+  build-system = with python3Packages; [
+    setuptools
+  ];
 
-  propagatedBuildInputs = with python3Packages; [ selenium ];
+  dependencies = with python3Packages; [
+    selenium
+  ];
 
   nativeCheckInputs = [
     firefox
@@ -66,6 +70,6 @@ python3Packages.buildPythonPackage rec {
     description = "Lighter web automation with Python";
     homepage = "https://github.com/mherrmann/helium";
     license = lib.licenses.mit;
-    maintainers = [ ];
+    teams = with lib.teams; [ ngi ];
   };
 }
