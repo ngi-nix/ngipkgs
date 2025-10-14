@@ -6,14 +6,14 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "meta-press";
-  version = "1.8.17.4";
+  version = "1.9.1";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "Siltaar";
     repo = "meta-press-ext";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-pJSSauUnam7ScECmx93G9rBIy+Q29U3sfnJrVyc3b4c=";
+    hash = "sha256-TRda285BUEWyIMnKAxaPpWw682I3nrl3yGetXQcu5z8=";
   };
 
   # The Makefile moves the output to the enclosing folder
