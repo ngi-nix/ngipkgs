@@ -6,6 +6,8 @@
   moreutils,
   yq,
   withS3 ? false,
+  unstableGitUpdater,
+  writeShellScript,
 }:
 let
   inherit (lib)
@@ -42,30 +44,41 @@ let
     ])
   );
 in
+# NOTE: when updating this:
+# - also update the `kbin-frontend` yarn deps hash and its `package.json`
 phpWithExtensions.buildComposerProject (
   finalAttrs:
   let
     pname = "kbin";
-    version = "0.0.1";
+    baseVersion = "0.0.1";
+    version = "0.0.1-unstable-2024-02-05";
   in
   {
     inherit pname version;
 
     src = fetchgit {
       url = "https://codeberg.org/Kbin/kbin-core/";
-      rev = "cc727b9133b60fe7411b8c4dbd90c0319d225916";
-      hash = "sha256-P1LUt5x1RTkSYG/ONWdX7/9MDYz03e//a9CjhqNdrss=";
-
+      rev = "0c0cb1a800f9c36f8fdf50ea1935192863ca11b0";
+      hash = "sha256-g8/w2jYsYfbTqtgtEBvTbD6qYKbGBGG1ABPulHm4Kho=";
       postFetch = ''
         # Work around <https://github.com/NixOS/nixpkgs/pull/257337>.
         substituteInPlace $out/yarn.lock \
-          --replace '@symfony/stimulus-bundle' '_symfony/stimulus-bundle' \
-          --replace '@symfony/ux-autocomplete' '_symfony/ux-autocomplete' \
-          --replace '@symfony/ux-chartjs'      '_symfony/ux-chartjs'
+          --replace-fail '@symfony/stimulus-bundle'   '_symfony/stimulus-bundle' \
+          --replace-fail '@symfony/ux-autocomplete'   '_symfony/ux-autocomplete' \
+          --replace-fail '@symfony/ux-chartjs'        '_symfony/ux-chartjs' \
+          --replace-fail '@symfony/ux-live-component' '_symfony/ux-live-component' \
+          --replace-fail '@symfony/ux-turbo'          '_symfony/ux-turbo'
 
-        patch -p1 -d $out < ${./antispam-bundle.patch}
+        substituteInPlace $out/composer.lock \
+          --replace-fail 'nucleos/NucleosAntiSpamBundle' 'matgrula/NucleosAntiSpamBundle'
       '';
     };
+
+    vendorHash = "sha256-lnyvcOCsTruLD2OzrwIqSqtXTKswKpoLFdwip4MpNM4=";
+
+    composerNoPlugins = false;
+    composerStrictValidation = false;
+    doInstallCheck = false;
 
     nativeBuildInputs = [
       yq
@@ -89,11 +102,10 @@ phpWithExtensions.buildComposerProject (
         | sponge config/packages/oneup_flysystem.yaml
     '');
 
-    vendorHash = "sha256-f+ZjdcM+/cBQm/5Nlt42+4t9LI6WNmum0DFfTWQkS0o=";
-
-    composerNoPlugins = false;
-    composerStrictValidation = false;
-    doInstallCheck = false;
+    preBuild = ''
+      # composer does not support unstable versioning scheme
+      export version="${baseVersion}"
+    '';
 
     installCheckPhase = ''
       runHook preInstallCheck
@@ -109,6 +121,17 @@ phpWithExtensions.buildComposerProject (
     passthru = {
       inherit withS3;
       php = phpWithExtensions;
+      updateScript = unstableGitUpdater {
+        tagConverter = writeShellScript "${pname}-tag-converter.sh" ''
+          read -r input_tag
+          if [ "$input_tag" = 0 ]
+          then
+            printf '%s' ${baseVersion}
+          else
+            printf '%s' "$input_tag"
+          fi
+        '';
+      };
     };
   }
 )
