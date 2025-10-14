@@ -21,6 +21,7 @@
   postgresql,
   qrencode,
   taler-exchange,
+  gitUpdater,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis-gtk";
@@ -74,6 +75,8 @@ stdenv.mkDerivation (finalAttrs: {
   postInstallCheck = ''
     make check
   '';
+
+  passthru.updateScript = gitUpdater { rev-prefix = "v"; };
 
   meta = {
     description = "GTK interfaces to GNU Anastasis";
