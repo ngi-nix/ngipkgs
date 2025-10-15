@@ -175,6 +175,34 @@ rec {
         '';
       })
 
+      (pkgs.writeShellApplication {
+        name = "update-all";
+        runtimeInputs = with pkgs; [ nix-update ];
+        text =
+          let
+            update-commands = lib.concatMapStringsSep "\n" (package: ''
+              if ! nix-update --flake --use-update-script "${package}" "$@"; then
+                echo "${package}" >> "$TMPDIR/failed_updates.txt"
+              fi
+            '') (lib.attrNames ngipkgs);
+          in
+          # bash
+          ''
+            TMPDIR=$(mktemp -d)
+
+            echo -n> "$TMPDIR/failed_updates.txt"
+
+            ${update-commands}
+
+            if [ -s "$TMPDIR/failed_updates.txt" ]; then
+              echo -e "\nFailed to update the following packages:"
+              cat "$TMPDIR/failed_updates.txt"
+            else
+              echo "All packages updated successfully!"
+            fi
+          '';
+      })
+
       # nix-shell --run nixdoc-to-github
       (nixdoc-to-github.lib.nixdoc-to-github.run {
         description = "NGI Project Types";
