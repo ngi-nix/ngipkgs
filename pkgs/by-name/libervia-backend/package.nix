@@ -1,5 +1,6 @@
 {
   lib,
+  callPackage,
   python3Packages,
   fetchhg,
   firefox,
@@ -10,15 +11,17 @@
   libervia-media,
   libervia-templates,
   libnice,
-  oldmemo,
-  omemo,
   sat-tmp,
-  twomemo,
   urwid-satext,
   which,
   wokkel,
   wrapGAppsHook3,
 }:
+let
+  omemo = callPackage ./omemo.nix { };
+  oldmemo = callPackage ./oldmemo.nix { };
+  twomemo = callPackage ./twomemo.nix { };
+in
 python3Packages.buildPythonApplication rec {
   pname = "libervia-backend";
   version = "0.8.0-unstable-2024-10-26";
