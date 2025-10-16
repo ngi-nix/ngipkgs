@@ -9,10 +9,11 @@
   rustPlatform,
   buildNpmPackage,
   udev,
+  nix-update-script,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ratman";
-  version = "0-unstable-2025-09-14";
+  version = "0.7.0-unstable-2025-09-09";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
@@ -62,6 +63,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   prePatch = ''
     cp -r ${finalAttrs.dashboard} ratman/dashboard/dist
   '';
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     description = "Modular decentralised peer-to-peer packet router and associated tools";
