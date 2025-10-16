@@ -123,7 +123,7 @@ let
           if (project.nixos.demo == null) then
             ''
               ${heading 2 "demo" "Demo"}
-              <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing demo</a>
+              <a href="https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md#libdemo">Implement missing demo</a>
             ''
           else
             (lib.concatMapAttrsStringSep "\n" (
