@@ -16,17 +16,18 @@
   potrace,
   yarn,
   node-pre-gyp,
+  nix-update-script,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "wax-server";
-  version = "0-unstable-2025-08-14";
+  version = "0-unstable-2025-10-07";
 
   src = fetchFromGitHub {
     owner = "Wax-Platform";
     repo = "Wax";
-    rev = "01316b557d201b09b4ce9745c7d7e841d94b8268";
-    hash = "sha256-afc15miIzzEBRrzvJaRzSK+IWe4/36+Lvo7IbmNM2CA=";
+    rev = "e87966c0b3c629e3ae03ba3423f8cb8c4ce8a6d7";
+    hash = "sha256-2gOv6S9TfzAZH5OloNtRo1jJFvfrrP8/i2zNX6hEq2U=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/packages/server";
@@ -60,7 +61,6 @@ stdenv.mkDerivation (finalAttrs: {
     # Building bcrypt with node-gyp requires node headers
     # See https://nixos.org/manual/nixpkgs/unstable/#javascript-yarn2nix-pitfalls
     export npm_config_nodedir=${nodejs}
-
   '';
 
   postInstall = ''
@@ -80,6 +80,8 @@ stdenv.mkDerivation (finalAttrs: {
         ]
       }
   '';
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     homepage = "https://github.com/Wax-Platform/Wax";
