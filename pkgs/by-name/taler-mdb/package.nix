@@ -17,28 +17,16 @@
   gitUpdater,
 }:
 
-let
-  docs = fetchgit {
-    url = "https://git.taler.net/taler-docs.git";
-    rev = "b97d82f99dc32b0fdb7942dbb501603a2c86f8b1";
-    hash = "sha256-qyp/iHHGxE0A2UCSY+muyzUd0upuJeQK1OIaacsmrjs=";
-  };
-in
 stdenv.mkDerivation (finalAttrs: {
   pname = "taler-mdb";
-  version = "0.14.1";
+  version = "1.0.0";
 
   src = fetchgit {
     url = "https://git.taler.net/taler-mdb.git";
     rev = "v${finalAttrs.version}";
-    # fatal: repository 'https://git.taler.net/docs.git/' not found
-    fetchSubmodules = false;
-    hash = "sha256-+raX3O2RNaMsN7Wi6F0P/lccpLOtL13EU4Fpe9lCueA=";
+    hash = "sha256-AAFnF8bN2Pnhy8OZbgA6CRHBIC6iP785HpVjPEVu+IQ=";
+    fetchSubmodules = true;
   };
-
-  postPatch = ''
-    cp -R ${docs}/* doc/prebuilt/
-  '';
 
   nativeBuildInputs = [
     autoreconfHook
