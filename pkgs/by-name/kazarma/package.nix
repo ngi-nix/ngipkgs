@@ -6,6 +6,9 @@
   fetchFromGitHub,
   fetchFromGitLab,
   nodejs,
+  _experimental-update-script-combinators,
+  unstableGitUpdater,
+  nix-update-script,
 }:
 let
   beamPackages = beam27Packages;
@@ -78,6 +81,13 @@ beamPackages'.mixRelease {
     npm run deploy --prefix ./assets
     mix do deps.loadpaths --no-deps-check, phx.digest
   '';
+
+  # Can't update from GitLab with fetchSubmodules
+  # https://github.com/Mic92/nix-update/issues/281
+  passthru.updateScript = _experimental-update-script-combinators.sequence [
+    (unstableGitUpdater { tagPrefix = "v"; }) # update version + source
+    (nix-update-script { extraArgs = [ "--version=skip" ]; }) # update deps
+  ];
 
   meta = {
     description = "Matrix bridge to ActivityPub";
