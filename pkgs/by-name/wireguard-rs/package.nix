@@ -2,6 +2,7 @@
   lib,
   rustPlatform,
   fetchgit,
+  unstableGitUpdater,
 }:
 let
   inherit (lib)
@@ -25,6 +26,8 @@ rustPlatform.buildRustPackage {
       --replace-fail 'pnet = "^0.27"' 'pnet = "^0.29"'
     cp ${./Cargo.lock} Cargo.lock
   '';
+
+  passthru.updateScript = unstableGitUpdater { };
 
   meta = {
     homepage = "https://git.zx2c4.com/wireguard-rs";
