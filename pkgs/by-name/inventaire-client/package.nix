@@ -49,7 +49,7 @@ let
     '';
   };
 in
-buildNpmPackage rec {
+buildNpmPackage (finalAttrs: {
   pname = "inventaire-client";
   version = "4.0.1";
 
@@ -57,7 +57,7 @@ buildNpmPackage rec {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire-client";
-    tag = "v${version}";
+    tag = "v${finalAttrs.version}";
     hash = "sha256-5v6JNqinlaiyDFidn6j7zaXdIoCaf8L6qHoa6qhC5Uk=";
   };
 
@@ -109,7 +109,9 @@ buildNpmPackage rec {
       --replace-fail './scripts/build_i18n' '${lib.getExe copyI18nDataScript}' \
       --replace-fail 'webpack --config ./bundle/webpack.config.prod.cjs --progress' 'webpack --config ./bundle/webpack.config.prod.cjs' \
       --replace-fail 'date -Ins' 'date -d "@$SOURCE_DATE_EPOCH" -Ins' \
-      --replace-fail '$(git rev-parse --short HEAD)' '"${if src.tag != null then src.tag else src.rev}"'
+      --replace-fail '$(git rev-parse --short HEAD)' '"${
+        with finalAttrs; if src.tag != null then src.tag else src.rev
+      }"'
   '';
 
   # "Your cache folder contains root-owned files" error from NPM
@@ -129,9 +131,7 @@ buildNpmPackage rec {
   '';
 
   passthru = rec {
-    updateSourceScript = gitUpdater {
-      rev-prefix = "v";
-    };
+    updateSourceScript = gitUpdater { rev-prefix = "v"; };
     updateQueriesScript = writeShellApplication {
       name = "inventaire-client-sparql-queries-update-script";
       runtimeInputs = [
@@ -145,9 +145,10 @@ buildNpmPackage rec {
       };
       text = lib.strings.readFile ./update-sparql-queries.sh;
     };
+    # FIX: don't update `sparql-queries` if there is no version change
     updateScript = _experimental-update-script-combinators.sequence [
       updateSourceScript.command
-      updateQueriesScript
+      (lib.getExe updateQueriesScript)
     ];
   };
 
@@ -155,7 +156,7 @@ buildNpmPackage rec {
     description = "A libre collaborative resources mapper powered by open-knowledge (client-side)";
     homepage = "https://inventaire.io";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.all;
+    teams = with lib.teams; [ ngi ];
   };
-}
+})
