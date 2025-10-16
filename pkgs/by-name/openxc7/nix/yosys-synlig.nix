@@ -81,6 +81,8 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
+
   meta = with lib; {
     description = "SystemVerilog support plugin for Yosys";
     homepage = "https://github.com/chipsalliance/synlig";

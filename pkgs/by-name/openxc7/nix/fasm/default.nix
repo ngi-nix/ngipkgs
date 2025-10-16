@@ -51,4 +51,6 @@ buildPythonPackage rec {
       hansfbaier
     ];
   };
+
+  env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
 }

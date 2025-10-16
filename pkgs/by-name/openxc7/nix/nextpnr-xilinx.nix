@@ -52,6 +52,8 @@ stdenv.mkDerivation rec {
     cp ../xilinx/constids.inc $out/share/nextpnr
   '';
 
+  env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
+
   meta = with lib; {
     description = "Place and route tool for FPGAs";
     homepage = "https://github.com/openXC7/nextpnr-xilinx";
