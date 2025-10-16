@@ -1,10 +1,10 @@
 {
-  gobject-introspection,
   lib,
+  callPackage,
+  fetchgit,
+  gobject-introspection,
   libayatana-appindicator,
   python3,
-  fetchgit,
-  hkdf,
   wrapGAppsHook,
 }:
 let
@@ -12,11 +12,13 @@ let
     licenses
     maintainers
     ;
+
+  hkdf = callPackage ./hkdf.nix { };
 in
 python3.pkgs.buildPythonApplication {
   pname = "vula";
   version = "0.2-unstable-2024-05-17";
-  format = "setuptools";
+  pyproject = true;
 
   src = fetchgit {
     url = "https://codeberg.org/vula/vula";
@@ -31,7 +33,11 @@ python3.pkgs.buildPythonApplication {
       --replace "IMAGE_BASE_PATH = '/usr/share/icons/vula/'" "IMAGE_BASE_PATH = '$out/share/icons/vula/'"
   '';
 
-  propagatedBuildInputs =
+  build-system = with python3.pkgs; [
+    setuptools
+  ];
+
+  dependencies =
     (with python3.pkgs; [
       click
       cryptography
@@ -54,11 +60,15 @@ python3.pkgs.buildPythonApplication {
       hkdf
     ];
 
-  buildInputs = [ libayatana-appindicator ];
   nativeBuildInputs = [
     wrapGAppsHook
     gobject-introspection
   ];
+
+  buildInputs = [
+    libayatana-appindicator
+  ];
+
   nativeCheckInputs = with python3.pkgs; [ pytestCheckHook ];
 
   postInstall = ''
