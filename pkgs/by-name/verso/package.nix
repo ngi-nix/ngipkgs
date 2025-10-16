@@ -24,13 +24,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "verso";
-  version = "0-unstable-2025-06-15";
+  version = "0-unstable-2025-06-17";
 
   src = fetchFromGitLab {
     owner = "verso-browser";
     repo = "verso";
-    rev = "ace264e0e73da37bfb14818d92f0e54946ce9871";
-    hash = "sha256-gjg7qs2ik1cJcE6OTGN4KdljqJDGokCo4JdR+KopMJw=";
+    rev = "3aa9750eefaa35b1aed752c01162c353ed6be371";
+    hash = "sha256-Ik7ZoUnqnHwWkp2nhKXRwjqcbabUdxEHz5mdsQuF+AI=";
   };
 
   depsExtraArgs = {
