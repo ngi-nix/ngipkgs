@@ -161,7 +161,7 @@ in
                 if (with self.demo; usage-instructions == null || usage-instructions == [ ]) then
                   ''
                     <li><span class="option-alert">Missing</span>
-                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute usage instructions.</a>
+                      <a href="https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md#libdemo">Contribute usage instructions.</a>
                     </li>
                   ''
                 else
@@ -190,7 +190,7 @@ in
             ${
               lib.optionalString nullTests ''
                 <li><span class="option-alert">Missing</span>
-                  <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Contribute tests for the demo.</a>
+                  <a href="https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md#libtest">Contribute tests for the demo.</a>
                 </li>
               ''
               + lib.optionalString (self.demo.problem != null) ''

@@ -42,7 +42,7 @@ in
             >${join "." self.prefix}</span>
           ''
           + optionalString (self.module == null) ''
-            <a href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md">Implement missing module</a>
+            <a href="https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md#libprogram">Implement missing module</a>
           '';
         in
         optionalString (self.project-options != [ ] || self.module == null) ''

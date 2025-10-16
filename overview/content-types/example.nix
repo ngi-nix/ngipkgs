@@ -30,7 +30,7 @@ in
         let
           button-missing-test = optionalString (any (test: test.module == null) (attrValues config.tests)) ''
             <button class="button missing">
-            <a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md" target = "_blank">Add missing test</a>
+            <a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md#libtest" target = "_blank">Add missing test</a>
             </button>
           '';
         in
