@@ -1,6 +1,6 @@
 {
   lib,
-  beamPackages,
+  beam27Packages,
   buildNpmPackage,
   cacert,
   fetchFromGitHub,
@@ -8,6 +8,8 @@
   nodejs,
 }:
 let
+  beamPackages = beam27Packages;
+
   # https://github.com/elixir-lang/elixir/issues/13976
   beamPackages' = beamPackages.extend (self: super: { elixir = self.elixir_1_17; });
 
@@ -84,9 +86,5 @@ beamPackages'.mixRelease {
     license = lib.licenses.agpl3Only;
     teams = [ lib.teams.ngi ];
     mainProgram = "kazarma";
-    # elixir 1.17 requires erlang >= 25 and <= 27
-    # even when that's true, cldr compilation still fails
-    # https://github.com/ngi-nix/ngipkgs/issues/1096
-    broken = true;
   };
 }
