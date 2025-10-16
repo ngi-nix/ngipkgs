@@ -14,6 +14,7 @@
   taler-exchange,
   taler-merchant,
   qrencode,
+  gitUpdater,
 }:
 
 let
@@ -58,6 +59,8 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   doInstallCheck = true;
+
+  passthru.updateScript = gitUpdater { rev-prefix = "v"; };
 
   meta = {
     homepage = "https://git.taler.net/taler-mdb.git";
