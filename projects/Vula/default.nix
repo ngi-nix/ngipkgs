@@ -23,13 +23,7 @@
 
         Add users to the group defined in `config.services.vula.operatorsGroup` to grant them permissions to manage Vula through the `vula` command.
       '';
-      # FIX:
-      tests.test = {
-        module = import ./test.nix args;
-        problem.broken.reason = ''
-          https://buildbot.ngi.nixos.org/#/builders/193/builds/1789
-        '';
-      };
+      tests.basic.module = import ./test.nix args;
     };
   };
 }
