@@ -36,12 +36,6 @@
         module = ./services/kazarma/examples/basic.nix;
         description = null;
         tests.basic.module = import ./services/kazarma/tests/basic.nix args;
-        tests.basic.problem.broken.reason = ''
-          elixir 1.17 requires erlang >= 25 and <= 27
-          even when that's true, cldr compilation still fails
-
-          See: https://github.com/ngi-nix/ngipkgs/issues/1096
-        '';
       };
     };
   };

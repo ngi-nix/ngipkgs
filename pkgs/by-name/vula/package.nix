@@ -1,27 +1,33 @@
 {
-  gobject-introspection,
   lib,
+  callPackage,
+  fetchFromGitea,
+  gobject-introspection,
   libayatana-appindicator,
   python3,
-  fetchgit,
-  hkdf,
   wrapGAppsHook,
+  unstableGitUpdater,
 }:
 let
   inherit (lib)
     licenses
     maintainers
     ;
+
+  hkdf = callPackage ./hkdf.nix { };
+  rendez = callPackage ./rendez.nix { };
 in
 python3.pkgs.buildPythonApplication {
   pname = "vula";
-  version = "0.2-unstable-2024-05-17";
-  format = "setuptools";
+  version = "0.2.2024011000-unstable-2025-07-15";
+  pyproject = true;
 
-  src = fetchgit {
-    url = "https://codeberg.org/vula/vula";
-    rev = "b82933c2d45496afb91727e7ce3dff61ae262473";
-    hash = "sha256-DVjEg28GFmA3fOgXZ8MQ7rwfZtt6WkK1qHnyTnYbKcY=";
+  src = fetchFromGitea {
+    domain = "codeberg.org";
+    owner = "vula";
+    repo = "vula";
+    rev = "59611c2c7d1ac69be71961ecccf52c61c6b3dd3e";
+    hash = "sha256-hYXkfgTlcQ7HIMiYRxkuWuVGjZxWNqRgbjfKFT6gnaw=";
   };
 
   # without removing `pyproject.toml` we don't end up with an executable.
@@ -31,7 +37,11 @@ python3.pkgs.buildPythonApplication {
       --replace "IMAGE_BASE_PATH = '/usr/share/icons/vula/'" "IMAGE_BASE_PATH = '$out/share/icons/vula/'"
   '';
 
-  propagatedBuildInputs =
+  build-system = with python3.pkgs; [
+    setuptools
+  ];
+
+  dependencies =
     (with python3.pkgs; [
       click
       cryptography
@@ -49,22 +59,31 @@ python3.pkgs.buildPythonApplication {
       setuptools
       tkinter
       zeroconf
+      typing-extensions
+      dbus-python
     ])
     ++ [
       hkdf
+      rendez
     ];
 
-  buildInputs = [ libayatana-appindicator ];
   nativeBuildInputs = [
     wrapGAppsHook
     gobject-introspection
   ];
+
+  buildInputs = [
+    libayatana-appindicator
+  ];
+
   nativeCheckInputs = with python3.pkgs; [ pytestCheckHook ];
 
   postInstall = ''
     mkdir -p $out/share
     ln -s $out/${python3.sitePackages}/usr/share/icons $out/share
   '';
+
+  passthru.updateScript = unstableGitUpdater { tagPrefix = "v"; };
 
   meta = {
     description = "Automatic local network encryption";

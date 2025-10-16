@@ -1,13 +1,16 @@
 {
   lib,
-  beamPackages,
+  beam27Packages,
   buildNpmPackage,
   cacert,
   fetchFromGitHub,
   fetchFromGitLab,
   nodejs,
+  unstableGitUpdater,
 }:
 let
+  beamPackages = beam27Packages;
+
   # https://github.com/elixir-lang/elixir/issues/13976
   beamPackages' = beamPackages.extend (self: super: { elixir = self.elixir_1_17; });
 
@@ -77,6 +80,13 @@ beamPackages'.mixRelease {
     mix do deps.loadpaths --no-deps-check, phx.digest
   '';
 
+  # can't update from GitLab with fetchSubmodules
+  # https://github.com/Mic92/nix-update/issues/281
+  passthru.updateScript = [
+    ../peertube-plugin-akismet/update.sh
+    (unstableGitUpdater { tagPrefix = "v"; })
+  ];
+
   meta = {
     description = "Matrix bridge to ActivityPub";
     homepage = "https://kazar.ma/";
@@ -84,9 +94,5 @@ beamPackages'.mixRelease {
     license = lib.licenses.agpl3Only;
     teams = [ lib.teams.ngi ];
     mainProgram = "kazarma";
-    # elixir 1.17 requires erlang >= 25 and <= 27
-    # even when that's true, cldr compilation still fails
-    # https://github.com/ngi-nix/ngipkgs/issues/1096
-    broken = true;
   };
 }

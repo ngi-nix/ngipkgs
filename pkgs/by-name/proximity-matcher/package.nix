@@ -2,6 +2,7 @@
   lib,
   fetchFromGitHub,
   python3Packages,
+  nix-update-script,
 }:
 
 let
@@ -73,6 +74,8 @@ python3Packages.buildPythonPackage {
   pythonImportsCheck = [
     "proximity_matcher_webservice"
   ];
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     description = "Webservice for proximity matching based on TLSH and vantage point trees";
