@@ -7,11 +7,13 @@
   clang,
   ninja,
   reoxide,
+
+  nix-update-script,
 }:
 
 clangStdenv.mkDerivation (finalAttrs: {
   pname = "reoxide-plugin-simple";
-  version = "0-unstable-2025-09-12";
+  version = "0-unstable-2025-09-04";
 
   # use latest dev branch commit
   src = fetchFromGitea {
@@ -37,19 +39,19 @@ clangStdenv.mkDerivation (finalAttrs: {
   mesonBuildType = "release";
 
   preConfigure = ''
-
     mkdir -p .config/reoxide
     touch .config/reoxide/reoxide.toml
     export HOME=$PWD
 
     meson setup --buildtype=release build
-
   '';
 
   postInstall = ''
     mkdir -p $out/lib
     cp simple/libsimple.so $out/lib/
   '';
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     description = "Simple plugin template for reoxide";
