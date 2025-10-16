@@ -78,4 +78,6 @@ stdenv.mkDerivation rec {
   # These steps should be untangled, ideally - for now just use the buildPhase and disable the (empty)
   # installPhase.
   dontInstall = true;
+
+  env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
 }

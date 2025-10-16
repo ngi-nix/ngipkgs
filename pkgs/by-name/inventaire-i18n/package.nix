@@ -11,14 +11,14 @@
 
 buildNpmPackage rec {
   pname = "inventaire-i18n";
-  version = "0-unstable-2025-06-12";
+  version = "0-unstable-2025-10-07";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire-i18n";
-    rev = "834830455bbdf7684a55141f80e9b7a2da33d4eb";
-    hash = "sha256-0FhJuHZI4NyeWg3mhb0KCqe/SOR2nNo2uOfJ2CJYXPo=";
+    rev = "21121fab751ac85bd4d4f609b727685830560137";
+    hash = "sha256-YcVWayPIdaLFHmCnE5lECS15epIUNrDip/baPCwyvjE=";
   };
 
   npmDepsHash = "sha256-hJ9L9X53n44Iz0lKX2NspMLtQbQA0nRgJvYZc5+xNuA=";

@@ -49,6 +49,8 @@ stdenv.mkDerivation rec {
 
   doCheck = false;
 
+  env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
+
   meta = with lib; {
     description = "Xilinx series 7 FPGA bitstream documentation";
     homepage = "https://github.com/f4pga/prjxray";

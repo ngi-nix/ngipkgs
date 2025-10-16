@@ -1,9 +1,12 @@
 {
   lib,
+  callPackage,
   python3Packages,
   fetchFromGitHub,
-  omemo,
 }:
+let
+  omemo = callPackage ./omemo.nix { };
+in
 python3Packages.buildPythonPackage rec {
   pname = "twomemo";
   version = "1.1.0";

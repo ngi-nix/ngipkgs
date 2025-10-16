@@ -1,9 +1,12 @@
 {
-  python3Packages,
   lib,
+  python3Packages,
+  callPackage,
   fetchFromGitHub,
-  omemo,
 }:
+let
+  omemo = callPackage ./omemo.nix { };
+in
 python3Packages.buildPythonPackage rec {
   pname = "oldmemo";
   version = "1.1.0";
@@ -18,9 +21,11 @@ python3Packages.buildPythonPackage rec {
 
   strictDeps = true;
 
-  nativeBuildInputs = with python3Packages; [ setuptools ];
+  build-system = with python3Packages; [
+    setuptools
+  ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     omemo
   ]
   ++ (with python3Packages; [
@@ -39,6 +44,5 @@ python3Packages.buildPythonPackage rec {
     homepage = "https://github.com/Syndace/python-oldmemo";
     changelog = "https://github.com/Syndace/python-oldmemo/blob/v${version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [ ];
   };
 }
