@@ -28,8 +28,7 @@
     };
   };
 
-  # https://github.com/ngi-nix/ngipkgs/issues/1512
-  binary.lora-modem-firmware.data = null;
+  binary.irdest-lora-firmware.data = pkgs.irdest-lora-firmware;
 
   nixos.modules = {
     # https://github.com/ngi-nix/ngipkgs/issues/1514
