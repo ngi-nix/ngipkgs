@@ -1,6 +1,6 @@
 {
-  stdenvNoCC,
   lib,
+  stdenvNoCC,
   callPackage,
   fetchFromGitHub,
   fetchpatch,
@@ -8,13 +8,13 @@
   bashInteractive,
   ghdl,
   gnat-bootstrap,
-  makeWrapper,
   openfpgaloader,
   pkgs,
   pypy310,
   python3Packages,
   yosys,
   yosys-ghdl,
+  nix-update-script,
 }:
 
 let
@@ -166,6 +166,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       ;
   };
 
+  env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
+
   meta = {
     description = "Open-source FPGA toolchain for AMD/Xilinx Series 7 chips";
     homepage = "https://github.com/openXC7/toolchain-nix";
@@ -175,9 +179,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     platforms = lib.platforms.linux;
     # ghdl -> gnat -> gnat-bootstrap only available for very specific platforms
     # Mark broken if bootstrapping gnat is unavailable, to keep CI green
-    # FIX: re-enable after this is solved
-    # https://github.com/NixOS/nixpkgs/issues/419942
-    # broken = !lib.meta.availableOn stdenvNoCC.hostPlatform gnat-bootstrap;
-    broken = true;
+    broken = !lib.meta.availableOn stdenvNoCC.hostPlatform gnat-bootstrap;
   };
 })
