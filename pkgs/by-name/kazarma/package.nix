@@ -6,6 +6,7 @@
   fetchFromGitHub,
   fetchFromGitLab,
   nodejs,
+  unstableGitUpdater,
 }:
 let
   beamPackages = beam27Packages;
@@ -78,6 +79,13 @@ beamPackages'.mixRelease {
     npm run deploy --prefix ./assets
     mix do deps.loadpaths --no-deps-check, phx.digest
   '';
+
+  # can't update from GitLab with fetchSubmodules
+  # https://github.com/Mic92/nix-update/issues/281
+  passthru.updateScript = [
+    ../peertube-plugin-akismet/update.sh
+    (unstableGitUpdater { tagPrefix = "v"; })
+  ];
 
   meta = {
     description = "Matrix bridge to ActivityPub";
