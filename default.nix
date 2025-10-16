@@ -38,6 +38,15 @@ let
 
   extension = import ./pkgs/lib.nix { inherit lib sources system; };
   extended = lib.extend (_: _: extension);
+
+  ngipkgs = import ./pkgs/by-name {
+    inherit
+      pkgs
+      dream2nix
+      mkSbtDerivation
+      ;
+    lib = extended;
+  };
 in
 rec {
   lib = extended;
@@ -47,6 +56,7 @@ rec {
     system
     sources
     extension
+    ngipkgs
     ;
 
   overlays.default =
@@ -55,21 +65,6 @@ rec {
       pkgs = prev;
       inherit lib dream2nix mkSbtDerivation;
     };
-
-  ngipkgs = import ./pkgs/by-name {
-    inherit
-      pkgs
-      lib
-      dream2nix
-      mkSbtDerivation
-      ;
-  };
-
-  # NOTE: currently, this only works with flakes, because `nix-update` can't
-  # find `maintainers/scripts/update.nix` otherwise
-  #
-  # nix run github:Mic92/nix-update -- --flake -u update.x86_64-linux.PACKAGE_NAME
-  update.${system} = ngipkgs;
 
   examples =
     with lib;
@@ -163,15 +158,16 @@ rec {
         '';
       })
 
+      # NOTE: currently, this only works with flakes, because `nix-update` can't
+      # find `maintainers/scripts/update.nix` otherwise
+      #
       # nix-shell --run 'update PACKAGE_NAME --use-update-script'
       (pkgs.writeShellApplication {
         name = "update";
         runtimeInputs = with pkgs; [ nix-update ];
         text = ''
-          package=$1
-          shift # past value
-
-          nix-update --flake update.${system}."$package" "$@"
+          package=$1; shift # past value
+          nix-update --flake --use-update-script "$package" "$@"
         '';
       })
 
@@ -244,3 +240,5 @@ rec {
     demo-shell
     ;
 }
+# required for update scripts
+// ngipkgs
