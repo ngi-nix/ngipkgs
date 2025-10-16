@@ -173,6 +173,11 @@ let
           links = project.metadata.links or null;
         };
 
+        download-binary = eval {
+          imports = [ ./content-types/download-instructions.nix ];
+          heading = heading 2 "binary" ("Download Binary");
+        };
+
       in
       ''
         <article class="page-width">
@@ -180,6 +185,7 @@ let
           ${heading 1 null name}
           ${metadata-summary}
           ${demo-instructions}
+          ${download-binary}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
           ${examples}
