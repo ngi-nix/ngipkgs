@@ -11,7 +11,7 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "pagedjs-cli";
-  version = "0.4.3-unstable-2024-05-31";
+  version = "0-unstable-2024-05-31";
 
   src = fetchFromGitHub {
     owner = "pagedjs";
