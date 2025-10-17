@@ -45,6 +45,10 @@ in
           install -m 600 ${configFile} $out/config.json
         '';
       }))
+
+      # TODO: hide behind a debug option?
+      pkgs._0wm-opmode
+      pkgs._0wm-ap-mock
     ];
   };
 }
