@@ -63,7 +63,7 @@
   };
 
   nixos.demo.shell = {
-    module = ./demo/module.nix;
+    module = ./programs/0wm-client/examples/basic.nix;
     module-demo = ./demo/module-demo.nix;
     usage-instructions = [
       {
@@ -77,6 +77,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./programs/_programName_/tests/basic.nix args;
+    tests.demo.module = import ./programs/0wm-server/tests/basic.nix args;
   };
 }

@@ -4,17 +4,17 @@
   ...
 }:
 let
-  cfg = config.programs._programName_;
+  cfg = config.programs.zwm-client;
 in
 {
   config = lib.mkIf cfg.enable {
     demo-shell = {
       programs = {
-        _programName_ = cfg.package;
+        zwm-client = cfg.package;
       };
-      env = {
-        PROGRAM_PORT = toString cfg.port;
-      };
+      # env = {
+      #   PROGRAM_PORT = toString cfg.port;
+      # };
     };
   };
 }
