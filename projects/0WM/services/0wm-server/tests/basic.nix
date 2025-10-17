@@ -23,13 +23,18 @@
           sources.modules.programs.zwm-client
           sources.examples."0WM"."Enable 0WM server"
           sources.examples."0WM"."Enable 0WM client"
+
+          # enable graphical session
+          "${sources.inputs.nixpkgs}/nixos/tests/common/x11.nix"
         ];
 
         # services.zwm-server.settings.port = lib.mkForce 8000;
+        services.zwm-server.settings.interface = lib.mkForce "ap.local";
 
         environment.systemPackages = with pkgs; [
-          _0wm-opmode
           _0wm-ap-mock
+          _0wm-opmode
+          librewolf
         ];
 
         networking.firewall.allowedTCPPorts = [
@@ -40,6 +45,7 @@
 
         networking.hosts."0.0.0.0" = [ "ap.local" ];
 
+        virtualisation.memorySize = 4096;
         virtualisation.forwardPorts =
           let
             cfg = config.services.zwm-server;
@@ -79,8 +85,10 @@
 
       machine.succeed("mkdir -p /logs")
 
-      machine.succeed("CLIENT_ADDRESS=0.0.0.0 0wm-client &> /logs/client.log &")
-      machine.succeed("OP_MODE_ADDRESS=0.0.0.0 0wm-opmode &> /logs/opmode.log &")
-      machine.succeed("AP_MOCK_ADDRESS=0.0.0.0 0wm-ap-mock &> /logs/ap-mock.log &")
+      machine.succeed("0wm-client &> /logs/client.log &")
+      machine.succeed("0wm-opmode &> /logs/opmode.log &")
+      machine.succeed("0wm-ap-mock &> /logs/ap-mock.log &")
+
+      machine.succeed("librewolf http://127.0.0.1:8002")
     '';
 }
