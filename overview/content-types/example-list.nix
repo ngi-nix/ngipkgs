@@ -1,7 +1,6 @@
 {
   lib,
-  name,
-  config,
+  utils,
   ...
 }:
 let
@@ -9,7 +8,14 @@ let
 in
 {
   options = {
-    examples = mkOption { type = with types; listOf (submodule ./example.nix); };
+    examples = mkOption {
+      type =
+        with types;
+        listOf (submodule {
+          imports = [ ./example.nix ];
+          _module.args.utils = utils;
+        });
+    };
     __toString = mkOption {
       type = with types; functionTo str;
       default =

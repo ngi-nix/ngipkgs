@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  utils,
+  ...
+}:
 let
   inherit (lib)
     mkOption
@@ -33,12 +38,19 @@ in
             <a class = "heading" href="https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md#libtest" target = "_blank">Add missing test</a>
             </button>
           '';
+
+          declaration-link = utils.getFileDeclarationLink self.module;
         in
         ''
           <details open>
           <summary>${self.name}</summary>
           ${self.example-snippet}
           ${button-missing-test}
+
+          ${optionalString (self.module != null) ''
+            <p>Declared in: ${declaration-link}</p>
+          ''}
+
           </details>
         '';
     };
