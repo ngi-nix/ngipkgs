@@ -1,7 +1,7 @@
 {
   lib,
   config,
-  flake,
+  utils,
   ...
 }:
 let
@@ -11,8 +11,6 @@ let
     optionalString
     any
     attrValues
-    hasPrefix
-    removePrefix
     ;
 
   types' = import ../../projects/types.nix { inherit lib; };
@@ -41,24 +39,7 @@ in
             </button>
           '';
 
-          declaration = toString self.module;
-
-          isFlake = flake == ../../.;
-
-          ngipkgs-path = toString (if isFlake then flake else ../../.) + "/";
-          nixpkgs-path = toString flake.inputs.nixpkgs + "/";
-
-          inNixpkgs = hasPrefix nixpkgs-path declaration;
-
-          relative-file-path = removePrefix (if inNixpkgs then nixpkgs-path else ngipkgs-path) declaration;
-
-          ngipkgs-rev = flake.rev or "main";
-
-          src-url =
-            if inNixpkgs then
-              "https://github.com/nixos/nixpkgs/blob/${flake.inputs.nixpkgs.rev}/${relative-file-path}"
-            else
-              "https://github.com/ngi-nix/ngipkgs/blob/${ngipkgs-rev}/${relative-file-path}";
+          declaration-link = utils.getFileDeclarationLink self.module;
         in
         ''
           <details open>
@@ -67,12 +48,7 @@ in
           ${button-missing-test}
 
           ${optionalString (self.module != null) ''
-            <dl>
-              <dt>Declared in:</dt>
-              <dd class="option-type">
-                <a href="${src-url}">${relative-file-path}</a>
-              </dd>
-            </dl>
+            <p>Declared in: ${declaration-link}</p>
           ''}
 
           </details>

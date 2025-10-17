@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  utils,
   ...
 }:
 let
@@ -134,7 +135,6 @@ in
         let
           tests = lib.attrValues self.demo.tests;
           nullTests = lib.any (test: test.module == null) tests;
-          markdownToHtml = markdown: "{{ markdown_to_html(${builtins.toJSON markdown}) }}";
         in
         if (self.demo.problem == null && !nullTests) then
           ''
@@ -172,7 +172,7 @@ in
                         <ol>
                           ${lib.concatMapStrings (i: ''
                             <li>
-                            <p>${markdownToHtml i.instruction}</p>
+                            <p>${utils.markdownToHtml i.instruction}</p>
                             </li>
                           '') self.demo.usage-instructions}
                         </ol>
