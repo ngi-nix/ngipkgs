@@ -6,9 +6,16 @@
 {
   name = "0WM server";
 
+  interactive.sshBackdoor.enable = true;
+
   nodes = {
     machine =
-      { lib, config, ... }:
+      {
+        lib,
+        pkgs,
+        config,
+        ...
+      }:
       {
         imports = [
           sources.modules.ngipkgs
@@ -18,7 +25,12 @@
           sources.examples."0WM"."Enable 0WM client"
         ];
 
-        services.zwm-server.settings.port = lib.mkForce 8000;
+        # services.zwm-server.settings.port = lib.mkForce 8000;
+
+        environment.systemPackages = with pkgs; [
+          _0wm-opmode
+          _0wm-ap-mock
+        ];
 
         virtualisation.forwardPorts =
           let
@@ -29,6 +41,21 @@
               from = "host";
               host.port = cfg.settings.port;
               guest.port = cfg.settings.port;
+            }
+            {
+              from = "host";
+              host.port = 8001;
+              guest.port = 8001;
+            }
+            {
+              from = "host";
+              host.port = 8002;
+              guest.port = 8002;
+            }
+            {
+              from = "host";
+              host.port = 8003;
+              guest.port = 8003;
             }
           ];
       };
