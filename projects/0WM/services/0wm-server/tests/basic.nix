@@ -24,17 +24,29 @@
           sources.examples."0WM"."Enable 0WM server"
           sources.examples."0WM"."Enable 0WM client"
 
-          # enable graphical session
+          # enable graphical session + users (alice, bob)
           "${sources.inputs.nixpkgs}/nixos/tests/common/x11.nix"
+          # "${sources.inputs.nixpkgs}/nixos/tests/common/wayland-cage.nix"
+          "${sources.inputs.nixpkgs}/nixos/tests/common/user-account.nix"
         ];
+
+        services.xserver.enable = true;
+        test-support.displayManager.auto.user = "alice";
+        services.getty.autologinUser = "alice";
 
         # services.zwm-server.settings.port = lib.mkForce 8000;
         services.zwm-server.settings.interface = lib.mkForce "ap.local";
 
+        programs.chromium.enable = true;
+        programs.chromium.extensions = [
+          "cgffilbpcibhmcfbgggfhfolhkfbhmik" # Immersive Web Emulator (XR)
+          "lfhmikememgdcahcdlaciloancbhjino" # CORS Unblock
+        ];
+
         environment.systemPackages = with pkgs; [
           _0wm-ap-mock
           _0wm-opmode
-          librewolf
+          chromium
         ];
 
         networking.firewall.allowedTCPPorts = [
@@ -72,6 +84,12 @@
               guest.port = 8003;
             }
           ];
+
+        virtualisation.qemu.options = [
+          "-cpu host"
+          "-device virtio-gpu-gl"
+          "-display default,gl=on,show-cursor=on"
+        ];
       };
   };
 
@@ -89,6 +107,9 @@
       machine.succeed("0wm-opmode &> /logs/opmode.log &")
       machine.succeed("0wm-ap-mock &> /logs/ap-mock.log &")
 
-      machine.succeed("librewolf http://127.0.0.1:8002")
+      machine.wait_for_x()
+
+      # TODO: this does not work. open from in the graphical session
+      machine.succeed("su -m alice -c sh 'env DISPLAY=:0 chromium --enable-unsafe-swiftshader http://127.0.0.1:8002'")
     '';
 }
