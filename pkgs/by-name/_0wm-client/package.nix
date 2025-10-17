@@ -36,7 +36,10 @@ stdenv.mkDerivation (finalAttrs: {
   postFixup = ''
     makeWrapper ${lib.getExe serve} $out/bin/0wm-client \
       --prefix PATH : ${lib.makeBinPath [ xsel ]} \
+      --set-default "CLIENT_ADDRESS" "127.0.0.1" \
+      --set-default "CLIENT_PORT" "8001" \
       --add-flags "--symlinks" \
+      --add-flags '-l "tcp://$CLIENT_ADDRESS:$CLIENT_PORT"' \
       --chdir $out
   '';
 
