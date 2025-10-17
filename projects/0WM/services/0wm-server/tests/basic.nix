@@ -38,6 +38,8 @@
           8003
         ];
 
+        networking.hosts."0.0.0.0" = [ "ap.local" ];
+
         virtualisation.forwardPorts =
           let
             cfg = config.services.zwm-server;

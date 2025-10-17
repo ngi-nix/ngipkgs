@@ -10,19 +10,24 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "0wm-client";
-  version = "0-unstable-2025-10-06";
+  version = "0-unstable-2025-10-16";
 
   src = fetchFromGitHub {
     owner = "lab0-cc";
     repo = "0WM-Client";
-    rev = "3f06bd666c67af7f36dc2363617af33f6a4af3ea";
-    hash = "sha256-5ZlQHAeUwoA/7DhhQBBH/PLkDFG+jeHWy4I8ophGRW4=";
+    rev = "b3dcf654da9fd12087eff37bc24844fc279108ea";
+    hash = "sha256-ssCsSqzckJoHl80bBrjx0T4PF4Fc01F85KtsqPykr0I=";
     fetchSubmodules = true;
   };
 
   nativeBuildInputs = [
     makeWrapper
   ];
+
+  postConfigure = ''
+    substituteInPlace js/app.mjs \
+      --replace-fail 'http://ap.local' 'http://127.0.0.1:8003'
+  '';
 
   installPhase = ''
     runHook preInstall
