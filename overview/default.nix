@@ -158,6 +158,15 @@ let
           </p>
         '';
 
+        project-declaration =
+          let
+            ngipkgs-rev = self.rev or "main";
+          in
+          ''
+            <p>Declared in:
+            <a href="https://github.com/ngi-nix/ngipkgs/blob/${ngipkgs-rev}/projects/${name}/default.nix">projects/${name}/default.nix</a></p>
+          '';
+
         demo-instructions =
           if (project.nixos.demo == null) then
             ''
@@ -212,13 +221,13 @@ let
           imports = [ ./content-types/metadata-links.nix ];
           links = project.metadata.links or null;
         };
-
       in
       ''
         <article class="page-width">
           ${breadcrumbs}
           ${heading 1 null name}
           ${metadata-summary}
+          ${project-declaration}
           ${demo-instructions}
           ${optionalString (lib.trim optionsRender != "") "${heading 2 "service" "Options"}"}
           ${optionsRender}
