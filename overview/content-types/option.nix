@@ -105,12 +105,14 @@ in
           option-path =
             with lib;
             let
-              declaration = head self.declarations;
+              declaration = toString (head self.declarations);
 
-              ngipkgs-path = toString ./../../. + "/";
+              isFlake = flake == ../../.;
+
+              ngipkgs-path = toString (if isFlake then flake else ../../.) + "/";
               nixpkgs-path = toString flake.inputs.nixpkgs + "/";
 
-              inNixpkgs = hasPrefix "/nix/store" declaration;
+              inNixpkgs = hasPrefix nixpkgs-path declaration;
 
               relative-file-path = removePrefix (if inNixpkgs then nixpkgs-path else ngipkgs-path) declaration;
 
