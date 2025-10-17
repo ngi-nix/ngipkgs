@@ -39,8 +39,8 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       # no other easy way to specify the config file, but to replace it
-      (cfg.package.override (prev: {
-        postFixup = prev.postFixup ++ ''
+      (cfg.package.overrideAttrs (prev: {
+        postFixup = prev.postFixup + ''
           rm $out/config.json
           install -m 600 ${configFile} $out/config.json
         '';
