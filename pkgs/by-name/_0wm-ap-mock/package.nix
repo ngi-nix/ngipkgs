@@ -3,8 +3,7 @@
   stdenv,
   fetchFromGitHub,
   makeWrapper,
-  serve,
-  xsel,
+  python3,
   nix-update-script,
 }:
 
@@ -33,12 +32,11 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   postFixup = ''
-    makeWrapper ${lib.getExe serve} $out/bin/0wm-ap-mock \
-      --prefix PATH : ${lib.makeBinPath [ xsel ]} \
-      --add-flags "--symlinks" \
+    makeWrapper ${python3.interpreter} $out/bin/0wm-ap-mock \
       --set-default "AP_MOCK_ADDRESS" "127.0.0.1" \
       --set-default "AP_MOCK_PORT" "8003" \
-      --add-flags '-l "tcp://$AP_MOCK_ADDRESS:$AP_MOCK_PORT"' \
+      --add-flags "server.py" \
+      --add-flags '$AP_MOCK_PORT' \
       --chdir $out
   '';
 
