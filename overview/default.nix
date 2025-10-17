@@ -65,6 +65,45 @@ let
     else
       self.dirtyRev;
 
+  utils = {
+    # This doesn't actually produce a HTML string but a Jinja2 template string
+    # literal, that is then replaced by it's HTML translation at the last build
+    # step.
+    # Also, this avoids IFD (which would make things very slow with a
+    # growing number of such strings in the website rendering) since
+    # this way we can do markdown processing in a single step per output file at the end
+    markdownToHtml = markdown: "{{ markdown_to_html(${builtins.toJSON markdown}) }}";
+
+    getFileDeclarationLink =
+      file-path:
+      let
+        declaration = toString file-path;
+
+        ngipkgs-root = ../.;
+        isFlake = self == ngipkgs-root;
+
+        ngipkgs-path = toString (if isFlake then self else ngipkgs-root) + "/";
+        nixpkgs-path = toString self.inputs.nixpkgs + "/";
+
+        inNixpkgs = lib.hasPrefix nixpkgs-path declaration;
+
+        relative-file-path = lib.removePrefix (
+          if inNixpkgs then nixpkgs-path else ngipkgs-path
+        ) declaration;
+
+        ngipkgs-rev = self.rev or "main";
+
+        src-url =
+          if inNixpkgs then
+            "https://github.com/nixos/nixpkgs/blob/${self.inputs.nixpkgs.rev}/${relative-file-path}"
+          else
+            "https://github.com/ngi-nix/ngipkgs/blob/${ngipkgs-rev}/${relative-file-path}";
+      in
+      ''
+        <a href="${src-url}">${relative-file-path}</a>
+      '';
+  };
+
   pick = {
     options = prefix: filter (option: lib.lists.hasPrefix prefix option.loc) (attrValues options);
     examples =
@@ -84,7 +123,7 @@ let
       eval {
         imports = [ ./content-types/option-list.nix ];
         _module.args.pkgs = pkgs;
-        _module.args.flake = self;
+        _module.args.utils = utils;
 
         inherit prefix;
         module = lib.attrByPath (prefix ++ [ "module" ]) null project.nixos.modules;
@@ -153,7 +192,7 @@ let
 
         examples = eval {
           imports = [ ./content-types/example-list.nix ];
-          _module.args.flake = self;
+          _module.args.utils = utils;
           examples = map (value: {
             inherit (value)
               description
@@ -194,6 +233,7 @@ let
       eval {
         imports = [ ./content-types/demo-instructions.nix ];
         _module.args.pkgs = pkgs;
+        _module.args.utils = utils;
 
         heading = heading 2 "demo" (
           if type == "shell" then "Try the program in a shell" else "Try the service in a VM"

@@ -1,6 +1,6 @@
 {
   lib,
-  flake,
+  utils,
   ...
 }:
 let
@@ -13,7 +13,7 @@ in
         with types;
         listOf (submodule {
           imports = [ ./example.nix ];
-          _module.args.flake = flake;
+          _module.args.utils = utils;
         });
     };
     __toString = mkOption {

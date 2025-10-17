@@ -1,7 +1,7 @@
 {
   lib,
   pkgs,
-  flake,
+  utils,
   ...
 }:
 let
@@ -69,21 +69,11 @@ in
             <dt>Default:</dt>
             <dd class="option-default"><code>${self.default.text}</code></dd>
           '';
-          option-description =
-            let
-              # This doesn't actually produce a HTML string but a Jinja2 template string
-              # literal, that is then replaced by it's HTML translation at the last build
-              # step.
-              # Also, this avoids IFD (which would make things very slow with a
-              # growing number of such strings in the website rendering) since
-              # this way we can do markdown processing in a single step per output file at the end
-              markdownToHtml = markdown: "{{ markdown_to_html(${builtins.toJSON markdown}) }}";
-            in
-            ''
-              <div class="option-description">
-              ${markdownToHtml self.description}
-              </div>
-            '';
+          option-description = ''
+            <div class="option-description">
+            ${utils.markdownToHtml self.description}
+            </div>
+          '';
           alert-update-script =
             let
               isDrv = self.type == "package";
@@ -103,31 +93,13 @@ in
             <span class="option-alert" title="This option can't be set by users">Read-only</span>
           '';
           option-path =
-            with lib;
             let
-              declaration = toString (head self.declarations);
-
-              isFlake = flake == ../../.;
-
-              ngipkgs-path = toString (if isFlake then flake else ../../.) + "/";
-              nixpkgs-path = toString flake.inputs.nixpkgs + "/";
-
-              inNixpkgs = hasPrefix nixpkgs-path declaration;
-
-              relative-file-path = removePrefix (if inNixpkgs then nixpkgs-path else ngipkgs-path) declaration;
-
-              ngipkgs-rev = flake.rev or "main";
-
-              src-url =
-                if inNixpkgs then
-                  "https://github.com/nixos/nixpkgs/blob/${flake.inputs.nixpkgs.rev}/${relative-file-path}"
-                else
-                  "https://github.com/ngi-nix/ngipkgs/blob/${ngipkgs-rev}/${relative-file-path}";
+              declaration-link = utils.getFileDeclarationLink (lib.head self.declarations);
             in
             optionalString (self.declarations != [ ]) ''
               <dt>Declared in:</dt>
               <dd class="option-type">
-                <a href="${src-url}">${relative-file-path}</a>
+                ${declaration-link}
               </dd>
             '';
         in
