@@ -41,33 +41,14 @@
   };
 
   nixos.modules.programs = {
-    # _programName_ = {
-    #   name = "_programName_";
-    #   # if a project has `packages`, add them inside the `module.nix` file
-    #   module = ./programs/_programName_/module.nix;
-    #   examples."Enable _programName_" = {
-    #     module = ./programs/_programName_/examples/basic.nix;
-    #     description = ''
-    #       Usage instructions
-    #
-    #       1.
-    #       2.
-    #       3.
-    #     '';
-    #     tests.basic.module = import ./programs/_programName_/tests/basic.nix args;
-    #   };
-    #   # Add relevant links to the program (optional)
-    #   links = {
-    #     build = {
-    #       text = "Build from source";
-    #       url = "<URL>";
-    #     };
-    #     test = {
-    #       text = "Test instructions";
-    #       url = "<URL>";
-    #     };
-    #   };
-    # };
+    zwm-client = {
+      module = ./programs/0wm-client/module.nix;
+      examples."Enable 0WM client" = {
+        module = ./programs/0wm-client/examples/basic.nix;
+        description = '''';
+        tests.basic.module = import ./programs/0wm-client/tests/basic.nix args;
+      };
+    };
   };
 
   nixos.modules.services = {
