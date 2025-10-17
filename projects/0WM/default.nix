@@ -77,6 +77,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./programs/0wm-server/tests/basic.nix args;
+    tests.demo.module = import ./programs/0wm-client/tests/basic.nix args;
   };
 }
