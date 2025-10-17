@@ -3,6 +3,7 @@
 {
   services.zwm-server = {
     enable = true;
+    openFirewall = true;
     settings = {
       port = 3000;
       # access point addresses
