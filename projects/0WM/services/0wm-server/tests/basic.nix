@@ -4,7 +4,7 @@
 }:
 
 {
-  name = "Serivce Name";
+  name = "0WM server";
 
   nodes = {
     machine =

@@ -7,8 +7,6 @@
 let
   inherit (lib)
     mkOption
-    mkEnableOption
-    mkPackageOption
     types
     ;
 

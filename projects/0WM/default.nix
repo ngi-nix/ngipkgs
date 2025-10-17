@@ -53,7 +53,6 @@
 
   nixos.modules.services = {
     zwm-server = {
-      name = "service name";
       module = ./services/0wm-server/module.nix;
       examples."Enable 0WM server" = {
         module = ./services/0wm-server/examples/basic.nix;
