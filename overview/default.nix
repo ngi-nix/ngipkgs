@@ -153,6 +153,7 @@ let
 
         examples = eval {
           imports = [ ./content-types/example-list.nix ];
+          _module.args.flake = self;
           examples = map (value: {
             inherit (value)
               description
