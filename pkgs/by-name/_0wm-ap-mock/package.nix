@@ -36,7 +36,9 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper ${lib.getExe serve} $out/bin/0wm-ap-mock \
       --prefix PATH : ${lib.makeBinPath [ xsel ]} \
       --add-flags "--symlinks" \
-      --add-flags "-l tcp://127.0.0.1:8003" \
+      --set-default "AP_MOCK_ADDRESS" "127.0.0.1" \
+      --set-default "AP_MOCK_PORT" "8003" \
+      --add-flags '-l "tcp://$AP_MOCK_ADDRESS:$AP_MOCK_PORT"' \
       --chdir $out
   '';
 

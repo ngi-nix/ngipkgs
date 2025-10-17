@@ -37,7 +37,9 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper ${lib.getExe serve} $out/bin/0wm-opmode \
       --prefix PATH : ${lib.makeBinPath [ xsel ]} \
       --add-flags "--symlinks" \
-      --add-flags "-l tcp://127.0.0.1:8001" \
+      --set-default "OP_MODE_ADDRESS" "127.0.0.1" \
+      --set-default "OP_MODE_PORT" "8001" \
+      --add-flags '-l "tcp://$OP_MODE_ADDRESS:$OP_MODE_PORT"' \
       --chdir $out
   '';
 
