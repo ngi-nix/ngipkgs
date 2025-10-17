@@ -32,6 +32,12 @@
           _0wm-ap-mock
         ];
 
+        networking.firewall.allowedTCPPorts = [
+          8001
+          8002
+          8003
+        ];
+
         virtualisation.forwardPorts =
           let
             cfg = config.services.zwm-server;
@@ -68,5 +74,11 @@
       start_all()
 
       machine.wait_for_unit("zwm-server.service")
+
+      machine.succeed("mkdir -p /logs")
+
+      machine.succeed("CLIENT_ADDRESS=0.0.0.0 0wm-client &> /logs/client.log &")
+      machine.succeed("OP_MODE_ADDRESS=0.0.0.0 0wm-opmode &> /logs/opmode.log &")
+      machine.succeed("AP_MOCK_ADDRESS=0.0.0.0 0wm-ap-mock &> /logs/ap-mock.log &")
     '';
 }
