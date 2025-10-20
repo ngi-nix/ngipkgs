@@ -1,0 +1,34 @@
+diff --git a/funkwhale_api/users/models.py b/funkwhale_api/users/models.py
+index bb9348f8b..59734501f 100644
+--- a/funkwhale_api/users/models.py
++++ b/funkwhale_api/users/models.py
+@@ -7,6 +7,7 @@ import uuid
+ from django.conf import settings
+ from django.contrib.auth.models import AbstractUser
+ from django.contrib.auth.models import UserManager as BaseUserManager
++from django.core.exceptions import ValidationError
+ from django.db import models, transaction
+ from django.db.models import JSONField
+ from django.dispatch import receiver
+@@ -387,9 +388,20 @@ OOB_SCHEMES = ["urn:ietf:wg:oauth:2.0:oob", "urn:ietf:wg:oauth:2.0:oob:auto"]
+ 
+ class CustomRedirectURIValidator(oauth2_validators.AllowedURIValidator):
+     def __call__(self, value):
++        if not value.startswith("urn:ietf:wg:oauth:2.0"):
++            return super().__call__(value)
++
+         if value in OOB_SCHEMES:
+             return value
+-        return super().__call__(value)
++
++        try:
++            oauth2_validators.URIValidator.__call__(self, value)
++        except ValidationError as e:
++            raise ValidationError(
++                "%(name)s URI validation error. %(cause)s: %(value)s",
++                params={"name": self.name, "value": value, "cause": e},
++            )
++
+ 
+ 
+ oauth2_models.AllowedURIValidator = CustomRedirectURIValidator
