@@ -16,6 +16,16 @@
 
       # ratmand fails to allcate all of its memory with only 1024
       virtualisation.memorySize = 1536;
+
+      services.ratmand.settings = {
+        ratmand = {
+          accept_unknown_peers = true;
+          # TODO: This is not required for the server, but the test breaks if
+          # this is not specified because of issues with the config file.
+          # Investigate further.
+          peers = [ "" ];
+        };
+      };
     };
   };
 
