@@ -1,0 +1,18 @@
+ deps.edn | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/deps.edn b/deps.edn
+index d3aa811f..5419be40 100644
+--- a/deps.edn
++++ b/deps.edn
+@@ -1,8 +1,7 @@
+ {:paths ["src"]
+  :deps {binaryage/devtools {:mvn/version "1.0.7"}
+         camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
+-        clj-kdtree/clj-kdtree {:git/url "https://github.com/abscondment/clj-kdtree.git"
+-                               :sha "5ec321c5e8006db00fa8b45a8ed9eb0b8f3dd56d"
++        clj-kdtree/clj-kdtree {:local/root "@clj-kdtree_src@"
+                                :deps/manifest :deps}
+         com.taoensso/tempura {:mvn/version "1.5.4"}
+         day8.re-frame/test {:mvn/version "0.1.7"}
+
