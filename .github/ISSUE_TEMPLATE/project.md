@@ -2,7 +2,7 @@
 name: NGI Project
 about: "User story for an NGI project"
 title: "NGI Project: PROJECT_NAME"
-labels: User story
+labels: ["User story", "NGI Project"] 
 projects: Nix@NGI
 assignees: ''
 ---
