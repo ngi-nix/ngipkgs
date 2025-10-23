@@ -7,31 +7,57 @@
 let
   cfg = config.services.ratmand;
 
+  inherit (lib)
+    boolToString
+    getExe'
+    isBool
+    mapAttrsToList
+    optionals
+    removeAttrs
+    ;
+
+  sectionKey =
+    section: sectionAttrs:
+    mapAttrsToList (
+      key: value:
+      ''--patch "${section}/${key}=${if isBool value then boolToString value else toString value}"''
+    ) sectionAttrs;
+
+  peer-args = optionals (cfg.settings.ratmand.peers != [ ]) (
+    map (peer: ''--add-peer "${peer}"'') cfg.settings.ratmand.peers
+  );
+
   # Convert `cfg.settings` to arguments for `ratmand generate` to generate the config
   # file.
-  configPatchArgs =
-    lib.concatLists (
-      (lib.mapAttrsToList (
-        section: sectionAttrs:
-        lib.mapAttrsToList (
-          key: value:
-          ''--patch "${section}/${key}=${
-            if lib.isBool value then lib.boolToString value else toString value
-          }"''
-        ) sectionAttrs
-      ) (cfg.settings // { ratmand = lib.removeAttrs (cfg.settings.ratmand or { }) [ "peers" ]; }))
-    )
-    ++ lib.map (peer: ''--add-peer "${peer}"'') cfg.settings.ratmand.peers;
+  configPatchArgs = toString (
+    (mapAttrsToList sectionKey (
+      cfg.settings // { ratmand = removeAttrs (cfg.settings.ratmand or { }) [ "peers" ]; }
+    ))
+    ++ peer-args
+  );
 
   configFile = pkgs.runCommand "ratmand-config" { } ''
-    ${lib.getExe' cfg.package "ratmand"} --config "$out" generate ${lib.concatStringsSep " " configPatchArgs}
+    ${getExe' cfg.package "ratmand"} --config "$out" generate ${configPatchArgs}
   '';
 in
 {
   options.services.ratmand = {
     enable = lib.mkEnableOption "ratmand, a decentralised peer-to-peer packet router";
-
     package = lib.mkPackageOption pkgs "ratman" { };
+
+    verbosity = lib.mkOption {
+      type = lib.types.enum [
+        "trace"
+        "debug"
+        "info"
+        "warn"
+        "error"
+        "fatal"
+      ];
+      default = "info";
+      example = "error";
+      description = "verbosity level";
+    };
 
     settings = lib.mkOption {
       type = lib.types.submodule (
@@ -94,6 +120,7 @@ in
         ExecStart = ''
           ${lib.getExe' cfg.package "ratmand"} \
             --config "${configFile}" \
+            --verbosity "${cfg.verbosity}" \
             --dir "$STATE_DIRECTORY"
         '';
         DynamicUser = true;
