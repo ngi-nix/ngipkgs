@@ -96,7 +96,9 @@ buildNpmPackage (finalAttrs: {
 
       dontFixup = true;
 
-      outputHash = "sha256-wytFeZkVE6zAivyTwF5wv8SgskocN33FzhojOjETWog=";
+      # FIX: this isn't 100% reproducible since it changes each time `clojure` is updated
+      # https://github.com/ngi-nix/ngipkgs/pull/1727#discussion_r2470180998
+      outputHash = "sha256-BmbzkhIc15EnGZWe17VTQcZ8l+byFOZnH8lBgaji04k=";
       outputHashMode = "recursive";
       outputHashAlgo = "sha256";
     };
