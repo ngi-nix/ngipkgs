@@ -14,7 +14,7 @@ in
   system ? builtins.currentSystem,
   pkgs ? import sources.nixpkgs {
     config = { };
-    overlays = [ ];
+    overlays = import ./pkgs/overlays.nix { inherit lib; };
     inherit system;
   },
   lib ? import "${sources.nixpkgs}/lib",
