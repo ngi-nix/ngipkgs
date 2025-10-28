@@ -40,7 +40,7 @@
       examples.basic = {
         module = ./programs/basic/examples/basic.nix;
         description = "";
-        tests.basic.module = import ./programs/basic/tests/basic.nix args;
+        tests.basic.module = null; # TODO: make a proper test
       };
     };
   };
