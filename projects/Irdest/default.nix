@@ -63,5 +63,11 @@
       }
     ];
     tests.demo-basic.module = import ./demo/tests/basic.nix args;
+    tests.demo-basic.problem.broken.reason = ''
+      This has been failing in CI for a while and the failure is not
+      reproducible, locally.
+
+      https://buildbot.ngi.nixos.org/#/builders/1255/builds/79
+    '';
   };
 }
