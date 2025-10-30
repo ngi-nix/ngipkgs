@@ -43,7 +43,7 @@ After implementing one of a project's components:
 
 1. [Run the overview locally](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#running-and-testing-the-overview-locally), navigate to the project page and make sure that the options and examples shows up correctly
 
-1. [Make a Pull Request on GitHub](https://github.com/ngi-nix/ngipkgs/main/render/CONTRIBUTING.md#how-to-create-pull-requests-to-ngipkgs)
+1. [Make a Pull Request on GitHub](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md#how-to-create-pull-requests-to-ngipkgs)
 
 ## `lib.metadata`
 
