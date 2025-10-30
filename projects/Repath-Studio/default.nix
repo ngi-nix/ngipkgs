@@ -18,10 +18,7 @@
         text = "Homepage";
         url = "https://repath.studio";
       };
-      docs = {
-        text = "Documentation";
-        url = "https://repath.studio/get-started/build-from-source/";
-      };
+      docs = null;
       blog = {
         text = "Blog";
         url = "https://repath.studio/blog/";
