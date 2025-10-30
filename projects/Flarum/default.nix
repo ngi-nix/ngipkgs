@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Flarum is a technically advanced, open and extensible discussion platform.";
-    subgrants = [
+    subgrants.Entrust = [
       "Flarum"
     ];
   };

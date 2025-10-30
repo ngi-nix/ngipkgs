@@ -15,7 +15,7 @@ in
 {
   metadata = {
     summary = "Open source tooling for events and conferences";
-    subgrants = [
+    subgrants.Entrust = [
       "Pretalx"
     ];
   };

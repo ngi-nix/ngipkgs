@@ -8,9 +8,14 @@
 {
   metadata = {
     summary = "Community forum software";
-    subgrants = [
-      "NodeBB"
-    ];
+    subgrants = {
+      Commons = [
+        "NodeBB-collections"
+      ];
+      Core = [
+        "NodeBB"
+      ];
+    };
     links = {
       website = {
         text = "Website";

@@ -9,10 +9,14 @@
     summary = ''
       Novel multimodal search and retrieval engine
     '';
-    subgrants = [
-      "Re-iSearch"
-      "Re-Isearch-Vector"
-    ];
+    subgrants = {
+      Commons = [
+        "Re-Isearch-Vector"
+      ];
+      Review = [
+        "Re-iSearch"
+      ];
+    };
   };
   nixos.modules.programs = {
     re-isearch = {

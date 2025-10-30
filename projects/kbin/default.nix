@@ -7,7 +7,7 @@
 {
   metadata = {
     summary = "Decentralized content aggregator and microblogging platform running on the Fediverse network.";
-    subgrants = [
+    subgrants.Entrust = [
       "Kbin"
       "Kbin-Mobile"
     ];

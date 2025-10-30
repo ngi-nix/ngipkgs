@@ -8,15 +8,16 @@
 {
   metadata = {
     summary = "Advanced electronic payment system for privacy-preserving payments";
-    subgrants = [
-      # Review
-      "GNUTaler"
-      "GNUTaler-KYC"
-
-      # Entrust
-      "GNUTaler-LocalCurrencies"
-      "Taler-iOS-wallet"
-    ];
+    subgrants = {
+      Entrust = [
+        "GNUTaler-LocalCurrencies"
+        "Taler-iOS-wallet"
+      ];
+      Review = [
+        "GNUTaler"
+        "GNUTaler-KYC"
+      ];
+    };
     links = {
       docs = {
         text = "GNU Taler Documentation";

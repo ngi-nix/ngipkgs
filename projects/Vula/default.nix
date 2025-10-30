@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Encrypted ad hoc local-area networking";
-    subgrants = [
-      "Vula"
-      "Vula-IPV6-Reunion"
-    ];
+    subgrants = {
+      Entrust = [
+        "Vula-IPV6-Reunion"
+      ];
+      Review = [
+        "Vula"
+      ];
+    };
   };
 
   nixos.modules.services.vula = {

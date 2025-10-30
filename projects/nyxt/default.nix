@@ -7,12 +7,16 @@
 
 {
   metadata = {
-    summary = "Nyxt is a new type of web browser designed to empower users to find and filter information on the Internet";
-    subgrants = [
-      "Nyxt-Webextensions"
-      "NyxtBrowser"
-      "NyxtUserhosted"
-    ];
+    summary = "Web browser, designed to empower users to find and filter information on the Internet";
+    subgrants = {
+      Entrust = [
+        "Nyxt-Webextensions"
+      ];
+      Review = [
+        "NyxtBrowser"
+        "NyxtUserhosted"
+      ];
+    };
   };
 
   nixos.modules.programs = {

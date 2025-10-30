@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Realtime and Collaborative P2P Search.";
-    subgrants = [
+    subgrants.Review = [
       "Hypermachines"
     ];
   };

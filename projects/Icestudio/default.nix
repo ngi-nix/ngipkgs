@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Visual developer tool for development of FPGAs";
-    subgrants = [
+    subgrants.Entrust = [
       "Icestudio"
     ];
     links = {

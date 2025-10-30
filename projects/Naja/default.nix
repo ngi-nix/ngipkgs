@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "EDA tool focused on post logic synthesis";
-    subgrants = [
+    subgrants.Entrust = [
       "Naja"
       "Naja-DNL"
     ];

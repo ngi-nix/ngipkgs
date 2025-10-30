@@ -7,10 +7,14 @@
 {
   metadata = {
     summary = "Omnom is a webpage bookmarking and snapshotting service.";
-    subgrants = [
-      "omnom"
-      "omnom-ActivityPub"
-    ];
+    subgrants = {
+      Core = [
+        "Omnom-ActivityPub"
+      ];
+      Review = [
+        "Omnom"
+      ];
+    };
     links = {
       config = {
         text = "Configuration options";

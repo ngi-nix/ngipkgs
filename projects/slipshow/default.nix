@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Slipshow is an innovative presentation tool that moves away from the traditional slide-based approach";
-    subgrants = [
+    subgrants.Commons = [
       "Slipshow"
     ];
   };

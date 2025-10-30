@@ -6,7 +6,7 @@
 {
   metadata = {
     summary = "Encoding for Robust Immutable Storage (ERIS)";
-    subgrants = [
+    subgrants.Review = [
       "ERIS"
     ];
     links = {

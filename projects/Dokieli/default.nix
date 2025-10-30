@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Clientside editor for decentralised article publishing, annotations and social interactions";
-    subgrants = [
+    subgrants.Entrust = [
       "Dokieli"
     ];
   };
