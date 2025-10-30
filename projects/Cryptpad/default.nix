@@ -9,16 +9,20 @@
     summary = ''
       Collaborative office suite that is end-to-end encrypted and open-source.
     '';
-    subgrants = [
-      "Cryptpad"
-      "CryptPad-Auth"
-      "Cryptpad-Directory"
-      "CryptPad-Blueprints"
-      "Cryptpad-Communities"
-      "CryptPad-QA"
-      "CryptPad-WCAG"
-      "CryptPadForms"
-    ];
+    subgrants = {
+      Entrust = [
+        "CryptPad-Blueprints"
+      ];
+      Review = [
+        "Cryptpad"
+        "CryptPad-Auth"
+        "Cryptpad-Directory"
+        "Cryptpad-Communities"
+        "CryptPad-QA"
+        "CryptPad-WCAG"
+        "CryptPadForms"
+      ];
+    };
   };
   nixos.modules.services = {
     cryptpad = {

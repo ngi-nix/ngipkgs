@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Open source low-code platform";
-    subgrants = [
+    subgrants.Review = [
       "CortezaDiscovery"
       "CortezaFederationPrivacy"
       "CortezaActivityPub"

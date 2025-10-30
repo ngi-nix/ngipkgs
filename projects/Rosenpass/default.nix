@@ -8,11 +8,15 @@
 {
   metadata = {
     summary = "Rosenpass is a formally verified, post-quantum secure VPN that uses WireGuard to transport the actual data.";
-    subgrants = [
-      "Rosenpass"
-      "Rosenpass-API"
-      "Rosenpass-integration"
-    ];
+    subgrants = {
+      Core = [
+        "Rosenpass-integration"
+      ];
+      Review = [
+        "Rosenpass"
+        "Rosenpass-API"
+      ];
+    };
     links = {
       docs = {
         text = "Rosenpass documentation";

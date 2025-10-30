@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Javascript library to transform HTML document into print-ready pdf";
-    subgrants = [
+    subgrants.Commons = [
       "PagedJS"
     ];
     links = {

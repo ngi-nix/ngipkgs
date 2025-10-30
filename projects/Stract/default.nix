@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Open source web search engine";
-    subgrants = [
+    subgrants.Entrust = [
       "Stract"
     ];
   };

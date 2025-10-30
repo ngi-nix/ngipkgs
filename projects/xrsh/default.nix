@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Interactive text/OS terminal inside WebXR";
-    subgrants = [
+    subgrants.Entrust = [
       "xrsh"
     ];
     links = {

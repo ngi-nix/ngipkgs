@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Programming language with deterministic automatic memory management";
-    subgrants = [
+    subgrants.Entrust = [
       "Inko"
     ];
   };

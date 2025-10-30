@@ -8,14 +8,18 @@
 {
   metadata = {
     summary = "A decentralised streaming video platform";
-    subgrants = [
-      "PeerTube"
-      "PeerTubeSearch"
-      "Peertube-Transcode"
-      "Peertube-Livechat"
-      "PeerTubeDesktop"
-      "PeerTube-mobile"
-    ];
+    subgrants = {
+      Entrust = [
+        "Peertube-Transcode"
+        "Peertube-Livechat"
+        "PeerTube-mobile"
+      ];
+      Review = [
+        "PeerTube"
+        "PeerTubeSearch"
+        "PeerTubeDesktop"
+      ];
+    };
     links = {
       website = {
         text = "Website";

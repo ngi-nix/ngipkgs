@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Interactive TLS-capable intercepting HTTP proxy";
-    subgrants = [
+    subgrants.Entrust = [
       "mitmproxy"
     ];
   };

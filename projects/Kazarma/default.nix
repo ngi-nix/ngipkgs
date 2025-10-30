@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Matrix bridge for the ActivityPub network";
-    subgrants = [
-      "Kazarma"
-      "Kazarma-Release"
-    ];
+    subgrants = {
+      Entrust = [
+        "Kazarma-Release"
+      ];
+      Review = [
+        "Kazarma"
+      ];
+    };
     links = {
       website = {
         text = "Website";

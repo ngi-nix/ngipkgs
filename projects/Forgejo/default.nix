@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Open source software forge with a focus on federation";
-    subgrants = [
+    subgrants.Entrust = [
       "Federated-Forgejo"
       "Forgejo"
     ];

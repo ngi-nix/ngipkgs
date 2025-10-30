@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Moderation bot for Matrix servers";
-    subgrants = [
+    subgrants.Core = [
       "Draupnir"
     ];
     links = {

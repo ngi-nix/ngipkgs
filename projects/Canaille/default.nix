@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Canaille is a zero-knowledge opinionated identity server.";
-    subgrants = [
+    subgrants.Entrust = [
       "Canaille"
     ];
   };

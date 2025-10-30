@@ -8,11 +8,15 @@
 {
   metadata = {
     summary = "Decentralized search engine & automatized press reviews";
-    subgrants = [
-      "Meta-Press.es-modularity"
-      "Meta-Presses"
-      "Meta-Presses-scaleup"
-    ];
+    subgrants = {
+      Entrust = [
+        "Meta-Press.es-modularity"
+      ];
+      Review = [
+        "Meta-Presses"
+        "Meta-Presses-scaleup"
+      ];
+    };
   };
 
   nixos.modules.programs = {

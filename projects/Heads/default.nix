@@ -7,9 +7,9 @@
 {
   metadata = {
     summary = ''
-      A minimal Linux that runs as a coreboot or LinuxBoot ROM payload to provide a secure, flexible boot environment for laptops, workstations and servers.
+      Minimal Linux that runs as a coreboot or LinuxBoot ROM payload to provide a secure, flexible boot environment for laptops, workstations and servers.
     '';
-    subgrants = [
+    subgrants.Review = [
       "AuthenticatedHeads"
       "AccessibleSecurity"
     ];

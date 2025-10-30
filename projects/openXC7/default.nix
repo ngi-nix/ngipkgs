@@ -9,7 +9,7 @@
     summary = ''
       Improve hardware support for open source FPGA tooling
     '';
-    subgrants = [
+    subgrants.Entrust = [
       "openXC7"
     ];
   };

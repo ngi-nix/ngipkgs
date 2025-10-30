@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Misskey is a decentralized and open source microblogging platform";
-    subgrants = [
+    subgrants.Review = [
       "Misskey"
     ];
   };

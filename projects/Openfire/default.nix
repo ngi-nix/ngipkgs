@@ -7,7 +7,7 @@
 {
   metadata = {
     summary = "Openfire is a real time collaboration (RTC) server licensed under the Open Source Apache License.";
-    subgrants = [
+    subgrants.Core = [
       "Openfire-IPv6"
       "Openfire-Connectivity"
     ];
