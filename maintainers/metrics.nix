@@ -4,6 +4,10 @@
 
 # nix eval --json -f default.nix metrics.summary
 
+# Latest Nixpkgs:
+#
+# nix eval --json -f default.nix metrics.summary --override-input nixpkgs "github:NixOS/nixpkgs"
+
 {
   lib,
   pkgs,
@@ -81,6 +85,33 @@ let
       lib.foldl (acc: name: acc // { "${name}" = accumulate name; }) acc names
     ) { } project-metrics;
 
+  nixos-derivations =
+    let
+      maintained = import ./metrics-maintainer.nix { inherit pkgs; };
+      packages = pkgs.writeText "packages" (lib.strings.toJSON maintained.packages);
+    in
+    pkgs.runCommand "nixos-derivations"
+      {
+        nativeBuildInputs = with pkgs; [ jq ];
+      }
+      ''
+        mkdir -p $out
+
+        cat ${packages} \
+          | jq '[.. | objects | select(has("name")) | .name]' \
+          > $out/packages.json
+
+        cat ${packages} \
+          | jq '[.. | objects | select(has("update-script") and .["update-script"] == true) | .name]' \
+          > $out/packages-update-scripts.json
+
+        jq -n \
+          --arg derivations $(jq length $out/packages.json) \
+          --arg update-scripts $(jq length $out/packages-update-scripts.json) \
+          '$ARGS.named' \
+          > "$out/count.json"
+      '';
+
   summary = {
     ngipkgs = {
       projects = length (attrNames raw-projects);
@@ -91,16 +122,8 @@ let
       update-scripts = length (filter (d: d ? passthru.updateScript) (attrValues ngipkgs));
     };
     nixos = (countAttrs "nixos") // {
-      # TODO: not accurate since it doesn't take scopes into account
-      # use https://github.com/ngi-nix/ngipkgs/pull/1725
-      update-scripts = length (
-        filter (
-          d:
-          (builtins.tryEval d).success
-          && (elem lib.teams.ngi d.meta.teams or [ ])
-          && d ? passthru.updateScript
-        ) (attrValues pkgs)
-      );
+      derivations = length (lib.importJSON "${nixos-derivations}/packages.json");
+      update-scripts = length (lib.importJSON "${nixos-derivations}/packages-update-scripts.json");
     };
   };
 in
@@ -108,6 +131,7 @@ rec {
   inherit
     project-metrics
     summary
+    nixos-derivations
     ;
 
   metrics = {
