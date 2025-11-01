@@ -246,7 +246,7 @@ rec {
       pkgs
       ngipkgs
       ;
-    raw-projects = projects;
+    raw-projects = hydrated-projects;
   };
 
   project-demos = lib.filterAttrs (name: value: value != null) (

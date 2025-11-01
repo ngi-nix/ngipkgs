@@ -8,17 +8,17 @@
 {
   metadata = {
     summary = "Javascript library to transform HTML document into print-ready pdf";
-    subgrants = [
+    subgrants.Commons = [
       "PagedJS"
     ];
     links = {
       documentation = {
         text = "Documentation";
-        url = "https://pagedjs.org/en/undefined/";
+        url = "https://pagedjs.org/en/documentation/";
       };
       source = {
         text = "Source";
-        url = "https://github.com/pagedjs/pagedjs/";
+        url = "https://github.com/pagedjs/pagedjs";
       };
       blog = {
         text = "Blog";

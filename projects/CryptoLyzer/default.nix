@@ -7,9 +7,16 @@
 {
   metadata = {
     summary = ''
-      CryptoLyzer is a cybersecurity tool that can analyse cryptographic settings of clients and servers for different protocols, and test endpoints against a set of known vulnerabilities.
+      Cybersecurity tool that can analyse cryptographic settings of clients and servers for different protocols, and test endpoints against a set of known vulnerabilities.
     '';
-    subgrants = [ "CryptoLyzer" ];
+    subgrants = {
+      Core = [
+        "CryptoLyzer-IKE"
+      ];
+      Review = [
+        "CryptoLyzer"
+      ];
+    };
     links = {
       development = {
         text = "Development environment with `pipenv`";

@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Better configuration and callibration of touchscreen devices";
-    subgrants = [
+    subgrants.Core = [
       "tslib"
     ];
   };

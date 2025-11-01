@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Yrs is a local-first collaboration library widely used for real-time collaborative editing";
-    subgrants = [
-      "Persistent-Yrs"
-      "Yrs-WeakLinks"
-    ];
+    subgrants = {
+      Commons = [
+        "Persistent-Yrs"
+      ];
+      Entrust = [
+        "Yrs-WeakLinks"
+      ];
+    };
     links = {
       website = {
         text = "Website";

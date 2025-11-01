@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Oku is a browser and encrypted data vault based on IPFS";
-    subgrants = [
+    subgrants.Entrust = [
       "Oku"
     ];
   };

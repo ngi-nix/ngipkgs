@@ -7,12 +7,19 @@
 {
   metadata = {
     summary = ''
-      Mastodon is a free and open-source software platform for decentralized social networking.
+      Free and open-source software platform for decentralized social networking.
     '';
-    subgrants = [
-      "Mastodon"
-      "Mastodon-Quoting"
-    ];
+    subgrants = {
+      Commons = [
+        "Mastodon-for-institutions"
+      ];
+      Entrust = [
+        "Mastodon-Quoting"
+      ];
+      Review = [
+        "Mastodon"
+      ];
+    };
   };
   nixos = {
     modules.services.mastodon = {

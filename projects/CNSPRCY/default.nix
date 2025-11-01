@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "E2EE connections between trusted devices for establishing private group chats.";
-    subgrants = [
+    subgrants.Review = [
       "CNSPRCY"
     ];
     links = {

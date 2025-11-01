@@ -8,12 +8,16 @@
 {
   metadata = {
     summary = "Verso is a new browser initiative that is based on the Servo browser engine";
-    subgrants = [
-      "Verso"
-      "Verso-Views"
-      "Verso-WebView"
-      "Verso-Profile"
-    ];
+    subgrants = {
+      Core = [
+        "Verso-Views"
+        "Verso-WebView"
+      ];
+      Review = [
+        "Verso"
+        "Verso-Profile"
+      ];
+    };
   };
 
   nixos.modules.programs = {

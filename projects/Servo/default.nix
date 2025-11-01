@@ -8,15 +8,21 @@
 {
   metadata = {
     summary = "Embeddable, independent, memory-safe, modular, parallel web rendering engine";
-    subgrants = [
-      "Servo"
-      "Servo-Benchmark"
-      "Servo-CSS"
-      "Servo-DX"
-      "Servo-Multibrowsing"
-      "Servo-Script"
-      "Servo-Multiprocess"
-    ];
+    subgrants = {
+      Entrust = [
+        "Servo"
+        "Servo-CSS"
+      ];
+      Core = [
+        "Servo-Benchmark"
+        "Servo-Script"
+        "Servo-Multiprocess"
+      ];
+      Review = [
+        "Servo-DX"
+        "Servo-Multibrowsing"
+      ];
+    };
   };
 
   nixos.modules.programs = {

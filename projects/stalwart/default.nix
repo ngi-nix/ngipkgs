@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Integrated solution for email, calendaring and file management";
-    subgrants = [
-      "Stalwart"
-      "Stalwart-Collaboration"
-    ];
+    subgrants = {
+      Core = [
+        "Stalwart-Collaboration"
+      ];
+      Entrust = [
+        "Stalwart"
+      ];
+    };
   };
 
   nixos.modules.services = {

@@ -16,10 +16,7 @@
         text = "Website";
         url = "https://wax.is";
       };
-      documentation = {
-        text = "User guide";
-        url = "https://www.wax.is/learn";
-      };
+      docs = null;
       source = {
         text = "Source repository";
         url = "https://github.com/Wax-Platform/Wax";

@@ -12,8 +12,9 @@
       such as blogging/microblogging, calendar events, file sharing, end-to-end
       encryption, etc.
     '';
-    subgrants = [
+    subgrants.Review = [
       "Libervia"
+      "Libervia-AV"
     ];
   };
   nixos = {

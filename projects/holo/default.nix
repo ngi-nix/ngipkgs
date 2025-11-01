@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Holo is a suite of routing protocols designed to address the needs of modern networks";
-    subgrants = [
+    subgrants.Core = [
       "HoloRouting"
     ];
   };

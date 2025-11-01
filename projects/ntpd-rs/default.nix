@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Memory-safe implementation of IETF time standards including NTPv5 and NTS";
-    subgrants = [
+    subgrants.Entrust = [
       "ntpd-rs"
     ];
     links = {

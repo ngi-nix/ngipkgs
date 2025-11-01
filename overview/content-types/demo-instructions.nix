@@ -154,7 +154,9 @@ in
                 ${config.set-nix-config}
               </li>
               <li>
-                <strong>Build and run a virtual machine</strong>
+                <strong>Build and run ${
+                  if config.demo.type == "vm" then "a virtual machine" else "the shell"
+                }</strong>
                 ${config.build-instructions}
               </li>
               ${
