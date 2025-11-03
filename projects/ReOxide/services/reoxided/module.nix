@@ -40,7 +40,7 @@ in
                   };
                   root-dir = mkOption {
                     type = types.str;
-                    default = "${cfg.package}/opt/ghidra";
+                    defaultText = lib.literalExpression "\"\${pkgs.reoxide}/opt/ghidra\"";
                     description = "Ghidra root install directory";
                   };
                 };
@@ -56,7 +56,7 @@ in
           ghidra-install = [
             {
               enabled = true;
-              default = "${pkgs.reoxide}/opt/ghidra";
+              root-dir = "${pkgs.reoxide}/opt/ghidra";
             }
           ];
         };
@@ -66,8 +66,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = [
       cfg.package
+    ];
+
+    # default instance (reoxide-ghidra)
+    services.reoxided.settings.ghidra-install = [
+      {
+        enabled = true;
+        root-dir = "${cfg.package}/opt/ghidra";
+      }
     ];
 
     systemd.services.reoxided = {

@@ -124,7 +124,7 @@ in
         description = ''
           Directory that contains user generated files. It needs to be writable by the pretalx process.
         '';
-        default = "${cfg.filesystem.data}/media";
+        defaultText = literalExpression "\"\${config.services.ngi-pretalx.filesystem.data}/media\"";
       };
 
       logs = mkOption {
@@ -132,7 +132,7 @@ in
         description = ''
           Directory that contains logged data. It needs to be writable by the pretalx process.
         '';
-        default = "${cfg.filesystem.data}/logs";
+        defaultText = literalExpression "\"\${config.services.ngi-pretalx.filesystem.data}/logs\"";
       };
 
       static = mkOption {
@@ -140,7 +140,6 @@ in
         description = ''
           Directory that contains static files. It needs to be writable by the pretalx process. pretalx will put files there.
         '';
-        default = "${cfg.package.static}";
         defaultText = literalExpression "\"\${config.services.ngi-pretalx.package.static}\"";
       };
     };
@@ -431,6 +430,12 @@ in
         message = "Enable either `${opt.mail.tls}` or `${opt.mail.ssl}`.";
       }
     ];
+
+    services.ngi-pretalx = {
+      filesystem.media = lib.mkDefault "${cfg.filesystem.data}/media";
+      filesystem.logs = lib.mkDefault "${cfg.filesystem.data}/logs";
+      filesystem.static = lib.mkDefault "${cfg.package.static}";
+    };
 
     services.nginx = {
       enable = mkDefault true;

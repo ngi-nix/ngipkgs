@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   programs.reoxide.enable = true;
   services.reoxided = {
@@ -7,6 +7,7 @@
       # default instance (reoxide-ghidra)
       {
         enabled = true;
+        root-dir = "${config.services.reoxided.package}/opt/ghidra";
       }
       # NOTE: you can supply additional ghidra instances
       # {
