@@ -5,7 +5,7 @@
   gobject-introspection,
   libayatana-appindicator,
   python3,
-  wrapGAppsHook,
+  wrapGAppsHook3,
   unstableGitUpdater,
 }:
 let
@@ -68,7 +68,7 @@ python3.pkgs.buildPythonApplication {
     ];
 
   nativeBuildInputs = [
-    wrapGAppsHook
+    wrapGAppsHook3
     gobject-introspection
   ];
 
