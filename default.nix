@@ -1,15 +1,14 @@
 let
-  flake-inputs = import (
-    fetchTarball "https://github.com/fricklerhandwerk/flake-inputs/tarball/4.1.0"
-  );
+  flake-inputs = import (fetchTarball {
+    url = "https://github.com/fricklerhandwerk/flake-inputs/tarball/4.1.0";
+    sha256 = "1j57avx2mqjnhrsgq3xl7ih8v7bdhz1kj3min6364f486ys048bm";
+  });
   inherit (flake-inputs)
     import-flake
     ;
 in
 {
-  flake ? import-flake {
-    src = ./.;
-  },
+  flake ? import-flake { src = ./.; },
   sources ? flake.inputs,
   system ? builtins.currentSystem,
   pkgs ? import sources.nixpkgs {
