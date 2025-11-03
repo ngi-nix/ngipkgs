@@ -112,6 +112,67 @@ let
           > "$out/count.json"
       '';
 
+  /*
+    Summary of NGIpkgs and NixOS metrics.
+
+    # Outputs
+
+    ## NGIpkgs
+
+    Metrics related to the NGIpkgs monorepo.
+
+    - `derivations`
+
+      : Number of derivations maintained in NGIpkgs
+
+    - `update-scripts`
+
+      : Number of derivations maintained in NGIpkgs that have an explicit update script
+
+    - `metadata`
+
+      : Information about NGI-funded projects
+
+    - `metadata.subgrants`
+
+      : Attribute set that contains the number of projects for each [fund](maintainers/docs/project.md#libsubgrant)
+
+    - `projects`
+
+      : Number of NGI-funded projects in NGIpkgs
+
+    ## NixOS
+
+    Metrics related to NixOS.
+
+    - `derivations`
+
+      : Number of derivations maintained in Nixpkgs
+
+    - `update-scripts`
+
+      : Number of derivations maintained in Nixpkgs that have an explicit update script
+
+    - `programs`
+
+      : Number of program modules in NGIpkgs
+
+    - `services`
+
+      : Number of service modules in NGIpkgs
+
+    - `examples`
+
+      : Number of project examples in NGIpkgs
+
+    - `tests`
+
+      : Number of NixOS tests associated with project examples in NGIpkgs
+
+    - `demos`
+
+      : Number of software demos in NGIpkgs
+  */
   summary = {
     ngipkgs = {
       projects = length (attrNames raw-projects);
