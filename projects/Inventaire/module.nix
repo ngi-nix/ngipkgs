@@ -8,7 +8,7 @@ let
   cfg = config.services.inventaire;
   settingsFormat = pkgs.formats.json { };
   settingsJson = settingsFormat.generate "local.json" cfg.settings;
-  settingsCJS = pkgs.runCommandNoCC "local.cjs" { } ''
+  settingsCJS = pkgs.runCommand "local.cjs" { } ''
     cat <<EOF >$out
     // Settings generated via Nix
 

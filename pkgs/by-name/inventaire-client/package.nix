@@ -10,12 +10,12 @@
   nix,
   nodejs,
   replaceVars,
-  runCommandNoCC,
+  runCommand,
   writeShellApplication,
   _experimental-update-script-combinators,
 
   # In case users want to override these with different ones
-  sparql-queries ? runCommandNoCC "sparql-queries-unpacked" { } ''
+  sparql-queries ? runCommand "sparql-queries-unpacked" { } ''
     cp -r --no-preserve=mode ${./sparql-queries} $out
     for archive in $out/*.gz; do
       gunzip "$archive"

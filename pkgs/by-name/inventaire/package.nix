@@ -1,6 +1,6 @@
 {
   lib,
-  runCommandNoCC,
+  runCommand,
   nodejs,
   inventaire-unwrapped,
   inventaire-client,
@@ -9,7 +9,7 @@
 # Inventaire has a build process that involves cloning different projects into various locations.
 # Some of these projects are written with the assumption that they'll only ever be used from within the inventaire tree.
 # We're building everything separately, so now we need to assemble the things that care about their locations back into one tree.
-runCommandNoCC "inventaire"
+runCommand "inventaire"
   {
     meta = {
       description = "A libre collaborative resources mapper powered by open-knowledge (wrapper)";

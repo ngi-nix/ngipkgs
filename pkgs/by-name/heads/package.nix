@@ -7,7 +7,7 @@
   fetchurl,
   newScope,
   replaceVars,
-  runCommandNoCC,
+  runCommand,
   unstableGitUpdater,
   writeShellApplication,
   _experimental-update-script-combinators,
@@ -128,7 +128,7 @@ let
   ];
   makeBlobsDir =
     withBlobs:
-    runCommandNoCC "blobs-collected" { } (
+    runCommand "blobs-collected" { } (
       ''
         mkdir -p $out
       ''
@@ -154,7 +154,7 @@ let
     bashInterpreter = lib.getExe bashNonInteractive;
     buildConfig = stdenv.buildPlatform.config;
     hostConfig = stdenv.hostPlatform.config;
-    musl-cross-make-sources = runCommandNoCC "musl-cross-make-sources" { } (
+    musl-cross-make-sources = runCommand "musl-cross-make-sources" { } (
       ''
         mkdir -p $out
       ''
