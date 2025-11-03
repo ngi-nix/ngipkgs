@@ -5,6 +5,7 @@
   ...
 }@args:
 let
+  # FIX:
   pretalx-test = {
     module = import ./test args;
     problem.broken.reason = ''
@@ -28,7 +29,6 @@ in
         description = ''
           Basic configuration for Pretalx, incl. secret management with SOPS, excl. database settings.
         '';
-        # FIX:
         tests.pretalx = pretalx-test;
       };
       postgresql = {

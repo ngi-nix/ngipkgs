@@ -50,7 +50,6 @@ in
 
     dataDir = lib.mkOption {
       type = lib.types.str;
-      default = "${cfg.package}/opt";
       defaultText = lib.literalExpression ''"''${config.services.openfire.package}/opt"'';
       description = ''
         Where to load readonly data from.
@@ -72,6 +71,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    services.openfire-server.dataDir = lib.mkDefault "${cfg.package}/opt";
+
     users.users.openfire = {
       description = "openfire server daemon user";
       home = cfg.stateDir;
