@@ -1,11 +1,10 @@
 {
   lib,
-  nixosTest,
-  anastasis,
   pkgs,
+  anastasis,
   ...
 }:
-nixosTest {
+pkgs.testers.nixosTest {
   name = "anastasis-httpd";
   nodes = {
     client =
