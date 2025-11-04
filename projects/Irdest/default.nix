@@ -42,6 +42,11 @@
           tests = {
             ratmand-config.module = import ./services/ratmand/tests/config.nix args;
             peer-communication.module = import ./services/ratmand/tests/peer-communication.nix args;
+            peer-communication.problem.broken.reason = ''
+              Test fails and is not reproducible, locally.
+
+              https://buildbot.ngi.nixos.org/#/builders/1257/builds/60
+            '';
           };
         };
       };

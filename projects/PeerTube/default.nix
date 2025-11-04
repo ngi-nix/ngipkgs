@@ -69,6 +69,11 @@
             module = ./services/peertube-runner/examples/basic.nix;
             description = "Basic peertube-runner configuration";
             tests.basic-runner.module = import ./services/peertube-runner/tests/basic.nix args;
+            tests.basic-runner.problem.broken.reason = ''
+              Dependency failure: `python3Packages.torch-audiomentations`
+
+              Fixed in https://github.com/NixOS/nixpkgs/pull/457825
+            '';
           };
           links = {
             docs = {
