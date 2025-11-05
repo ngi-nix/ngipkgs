@@ -248,6 +248,10 @@ rec {
     raw-projects = hydrated-projects;
   };
 
+  report = import ./maintainers/templates/report {
+    inherit lib pkgs metrics;
+  };
+
   project-demos = lib.filterAttrs (name: value: value != null) (
     lib.mapAttrs (name: value: value.nixos.demo.vm or value.nixos.demo.shell or null) projects
   );
