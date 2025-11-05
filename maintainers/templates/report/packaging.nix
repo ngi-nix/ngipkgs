@@ -24,8 +24,16 @@ let
     name:
     let
       hasDemo = metrics.project-metrics.${name}.nixos.demos != 0;
+      subgrant-count =
+        project:
+        toString (
+          lib.mapAttrsToList (
+            subgrant: count: "\n    - ${subgrant}: ${toString count}"
+          ) metrics.project-metrics.${project}.metadata.subgrants
+        );
     in
     "  - [${name}](https://ngi.nixos.org/project/${name}/${lib.optionalString hasDemo "#demo"})"
+    + subgrant-count name
   ) project-names;
 
   # metrics
