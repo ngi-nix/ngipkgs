@@ -41,23 +41,28 @@ let
   ngipkgs = lib.mapAttrsRecursive (path: toString) metrics.summary.ngipkgs;
   prev-project-count = toString (lib.length prev-project-names);
 in
-pkgs.writeText "report-packaging" ''
-  - Worked on supporting ${ngipkgs.projects} NGI-funded projects (${prev-date}: ${prev-project-count})
+pkgs.writeText "report-packaging.md" ''
+  - Start date: ${prev-date}
+  - Projects count at the start: ${prev-project-count}
+  - Projects count at the end: ${ngipkgs.projects}
+
+  ## Projects
   ${project-links}
-  - NGIpkgs (monorepo)
-    - Metrics
-      - ${nixos.demos} projects have a demo, available
-      - ${nixos.services} services and ${nixos.programs} programs
-      - ${nixos.tests} NixOS tests, associated with ${nixos.examples} examples
-      - ${ngipkgs.derivations} derivations, ${ngipkgs.update-scripts} of which have an explicit update script
-      - Subgrants
-        - ${ngipkgs.metadata.subgrants.Commons} Commons
-        - ${ngipkgs.metadata.subgrants.Core} Core
-        - ${ngipkgs.metadata.subgrants.Entrust} Entrust
-        - ${ngipkgs.metadata.subgrants.Review} Review
-        - ${ngipkgs.metadata.subgrants.Uncategorized} Uncategorized
-  - Nixpkgs (upstream)
-    - Metrics
-      - Maintaining ${nixos.derivations} derivations, ${nixos.update-scripts} of which have an explicit update script
+
+  ## Metrics
+  ### NGIpkgs (monorepo)
+    - ${nixos.demos} projects have a demo, available
+    - ${nixos.services} services and ${nixos.programs} programs
+    - ${nixos.tests} NixOS tests, associated with ${nixos.examples} examples
+    - ${ngipkgs.derivations} derivations, ${ngipkgs.update-scripts} of which have an explicit update script
+    - Subgrants
+      - ${ngipkgs.metadata.subgrants.Commons} Commons
+      - ${ngipkgs.metadata.subgrants.Core} Core
+      - ${ngipkgs.metadata.subgrants.Entrust} Entrust
+      - ${ngipkgs.metadata.subgrants.Review} Review
+      - ${ngipkgs.metadata.subgrants.Uncategorized} Uncategorized
+
+  ### Nixpkgs (upstream)
+    - Maintaining ${nixos.derivations} derivations, ${nixos.update-scripts} of which have an explicit update script
     - Migrated derivations, services and tests from monorepo
 ''
