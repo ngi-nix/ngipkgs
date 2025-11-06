@@ -248,7 +248,7 @@ rec {
     raw-projects = hydrated-projects;
   };
 
-  report = import ./maintainers/templates/report {
+  report = import ./maintainers/report {
     inherit lib pkgs metrics;
   };
 
