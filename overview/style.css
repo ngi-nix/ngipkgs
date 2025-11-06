@@ -556,3 +556,7 @@ nav.breadcrumb li:not(:last-child):after {
 .tabs > [type=radio]:not(:checked) + label + .tab-content {
   display: none;
 }
+
+.footer {
+  text-align: center;
+}

@@ -72,7 +72,9 @@ in
 
         </section>
 
-        <footer>Version: ${self.version}, Last Modified: ${self.lastModified}</footer>
+        <div class="footer">
+          <footer>Version: ${self.version}, Last Modified: ${self.lastModified}</footer>
+        </div>
       '';
     };
   };
