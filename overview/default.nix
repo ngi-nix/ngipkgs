@@ -63,7 +63,7 @@ let
         <a href="https://github.com/ngi-nix/ngipkgs/tree/${self.rev}"><code>${self.shortRev}</code></a>
       ''
     else
-      self.dirtyRev;
+      self.dirtyRev or "dev";
 
   utils = {
     # This doesn't actually produce a HTML string but a Jinja2 template string
