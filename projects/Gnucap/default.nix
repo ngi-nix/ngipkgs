@@ -9,11 +9,15 @@
   name = "Gnucap";
   metadata = {
     summary = "GNU Circuit Analysis Package";
-    subgrants = [
-      "Gnucap-MixedSignals"
-      "Gnucap-VerilogAMS"
-      "Gnucap-performance"
-    ];
+    subgrants = {
+      Commons = [
+        "Gnucap-performance"
+      ];
+      Entrust = [
+        "Gnucap-MixedSignals"
+        "Gnucap-VerilogAMS"
+      ];
+    };
   };
 
   nixos = {

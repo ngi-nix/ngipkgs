@@ -8,17 +8,21 @@
 {
   metadata = {
     summary = "An umbrella for open source projects that implement the open source and open networking ideals of a secure, private and decentral Internet";
-    subgrants = [
-      "DANCE4All"
-      "LDAPmiddleware"
-      "SASL-XMSS"
-      "SASLworks"
-      "Steamworks"
-      "TLS-KDH-mbed"
-      "arpa2"
-      "arpa2-nginx"
-      "steamworks"
-    ];
+    subgrants = {
+      Entrust = [
+        "DANCE4All"
+      ];
+      Review = [
+        "LDAPmiddleware"
+        "SASL-XMSS"
+        "SASLworks"
+        "Steamworks"
+        "TLS-KDH-mbed"
+        "arpa2"
+        "arpa2-nginx"
+        "steamworks"
+      ];
+    };
   };
 
   nixos.modules.programs = {

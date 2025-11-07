@@ -7,10 +7,14 @@
 {
   metadata = {
     summary = "Marginalia Search is an experimental search engine focused on the independent web, designed to run on low-cost hardware. Its development aims to improve search quality, expand coverage, automate operations, and provide portable data to support related search projects.";
-    subgrants = [
-      "Marginalia"
-      "Marginalia-multilingual"
-    ];
+    subgrants = {
+      Core = [
+        "Marginalia-multilingual"
+      ];
+      Entrust = [
+        "Marginalia"
+      ];
+    };
   };
 
   nixos.modules.services = {

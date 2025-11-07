@@ -8,11 +8,17 @@
 {
   metadata = {
     summary = "Microlibrary for the X25519 encryption system and the Ed25519 signature system";
-    subgrants = [
-      "lib25519"
-      "lib25519-ARM"
-      "lib25519-ARM64"
-    ];
+    subgrants = {
+      Core = [
+        "lib25519-ARM64"
+      ];
+      Entrust = [
+        "lib25519-ARM"
+      ];
+      Review = [
+        "lib25519"
+      ];
+    };
   };
 
   nixos.modules.programs = {

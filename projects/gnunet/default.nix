@@ -8,15 +8,21 @@
 {
   metadata = {
     summary = "GNUnet is GNU's framework for secure peer-to-peer networking";
-    subgrants = [
-      "gnunet"
-      "GNUnet-CONG"
-      "GNUnet-Messenger"
-      "GNUnet-Android"
-      "GNUnet-L2"
-      "gnunet-test"
-      "ProbabilisticNAT"
-    ];
+    subgrants = {
+      Core = [
+        "GNUnet-Android"
+      ];
+      Entrust = [
+        "GNUnet-CONG"
+      ];
+      Review = [
+        "GNUnet-L2"
+        "GNUnet-Messenger"
+        "ProbabilisticNAT"
+        "gnunet"
+        "gnunet-test"
+      ];
+    };
   };
 
   nixos.modules.services = {

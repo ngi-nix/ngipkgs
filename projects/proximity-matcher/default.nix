@@ -9,9 +9,9 @@
     summary = ''
       Webservice for proximity matching based on TLSH and vantage point trees.
     '';
-    subgrants = [
+    subgrants = {
       # Not listed online?
-    ];
+    };
   };
 
   nixos.modules.services = {

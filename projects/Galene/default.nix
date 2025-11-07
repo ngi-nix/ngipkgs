@@ -20,7 +20,7 @@ in
 {
   metadata = {
     summary = "Galene is a self-hosted video conferencing server. It features advanced networking and video algorithms and automatic subtitling.";
-    subgrants = [
+    subgrants.Core = [
       "Galene"
     ];
   };

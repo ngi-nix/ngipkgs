@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Tool to help modeling engineers extract model parameters, run circuit and TCAD simulations and automate infrastructure";
-    subgrants = [
+    subgrants.Entrust = [
       "DMT-Core"
     ];
   };
