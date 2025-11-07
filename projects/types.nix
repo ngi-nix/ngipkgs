@@ -167,9 +167,8 @@ rec {
           type = nullOr str;
           default = null;
         };
-        # TODO: convert all subgrants to `subgrant`, remove listOf
         subgrants = mkOption {
-          type = with types; nullOr (either (listOf str) subgrant);
+          type = with types; nullOr subgrant;
           default = null;
         };
         links = mkOption {
