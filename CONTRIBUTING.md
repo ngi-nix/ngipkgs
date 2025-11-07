@@ -277,20 +277,20 @@ Additionally, include information about the programming languages, build tools u
 
    <!-- For example, for a project called `Foobar`, this can be something like:
 
-    - https://github.com/foo/foobar
-      - Language/Framework: Python
-      - Dependency management: Nix
-      - Nix development environment: [default.nix](https://github.com/foo/foobar/default.nix)
+   - https://github.com/foo/foobar
+     - Language/Framework: Python
+     - Dependency management: Nix
+     - Nix development environment: [default.nix](https://github.com/foo/foobar/default.nix)
 
-    - https://github.com/foo/foobar-mobile
-      - Language/Framework: Java
-      - Dependency management: Gradle
-      - Nix development environment: -->
+   - https://github.com/foo/foobar-mobile
+     - Language/Framework: Java
+     - Dependency management: Gradle
+     - Nix development environment: -->
 
    - <REPOSITORY_LINK>
-    - Language/Framework:
-    - Dependency management:
-    - Nix development environment:
+     - Language/Framework:
+     - Dependency management:
+     - Nix development environment:
    ```
 
 > [!NOTE]
@@ -315,14 +315,14 @@ Next, provide any links to documentation and any other resource that can help wi
      - Notes -->
 
    - Usage Examples:
-    -
-    -
+     -
+     -
    - Build from source/Development:
-    -
-    -
+     -
+     -
    - Other:
-    -
-    -
+     -
+     -
    ```
 
 > [!TIP]
@@ -454,12 +454,14 @@ To add an example:
 1. Figure out the application module options and how they are configured. For instace, this can be done by looking at the module's source code.
 
 2. Create a new `.nix` file to contain the valid example configuration.
+
 > [!NOTE]
 >
 > - Examples should work as-is without requiring additional configuration outside of what's shown.
 > - Include all necessary options and dependent services.
 
 3. In the project's `default.nix`, reference the example with a clear description:
+
 > [!NOTE]
 >
 > - Descriptions are for instructions on playing with the example.
@@ -474,6 +476,7 @@ To add an example:
      };
    };
    ```
+
 4. Ensure the example works by building and running its test.
 <!--TODO: Reference the tests section when it is written -->
 
