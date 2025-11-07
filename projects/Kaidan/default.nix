@@ -8,14 +8,20 @@
 {
   metadata = {
     summary = "Cross-platform chat client for the XMPP protocol";
-    subgrants = [
-      "Kaidan"
-      "Kaidan-Groups"
-      "Kaidan-AV"
-      "Kaidan-Auth"
-      "Kaidan-Mediasharing"
-      "Kaidan-MUC"
-    ];
+    subgrants = {
+      Commons = [
+        "Kaidan-MUC"
+      ];
+      Entrust = [
+        "Kaidan-Auth"
+      ];
+      Review = [
+        "Kaidan"
+        "Kaidan-AV"
+        "Kaidan-Groups"
+        "Kaidan-Mediasharing"
+      ];
+    };
     links = {
       install = {
         text = "Build Kaidan from source";

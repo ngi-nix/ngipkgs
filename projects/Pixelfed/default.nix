@@ -9,12 +9,16 @@
 {
   metadata = {
     summary = "ActivityPub-driven decentralised photo sharing platform";
-    subgrants = [
-      "PixelDroid-MediaEditor"
-      "PixelFedLive"
-      "Pixelfed"
-      "Pixelfed-Groups"
-    ];
+    subgrants = {
+      Entrust = [
+        "PixelDroid-MediaEditor"
+        "Pixelfed-Groups"
+      ];
+      Review = [
+        "PixelFedLive"
+        "Pixelfed"
+      ];
+    };
     links = {
       docs = {
         text = "Documentation";

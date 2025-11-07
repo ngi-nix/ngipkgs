@@ -8,11 +8,18 @@
 {
   metadata = {
     summary = "A project to provide fast, efficient and scalable communication by leveraging IPv6 multicast";
-    subgrants = [
-      "LibreCastLiveStudio"
-      "Librecast-OverlayMulticast"
-      "LibrecastLive"
-    ];
+    subgrants = {
+      Commons = [
+        "Librecast-Studio"
+      ];
+      Core = [
+        "Librecast-OverlayMulticast"
+      ];
+      Review = [
+        "LibreCastLiveStudio"
+        "LibrecastLive"
+      ];
+    };
   };
 
   nixos.modules.programs = {

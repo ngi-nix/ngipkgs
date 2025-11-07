@@ -7,13 +7,15 @@
 {
   metadata = {
     summary = "Blockchain-based decentralized naming system and trust anchor";
-    subgrants = [
-      "Namecoin-Electrum-NMC"
-      "Namecoin-TLS"
-      "Namecoin-ZeroNet"
-      "NamecoinCore"
-      "namecoin"
-    ];
+    subgrants = {
+      Review = [
+        "namecoin"
+        "NamecoinCore"
+        "Namecoin-Electrum-NMC"
+        "Namecoin-TLS"
+        "Namecoin-ZeroNet"
+      ];
+    };
   };
 
   nixos = {

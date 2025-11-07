@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Privacy-friendly Proof of Work (PoW) based CAPTCHA system";
-    subgrants = [
+    subgrants.Entrust = [
       "mCaptcha"
     ];
     links = {

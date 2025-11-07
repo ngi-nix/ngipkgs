@@ -11,11 +11,15 @@
       aggregating individuals' and collectives' book inventories from around the world, Inventaire is kind of a
       huge, distributed community library.
     '';
-    subgrants = [
-      "Inventaire"
-      "Inventaire2"
-      "Inventaire-Self-hosted"
-    ];
+    subgrants = {
+      Entrust = [
+        "Inventaire-Self-hosted"
+      ];
+      Review = [
+        "Inventaire"
+        "Inventaire2"
+      ];
+    };
   };
 
   nixos = {

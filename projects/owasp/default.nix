@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Dependency scanner server, and versatile binary linter, malware research tool and SBOM generator";
-    subgrants = [
-      "OWASP-dep-scan"
-      "OWASP-blint"
-    ];
+    subgrants = {
+      Core = [
+        "OWASP-dep-scan"
+      ];
+      Review = [
+        "OWASP-blint"
+      ];
+    };
   };
 
   nixos.modules.programs = {

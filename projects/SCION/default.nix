@@ -7,16 +7,22 @@
 {
   metadata = {
     summary = "SCION is a clean-slate Next-Generation Internet (NGI) architecture which offers a.o. multi-path and path-awareness capabilities by design.";
-    subgrants = [
-      "SCION-proxy"
-      "SCION-router-codealignment"
-      "Verified-SCION-router"
-      "SCION-Rains"
-      "SCION-Swarm"
-      "SCION-IPFS"
-      "SCION-1M"
-      "SCION-geo"
-    ];
+    subgrants = {
+      Core = [
+        "SCION-1M"
+        "SCION-IPFS"
+        "SCION-router-codealignment"
+        "Verified-SCION-router"
+      ];
+      Entrust = [
+        "SCION-proxy"
+      ];
+      Review = [
+        "SCION-Rains"
+        "SCION-Swarm"
+        "SCION-geo"
+      ];
+    };
     links = {
       docs = {
         text = "SCION Documentation";

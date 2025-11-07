@@ -8,7 +8,7 @@
 {
   metadata = {
     summary = "Portable ActivityPub implementation";
-    subgrants = [
+    subgrants.Entrust = [
       "Seppo"
     ];
     links = {

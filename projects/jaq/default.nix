@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Jaq is a data wrangling tool focusing on correctness, speed, and simplicity";
-    subgrants = [
-      "jaq"
-      "Polyglot-jaq"
-    ];
+    subgrants = {
+      Commons = [
+        "Polyglot-jaq"
+      ];
+      Entrust = [
+        "jaq"
+      ];
+    };
   };
 
   nixos.modules.programs = {

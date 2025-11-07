@@ -8,9 +8,11 @@
 {
   metadata = {
     summary = "Ethersync aims to enable real-time collaborative editing of local text files. Similar to Etherpads, it facilitates multiple users to work on content simultaneously, enabling applications such as shared notes or pair programming.";
-    subgrants = [
-      "Ethersync"
-    ];
+    subgrants = {
+      Core = [
+        "Ethersync"
+      ];
+    };
     links = {
       docs = {
         text = "Documentation";

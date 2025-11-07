@@ -8,11 +8,17 @@
 {
   metadata = {
     summary = "Modern full-featured open source secure mail server";
-    subgrants = [
-      "Mox"
-      "Mox-API"
-      "Mox-Automation"
-    ];
+    subgrants = {
+      Core = [
+        "Mox-Automation"
+      ];
+      Entrust = [
+        "Mox"
+      ];
+      Review = [
+        "Mox-API"
+      ];
+    };
     links = {
       install = {
         text = "Mox Install Documentation";

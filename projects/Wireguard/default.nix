@@ -8,15 +8,19 @@
 {
   metadata = {
     summary = "fast and modern VPN that utilizes state-of-the-art cryptography";
-    subgrants = [
-      "KlusterLab-Wireguard"
-      "WireGuard-SpinalHDL"
-      "WireGuard-upscale"
-      "WireGuardonWindows"
-      "Wireguard-Rust"
-      "wireguard"
-      "wireguard-scaleup"
-    ];
+    subgrants = {
+      Entrust = [
+        "KlusterLab-Wireguard"
+        "WireGuard-SpinalHDL"
+      ];
+      Review = [
+        "WireGuard-upscale"
+        "WireGuardonWindows"
+        "Wireguard-Rust"
+        "wireguard"
+        "wireguard-scaleup"
+      ];
+    };
   };
 
   nixos.modules.programs = {

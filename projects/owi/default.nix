@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Cross-language symbolic execution for C, C++, Rust, Zig, and Wasm";
-    subgrants = [
-      "OWI"
-      "Owi-2"
-    ];
+    subgrants = {
+      Commons = [
+        "Owi-2"
+      ];
+      Core = [
+        "OWI"
+      ];
+    };
   };
 
   nixos.modules.programs = {

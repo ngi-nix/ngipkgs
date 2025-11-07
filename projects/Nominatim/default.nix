@@ -8,10 +8,14 @@
 {
   metadata = {
     summary = "Nominatim is an open-source geographic search engine (geocoder).";
-    subgrants = [
-      "Nominatim"
-      "Nominatim-lib"
-    ];
+    subgrants = {
+      Entrust = [
+        "Nominatim-lib"
+      ];
+      Review = [
+        "Nominatim"
+      ];
+    };
     links = {
       docs = {
         text = "Documentation";
