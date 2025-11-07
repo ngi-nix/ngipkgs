@@ -1,0 +1,23 @@
+diff --git a/funkwhale_api/users/views.py b/funkwhale_api/users/views.py
+index 329f9e8d3..51ac0a5fc 100644
+--- a/funkwhale_api/users/views.py
++++ b/funkwhale_api/users/views.py
+@@ -1,7 +1,7 @@
+ import json
+ 
+ from allauth.account.adapter import get_adapter
+-from allauth.account.utils import send_email_confirmation
++from allauth.account.models import EmailAddress
+ from dj_rest_auth import views as rest_auth_views
+ from dj_rest_auth.registration import views as registration_views
+ from django import http
+@@ -39,7 +39,8 @@ class RegisterView(registration_views.RegisterView):
+         user = super().perform_create(serializer)
+         if not user.is_active:
+             # manual approval, we need to send the confirmation e-mail by hand
+-            send_email_confirmation(self.request, user)
++            email = EmailAddress.objects.get(user=user)
++            email.send_confirmation(request=self.request)
+         if user.invitation:
+             user.invitation.set_invited_user(user)
+ 
