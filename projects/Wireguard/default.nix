@@ -9,6 +9,9 @@
   metadata = {
     summary = "fast and modern VPN that utilizes state-of-the-art cryptography";
     subgrants = {
+      Commons = [
+        "MirageOS-Wireguard"
+      ];
       Entrust = [
         "KlusterLab-Wireguard"
         "WireGuard-SpinalHDL"
