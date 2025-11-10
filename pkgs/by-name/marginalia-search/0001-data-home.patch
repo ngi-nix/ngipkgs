@@ -1,0 +1,103 @@
+From 6262a600b74fc987572383118adee19051e85e3b Mon Sep 17 00:00:00 2001
+From: eljamm <fedi.jamoussi@protonmail.ch>
+Date: Mon, 10 Nov 2025 11:02:04 +0100
+Subject: [PATCH] data home
+
+---
+ .../config/java/nu/marginalia/WmsaHome.java   | 27 ++++++++++++++-----
+ .../actor/proc/ScrapeFeedsActor.java          |  2 +-
+ .../marginalia/assistant/AssistantModule.java |  4 +--
+ 3 files changed, 23 insertions(+), 10 deletions(-)
+
+diff --git a/code/common/config/java/nu/marginalia/WmsaHome.java b/code/common/config/java/nu/marginalia/WmsaHome.java
+index e815fd0c2..b9981762b 100644
+--- a/code/common/config/java/nu/marginalia/WmsaHome.java
++++ b/code/common/config/java/nu/marginalia/WmsaHome.java
+@@ -76,24 +76,37 @@ public class WmsaHome {
+     }
+ 
+     public static Path getDataPath() {
+-        return getHomePath().resolve("data");
++        String[] possibleLocations = new String[] {
++            System.getenv("WMSA_DATA"),
++            System.getProperty("system.dataPath"),
++            getHomePath().resolve("data").toString(),
++        };
++
++        Optional<String> retStr = Stream.of(possibleLocations)
++                .filter(Objects::nonNull)
++                .map(Path::of)
++                .filter(Files::isDirectory)
++                .map(Path::toString)
++                .findFirst();
++
++        return Path.of(retStr.get());
+     }
+ 
+     public static Path getAdsDefinition() {
+-        return getHomePath().resolve("data").resolve("adblock.txt");
++        return getDataPath().resolve("adblock.txt");
+     }
+ 
+     public static Path getIPLocationDatabse() {
+-        return getHomePath().resolve("data").resolve("IP2LOCATION-LITE-DB1.CSV");
++        return getDataPath().resolve("IP2LOCATION-LITE-DB1.CSV");
+ 
+     }
+ 
+     public static Path getAsnMappingDatabase() {
+-        return getHomePath().resolve("data").resolve("asn-data-raw-table");
++        return getDataPath().resolve("asn-data-raw-table");
+     }
+ 
+     public static Path getAsnInfoDatabase() {
+-        return getHomePath().resolve("data").resolve("asn-used-autnums");
++        return getDataPath().resolve("asn-used-autnums");
+     }
+ 
+     public static LanguageModels getLanguageModels() {
+@@ -110,11 +123,11 @@ public class WmsaHome {
+     }
+ 
+     public static Path getAtagsPath() {
+-        return getHomePath().resolve("data/atags.parquet");
++        return getDataPath().resolve("data/atags.parquet");
+     }
+ 
+ 
+     public static Path getLangugeConfig() {
+-        return getHomePath().resolve("conf/languages.xml");
++        return getDataPath().resolve("conf/languages.xml");
+     }
+ }
+diff --git a/code/execution/java/nu/marginalia/actor/proc/ScrapeFeedsActor.java b/code/execution/java/nu/marginalia/actor/proc/ScrapeFeedsActor.java
+index 336cddb4d..ae643dcf4 100644
+--- a/code/execution/java/nu/marginalia/actor/proc/ScrapeFeedsActor.java
++++ b/code/execution/java/nu/marginalia/actor/proc/ScrapeFeedsActor.java
+@@ -45,7 +45,7 @@ public class ScrapeFeedsActor extends RecordActorPrototype {
+     private final HikariDataSource dataSource;
+     private final int nodeId;
+ 
+-    private final Path feedPath = WmsaHome.getHomePath().resolve("data/scrape-urls.txt");
++    private final Path feedPath = WmsaHome.getDataPath().resolve("data/scrape-urls.txt");
+ 
+     private static boolean insertFoundDomains = Boolean.getBoolean("loader.insertFoundDomains");
+ 
+diff --git a/code/services-core/assistant-service/java/nu/marginalia/assistant/AssistantModule.java b/code/services-core/assistant-service/java/nu/marginalia/assistant/AssistantModule.java
+index 6b33cbbde..0e6c999fa 100644
+--- a/code/services-core/assistant-service/java/nu/marginalia/assistant/AssistantModule.java
++++ b/code/services-core/assistant-service/java/nu/marginalia/assistant/AssistantModule.java
+@@ -10,8 +10,8 @@ import static com.google.inject.name.Names.named;
+ 
+ public class AssistantModule extends AbstractModule {
+     public void configure() {
+-        bind(Path.class).annotatedWith(named("suggestions-file1")).toInstance(WmsaHome.getHomePath().resolve("data/suggestions2.txt.gz"));
+-        bind(Path.class).annotatedWith(named("suggestions-file2")).toInstance(WmsaHome.getHomePath().resolve("data/suggestions3.txt.gz"));
++        bind(Path.class).annotatedWith(named("suggestions-file1")).toInstance(WmsaHome.getDataPath().resolve("data/suggestions2.txt.gz"));
++        bind(Path.class).annotatedWith(named("suggestions-file2")).toInstance(WmsaHome.getDataPath().resolve("data/suggestions3.txt.gz"));
+ 
+         bind(LanguageModels.class).toInstance(WmsaHome.getLanguageModels());
+     }
+-- 
+2.50.1
+

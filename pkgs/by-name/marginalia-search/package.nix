@@ -32,6 +32,11 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-IDt7A5ZXhu9Un9r72esHTwRyUKiwpvE8LKnzM5ccLeI=";
   };
 
+  patches = [
+    ./0001-data-home.patch
+    # ./2001-Make-data-path-configurable-as-well.patch
+  ];
+
   postPatch = ''
     patchShebangs \
       run/*.sh \
