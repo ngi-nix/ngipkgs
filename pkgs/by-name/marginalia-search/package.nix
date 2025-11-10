@@ -68,7 +68,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     # Gradle build daemon has been stopped: since the JVM garbage collector is thrashing
     # https://docs.gradle.org/9.1.0/userguide/build_environment.html#sec:configuring_jvm_memory
-    echo "org.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> gradle.properties
+    gradleFlagsArray+=(-Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8")
   '';
 
   strictDeps = true;
