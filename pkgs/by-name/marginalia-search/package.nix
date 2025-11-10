@@ -43,7 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   postPatch = ''
-    patchShebangs run/*.sh
+    patchShebangs run/*.sh code/libraries/native/findliburing.sh
 
     substituteInPlace code/services-application/search-service/build.gradle \
       --replace-fail "commandLine 'npx', 'tailwindcss'" "commandLine 'tailwindcss'"
@@ -68,44 +68,44 @@ stdenv.mkDerivation (finalAttrs: {
           jdk_headless
         ];
         dontAutoPatchelf = true;
-        # buildCommand =
-        #   oa.buildCommand
-        #   # Patchelf downloaded binaries
-        #   + (lib.strings.concatMapStringsSep "\n"
-        #     (path: ''
-        #       target="$(realpath '${path}')"
-        #       rm '${path}'
-        #       cp --no-preserve=mode "$target" '${path}'
-        #       chmod +x '${path}'
-        #       autoPatchelf '${path}'
-        #     '')
-        #     [
-        #       "https://repo1.maven.org/maven2/com/google/protobuf/protoc/3.0.2/protoc-3.0.2-linux-x86_64.exe"
-        #       "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.1.2/protoc-gen-grpc-java-1.1.2-linux-x86_64.exe"
-        #     ]
-        #   )
-        #   # Unpack, patchelf & repack embedded dart-sass
-        #   + ''
-        #     path='https://plugins.gradle.org/m2/de/larsgrefer/sass/sass-embedded-bundled/3.2.0/sass-embedded-bundled-3.2.0.jar'
-        #     target="$(realpath "$path")"
-        #     rm "$path"
-        #
-        #     pushd "$(mktemp -d)"
-        #     jar xvf "$target"
-        #
-        #     pushd de/larsgrefer/sass/embedded/bundled
-        #     gunzip -ck dart-sass-linux-x64.tar.gz | tar -xvf-
-        #     rm dart-sass-linux-x64.tar.gz
-        #
-        #     autoPatchelf dart-sass/src/dart
-        #
-        #     tar -cvf- dart-sass | gzip -9c > dart-sass-linux-x64.tar.gz
-        #     rm -r dart-sass
-        #     popd
-        #
-        #     jar -cf "$out"/"$path" *
-        #     popd
-        #   '';
+        buildCommand =
+          oa.buildCommand
+          # Patchelf downloaded binaries
+          + (lib.strings.concatMapStringsSep "\n"
+            (path: ''
+              target="$(realpath '${path}')"
+              rm '${path}'
+              cp --no-preserve=mode "$target" '${path}'
+              chmod +x '${path}'
+              autoPatchelf '${path}'
+            '')
+            [
+              "https/repo.maven.apache.org/maven2/com/google/protobuf/protoc/3.0.2/protoc-3.0.2-linux-x86_64.exe"
+              "https/repo.maven.apache.org/maven2/io/grpc/protoc-gen-grpc-java/1.1.2/protoc-gen-grpc-java-1.1.2-linux-x86_64.exe"
+            ]
+          )
+          # Unpack, patchelf & repack embedded dart-sass
+          + ''
+            path='https/plugins.gradle.org/m2/de/larsgrefer/sass/sass-embedded-bundled/3.2.0/sass-embedded-bundled-3.2.0.jar'
+            target="$(realpath "$path")"
+            rm "$path"
+
+            pushd "$(mktemp -d)"
+            jar xvf "$target"
+
+            pushd de/larsgrefer/sass/embedded/bundled
+            gunzip -ck dart-sass-linux-x64.tar.gz | tar -xvf-
+            rm dart-sass-linux-x64.tar.gz
+
+            autoPatchelf dart-sass/src/dart
+
+            tar -cvf- dart-sass | gzip -9c > dart-sass-linux-x64.tar.gz
+            rm -r dart-sass
+            popd
+
+            jar -cf "$out"/"$path" *
+            popd
+          '';
       });
 
   nativeBuildInputs = [
