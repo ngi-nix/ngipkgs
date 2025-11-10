@@ -164,5 +164,6 @@ stdenv.mkDerivation (finalAttrs: {
     mainProgram = "marginalia";
     maintainers = [ ];
     platforms = lib.platforms.linux;
+    broken = true; # openjdk23 has been removed. this needs an update
   };
 })
