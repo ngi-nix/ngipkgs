@@ -65,6 +65,10 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail "junit-platform-launcher" "junit-platform-launcher:1.13.4"
 
     cp -r --no-preserve=mode ${slop-src} third-party/slop
+
+    # Gradle build daemon has been stopped: since the JVM garbage collector is thrashing
+    # https://docs.gradle.org/9.1.0/userguide/build_environment.html#sec:configuring_jvm_memory
+    echo "org.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> gradle.properties
   '';
 
   strictDeps = true;
