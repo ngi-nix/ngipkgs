@@ -62,5 +62,4 @@ pkgs.writeText "report-packaging.md" ''
 
   ### Nixpkgs (upstream)
     - Maintaining ${nixos.derivations} derivations, ${nixos.update-scripts} of which have an explicit update script
-    - Migrated derivations, services and tests from monorepo
 ''
