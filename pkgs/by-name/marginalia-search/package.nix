@@ -14,6 +14,8 @@
   unzip,
   which,
   nix-update-script,
+  liburing,
+  pkg-config,
 }:
 let
   gradle = gradle_9;
@@ -44,6 +46,17 @@ stdenv.mkDerivation (finalAttrs: {
 
   postPatch = ''
     patchShebangs run/*.sh code/libraries/native/findliburing.sh
+
+    substituteInPlace code/libraries/native/Makefile \
+      --replace-fail \
+        'LIBURING_PATH=`./findliburing.sh`' \
+        'LIBURING_PATH=${lib.getLib liburing}/lib/liburing.so'
+
+    # bad filename:
+    # RelativeFile[nu/marginalia/language/encoding/UnicodeNormalization$Flattenß.class]
+    substituteInPlace \
+        code/functions/language-processing/java/nu/marginalia/language/{encoding/UnicodeNormalization.java,config/LanguageConfiguration.java} \
+          --replace-fail "Flattenß" "FlattenSS"
 
     substituteInPlace code/services-application/search-service/build.gradle \
       --replace-fail "commandLine 'npx', 'tailwindcss'" "commandLine 'tailwindcss'"
@@ -115,6 +128,11 @@ stdenv.mkDerivation (finalAttrs: {
     tailwindcss
     unzip
     which
+    pkg-config
+  ];
+
+  buildInputs = [
+    liburing
   ];
 
   gradleFlags = [
