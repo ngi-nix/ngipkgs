@@ -1,0 +1,50 @@
+name: changelog
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run at an odd time to avoid spikes at, e.g. midnight.
+    # We don't really care too much about the particular time.
+    # https://crontab.guru/#17_1_1_*_*
+    - cron: "17 1 1 * *"
+
+jobs:
+  changelog:
+    if: github.repository_owner == 'ngi-nix'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+          ref: "main"
+      - name: Update changelog
+        uses: orhun/git-cliff-action@d77b37db2e3f7398432d34b72a12aa3e2ba87e51 # v4.6.0
+        id: git-cliff
+        with:
+          config: cliff.toml
+          args: --verbose
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          sign-commits: true
+          title: "chore: Update CHANGELOG.md"
+          commit-message: "chore: Update CHANGELOG.md"
+          branch: "update_changelog"
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
+          labels: |
+            automated
+          body: |
+            <details><summary>Changelog</summary>
+            <p>
+
+            ${{ steps.git-cliff.outputs.content }}
+
+            </p>
+            </details>
