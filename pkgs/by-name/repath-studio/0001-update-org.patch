@@ -1,0 +1,234 @@
+From d828813ed445f390a5d7aad961f4873b8bc11c17 Mon Sep 17 00:00:00 2001
+From: eljamm <fedi.jamoussi@protonmail.ch>
+Date: Mon, 10 Nov 2025 08:15:28 +0100
+Subject: [PATCH] update org
+
+---
+ CHANGELOG.md                           | 12 ++++++------
+ README.md                              | 12 ++++++------
+ SECURITY.md                            |  2 +-
+ package-lock.json                      |  8 ++++----
+ package.json                           |  2 +-
+ src/renderer/app/views.cljs            |  2 +-
+ src/renderer/attribute/impl/color.cljs |  2 +-
+ src/renderer/error/views.cljs          |  2 +-
+ src/renderer/views.cljs                |  2 +-
+ src/renderer/window/menubar.cljs       |  6 +++---
+ 10 files changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index a89736fa..f2681033 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -4,13 +4,13 @@
+ 
+ **Added**
+ 
+-- Persist file handles to open recent and save open files on future sessions [#91](https://github.com/repath-project/repath-studio/pull/91)
++- Persist file handles to open recent and save open files on future sessions [#91](https://github.com/repath-studio/repath-studio/pull/91)
+ - Code sign and notarize macOS build
+ - Preview fill color on pointer over element
+ - Error reporting dialog
+ - PWA install button
+ - Korean and Turkish languages
+-- Toast notifications [#92](https://github.com/repath-project/repath-studio/pull/92)
++- Toast notifications [#92](https://github.com/repath-studio/repath-studio/pull/92)
+ - Icon loading placeholder
+ 
+ **Removed**
+@@ -89,23 +89,23 @@
+ 
+ **Added**
+ 
+-- Internationalization support [#87](https://github.com/repath-project/repath-studio/pull/87)
++- Internationalization support [#87](https://github.com/repath-studio/repath-studio/pull/87)
+ - Initial attribute value support
+ - Reintroduce FPS component
+ - Core attributes to container elements
+ 
+ **Changed**
+ 
+-- Font enhancements [#84](https://github.com/repath-project/repath-studio/pull/84)
++- Font enhancements [#84](https://github.com/repath-studio/repath-studio/pull/84)
+   - Converting text elements to paths works on web
+   - Noto Sans bundled with the app
+   - Text elements without a font family set can be converted to paths
+   - Font weight filtering based on the selected font-family also works on web
+   - Improved scaling of text elements
+-- Persist enhancements [#86](https://github.com/repath-project/repath-studio/pull/86)
++- Persist enhancements [#86](https://github.com/repath-studio/repath-studio/pull/86)
+   - Persisting is not constrained to local storage limitations
+   - Some loading issues on we are now fixed
+-- Tool enhancements [#85](https://github.com/repath-project/repath-studio/pull/85)
++- Tool enhancements [#85](https://github.com/repath-studio/repath-studio/pull/85)
+   - Preview attributes while creating elements
+   - Disable attributes while modifying elements
+ - Enhance performance
+diff --git a/README.md b/README.md
+index 345ea82c..79c38bc4 100644
+--- a/README.md
++++ b/README.md
+@@ -2,13 +2,13 @@
+ 
+  :construction: **This project is in alpha stage!**
+ 
+-[![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/repath-project/repath-studio/latest/total?style=for-the-badge)](https://github.com/repath-project/repath-studio/releases/latest/)
++[![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/repath-studio/repath-studio/latest/total?style=for-the-badge)](https://github.com/repath-studio/repath-studio/releases/latest/)
+ 
+-[![Build desktop app](https://github.com/repath-project/repath-studio/actions/workflows/desktop-app.yml/badge.svg)](https://github.com/repath-project/repath-studio/actions/workflows/desktop-app.yml)
+-[![Deploy web app](https://github.com/repath-project/repath-studio/actions/workflows/web-app.yml/badge.svg)](https://github.com/repath-project/repath-studio/actions/workflows/web-app.yml)
++[![Build desktop app](https://github.com/repath-studio/repath-studio/actions/workflows/desktop-app.yml/badge.svg)](https://github.com/repath-studio/repath-studio/actions/workflows/desktop-app.yml)
++[![Deploy web app](https://github.com/repath-studio/repath-studio/actions/workflows/web-app.yml/badge.svg)](https://github.com/repath-studio/repath-studio/actions/workflows/web-app.yml)
+ 
+-[![Outdated dependencies](https://github.com/repath-project/repath-studio/actions/workflows/dependencies.yml/badge.svg)](https://github.com/repath-project/repath-studio/actions/workflows/dependencies.yml)
+-[![Static security testing](https://github.com/repath-project/repath-studio/actions/workflows/clj-holmes.yml/badge.svg)](https://github.com/repath-project/repath-studio/actions/workflows/clj-holmes.yml)
++[![Outdated dependencies](https://github.com/repath-studio/repath-studio/actions/workflows/dependencies.yml/badge.svg)](https://github.com/repath-studio/repath-studio/actions/workflows/dependencies.yml)
++[![Static security testing](https://github.com/repath-studio/repath-studio/actions/workflows/clj-holmes.yml/badge.svg)](https://github.com/repath-studio/repath-studio/actions/workflows/clj-holmes.yml)
+ [![CodeFactor](https://codescene.io/projects/72168/status-badges/average-code-health)](https://codescene.io/projects/72168)
+ 
+ [![Discord](https://img.shields.io/discord/890005586958237716?label=Discord&logo=discord&logoColor=aaa)](https://discord.gg/yzjY6W6ame)
+@@ -103,7 +103,7 @@ project.
+ Clone the project.
+ 
+ ```bash
+-git clone https://github.com/repath-project/repath-studio.git
++git clone https://github.com/repath-studio/repath-studio.git
+ ```
+ 
+ Go into the directory.
+diff --git a/SECURITY.md b/SECURITY.md
+index eea18d68..103d024a 100644
+--- a/SECURITY.md
++++ b/SECURITY.md
+@@ -2,7 +2,7 @@
+ 
+ ## Reporting a Vulnerability
+ 
+-Please [open a security advisory](https://github.com/repath-project/repath-studio/security/advisories/new)
++Please [open a security advisory](https://github.com/repath-studio/repath-studio/security/advisories/new)
+ or send a detailed mail to [contact@repath.studio](mailto:contact@repath.studio)
+ to report security vulnerabilities. Even when unsure whether the bug in question
+ is an exploitable vulnerability, it is recommended to use the above methods and
+diff --git a/package-lock.json b/package-lock.json
+index 97604712..43518358 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -32,7 +32,7 @@
+         "@radix-ui/react-slider": "1.2.4",
+         "@radix-ui/react-switch": "1.2.6",
+         "@radix-ui/react-tooltip": "1.2.8",
+-        "@repath-project/react-color": "2.19.4",
++        "@repath-studio/react-color": "2.19.4",
+         "@sentry/cli": "2.56.1",
+         "@sentry/react": "10.19.0",
+         "@tailwindcss/cli": "4.1.14",
+@@ -4056,10 +4056,10 @@
+       "dev": true,
+       "license": "MIT"
+     },
+-    "node_modules/@repath-project/react-color": {
++    "node_modules/@repath-studio/react-color": {
+       "version": "2.19.4",
+-      "resolved": "https://registry.npmjs.org/@repath-project/react-color/-/react-color-2.19.4.tgz",
+-      "integrity": "sha512-cLjyrHD/Ont3sFXXN6/9/8PmpCGMyRGRcVxFFMNI34m1rHSMVqlnyoxuhV8asrdJDU1xBs0DtvlxfHKMvlFQGQ==",
++      "resolved": "https://registry.npmjs.org/@repath-studio/react-color/-/react-color-2.19.4.tgz",
++      "integrity": "sha512-ITop1TjwYi5NVHwjEqlvhcdcgCGYOSKVsO0OzXoaAjC2zPHAgF2uU6STrOsLyJ6NSm8zli4mVpsoFkje+sqg7Q==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+diff --git a/package.json b/package.json
+index 18237daf..3b6cedcc 100644
+--- a/package.json
++++ b/package.json
+@@ -99,7 +99,7 @@
+     "@radix-ui/react-slider": "1.2.4",
+     "@radix-ui/react-switch": "1.2.6",
+     "@radix-ui/react-tooltip": "1.2.8",
+-    "@repath-project/react-color": "2.19.4",
++    "@repath-studio/react-color": "2.19.4",
+     "@sentry/cli": "2.56.1",
+     "@sentry/react": "10.19.0",
+     "@tailwindcss/cli": "4.1.14",
+diff --git a/src/renderer/app/views.cljs b/src/renderer/app/views.cljs
+index f95bcf54..47fbc46c 100644
+--- a/src/renderer/app/views.cljs
++++ b/src/renderer/app/views.cljs
+@@ -299,7 +299,7 @@
+                ["commit"
+                 (t [::source-code "Source Code"])
+                 [::events/open-remote-url
+-                 "https://github.com/repath-project/repath-studio"]]
++                 "https://github.com/repath-studio/repath-studio"]]
+                ["list"
+                 (t [::changelog "Changelog"])
+                 [::events/open-remote-url
+diff --git a/src/renderer/attribute/impl/color.cljs b/src/renderer/attribute/impl/color.cljs
+index 37867606..6cc5b9ed 100644
+--- a/src/renderer/attribute/impl/color.cljs
++++ b/src/renderer/attribute/impl/color.cljs
+@@ -2,7 +2,7 @@
+   "https://developer.mozilla.org/en-US/docs/Web/SVG/Content_type#color"
+   (:require
+    ["@radix-ui/react-popover" :as Popover]
+-   ["@repath-project/react-color" :refer [ChromePicker]]
++   ["@repath-studio/react-color" :refer [ChromePicker]]
+    [re-frame.core :as rf]
+    [renderer.attribute.hierarchy :as attribute.hierarchy]
+    [renderer.attribute.views :as attribute.views]
+diff --git a/src/renderer/error/views.cljs b/src/renderer/error/views.cljs
+index 41008b65..1d918fdb 100644
+--- a/src/renderer/error/views.cljs
++++ b/src/renderer/error/views.cljs
+@@ -11,7 +11,7 @@
+ (m/=> submit-error-url [:-> string? string?])
+ (defn submit-error-url
+   [message]
+-  (str "https://github.com/repath-project/repath-studio/issues/new?"
++  (str "https://github.com/repath-studio/repath-studio/issues/new?"
+        "&title=" message
+        "&template=bug_report.md"))
+ 
+diff --git a/src/renderer/views.cljs b/src/renderer/views.cljs
+index 26c24c2a..711b0478 100644
+--- a/src/renderer/views.cljs
++++ b/src/renderer/views.cljs
+@@ -8,7 +8,7 @@
+    ["@radix-ui/react-scroll-area" :as ScrollArea]
+    ["@radix-ui/react-slider" :as Slider]
+    ["@radix-ui/react-switch" :as Switch]
+-   ["@repath-project/react-color" :refer [PhotoshopPicker]]
++   ["@repath-studio/react-color" :refer [PhotoshopPicker]]
+    ["codemirror" :as codemirror]
+    ["codemirror/addon/display/placeholder.js"]
+    ["codemirror/addon/hint/css-hint.js"]
+diff --git a/src/renderer/window/menubar.cljs b/src/renderer/window/menubar.cljs
+index ad4d121d..478f356c 100644
+--- a/src/renderer/window/menubar.cljs
++++ b/src/renderer/window/menubar.cljs
+@@ -598,12 +598,12 @@
+             :label (t [::source-code "Source Code"])
+             :icon "commit"
+             :action [::events/open-remote-url
+-                     "https://github.com/repath-project/repath-studio"]}
++                     "https://github.com/repath-studio/repath-studio"]}
+            {:id :license
+             :label (t [::license "License"])
+             :icon "lgpl"
+             :action [::events/open-remote-url
+-                     "https://github.com/repath-project/repath-studio/blob/main/LICENSE"]}
++                     "https://github.com/repath-studio/repath-studio/blob/main/LICENSE"]}
+            {:id :changelog
+             :icon "list"
+             :label (t [::changelog "Changelog"])
+@@ -620,7 +620,7 @@
+             :icon "warning"
+             :label (t [::submit-an-issue "Submit an issue"])
+             :action [::events/open-remote-url
+-                     "https://github.com/repath-project/repath-studio/issues/new/choose"]}
++                     "https://github.com/repath-studio/repath-studio/issues/new/choose"]}
+            {:id :report-errors
+             :icon "bug"
+             :type :checkbox
+-- 
+2.50.1
+

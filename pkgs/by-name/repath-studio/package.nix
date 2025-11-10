@@ -1,6 +1,7 @@
 {
   lib,
   stdenv,
+  fetchpatch,
 
   buildNpmPackage,
   fetchFromGitHub,
@@ -37,11 +38,14 @@ buildNpmPackage (finalAttrs: {
         hash = "sha256-ZOv+9TxBsOnSSbfM7kJLP3cQH9FpgA15aETszg7YSes=";
       };
     })
+    # TODO: remove on next release
+    # repath-project -> repath-studio
+    ./0001-update-org.patch
   ];
 
   makeCacheWritable = true;
 
-  npmDepsHash = "sha256-/Wj//cxM3bhBeU8LIyA/fMO9MZHoNs15apKBzhx6sCQ=";
+  npmDepsHash = "sha256-++PG//GNThHpN/u6Za8css0ovj4RMjqWrIo8PjaO/eM=";
 
   nativeBuildInputs = [
     finalAttrs.passthru.clojureWithCache
