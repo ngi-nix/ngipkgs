@@ -75,14 +75,6 @@ let
       tag = "v${version}";
       hash = "sha256-iAgiGo/PMG0L4S/ZqSPL7Hl8akCNyva4JhaOkcHit8w=";
     };
-
-    patches = (oa.patches or [ ]) ++ [
-      # Fix stack smashing in testq with high core count
-      (fetchpatch {
-        url = "https://github.com/signalwire/libks/commit/404206ca50e2a1b6d9304ca385eec57e8e8955b2.patch";
-        hash = "sha256-JIeUU9wNju9W8QhkYXT+e/Zx1GMhDn68gzwQlENB6d0=";
-      })
-    ];
   });
 
   libwebsockets' = libwebsockets.overrideAttrs (oa: rec {
@@ -110,6 +102,9 @@ let
     env.NIX_CFLAGS_COMPILE = toString [
       "-Wno-error"
     ];
+
+    # new patches have been added to Nixpkgs that don't apply here
+    patches = [ ];
   });
 
   # Only a directory gets copied from this, built during bbb-freeswitch-core
