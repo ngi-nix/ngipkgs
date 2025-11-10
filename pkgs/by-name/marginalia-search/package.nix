@@ -20,13 +20,6 @@
 let
   gradle = gradle_9;
   jdk_headless = jdk25_headless;
-
-  slop-src = fetchFromGitHub {
-    owner = "MarginaliaSearch";
-    repo = "SlopData";
-    rev = "3277a0a0fb09cd8e86e6a2e49a7981ebdf66b4df";
-    hash = "sha256-JCbTlQt0OiYyY5bJJsu+4NW0AUSqzA7pYv2JZgidfrI=";
-  };
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "marginalia-search";
@@ -39,23 +32,15 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-IDt7A5ZXhu9Un9r72esHTwRyUKiwpvE8LKnzM5ccLeI=";
   };
 
-  patches = [
-    # ./2001-Make-data-path-configurable-as-well.patch
-    # ./2002-Make-slop-an-in-tree-project.patch
-  ];
-
   postPatch = ''
-    patchShebangs run/*.sh code/libraries/native/findliburing.sh
+    patchShebangs \
+      run/*.sh \
+      code/libraries/native/findliburing.sh
 
-    substituteInPlace code/libraries/native/Makefile \
-      --replace-fail \
-        'LIBURING_PATH=`./findliburing.sh`' \
-        'LIBURING_PATH=${lib.getLib liburing}/lib/liburing.so'
-
-    # bad filename:
-    # RelativeFile[nu/marginalia/language/encoding/UnicodeNormalization$Flattenß.class]
+    # bad filename
     substituteInPlace \
-        code/functions/language-processing/java/nu/marginalia/language/{encoding/UnicodeNormalization.java,config/LanguageConfiguration.java} \
+        code/functions/language-processing/java/nu/marginalia/language/encoding/UnicodeNormalization.java \
+        code/functions/language-processing/java/nu/marginalia/language/config/LanguageConfiguration.java \
           --replace-fail "Flattenß" "FlattenSS"
 
     substituteInPlace code/services-application/search-service/build.gradle \
@@ -64,11 +49,20 @@ stdenv.mkDerivation (finalAttrs: {
     substituteInPlace srcsets.gradle \
       --replace-fail "junit-platform-launcher" "junit-platform-launcher:1.13.4"
 
-    cp -r --no-preserve=mode ${slop-src} third-party/slop
-
     # Gradle build daemon has been stopped: since the JVM garbage collector is thrashing
     # https://docs.gradle.org/9.1.0/userguide/build_environment.html#sec:configuring_jvm_memory
-    gradleFlagsArray+=(-Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8")
+    gradleFlagsArray+=(
+        -Dorg.gradle.jvmargs="\
+          -Xmx2g \
+          -XX:MaxMetaspaceSize=512m \
+          -XX:+HeapDumpOnOutOfMemoryError \
+          -Dfile.encoding=UTF-8"
+    )
+
+    substituteInPlace code/libraries/native/Makefile \
+      --replace-fail \
+        "LIBURING_PATH=`./findliburing.sh`" \
+        "LIBURING_PATH=${lib.getLib liburing}/lib/liburing.so"
   '';
 
   strictDeps = true;
