@@ -32,6 +32,10 @@
           For production usage, look into secrets management via Nix.
         '';
         tests.marginalia-search.module = import ./test.nix args;
+        tests.marginalia-search.problem.broken.reason = ''
+          OpenJDK23 is deprecated, which Marginalia depends on.
+          This needs an update.
+        '';
       };
     };
   };
