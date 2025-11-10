@@ -82,4 +82,3 @@ topo_order = false
 # Allowed values: newest, oldest
 sort_commits = "oldest"
 skip_tags = "25.00"
-include_paths = ["projects", "pkgs"]
