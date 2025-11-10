@@ -9,9 +9,13 @@ install_nix() {
         apt install --yes curl git jq nix
     # Archlinux
     elif echo "$DISTRO" | grep --quiet archlinux; then
+        # HACK: temporary fix for https://github.com/ngi-nix/ngipkgs/issues/1780
+        mkdir workaround
+        cp /usr/lib/libicu*.so.76 workaround
+        pacman --sync --refresh --noconfirm icu
+        cp workaround/* /usr/lib/
+        # install Nix
         pacman --sync --refresh --noconfirm curl git jq nix
-        # temporary fix for https://gitlab.archlinux.org/archlinux/packaging/packages/nix/-/issues/18
-        pacman --sync --refresh --noconfirm aws-sdk-cpp-iam
     # Other
     else
         echo "ERROR: Unknown distro. Exiting ..."
