@@ -20,4 +20,10 @@
       };
     };
   };
+
+  nixos.demo.vm = {
+    module = ./example.nix;
+    description = "Deployment for demo purposes";
+    tests.gancio.module = pkgs.nixosTests.gancio;
+  };
 }
