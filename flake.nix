@@ -71,7 +71,7 @@
         in
         rec {
           packages = ngipkgs // {
-            inherit (classic) overview;
+            inherit (classic) overview demos;
 
             options =
               pkgs.runCommand "options.json"

@@ -10,6 +10,7 @@ let
     mkOption
     ;
 
+  isFLake = !builtins ? currentSystem;
   makeManPath = lib.makeSearchPathOutput "man" "share/man";
 
   activate =
@@ -19,8 +20,8 @@ let
       runtimeInputs = lib.attrValues demo-shell.programs;
       runtimeEnv = demo-shell.env;
       passthru.inheritManPath = false;
-      # HACK: start shell from ./result
-      derivationArgs.postCheck = ''
+      # HACK: start shell from ./result, if not using flakes
+      derivationArgs.postCheck = lib.optionalString (!isFLake) ''
         mv $out/bin/$name /tmp/$name
         rm -rf $out && mv /tmp/$name $out
       '';
