@@ -4,10 +4,102 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Bug Fixes
+
+- *overview* Add fallback for overview version
+- Deprecated nixosTest alias
+- Don't evaluate paths in module options
+
+
+### CI/CD
+
+- Fix changelog config with recent git-cliff
+- Add workflow to update changelog
+
+
 ### Documentation
 
+- *report/packaging* Improve output of packaging report script
+- *report/packaging* Don't link to demo
+- *report/packaging* Remove redunadant information
+- Document metrics summary outputs
+- Automate packaging report
+- Add subgrant details for packaging report
+- Fix triaging instructions' bullet point indentation
+- Add reporting documentation
+
+
+### Features
+
+- *types* Enforce subgrant structure in metadata
+- Count maintained derivations in Nixpkgs
+
+
+### Overview
+
+- Center footer text
+
+
+### Refactor
+
+- RunCommandNoCC -> runCommand
+- WrapGAppsHook -> wrapGAppsHook3
+- Pin flake-inputs hash
+- Use markdown for triage issue template
+
+
+### Bigbluebutton.bbb-freeswitch-core
+
+- Switch to overriding packages from Nixpkgs
+
+
+### Pkgs
+
+- *bigbluebutton.bbb-freeswitch-core* Fix build
+- *repath-studio* Fix org change
+
+
+### Pkgs/tau-radio
+
+- Init at 0-unstable-2025-10-13
+
+
+### Pkgs/tau-tower
+
+- Init at 0-unstable-2025-09-30
+
+
+### Projects
+
+- *Marginalia* Mark as broken
+
+
+### Projects/Tau
+
+- Init
+
+
+### Treewide
+
+- Categorize all projects' subgrants
+
+
+## 25.10 - 2025-11-04
+
+### Bug Fixes
+
+- Trailing whitespace in project template
+- Metrics count
+
+
+### Documentation
+
+- *overview* Update usage instructions by demo type
 - Add header to project reference; refactor & generate
 - Refactor project template; add demo
+- Fix url to contributing.md
+- Change example package url
+- Register url changed
 
 
 ### Features
@@ -33,6 +125,7 @@ All notable changes to this project will be documented in this file.
 ### Refactor
 
 - Flatten project types; move project up
+- Metrics and get more accurate results
 
 
 ### Anastasis
@@ -72,9 +165,27 @@ All notable changes to this project will be documented in this file.
 - Use derivation from Nixpkgs
 
 
+### Inventaire-client
+
+- Fix build script; refactor
+
+
 ### Inventaire-i18n
 
 - 0-unstable-2025-06-12 -> 0-unstable-2025-10-07
+- Refactor update script
+- 0-unstable-2025-10-07 -> 0-unstable-2025-10-20
+
+
+### Irdest-lora-firmware
+
+- Init at 0.1.0
+
+
+### Kazarma
+
+- Fix build failure
+- Add update script
 
 
 ### Kbin-backend
@@ -120,6 +231,32 @@ All notable changes to this project will be documented in this file.
 - 0.4.3-unstable-2024-05-31 -> 0-unstable-2024-05-31
 
 
+### Pkgs
+
+- *repath-studio* Fix maven deps outputHash
+- Add overlays.nix for fixes
+
+
+### Pkgs/_0wm-ap-mock
+
+- Init at 0-unstable-2025-10-27
+
+
+### Pkgs/_0wm-client
+
+- Init at 0-unstable-2025-10-06
+
+
+### Pkgs/_0wm-opmode
+
+- Init at 0-unstable-2025-09-23
+
+
+### Pkgs/_0wm-server
+
+- Init at 0-unstable-2025-09-23
+
+
 ### Pkgs/ratman
 
 - Use buildNpmPackage for dashboard
@@ -128,6 +265,25 @@ All notable changes to this project will be documented in this file.
 ### Pkgs/{libgnunetchat,gnunet-messenger-cli}
 
 - Remove
+
+
+### Project
+
+- *owasp* Remove upstreamed tests depscan.nix, blint.nix
+
+
+### Projects
+
+- *Irdest* Refactor config & test; add verbosity
+- *Irdest* Mark demo test as broken
+- *pagedjs* Fix docs links
+- *repath-studio* Fix docs link
+- *wax* Remove docs link
+
+
+### Projects/0WM
+
+- Init
 
 
 ### Projects/Blink
@@ -201,14 +357,39 @@ All notable changes to this project will be documented in this file.
 - Migrate usage instructions
 
 
+### Projects/repath-studio
+
+- Init
+
+
 ### Projects/xrsh
 
 - Migrate usage instructions
 
 
+### Projects/y-crdt
+
+- Init
+
+
+### Proximity-matcher
+
+- Add update script
+
+
 ### Ratman
 
 - 0.7.0 -> 0.7.0-unstable-2025-09-09; add update script
+
+
+### Reoxide-plugin-simple
+
+- Add update script; fix version
+
+
+### Repath-studio
+
+- Init at 0.4.10
 
 
 ### Steamworks-pulleyback
@@ -219,6 +400,23 @@ All notable changes to this project will be documented in this file.
 ### Taldir
 
 - Add update script
+- 1.0.5 -> 1.0.5-unstable-2025-10-15; refactor update script
+
+
+### Taler-mdb
+
+- Add update script
+- 0.14.1 -> 1.0.0
+
+
+### Templates
+
+- Add label to project template
+
+
+### Treewide
+
+- Categorize subgrants
 
 
 ### Types
@@ -229,6 +427,27 @@ All notable changes to this project will be documented in this file.
 ### Verso
 
 - 0-unstable-2025-06-15 -> 0-unstable-2025-06-17
+
+
+### Vula
+
+- Refactor; move hkdf to the same dir
+- Add update script; update to latest version
+
+
+### Wax-client
+
+- 0-unstable-2025-08-14 -> 0-unstable-2025-10-07
+
+
+### Wax-server
+
+- 0-unstable-2025-08-14 -> 0-unstable-2025-10-07
+
+
+### Wireguard-rs
+
+- Add update script
 
 
 ## 25.09 - 2025-09-24
