@@ -11,15 +11,17 @@
 }:
 
 {
-  name = "Ethersync";
+  name = "Teamtype";
+
+  interactive.sshBackdoor.enable = true;
 
   nodes =
     let
       config = {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.programs.ethersync
-          sources.examples.Ethersync."Enable Ethersync"
+          sources.modules.programs.teamtype
+          sources.examples.Teamtype."Enable Teamtype"
         ];
         services.getty.autologinUser = "root";
       };
@@ -55,20 +57,20 @@
       start_all()
 
       server.wait_for_unit("default.target")
-      # enable ethersync for the directory
-      server.succeed("mkdir -p .ethersync")
-      server.succeed("echo ${key} | base64 -d >.ethersync/key")
-      server.succeed("chmod go-rwx .ethersync")
-      server.succeed("chmod 600 .ethersync/key")
+      # enable teamtype for the directory
+      server.succeed("mkdir -p .teamtype")
+      server.succeed("echo ${key} | base64 -d >.teamtype/key")
+      server.succeed("chmod go-rwx .teamtype")
+      server.succeed("chmod 600 .teamtype/key")
       server.succeed("echo server >file.txt")
-      server.execute("ethersync share >/dev/null &")
+      server.execute("teamtype share >/dev/null &")
 
       client.wait_for_unit("default.target")
-      # enable ethersync for the directory
-      client.send_chars("mkdir -p .ethersync\n")
-      client.send_chars("chmod go-rwx .ethersync\n")
-      client.send_chars("echo peer=${secret-address} >.ethersync/config\n")
-      client.send_chars("ethersync join >/dev/null 2>&1 &\n")
+      # enable teamtype for the directory
+      client.send_chars("mkdir -p .teamtype\n")
+      client.send_chars("chmod go-rwx .teamtype\n")
+      client.send_chars("echo peer=${secret-address} >.teamtype/config\n")
+      client.send_chars("teamtype join >/dev/null 2>&1 &\n")
       client.wait_until_succeeds("test -s /root/file.txt")
 
       client.send_chars("nvim file.txt\n")
