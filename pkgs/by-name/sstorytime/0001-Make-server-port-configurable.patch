@@ -1,0 +1,36 @@
+From e2d7747306e86a69f4fcbd6fc333b24854d87b90 Mon Sep 17 00:00:00 2001
+From: eljamm <fedi.jamoussi@protonmail.ch>
+Date: Wed, 12 Nov 2025 15:56:31 +0100
+Subject: [PATCH] Make server port configurable
+
+---
+ server/http_server.go | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/server/http_server.go b/server/http_server.go
+index f880a4e..d001d72 100644
+--- a/server/http_server.go
++++ b/server/http_server.go
+@@ -62,12 +62,17 @@ func main() {
+ 
+ 	// 3. Create an http.Server instance for graceful shutdown.
+ 
+-	srv := &http.Server{Addr:    "0.0.0.0:8080", Handler: EnableCORS(mux), }
++	port := os.Getenv("SST_SERVER_PORT")
++	if port == "" {
++		port = "8080"
++	}
++
++	srv := &http.Server{Addr:    "0.0.0.0:" + port, Handler: EnableCORS(mux), }
+ 
+ 	// 4. Run the server in a goroutine so it doesn't block.
+ 
+ 	go func() {
+-		log.Println("Server starting on http://localhost:8080")
++		log.Println("Server starting on http://localhost:" + port)
+ 
+ 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+ 			log.Fatalf("could not start server: %s\n", err)
+-- 
+2.50.1
+
