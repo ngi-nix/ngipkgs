@@ -58,7 +58,6 @@ pkgs.writeText "report-packaging.md" ''
       - ${ngipkgs.metadata.subgrants.Core} Core
       - ${ngipkgs.metadata.subgrants.Entrust} Entrust
       - ${ngipkgs.metadata.subgrants.Review} Review
-      - ${ngipkgs.metadata.subgrants.Uncategorized} Uncategorized
 
   ### Nixpkgs (upstream)
     - Maintaining ${nixos.derivations} derivations, ${nixos.update-scripts} of which have an explicit update script
