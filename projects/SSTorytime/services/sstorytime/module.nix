@@ -24,21 +24,9 @@ in
     };
 
     openFirewall = lib.mkEnableOption "the default ports in the firewall for the SSTorytime server.";
-
-    sstConfigDir = mkOption {
-      type = types.path;
-      description = "Path to the directory containing the SSTconfig files.";
-      default = "${cfg.package}/share/config/SSTconfig";
-      defaultText = lib.literalExpression "''${pkgs.sstorytime}/share/config/SSTconfig";
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.variables.SST_CONFIG_PATH = cfg.sstConfigDir;
-    environment.systemPackages = [
-      cfg.package
-    ];
-
     systemd.services.sstorytime = {
       description = "SSTorytime Server";
       serviceConfig = {
@@ -56,7 +44,6 @@ in
         StartLimitBurst = 5;
         StartLimitInterval = 100;
       };
-      environment.SST_CONFIG_PATH = cfg.sstConfigDir;
       environment.SST_SERVER_PORT = toString cfg.port;
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];

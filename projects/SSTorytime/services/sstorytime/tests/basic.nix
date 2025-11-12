@@ -13,23 +13,16 @@
       {
         imports = [
           sources.modules.ngipkgs
+          sources.modules.programs.sstorytime
           sources.modules.services.sstorytime
-          sources.examples.SSTorytime."Enable SSTorytime"
+          sources.examples.SSTorytime."Enable SSTorytime programs"
+          sources.examples.SSTorytime."Enable SSTorytime server"
         ];
 
+        # TODO: remove
         environment.systemPackages = with pkgs; [
           neovim
         ];
-
-        services.postgresql = {
-          enable = true;
-          initialScript = pkgs.writeText "init-sql-script" ''
-            CREATE USER sstoryline PASSWORD 'sst_1234' superuser;
-            CREATE DATABASE sstoryline;
-            GRANT ALL PRIVILEGES ON DATABASE sstoryline TO sstoryline;
-            CREATE EXTENSION UNACCENT;
-          '';
-        };
       };
   };
 
@@ -61,15 +54,18 @@
 
   testScript =
     { nodes, ... }:
+    let
+      cfg = nodes.machine.services.sstorytime;
+    in
     # python
     ''
       start_all()
 
       machine.wait_for_unit("postgresql.service")
       machine.wait_for_unit("sstorytime.service")
-      machine.wait_for_open_port(${toString nodes.machine.services.sstorytime.port})
+      machine.wait_for_open_port(${toString cfg.port})
 
-      machine.succeed("ln -s ${nodes.machine.services.sstorytime.package}/share/examples /tmp/examples")
+      machine.succeed("ln -s ${cfg.package}/share/examples /tmp/examples")
       machine.succeed("N4L -u /tmp/examples/tutorial.n4l")
     '';
 }

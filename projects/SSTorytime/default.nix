@@ -6,36 +6,35 @@
 }@args:
 
 {
-  /**
-    NOTE
-    - Each program/service must have at least one example
-    - Each example must be tested
-    - If something is needed but not available, set its attribute to `null`
-    - Remove template comments before committing changes
-
-    See the [project reference document](https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/docs/project.md) for more details on how to implement each component.
-  */
   metadata = {
-    summary = "Short summary that describes the project";
+    summary = "Unified Graph Process For Mapping Knowledge";
     subgrants = {
-      Commons = [ ];
-      Core = [ ];
-      Entrust = [ ];
-      Review = [ ];
+      Commons = [
+        "SmartSemanticDataLookup"
+      ];
     };
-    # Top-level links for things that are in common across the whole project (mandatory)
     links = {
       repo = {
-        text = "Title";
-        url = "<URL>";
+        text = "Source repository";
+        url = "https://github.com/markburgess/SSTorytime";
       };
       homepage = {
-        text = "Title";
-        url = "<URL>";
+        text = "Homepage";
+        url = "https://markburgess.org/spacetime.html";
       };
       docs = {
-        text = "Title";
-        url = "<URL>";
+        text = "Documentation";
+        url = "https://github.com/markburgess/SSTorytime/blob/main/docs/README.md";
+      };
+    };
+  };
+
+  nixos.modules.programs = {
+    sstorytime = {
+      module = ./programs/sstorytime/module.nix;
+      examples."Enable SSTorytime programs" = {
+        module = ./programs/sstorytime/examples/basic.nix;
+        tests.basic.module = import ./services/sstorytime/tests/basic.nix args;
       };
     };
   };
@@ -44,7 +43,7 @@
     sstorytime = {
       name = "service name";
       module = ./services/sstorytime/module.nix;
-      examples."Enable SSTorytime" = {
+      examples."Enable SSTorytime server" = {
         module = ./services/sstorytime/examples/basic.nix;
         tests.basic.module = import ./services/sstorytime/tests/basic.nix args;
       };
