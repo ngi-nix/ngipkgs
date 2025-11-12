@@ -5,7 +5,7 @@
 }:
 
 {
-  name = "Serivce Name";
+  name = "SSTorytime basic test";
 
   nodes = {
     machine =
@@ -13,13 +13,12 @@
       {
         imports = [
           sources.modules.ngipkgs
-          # sources.modules.services._serviceName_
-          # sources.examples._ProjectName_._exampleName_
+          sources.modules.services.sstorytime
+          sources.examples.SSTorytime."Enable SSTorytime"
         ];
 
         environment.systemPackages = with pkgs; [
           neovim
-          sstorytime
         ];
 
         services.postgresql = {
@@ -78,15 +77,10 @@
       start_all()
 
       machine.wait_for_unit("postgresql.service")
+      machine.wait_for_unit("sstorytime.service")
+      machine.wait_for_open_port(8080)
 
-      machine.succeed("ln -s ${pkgs.sstorytime}/share/examples /tmp/examples")
-      machine.succeed("ln -s ${pkgs.sstorytime}/share/config/SSTconfig /tmp/SSTconfig")
-      machine.succeed('\
-        SST_CONFIG_PATH="${pkgs.sstorytime}/share/config/SSTconfig" \
-        N4L -u \
-        ${pkgs.sstorytime}/share/examples/tutorial.n4l \
-      ')
-
-      machine.succeed("http_server")
+      machine.succeed("ln -s ${nodes.machine.services.sstorytime.package}/share/examples /tmp/examples")
+      machine.succeed("N4L -u /tmp/examples/tutorial.n4l")
     '';
 }

@@ -43,28 +43,10 @@
   nixos.modules.services = {
     sstorytime = {
       name = "service name";
-      module = ./services/_serviceName_/module.nix;
-      examples."Enable _serviceName_" = {
-        module = ./services/_serviceName_/examples/basic.nix;
-        description = ''
-          Usage instructions
-
-          1.
-          2.
-          3.
-        '';
+      module = ./services/sstorytime/module.nix;
+      examples."Enable SSTorytime" = {
+        module = ./services/sstorytime/examples/basic.nix;
         tests.basic.module = import ./services/sstorytime/tests/basic.nix args;
-      };
-      # Add relevant links to the program (optional)
-      links = {
-        build = {
-          text = "Build from source";
-          url = "<URL>";
-        };
-        test = {
-          text = "Test instructions";
-          url = "<URL>";
-        };
       };
     };
   };
