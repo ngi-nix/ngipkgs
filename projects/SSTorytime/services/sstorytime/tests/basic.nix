@@ -46,24 +46,13 @@
       }:
       {
         # forward ports from VM to host
-        virtualisation.forwardPorts =
-          (map
-            (port: {
-              from = "host";
-              host.port = port;
-              guest.port = port;
-            })
-            [
-              config.services.postgresql.settings.port
-            ]
-          )
-          ++ [
-            {
-              from = "host";
-              host.port = 9090;
-              guest.port = 8080;
-            }
-          ];
+        virtualisation.forwardPorts = [
+          {
+            from = "host";
+            host.port = 9090;
+            guest.port = config.services.sstorytime.port;
+          }
+        ];
 
         # forwarded ports need to be accessible
         networking.firewall.enable = false;
@@ -78,7 +67,7 @@
 
       machine.wait_for_unit("postgresql.service")
       machine.wait_for_unit("sstorytime.service")
-      machine.wait_for_open_port(8080)
+      machine.wait_for_open_port(${toString nodes.machine.services.sstorytime.port})
 
       machine.succeed("ln -s ${nodes.machine.services.sstorytime.package}/share/examples /tmp/examples")
       machine.succeed("N4L -u /tmp/examples/tutorial.n4l")

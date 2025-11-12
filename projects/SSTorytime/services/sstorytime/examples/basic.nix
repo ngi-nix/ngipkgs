@@ -1,5 +1,8 @@
 { ... }:
 
 {
-  services.sstorytime.enable = true;
+  services.sstorytime = {
+    enable = true;
+    port = 3030;
+  };
 }
