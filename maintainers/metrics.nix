@@ -36,11 +36,7 @@ let
     _: p:
     optionalAttrs (p ? nixos) {
       metadata = {
-        subgrants =
-          if lib.isAttrs p.metadata.subgrants then
-            mapAttrs (_: length) p.metadata.subgrants
-          else
-            { Uncategorized = length p.metadata.subgrants; };
+        subgrants = mapAttrs (_: length) p.metadata.subgrants;
       };
       nixos = {
         tests = countComponent p.nixos "tests";
