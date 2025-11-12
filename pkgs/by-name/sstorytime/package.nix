@@ -2,6 +2,9 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
+  postgresql,
+  postgresqlTestHook,
+  nix-update-script,
 }:
 
 buildGoModule (finalAttrs: {
@@ -29,11 +32,44 @@ buildGoModule (finalAttrs: {
 
     make all
 
+    # build necessary tools for the tests
+    pushd demo_pocs
+      make all
+    popd
+
     runHook postBuild
+  '';
+
+  nativeCheckInputs = [
+    postgresql
+    postgresqlTestHook
+  ];
+
+  env = {
+    DBHOST = "127.0.0.1";
+    PGDATABASE = "sstoryline";
+    PGUSER = "sstoryline";
+    PGPASSWORD = "sst_1234";
+  };
+
+  checkPhase = ''
+    runHook preCheck
+
+    pushd ../tests
+      make test
+    popd
+
+    runHook postCheck
   '';
 
   postInstall = ''
     mkdir -p $out/{bin,share/config}
+
+    installExecutables () {
+      for file in $EXECUTABLES; do
+        install -Dm755 "$file" -t $out/bin
+      done
+    }
 
     EXECUTABLES="N4L \
     searchN4L \
@@ -47,16 +83,27 @@ buildGoModule (finalAttrs: {
     API_EXAMPLE_3 \
     API_EXAMPLE_4"
 
-    for file in $EXECUTABLES; do
-      install -Dm755 "$file" -t $out/bin
-    done
+    installExecutables
+
+    pushd demo_pocs
+      EXECUTABLES="postgres_testdb \
+      search_coarse_grain_api \
+      search_wardley \
+      search_coarse_grain \
+      search_coarse_grain2 \
+      search_coarse_grain_api \
+      dotest_entirecone \
+      dotest_getnodes \
+      definecontext"
+
+      installExecutables
+    popd
 
     cp -R ../SSTconfig $out/share/config
     cp -R ../examples $out/share/
   '';
 
-  # TODO:
-  doCheck = false;
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Unified Graph Process For Mapping Knowledge";
