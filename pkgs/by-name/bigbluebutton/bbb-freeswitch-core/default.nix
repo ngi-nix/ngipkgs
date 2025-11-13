@@ -75,6 +75,20 @@ let
       tag = "v${version}";
       hash = "sha256-iAgiGo/PMG0L4S/ZqSPL7Hl8akCNyva4JhaOkcHit8w=";
     };
+
+    patches = (oa.patches or [ ]) ++ [
+      # Fix stack smashing in testq with high core count
+      (fetchpatch {
+        url = "https://github.com/signalwire/libks/commit/404206ca50e2a1b6d9304ca385eec57e8e8955b2.patch";
+        hash = "sha256-JIeUU9wNju9W8QhkYXT+e/Zx1GMhDn68gzwQlENB6d0=";
+      })
+
+      # Fixes sometimes-occuring SIGSEGVs in testhash
+      (fetchpatch {
+        url = "https://github.com/signalwire/libks/commit/61f2d2f7e308c42cce652db4a172cfa4b0ff6bf1.patch";
+        hash = "sha256-v14UUPTYkwJ4DEfPnOsHlEUxTJSko5ecD+LMAKh4JQg=";
+      })
+    ];
   });
 
   libwebsockets' = libwebsockets.overrideAttrs (oa: rec {
