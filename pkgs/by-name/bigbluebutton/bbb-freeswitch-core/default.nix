@@ -75,6 +75,20 @@ let
       tag = "v${version}";
       hash = "sha256-iAgiGo/PMG0L4S/ZqSPL7Hl8akCNyva4JhaOkcHit8w=";
     };
+
+    patches = (oa.patches or [ ]) ++ [
+      # Fix stack smashing in testq with high core count
+      (fetchpatch {
+        url = "https://github.com/signalwire/libks/commit/404206ca50e2a1b6d9304ca385eec57e8e8955b2.patch";
+        hash = "sha256-JIeUU9wNju9W8QhkYXT+e/Zx1GMhDn68gzwQlENB6d0=";
+      })
+
+      # Fixes sometimes-occuring SIGSEGVs in testhash
+      (fetchpatch {
+        url = "https://github.com/signalwire/libks/commit/61f2d2f7e308c42cce652db4a172cfa4b0ff6bf1.patch";
+        hash = "sha256-v14UUPTYkwJ4DEfPnOsHlEUxTJSko5ecD+LMAKh4JQg=";
+      })
+    ];
   });
 
   libwebsockets' = libwebsockets.overrideAttrs (oa: rec {
@@ -103,8 +117,52 @@ let
       "-Wno-error"
     ];
 
-    # new patches have been added to Nixpkgs that don't apply here
-    patches = [ ];
+    # Abit cursed, but lets us stay on top of patches without a full replacement of the original patches list
+    patches =
+      let
+        # null == patch isn't relevant
+        patchReplacements = {
+          # Applied in Nixpkgs, fixed in version 4.4. Manually backported.
+          "CVE-2025-11677.patch" = ./libwebsockets-0001-v3.2.3-CVE-2025-11677.patch;
+
+          # CVE-2025-11678 fix doesn't apply to this version, relevant functionality was added in 4.0.0
+          "CVE-2025-11678.patch" = null;
+        };
+        getPatchName =
+          patchObj:
+          {
+            "set" = patchObj.name;
+            "path" = "${patchObj}";
+          }
+          .${builtins.typeOf patchObj}
+          or (throw "bbb-freecore-switch.passthru.libwebsockets.patches: Unsure how to handle ${builtins.toString patchObj}");
+        prevPatches = oa.patches or [ ];
+        prevPatchesNames = builtins.map getPatchName prevPatches;
+        # patchReplacements attrname -> prevPatchesName
+        getPrevPatchName =
+          patchName:
+          let
+            res = builtins.filter (prevPatch: lib.strings.hasSuffix patchName prevPatch) prevPatchesNames;
+          in
+          if builtins.length res == 1 then builtins.head res else null;
+        # patchReplacements, with the original attrnames replaced with the equivalents from prevPatchesNames
+        patchReplacementsProcessed = lib.attrsets.concatMapAttrs (
+          patchName: patchReplacement:
+          let
+            prevPatchName = getPrevPatchName patchName;
+          in
+          assert lib.asserts.assertMsg (prevPatchName != null)
+            "bbb-freecore-switch.passthru.libwebsockets.patches: ${patchName} not present in Nixpkgs' libwebsockets.patches!";
+          {
+            ${prevPatchName} = patchReplacement;
+          }
+        ) patchReplacements;
+      in
+      builtins.filter (x: x != null) (
+        builtins.map (
+          patchElem: patchReplacementsProcessed.${getPatchName patchElem} or patchElem
+        ) prevPatches
+      );
   });
 
   # Only a directory gets copied from this, built during bbb-freeswitch-core
