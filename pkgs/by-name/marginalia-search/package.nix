@@ -5,45 +5,69 @@
   fetchurl,
   autoPatchelfHook,
   gettext,
-  gradle,
+  gradle_9,
   # Project asks specifically for a Java with languageVersion=23
-  jdk23_headless,
+  # NOTE: jdk23 is EOL and has been deprecated
+  jdk25_headless,
   makeWrapper,
   tailwindcss,
   unzip,
   which,
+  nix-update-script,
+  liburing,
+  pkg-config,
 }:
 let
-  slop-src = fetchFromGitHub {
-    owner = "MarginaliaSearch";
-    repo = "SlopData";
-    rev = "3277a0a0fb09cd8e86e6a2e49a7981ebdf66b4df";
-    hash = "sha256-JCbTlQt0OiYyY5bJJsu+4NW0AUSqzA7pYv2JZgidfrI=";
-  };
+  gradle = gradle_9;
+  jdk_headless = jdk25_headless;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "marginalia-search";
-  version = "24.10.0-unstable-2025-02-15";
+  version = "24.10.0-unstable-2025-11-09";
 
   src = fetchFromGitHub {
     owner = "MarginaliaSearch";
     repo = "MarginaliaSearch";
-    rev = "44d6bc71b7bdf9d89a6811773bea43e44a8ca190";
-    hash = "sha256-5vKCImc/v3BGqVAfDXId03BTfjcPr9m5S5qXYTYA/DE=";
+    rev = "4aa37e16d126e1f0cd9592b53a6554e57a44b3cc";
+    hash = "sha256-IDt7A5ZXhu9Un9r72esHTwRyUKiwpvE8LKnzM5ccLeI=";
   };
 
   patches = [
-    ./2001-Make-data-path-configurable-as-well.patch
-    ./2002-Make-slop-an-in-tree-project.patch
+    ./0001-data-home.patch
+    # ./2001-Make-data-path-configurable-as-well.patch
   ];
 
   postPatch = ''
-    patchShebangs run/*.sh
+    patchShebangs \
+      run/*.sh \
+      code/libraries/native/findliburing.sh
+
+    # bad filename
+    substituteInPlace \
+        code/functions/language-processing/java/nu/marginalia/language/encoding/UnicodeNormalization.java \
+        code/functions/language-processing/java/nu/marginalia/language/config/LanguageConfiguration.java \
+          --replace-fail "Flattenß" "FlattenSS"
 
     substituteInPlace code/services-application/search-service/build.gradle \
       --replace-fail "commandLine 'npx', 'tailwindcss'" "commandLine 'tailwindcss'"
 
-    cp -r --no-preserve=mode ${slop-src} third-party/slop
+    substituteInPlace srcsets.gradle \
+      --replace-fail "junit-platform-launcher" "junit-platform-launcher:1.13.4"
+
+    # Gradle build daemon has been stopped: since the JVM garbage collector is thrashing
+    # https://docs.gradle.org/9.1.0/userguide/build_environment.html#sec:configuring_jvm_memory
+    gradleFlagsArray+=(
+        -Dorg.gradle.jvmargs="\
+          -Xmx2g \
+          -XX:MaxMetaspaceSize=512m \
+          -XX:+HeapDumpOnOutOfMemoryError \
+          -Dfile.encoding=UTF-8"
+    )
+
+    substituteInPlace code/libraries/native/Makefile \
+      --replace-fail \
+        "LIBURING_PATH=`./findliburing.sh`" \
+        "LIBURING_PATH=${lib.getLib liburing}/lib/liburing.so"
   '';
 
   strictDeps = true;
@@ -57,7 +81,7 @@ stdenv.mkDerivation (finalAttrs: {
       (oa: {
         nativeBuildInputs = (oa.nativeBuildInputs or [ ]) ++ [
           autoPatchelfHook
-          jdk23_headless
+          jdk_headless
         ];
         dontAutoPatchelf = true;
         buildCommand =
@@ -72,8 +96,8 @@ stdenv.mkDerivation (finalAttrs: {
               autoPatchelf '${path}'
             '')
             [
-              "https/repo1.maven.org/maven2/com/google/protobuf/protoc/3.0.2/protoc-3.0.2-linux-x86_64.exe"
-              "https/repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.1.2/protoc-gen-grpc-java-1.1.2-linux-x86_64.exe"
+              "https/repo.maven.apache.org/maven2/com/google/protobuf/protoc/3.0.2/protoc-3.0.2-linux-x86_64.exe"
+              "https/repo.maven.apache.org/maven2/io/grpc/protoc-gen-grpc-java/1.1.2/protoc-gen-grpc-java-1.1.2-linux-x86_64.exe"
             ]
           )
           # Unpack, patchelf & repack embedded dart-sass
@@ -107,10 +131,15 @@ stdenv.mkDerivation (finalAttrs: {
     tailwindcss
     unzip
     which
+    pkg-config
+  ];
+
+  buildInputs = [
+    liburing
   ];
 
   gradleFlags = [
-    "-Dorg.gradle.java.home=${jdk23_headless}"
+    "-Dorg.gradle.java.home=${jdk_headless}"
   ];
 
   preConfigure = ''
@@ -126,7 +155,7 @@ stdenv.mkDerivation (finalAttrs: {
     mv marginalia $out
     rm $out/bin/marginalia.bat
     wrapProgram $out/bin/marginalia \
-      --set JAVA_HOME '${jdk23_headless}'
+      --set JAVA_HOME '${jdk_headless}'
 
     mkdir -p run/{model,data}
     cp -r run{/template,}/conf
@@ -156,6 +185,8 @@ stdenv.mkDerivation (finalAttrs: {
   + ''
     runHook postInstall
   '';
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     description = "Internet search engine for text-oriented websites, indexing the small, old and weird web";
