@@ -117,8 +117,52 @@ let
       "-Wno-error"
     ];
 
-    # new patches have been added to Nixpkgs that don't apply here
-    patches = [ ];
+    # Abit cursed, but lets us stay on top of patches without a full replacement of the original patches list
+    patches =
+      let
+        # null == patch isn't relevant
+        patchReplacements = {
+          # Applied in Nixpkgs, fixed in version 4.4. Manually backported.
+          "CVE-2025-11677.patch" = ./libwebsockets-0001-v3.2.3-CVE-2025-11677.patch;
+
+          # CVE-2025-11678 fix doesn't apply to this version, relevant functionality was added in 4.0.0
+          "CVE-2025-11678.patch" = null;
+        };
+        getPatchName =
+          patchObj:
+          {
+            "set" = patchObj.name;
+            "path" = "${patchObj}";
+          }
+          .${builtins.typeOf patchObj}
+          or (throw "bbb-freecore-switch.passthru.libwebsockets.patches: Unsure how to handle ${builtins.toString patchObj}");
+        prevPatches = oa.patches or [ ];
+        prevPatchesNames = builtins.map getPatchName prevPatches;
+        # patchReplacements attrname -> prevPatchesName
+        getPrevPatchName =
+          patchName:
+          let
+            res = builtins.filter (prevPatch: lib.strings.hasSuffix patchName prevPatch) prevPatchesNames;
+          in
+          if builtins.length res == 1 then builtins.head res else null;
+        # patchReplacements, with the original attrnames replaced with the equivalents from prevPatchesNames
+        patchReplacementsProcessed = lib.attrsets.concatMapAttrs (
+          patchName: patchReplacement:
+          let
+            prevPatchName = getPrevPatchName patchName;
+          in
+          assert lib.asserts.assertMsg (prevPatchName != null)
+            "bbb-freecore-switch.passthru.libwebsockets.patches: ${patchName} not present in Nixpkgs' libwebsockets.patches!";
+          {
+            ${prevPatchName} = patchReplacement;
+          }
+        ) patchReplacements;
+      in
+      builtins.filter (x: x != null) (
+        builtins.map (
+          patchElem: patchReplacementsProcessed.${getPatchName patchElem} or patchElem
+        ) prevPatches
+      );
   });
 
   # Only a directory gets copied from this, built during bbb-freeswitch-core
