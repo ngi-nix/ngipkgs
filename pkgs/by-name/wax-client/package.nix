@@ -60,7 +60,7 @@ stdenv.mkDerivation (finalAttrs: {
     mkdir -p $out/bin
 
     cat > $out/bin/wax-client << EOF
-      ${stdenv.shell}
+      #!${stdenv.shell}
       cd "$out/lib/wax-client"
       exec sh ./env.sh serve -p 8080 --single ./_build "\$@"
     EOF
