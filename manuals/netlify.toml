@@ -1,0 +1,15 @@
+[[redirects]]
+from = "/manual/nix/unstable/*"
+to = "https://hydra.nixos.org/job/nix/master/manual/latest/download/1/manual/:splat"
+status = 200
+force = true
+[redirects.headers]
+X-From = "NGIpkgs-12e7be5d"
+
+[[redirects]]
+from = "/manual/nix/development/*"
+to = "https://hydra.nixos.org/job/nix/master/manual/latest/download/1/manual/:splat"
+status = 200
+force = true
+[redirects.headers]
+X-From = "NGIpkgs-12e7be5d"

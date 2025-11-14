@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /manuals/_static/
+Disallow: /manuals/_sources/
+Sitemap: https://ngi.nixos.org/manuals/sitemap.xml

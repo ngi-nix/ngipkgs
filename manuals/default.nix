@@ -1,0 +1,232 @@
+{
+  callPackage,
+  fetchurl,
+  ghostscript,
+  gnused,
+  imagemagick,
+  installShellFiles,
+  lib,
+  modulesPath,
+  perl,
+  python3,
+  revision,
+  stdenv,
+  texinfo,
+  texlive,
+  version,
+  ...
+}:
+let
+  options = callPackage ./Options.nix { inherit modulesPath revision; };
+
+  common = stdenv.mkDerivation (finalAttrs: {
+    pname = "NGIpkgs-Manuals-${finalAttrs.passthru.format}";
+    inherit version;
+    src =
+      with lib.fileset;
+      toSource {
+        root = ../.;
+        fileset = intersection (gitTracked ../.) (unions [
+          (fileFilter (
+            file:
+            lib.any file.hasExt [
+              "md"
+              "nix"
+              "svg"
+            ]
+          ) ../.)
+          ./Makefile
+          ./_redirects
+          ./_static
+          ./_templates
+          ./conf.py
+          ./netlify.toml
+          ./robots.txt
+          ../projects
+        ]);
+      };
+
+    nativeBuildInputs = [
+      finalAttrs.passthru.pythonPackages
+      gnused
+      imagemagick
+      perl
+    ];
+
+    patchPhase = ''
+      runHook prePatch
+      mkdir -p manuals/Options
+      ln -sf ${options.optionsMyST} manuals/Options/generated.md
+
+      for manual in ${lib.concatStringsSep " " finalAttrs.passthru.manuals}; do
+        substituteInPlace manuals/''${manual}.md \
+          --replace-fail '@NGIPKGS_REVISION@' "${revision}" \
+          --replace-fail '@NGIPKGS_VERSION@' "${version}"
+      done
+
+      mkdir -p manuals/_static/_img
+      ln -s ${finalAttrs.passthru.logo.svg} manuals/_static/_img/nix.svg
+      magick ${finalAttrs.passthru.logo.svg} \
+        -background transparent \
+        -define icon:auto-resize=32 \
+        -extent "%[fx:max(w,h)]x%[fx:max(w,h)]" \
+        -fuzz 10% \
+        -gravity center \
+        -transparent white \
+        -trim +repage \
+        manuals/favicon.ico
+      runHook postPatch
+    '';
+
+    buildPhase = ''
+      runHook preBuild
+      make -C manuals ${finalAttrs.passthru.format}
+      runHook postBuild
+    '';
+
+    passthru = {
+      inherit options;
+      manuals = [
+        "Contributor"
+        "Options"
+        "User"
+      ];
+      logo.svg = fetchurl {
+        url = "https://brand.nixos.org/logos/nixos-logomark-default-gradient-minimal.svg";
+        hash = "sha256-YrOle9qo0G92vvCjy9FAkyNOdyAz1DR+xoc+/CpK0yk=";
+      };
+      pythonPackages = python3.withPackages (
+        pyPkgs: with pyPkgs; [
+          linkify-it-py
+          myst-parser
+          sphinx
+          sphinx-book-theme
+          sphinx-copybutton
+          sphinx-design
+          sphinx-notfound-page
+          sphinx-sitemap
+        ]
+      );
+    };
+  });
+
+in
+
+# Split the different formats
+# in different derivations instead of different outputs
+# in order to only use `nix build -f. manuals.man`
+# as a `.git/hooks/pre-push` check.
+lib.recurseIntoAttrs {
+  html = common.overrideAttrs (
+    finalAttrs: previousAttrs: {
+      installPhase = ''
+        runHook preInstall
+        cp -R manuals/build/html $out/
+        cp -t $out \
+          manuals/netlify.toml \
+          manuals/robots.txt
+        runHook postInstall
+      '';
+      passthru = previousAttrs.passthru or { } // {
+        format = "html";
+      };
+    }
+  );
+
+  info = common.overrideAttrs (previousAttrs: {
+    passthru = previousAttrs.passthru or { } // {
+      format = "info";
+    };
+    nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [ texinfo ];
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/share/info
+      cp manuals/build/texinfo/*.info $out/share/info/
+      runHook postInstall
+    '';
+  });
+
+  latexpdf = common.overrideAttrs (
+    finalAttrs: previousAttrs: {
+      nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [
+        finalAttrs.passthru.texPackages
+        ghostscript
+        imagemagick
+      ];
+      prePatch = previousAttrs.prePatch or "" + ''
+        mkdir -p manuals/_static/_img
+        magick ${finalAttrs.passthru.logo.svg} manuals/_static/_img/nix.pdf
+      '';
+      installPhase = ''
+        runHook preInstall
+        pushd manuals/build/latex/
+        mkdir -p $out
+        # Drastically reduce resulting PDF size
+        # by compressing embedded images (logo).
+        #
+        # FixMe(role): there may be a way to do it upfront using sphinx.
+        for pdf in NGIpkgs_*.pdf; do
+          ps2pdf \
+            -dPDFSETTINGS="/default" \
+            -dDownsampleGrayImages=false\
+            -dAutoRotatePages=/None \
+            -dColorImageResolution=600 \
+            -dColorImageDownsampleType=/Bicubic \
+            "$pdf" \
+            "$out/$pdf"
+        done
+        popd
+        runHook postInstall
+      '';
+      passthru = previousAttrs.passthru or { } // {
+        format = "latexpdf";
+        # Those TeX packages are dependencies to provision
+        # for the build/latex/*.{tex,sty} files generated by sphinx,
+        # ./tex-env.nix has been generated with:
+        #     nix -L develop -f. manuals.latexpdf
+        #     nix run github:rgri/tex2nix -- build/latex/*.{tex,sty}
+        #     nixfmt ./tex-env.nix
+        # It may have to be regenerated at some point the build is missing tex packages.
+        texPackages = callPackage ./tex-env.nix {
+          extraTexPackages = {
+            inherit (texlive)
+              latexmk
+              collection-fontsrecommended
+              collection-latexrecommended
+              collection-luatex
+              gnu-freefont # For FreeSerif.otf
+              ;
+          };
+        };
+      };
+    }
+  );
+
+  man = common.overrideAttrs (previousAttrs: {
+    passthru = previousAttrs.passthru or { } // {
+      format = "man";
+    };
+    nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [ installShellFiles ];
+    installPhase = ''
+      runHook preInstall
+      installManPage manuals/build/man/*.5
+      runHook postInstall
+    '';
+  });
+
+  singlehtml = common.overrideAttrs (
+    finalAttrs: previousAttrs: {
+      passthru = previousAttrs.passthru or { } // {
+        format = "singlehtml";
+      };
+      installPhase = ''
+        runHook preInstall
+        cp -R manuals/build/singlehtml $out/
+        cp -t $out \
+          manuals/netlify.toml \
+          manuals/robots.txt
+        runHook postInstall
+      '';
+    }
+  );
+}
