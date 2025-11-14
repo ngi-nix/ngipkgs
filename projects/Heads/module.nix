@@ -21,6 +21,7 @@ in
       '';
       type = lib.types.listOf lib.types.str;
       default = pkgs.heads.allowedBoards;
+      defaultText = lib.literalExpression "pkgs.heads.allowedBoards";
     };
   };
 
