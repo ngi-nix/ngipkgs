@@ -16,6 +16,7 @@ in
       type = lib.types.str;
       description = "Hostname of CNSPRCY server";
       default = config.networking.hostName;
+      defaultText = lib.literalExpression "config.networking.hostName";
     };
 
     stateDir = lib.mkOption {
