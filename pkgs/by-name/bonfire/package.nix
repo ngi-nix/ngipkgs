@@ -302,12 +302,11 @@ beamPackages.mixRelease {
          extensions/bonfire_ui_common
     ''
 
-    # Explanation: tzdata needs a writable directory to autoupdate
-    # its TimeZone data periodically.
+    # Explanation: make runtime.exs configurable at runtime
+    # without rebuilding the package.
     ''
       cat >>config/runtime.exs <<EOF
-
-        config :tzdata, :data_dir, System.get_env("TZDATA_DIR", "/var/lib/bonfire/tzdata")
+        Code.eval_file(System.get_env("BONFIRE_RUNTIME_CONFIG"))
       EOF
     ''
 
@@ -324,6 +323,7 @@ beamPackages.mixRelease {
     ''
 
     # See: justfile#_deps-post-get
+    # ToDo(functional/correctness): data/uploads should be set to a sensible location for runtime
     ''
       mkdir -p data
       mkdir -p data/uploads
@@ -378,6 +378,8 @@ beamPackages.mixRelease {
   # and mix do (through MIX_DEBUG=1).
   enableDebugInfo = true;
 
+  #stripDebug = true
+
   env = env // {
     WITH_IMAGE_VIX = "true";
     WITH_GIT_DEPS = "1";
@@ -386,6 +388,7 @@ beamPackages.mixRelease {
     # Explanation: from justfile's _ext-migrations-copy
     MIX_OS_DEPS_COMPILE_PARTITION_COUNT = "1";
     # ToDo(functional/completeness): support those?
+    #LIVEVIEW_ENABLED=true
     #WITH_XMPP = "1";
     #WITH_API_GRAPHQL = "1";
   };
@@ -393,8 +396,9 @@ beamPackages.mixRelease {
   passthru = {
     inherit
       beamPackages
-      mixNixDeps
       bonfireSetup
+      flavour
+      mixNixDeps
       update
       ;
     # HowTo(maint/update): `update bonfire`, or a bit faster:

@@ -24,7 +24,6 @@ secret() {
 }
 
 secret RELEASE_COOKIE 40
-secret ERLANG_COOKIE 42
 secret ENCRYPTION_SALT 128
 secret SIGNING_SALT 128
 secret SECRET_KEY_BASE 128
