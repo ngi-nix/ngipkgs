@@ -57,6 +57,13 @@ let
       options = self.optionsDoc.optionsNix;
     };
 
+    manuals = self.call manuals/default.nix rec {
+      version = "0.0.0"; # FixMe(maint): use something better, alas self.rev is not available there.
+      revision = "release-${version}";
+      inherit (self.project-utils.raw-projects.config) projects;
+      modulesPath = "${sources.nixpkgs}/nixos/modules";
+    };
+
     nixos-modules =
       # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
       {
