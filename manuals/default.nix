@@ -56,7 +56,7 @@ let
 
     patchPhase = ''
       runHook prePatch
-      ln -sf ${manuals.optionsMyST} manuals/options.md
+      ln -sf ${manuals.optionsMyST} manuals/User/What_is/the_tree_of_options.md
       magick ${finalAttrs.passthru.logo} manuals/_static/_img/nix.pdf
       substituteInPlace manuals/index.md \
         --replace-fail '@MANUALS_VERSION@' "${version}"

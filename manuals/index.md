@@ -2,8 +2,8 @@
 Version: @MANUALS_VERSION@
 
 ```{toctree}
-:maxdepth: 1
-:hidden: true
+:hidden:
 
-options.md
+User.md
+Contributor.md
 ```

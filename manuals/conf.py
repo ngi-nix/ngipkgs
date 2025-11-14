@@ -263,7 +263,7 @@ latex_elements = {
     #'pointsize': '10pt',
     # Additional stuff for the LaTeX preamble.
     'preamble': r'''
-      \setcounter{tocdepth}{0}
+      \setcounter{tocdepth}{2}
     ''',
     'sphinxsetup': r'TitleColor={RGB}{87, 154, 202}',
     # Latex figure (float) alignment
