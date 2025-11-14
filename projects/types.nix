@@ -703,7 +703,21 @@ rec {
     > [!TIP]
     > [Example](#libexample) modules can also be used for demos, if they clearly describe how the application should be configured and used.
 
-    After implementing the demo, run the [checks](#checks) to make sure that everything is correct.
+    After implementing the demo, run the following commands to test it:
+
+    - With classic Nix:
+
+      ```shellSession
+      nix-build -A demos.PROJECT_NAME
+      ```
+
+    - With flakes:
+
+      ```shellSession
+      nix run .#demos.PROJECT_NAME
+      ```
+
+    Then, run the [checks](#checks) to make sure that everything is correct.
   */
   demo = types.submodule (
     { name, ... }:
@@ -729,6 +743,13 @@ rec {
               ];
           };
           default = { };
+        };
+        type = mkOption {
+          type = types.enum [
+            "vm"
+            "shell"
+          ];
+          default = name;
         };
         problem = mkOption {
           type = types.nullOr problem;

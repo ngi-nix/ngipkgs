@@ -252,26 +252,23 @@ rec {
     inherit lib pkgs metrics;
   };
 
-  project-demos = lib.filterAttrs (name: value: value != null) (
-    lib.mapAttrs (name: value: value.nixos.demo.vm or value.nixos.demo.shell or null) projects
-  );
-
-  demo = import ./overview/demo {
-    inherit
-      lib
-      pkgs
-      sources
-      system
-      ;
-    demo-modules = lib.flatten (
-      lib.mapAttrsToList (name: value: value.module-demo.imports) project-demos
-    );
-    nixos-modules = extendedNixosModules;
-  };
-
-  inherit (demo)
-    demo-vm
+  inherit
+    (import ./overview/demo {
+      inherit
+        lib
+        pkgs
+        sources
+        system
+        projects
+        ;
+      nixos-modules = extendedNixosModules;
+    })
+    # for demo code activation. used in the overview code snippets
     demo-shell
+    demo-vm
+    # - $(nix-build -A demos.PROJECT_NAME)
+    # - nix run .#demos.PROJECT_NAME
+    demos
     ;
 }
 # required for update scripts

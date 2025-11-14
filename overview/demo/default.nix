@@ -3,9 +3,22 @@
   pkgs,
   system,
   sources,
+  projects,
   nixos-modules,
-  demo-modules,
 }:
+let
+  raw-demos = lib.pipe projects [
+    (lib.mapAttrs (_: value: value.nixos.demo.vm or value.nixos.demo.shell or null))
+    (lib.filterAttrs (_: value: value != null))
+  ];
+
+  demo-modules = lib.pipe raw-demos [
+    (lib.mapAttrsToList (_: value: value.module-demo.imports))
+    (lib.flatten)
+  ];
+
+  isFLake = !builtins ? currentSystem;
+in
 rec {
   eval =
     module:
@@ -23,9 +36,19 @@ rec {
 
   demo-vm =
     module:
-    pkgs.writeShellScript "demo-vm" ''
-      exec ${(eval module).config.system.build.vm}/bin/run-nixos-vm "$@"
-    '';
-
+    pkgs.writeShellScript "demo-vm" (
+      let
+        nixos-vm = (eval module).config.system.build.vm;
+      in
+      if isFLake then
+        nixos-vm
+      else
+        ''
+          exec ${nixos-vm}/bin/run-nixos-vm "$@"
+        ''
+    );
   demo-shell = module: (eval module).config.shells.bash.activate;
+  demo = d: (if d.type == "vm" then demo-vm else demo-shell) d.module;
+
+  demos = lib.mapAttrs (_: demo) raw-demos;
 }
