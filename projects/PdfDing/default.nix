@@ -57,4 +57,17 @@
 
   # e2e not tied to an example
   nixos.tests.e2e.module = import ./services/pdfding/tests/e2e.nix args;
+
+  nixos.demo.vm = {
+    module = ./demo/module.nix;
+    module-demo = ./demo/module-demo.nix;
+    usage-instructions = [
+      {
+        instruction = ''
+          Visit [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser
+        '';
+      }
+    ];
+    tests.demo.module = import ./services/pdfding/tests/basic.nix args;
+  };
 }
