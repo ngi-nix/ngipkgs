@@ -15,7 +15,6 @@ in
       {
         config,
         lib,
-        pkgs,
         ...
       }:
       {
@@ -32,12 +31,10 @@ in
 
         # Running blink-qt doesn't open a window in this environment for some reason.
         # To know when it's ready, override tray icon to unique color and wait until it's found.
-        programs.blink.package = pkgs.blink-qt.overrideAttrs (oa: {
-          nativeBuildInputs =
-            (oa.nativeBuildInputs or [ ])
-            ++ (with pkgs; [
-              imagemagick
-            ]);
+        programs.blink.package = pkgs.blink-qt.overridePythonAttrs (oa: {
+          nativeBuildInputs = (oa.nativeBuildInputs or [ ]) ++ [
+            pkgs.imagemagick
+          ];
 
           postInstall = (oa.postInstall or "") + ''
             cp $out/share/blink/icons/blink.png blink.png
