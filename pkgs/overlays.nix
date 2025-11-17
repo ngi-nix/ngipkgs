@@ -3,12 +3,6 @@
   ...
 }:
 [
-  # https://github.com/NixOS/nixpkgs/pull/456291
-  (final: prev: {
-    stalwart-mail = prev.stalwart-mail.overrideAttrs (oldAttrs: {
-      nativeCheckInputs = oldAttrs.nativeCheckInputs or [ ] ++ [ final.openssl ];
-    });
-  })
   (final: prev: {
     scion-apps = prev.scion-apps.overrideAttrs (oldAttrs: {
       checkFlags =
@@ -21,5 +15,14 @@
         in
         oldAttrs.checkFlags or [ ] ++ [ "-skip=^${lib.concatStringsSep "$|^" skippedTests}$" ];
     });
+  })
+  # https://github.com/NixOS/nixpkgs/pull/462698
+  (final: prev: {
+    python3 = prev.python3.override {
+      packageOverrides = pyfinal: pyprev: {
+        sipsimple = pyprev.sipsimple.override { ffmpeg = final.ffmpeg_7; };
+      };
+    };
+    python3Packages = final.python3.pkgs;
   })
 ]
