@@ -9,18 +9,18 @@
 
 buildGoModule (finalAttrs: {
   pname = "sstorytime";
-  version = "0.1.2-alpha";
+  version = "0.1.3-alpha-unstable-2025-11-17";
 
   src = fetchFromGitHub {
     owner = "markburgess";
     repo = "SSTorytime";
-    tag = finalAttrs.version;
-    hash = "sha256-TFebbpqvxaHeQKduOW/1w4V/o5UD55eIVeu7WVqgFjg=";
+    rev = "fd6df05d9019a279d72adb8093ccde8028e9e312";
+    hash = "sha256-G4FsxFrRrDoH7XUMH/uiMaWVbm3M7tsLRVdQ/8AecTA=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/src";
 
-  vendorHash = "sha256-OXE/APm4ypsPsv4V5zvEFHe6LwJhnwnP8Ni88e5tdzU=";
+  vendorHash = "sha256-H2iZoaR1QNbczteebbFzc0hkqHeRgZCviZVHcq7GgQM=";
 
   ldflags = [
     "-s"
@@ -103,7 +103,7 @@ buildGoModule (finalAttrs: {
     cp -R ../examples $out/share/
   '';
 
-  passthru.updateScript = nix-update-script { };
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     description = "Unified Graph Process For Mapping Knowledge";
