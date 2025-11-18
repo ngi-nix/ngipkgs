@@ -45,7 +45,7 @@
       module = lib.moduleLocFromOptionString "services.nominatim";
       examples."Nominatim service with API, UI and CLI support" = {
         module = ./services/nominatim/examples/basic.nix;
-        tests.basic.module = import ./services/nominatim/tests/basic.nix args;
+        tests.basic.module = pkgs.nixosTests.nominatim;
       };
     };
   };
@@ -107,6 +107,6 @@
       }
     ];
 
-    tests.demo.module = import ./services/nominatim/tests/basic.nix args;
+    tests.demo.module = pkgs.nixosTests.nominatim;
   };
 }
