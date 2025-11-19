@@ -36,17 +36,15 @@ rec {
 
   demo-vm =
     module:
-    pkgs.writeShellScript "demo-vm" (
-      let
-        nixos-vm = (eval module).config.system.build.vm;
-      in
-      if isFLake then
-        nixos-vm
-      else
-        ''
-          exec ${nixos-vm}/bin/run-nixos-vm "$@"
-        ''
-    );
+    let
+      nixos-vm = (eval module).config.system.build.vm;
+    in
+    if isFLake then
+      nixos-vm
+    else
+      pkgs.writeShellScript "demo-vm" ''
+        exec ${nixos-vm}/bin/run-nixos-vm "$@"
+      '';
   demo-shell = module: (eval module).config.shells.bash.activate;
   demo = d: (if d.type == "vm" then demo-vm else demo-shell) d.module;
 
