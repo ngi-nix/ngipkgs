@@ -22,6 +22,17 @@ buildGoModule (finalAttrs: {
 
   vendorHash = "sha256-H2iZoaR1QNbczteebbFzc0hkqHeRgZCviZVHcq7GgQM=";
 
+  # make port configurable
+  postPatch = ''
+    substituteInPlace server/http_server.go \
+      --replace-fail \
+        'srv := &http.Server{Addr: "0.0.0.0:8080"' \
+        'port := os.Getenv("SST_SERVER_PORT"); if port == "" { port = "8080" }; srv := &http.Server{Addr: "0.0.0.0:" + port' \
+      --replace-fail \
+        '"Server starting on http://localhost:8080"' \
+        '"Server starting on http://localhost:" + port'
+  '';
+
   ldflags = [
     "-s"
     "-w"
