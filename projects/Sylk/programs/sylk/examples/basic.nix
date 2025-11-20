@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.sylk.enable = true;
+}
