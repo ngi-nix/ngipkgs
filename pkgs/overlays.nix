@@ -60,4 +60,15 @@
       doCheck = final.python3Packages.pythonOlder "3.13";
     });
   })
+  (final: prev: {
+    sylkserver = prev.sylkserver.overrideAttrs (oldAttrs: {
+      postPatch = oldAttrs.postPatch or "" + ''
+        # "value must be a string"
+        substituteInPlace \
+          sylk/configuration/__init__.py \
+          sylk/applications/xmppgateway/configuration.py \
+            --replace-fail "host.default_ip" "host.default_ip or '127.0.0.1'"
+      '';
+    });
+  })
 ]
