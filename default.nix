@@ -101,6 +101,26 @@ rec {
     options = optionsDoc.optionsNix;
   };
 
+  plugins = [
+    "org.igniterealtime:rest-api-client:1.1.5"
+  ];
+
+  plugin-names = lib.pipe plugins [
+    (map (x: (lib.splitString ":") x))
+    (map (plugin: {
+      org = lib.replaceString "." "/" (lib.elemAt plugin 0);
+      name = lib.elemAt plugin 1;
+      version = lib.elemAt plugin 2;
+    }))
+    (map (p: "${p.org}/${p.name}/${p.version}/${p.name}-${p.version}.jar"))
+  ];
+
+  mkPlugin = plugin: {
+    org = lib.replaceString "." "/" (lib.elemAt plugin 0);
+    name = lib.elemAt plugin 1;
+    version = lib.elemAt plugin 2;
+  };
+
   optionsDoc = pkgs.nixosOptionsDoc {
     inherit
       (lib.evalModules {

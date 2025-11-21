@@ -10,7 +10,7 @@ in
 {
   options.services.openfire-server = {
     enable = lib.mkEnableOption "Openfire XMPP server";
-    package = lib.mkPackageOption pkgs "openfire" { };
+    package = lib.mkPackageOption pkgs "openfire-wrapped" { };
 
     autoUpdateState = lib.mkOption {
       type = lib.types.bool;
@@ -68,10 +68,18 @@ in
         by the `openfire` user.
       '';
     };
+
+    plugins = lib.mkOption {
+      # TODO: add type check for format
+      type = with lib.types; listOf str;
+      default = [ ];
+      description = "";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     services.openfire-server.dataDir = lib.mkDefault "${cfg.package}/opt";
+    # config.openfire-server.package = lib.mkDefault cfg.package.override { inherit (cfg) plugins; };
 
     users.users.openfire = {
       description = "Openfire server daemon user";
