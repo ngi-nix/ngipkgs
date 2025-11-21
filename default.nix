@@ -65,6 +65,9 @@ rec {
       inherit lib dream2nix mkSbtDerivation;
     };
 
+  # apply package fixes
+  overlays.fixups = import ./pkgs/overlays.nix { inherit lib; };
+
   examples =
     with lib;
     mapAttrs (
@@ -79,7 +82,7 @@ rec {
       ngipkgs =
         { ... }:
         {
-          nixpkgs.overlays = [ overlays.default ];
+          nixpkgs.overlays = [ overlays.default ] ++ overlays.fixups;
         };
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues hydrated-projects));
