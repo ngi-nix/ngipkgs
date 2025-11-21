@@ -5,35 +5,43 @@
   ...
 }:
 {
-  # NOTE:
-  # - Run the test interactively to access the server: nix run .#nixosTests.Openfire-IPv6.openfire-server.driverInteractive
-  # - Diable `Restrict Admin Console Access` in the `Server Settings`, else you won't be able to login.
-
-  name = "openfire";
+  name = "Openfire server";
 
   nodes = {
     server =
-      { config, ... }:
+      { lib, config, ... }:
       {
         imports = [
           sources.modules.ngipkgs
           sources.modules.services.openfire-server
+          sources.examples.Openfire."Enable Openfire server"
         ];
+      };
+  };
 
-        services.openfire-server = {
-          enable = true;
-          openFirewall = true;
-        };
+  testScript =
+    { nodes, ... }:
+    let
+      port = toString nodes.server.services.openfire-server.servicePort;
+    in
+    ''
+      start_all()
 
-        services.openssh = {
-          enable = true;
-          settings = {
-            PermitRootLogin = "yes";
-            PermitEmptyPasswords = "yes";
-          };
-        };
-        security.pam.services.sshd.allowNullPassword = true;
+      server.wait_for_unit("openfire-server.service")
+      server.wait_for_open_port(${port})
 
+      server.succeed("curl -f http://localhost:${port}")
+    '';
+
+  # ssh -o User=root vsock/3
+  interactive.sshBackdoor.enable = true;
+
+  # nix run .#checks.x86_64-linux.projects/Openfire/nixos/tests/basic.driverInteractive -L
+  # NOTE: diable `Restrict Admin Console Access` in the `Server Settings`, else you won't be able to login.
+  interactive.nodes = {
+    server =
+      { config, ... }:
+      {
         virtualisation.forwardPorts =
           let
             cfg = config.services.openfire-server;
@@ -57,12 +65,4 @@
           ];
       };
   };
-
-  testScript =
-    { nodes, ... }:
-    ''
-      start_all()
-      server.wait_for_unit("openfire-server.service")
-      server.wait_for_open_port(9090)
-    '';
 }

@@ -74,7 +74,7 @@ in
     services.openfire-server.dataDir = lib.mkDefault "${cfg.package}/opt";
 
     users.users.openfire = {
-      description = "openfire server daemon user";
+      description = "Openfire server daemon user";
       home = cfg.stateDir;
       createHome = false;
       isSystemUser = true;
