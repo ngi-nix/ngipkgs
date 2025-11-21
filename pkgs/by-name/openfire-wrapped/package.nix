@@ -62,6 +62,8 @@ symlinkJoin {
   name = "openfire-wrapped";
   paths = [
     openfire
-    openfire-plugins
   ];
+  postBuild = ''
+    cp -R ${openfire-plugins}/plugins/* $out/opt/plugins/
+  '';
 }

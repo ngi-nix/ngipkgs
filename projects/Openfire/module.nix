@@ -177,7 +177,12 @@ in
 
           # Install package to state directory (initial run)
           if [ ! -e "${cfg.stateDir}"/version ]; then
-            rsync -a --chmod=u=rwX,go=rX "${cfg.package}/opt/" "${cfg.stateDir}/"
+            rsync \
+              --copy-links \
+              --archive \
+              --chmod=u=rwX,go=rX \
+              "${cfg.package}/opt/" \
+              "${cfg.stateDir}/"
           else
             if [ ${toString cfg.autoUpdateState} ]; then
               ${updateState}
