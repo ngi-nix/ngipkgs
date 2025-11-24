@@ -7,13 +7,17 @@
   openfire,
   openfire-plugins,
 
-  plugins ? [ "org.igniterealtime:rest-api-client:1.1.5" ],
+  plugins ? with openfire-plugins; [
+    rest-api
+  ],
+
+  plugins-old ? [ "org.igniterealtime:rest-api-client:1.1.5" ],
   pluginsHash ? "sha256-YuNF/7SmQafJ8inZ199jbU1Xd8GFFuGkLeKLGLdBwfw=",
 }:
 let
   #   "org.igniterealtime:rest-api-client:1.1.5"
   # -> org/igniterealtime/rest-api-client/1.1.5/rest-api-client-1.1.5.jar
-  plugin-paths = lib.pipe plugins [
+  plugin-paths = lib.pipe plugins-old [
     (map (x: (lib.splitString ":") x))
     (map (plugin: {
       org = lib.replaceString "." "/" (lib.elemAt plugin 0);
@@ -42,7 +46,7 @@ let
       ''
         mkdir -p $out
 
-        for artifactId in ${toString plugins}
+        for artifactId in ${toString plugins-old}
         do
           echo "Downloading plugin $artifactId"
           mvn $MAVEN_EXTRA_ARGS dependency:get -Dartifact="$artifactId" -Dmaven.repo.local=.m2
@@ -58,18 +62,11 @@ let
           install -D .m2/$path -t $out/plugins
         done
       '';
-
-  plugins2 = [
-    openfire-plugins.rest-api
-  ];
 in
 symlinkJoin {
   name = "openfire-wrapped";
   paths = [
     openfire
   ]
-  ++ plugins2;
-  # postBuild = lib.concatMapStringsSep "\n" (plugin: ''
-  #   cp -R ${plugin} $out/opt/plugins/
-  # '') plugins2;
+  ++ plugins;
 }

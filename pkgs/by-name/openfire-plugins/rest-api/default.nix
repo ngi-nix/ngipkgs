@@ -1,9 +1,9 @@
 {
   lib,
-  stdenv,
+  fetchOpenfirePlugin,
   fetchurl,
 }:
-stdenv.mkDerivation (finalAttrs: {
+fetchOpenfirePlugin (finalAttrs: {
   pname = "rest-api";
   version = "1.12.0";
 
@@ -12,13 +12,8 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-oc1bcUN+XWzQu/aimFN7qnjxmlDyEE9MG7lFlaNQzPY=";
   };
 
-  dontUnpack = true;
-
-  installPhase = ''
-    runHook preInstall
-
-    install -Dm755 $src -t $out/opt/plugins
-
-    runHook postInstall
-  '';
+  meta = {
+    homepage = "https://github.com/igniterealtime/openfire-restAPI-plugin";
+    license = lib.licenses.asl20;
+  };
 })
