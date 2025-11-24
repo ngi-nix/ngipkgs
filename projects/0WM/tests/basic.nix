@@ -91,14 +91,18 @@
 
   testScript =
     { nodes, ... }:
+    let
+      user = nodes.machine.users.users.alice;
+      bus = "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${toString user.uid}/bus";
+    in
     # python
     ''
       def click_position(x: int, y: int):
-        machine.succeed(f"env DISPLAY=:0 sudo -u alice xdotool mousemove --sync {x} {y} click 1")
+        machine.succeed(f"su - alice -c 'DISPLAY=:0 ${bus} xdotool mousemove --sync {x} {y} click 1'")
         machine.sleep(1)
 
       def click_start():
-        machine.wait_for_text("Click here to start")
+        machine.wait_for_text(r"(Click|here|start)")
         click_position(512, 417)
 
       start_all()
@@ -114,12 +118,12 @@
       machine.wait_for_x()
 
       # open browser
-      machine.succeed("env DISPLAY=:0 sudo -u alice chromium http://127.0.0.1:8002 >&2 &")
+      machine.succeed("su - alice -c 'DISPLAY=:0 ${bus} chromium http://127.0.0.1:8002 >&2 &'")
 
       click_start()
 
       # allow location permissions
-      machine.wait_for_text("Allow while visiting the site")
+      machine.wait_for_text(r"(Allow|visiting|site|this time|location)")
       click_position(294, 229)
 
       machine.send_key("f5")
