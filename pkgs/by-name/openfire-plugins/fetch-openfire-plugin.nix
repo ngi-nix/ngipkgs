@@ -27,7 +27,7 @@ lib.extendMkDerivation {
       installPhase = ''
         runHook preInstall
 
-        install -Dm755 $src -t $out/opt/plugins
+        install -Dm755 $src $out/opt/plugins/${pname}.jar
 
         runHook postInstall
       '';
