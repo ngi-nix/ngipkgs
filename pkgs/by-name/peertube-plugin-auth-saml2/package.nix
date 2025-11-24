@@ -6,15 +6,15 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auth-saml2";
-  version = "0.0.8";
+  version = "0-unstable-2025-11-20";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "6737d29dce5272d2abeac8a8c501ba874413e422";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
     sparseCheckout = [ "peertube-plugin-auth-saml2" ];
-    hash = "sha256-qLTL+FoXHpXwNGwc77v4S04zqp8EcfElkw3+ZW1k2CM=";
+    hash = "sha256-jXa1fILVvzgWx6Yq6ES1rY6tSTHdU8STZMXabn0jtDA=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auth-saml2";
