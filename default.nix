@@ -207,6 +207,9 @@ rec {
               # broken package
               "libresoc-nmigen"
               "libresoc-verilog"
+              # other issues
+              "kazarma"
+              "anastasis"
             ];
             update-packages = with lib; filter (x: !elem x skipped-packages) (attrNames ngipkgs);
             update-commands = lib.concatMapStringsSep "\n" (package: ''
