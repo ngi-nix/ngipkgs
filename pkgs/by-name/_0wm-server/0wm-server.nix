@@ -7,6 +7,7 @@
   # dependencies
   ocamlPackages,
   gendarme,
+  gendarme-ezjsonm,
   gendarme-yojson,
   ppx_marshal,
 
@@ -16,15 +17,15 @@
 }:
 ocamlPackages.buildDunePackage (finalAttrs: {
   pname = "0wm-server";
-  version = "0-unstable-2025-09-23";
+  version = "0-unstable-2025-11-24";
 
   duneVersion = "3";
 
   src = fetchFromGitHub {
     owner = "lab0-cc";
     repo = "0WM-Server";
-    rev = "a16be8b5dca2359bf1dde666492ccb62b24d77d7";
-    hash = "sha256-oLZvdj59oc7muYKTcSae0WvpBlph4U6eEB/ziOu4xE8=";
+    rev = "1e8c2708eab570f5bc7d54d3fc792f03e27f2d45";
+    hash = "sha256-FOALrLfLopGaBZfX0C5HA5UYEvJ2XyH0VMSZbXW0BHQ=";
   };
 
   nativeBuildInputs = [
@@ -37,8 +38,11 @@ ocamlPackages.buildDunePackage (finalAttrs: {
     camlimages
     domainslib
     dream
+    ezjsonm
     gendarme
+    gendarme-ezjsonm
     gendarme-yojson
+    irmin-git
     lwt_ppx
     ppx_marshal
     uuidm

@@ -3,24 +3,27 @@
   fetchFromGitHub,
   writableTmpDirAsHomeHook,
   ocamlPackages,
+  nix-update-script,
 }:
 
 ocamlPackages.buildDunePackage (finalAttrs: {
   pname = "gendarme";
-  version = "0.3-unstable-2025-09-23";
+  version = "0.3-unstable-2025-11-21";
 
   minimalOCamlVersion = "4.13";
 
   src = fetchFromGitHub {
     owner = "bensmrs";
     repo = "gendarme";
-    rev = "eccdfd253ff02a854fd4d1f1bcc78cee34bcd491";
-    hash = "sha256-+5CWsQVNc+DT6zJYXhijNf1HGNjFdswkJQ6/dlpIK8Y=";
+    rev = "47d3dfc7762bd3b5954c212dbc1259546010aa74";
+    hash = "sha256-sM9TmNCqH7Qy/HjjmPmHhX+q7t2fYMwNBuwtDx14hGQ=";
   };
 
   nativeBuildInputs = [
     writableTmpDirAsHomeHook
   ];
+
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
 
   meta = {
     description = "Marshalling library for OCaml";
