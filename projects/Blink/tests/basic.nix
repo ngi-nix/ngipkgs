@@ -89,6 +89,9 @@ in
       start_all()
       machine.wait_for_x()
 
+      # Enable dummy sound card
+      machine.succeed("modprobe snd-dummy")
+
       # Ensure icon color isn't present already
       assert(
           check_for_color(iconColor)(True) == False
