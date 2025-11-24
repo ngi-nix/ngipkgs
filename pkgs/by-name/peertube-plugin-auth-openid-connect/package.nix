@@ -6,20 +6,20 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auth-openid-connect";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-11-20";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
     sparseCheckout = [ "peertube-plugin-auth-openid-connect" ];
-    hash = "sha256-vc1ZOO1hAmTD2NE4P7WELZjDTP7+CwJk7yMCXeuRn0E=";
+    hash = "sha256-UMdiEe7lYcgkBvh50hmJgDrOdRGpMrOCHoon/tFF5VM=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auth-openid-connect";
 
-  npmDepsHash = "sha256-NXCjLPJvFZ05b3gHnhnGF58ULgfL23+r6b0IaMeIw60=";
+  npmDepsHash = "sha256-43VpgExn5SKSb2aWuFNqL7XlGuspBiG7/JO12X+7WHk=";
 
   dontNpmBuild = true;
 
