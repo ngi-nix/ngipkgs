@@ -6,15 +6,15 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auth-ldap";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-11-20";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
     sparseCheckout = [ "peertube-plugin-auth-ldap" ];
-    hash = "sha256-kyQeVRNRgEVh74fjFvwto9dDbliurQhRTlb0+gYYf1Q=";
+    hash = "sha256-1l8GrkJU+eDlUjJd36o3F8o6OAXZR9SF5un1W2gDQcU=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auth-ldap";
