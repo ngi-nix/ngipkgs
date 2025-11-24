@@ -10,7 +10,7 @@ in
 {
   options.services.openfire-server = {
     enable = lib.mkEnableOption "Openfire XMPP server";
-    package = lib.mkPackageOption pkgs "openfire-wrapped" { };
+    package = lib.mkPackageOption pkgs "openfire" { };
 
     autoUpdateState = lib.mkOption {
       type = lib.types.bool;
