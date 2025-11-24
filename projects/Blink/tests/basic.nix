@@ -99,9 +99,25 @@ in
 
       machine.succeed("env DISPLAY=:0 sudo -u alice blink >&2 &")
 
+      machine.wait_for_text(r"(name|username|password|address)")
+      machine.succeed("env DISPLAY=:0 sudo -u alice xdotool click 1")
+
       # Waiting for blink icon to be displayed
       with machine.nested("Waiting for the screen to have iconColor {} on it:".format(iconColor)):
           retry(check_for_color(iconColor))
+
+      # Add an existing SIP account
+      machine.succeed("sudo -u alice xdotool mousemove 336 159 click 1")
+
+      # SIP address
+      machine.send_key("tab")
+      machine.send_key("tab")
+      machine.send_chars("alice@example.net")
+
+      # Password
+      machine.send_key("tab")
+      machine.send_chars("alice")
+      machine.send_key("enter")
 
       machine.screenshot("blink-indicator")
 
