@@ -5,6 +5,7 @@
   makeWrapper,
   maven,
   openfire,
+  openfire-plugins,
 
   plugins ? [ "org.igniterealtime:rest-api-client:1.1.5" ],
   pluginsHash ? "sha256-YuNF/7SmQafJ8inZ199jbU1Xd8GFFuGkLeKLGLdBwfw=",
@@ -23,7 +24,7 @@ let
   ];
 
   # TODO: turn into a re-usable fetcher and create a plugin set
-  openfire-plugins =
+  openfire-plugins-old =
     runCommand openfire.name
       {
         inherit (openfire) pname version meta;
@@ -57,13 +58,18 @@ let
           install -D .m2/$path -t $out/plugins
         done
       '';
+
+  plugins2 = [
+    openfire-plugins.rest-api
+  ];
 in
 symlinkJoin {
   name = "openfire-wrapped";
   paths = [
     openfire
-  ];
-  postBuild = ''
-    cp -R ${openfire-plugins}/plugins/* $out/opt/plugins/
-  '';
+  ]
+  ++ plugins2;
+  # postBuild = lib.concatMapStringsSep "\n" (plugin: ''
+  #   cp -R ${plugin} $out/opt/plugins/
+  # '') plugins2;
 }
