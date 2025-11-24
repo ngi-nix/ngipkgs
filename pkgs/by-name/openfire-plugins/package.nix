@@ -10,6 +10,7 @@ lib.makeScope pkgs.newScope (
     };
   in
   {
+    galene = callPackage ./galene { };
     rest-api = callPackage ./rest-api { };
   }
 )
