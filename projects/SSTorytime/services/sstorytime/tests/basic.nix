@@ -21,32 +21,6 @@
       };
   };
 
-  # Debug interactively with:
-  # - nix run .#checks.x86_64-linux.projects/SSTorytime/nixos/tests/basic.driverInteractive -L
-  # - run_tests()
-  interactive.sshBackdoor.enable = true; # ssh -o User=root vsock/3
-  interactive.nodes = {
-    machine =
-      {
-        lib,
-        config,
-        ...
-      }:
-      {
-        # forward ports from VM to host
-        virtualisation.forwardPorts = [
-          {
-            from = "host";
-            host.port = config.services.sstorytime.port;
-            guest.port = config.services.sstorytime.port;
-          }
-        ];
-
-        # forwarded ports need to be accessible
-        networking.firewall.enable = false;
-      };
-  };
-
   testScript =
     { nodes, ... }:
     let
@@ -76,4 +50,34 @@
       output = machine.succeed('N4L -s -adj="" /tmp/examples/Mary.n4l')
       assert "Incidence summary of raw declarations" in output, "Failed to summarize graph."
     '';
+
+  # Debug interactively with:
+  # - nix run .#checks.x86_64-linux.projects/SSTorytime/nixos/tests/basic.driverInteractive -L
+  # - run_tests()
+  interactive.sshBackdoor.enable = true; # ssh -o User=root vsock/3
+  interactive.nodes = {
+    machine =
+      {
+        lib,
+        config,
+        ...
+      }:
+      {
+        # forward ports from VM to host
+        virtualisation.forwardPorts = [
+          {
+            from = "host";
+            host.port = config.services.sstorytime.port;
+            guest.port = config.services.sstorytime.port;
+          }
+        ];
+
+        # forwarded ports need to be accessible
+        networking.firewall.enable = false;
+
+        environment.systemPackages = with pkgs; [
+          postgresql
+        ];
+      };
+  };
 }
