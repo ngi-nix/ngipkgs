@@ -32,13 +32,21 @@
     };
   };
 
-  nixos.modules.services.icosa-gallery = {
-    name = "icosa-gallery";
-    module = ./services/icosa-gallery/module.nix;
-    examples."Enable icosa-gallery" = {
+  nixos = {
+    modules.services.icosa-gallery = {
+      name = "icosa-gallery";
+      module = ./services/icosa-gallery/module.nix;
+      examples."Enable icosa-gallery" = {
+        module = ./services/icosa-gallery/examples/basic.nix;
+        description = null;
+        tests.basic.module = import ./services/icosa-gallery/tests/basic.nix args;
+      };
+    };
+    demo.vm = {
       module = ./services/icosa-gallery/examples/basic.nix;
-      description = null;
-      tests.basic.module = import ./services/icosa-gallery/tests/basic.nix args;
+      module-demo = ./module-demo.nix;
+      description = "Deployment for demo purposes";
+      tests.postgresql.module = import ./services/icosa-gallery/tests/basic.nix args;
     };
   };
 }
