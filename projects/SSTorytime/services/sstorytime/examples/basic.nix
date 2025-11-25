@@ -4,25 +4,14 @@
   services.sstorytime = {
     enable = true;
     port = 3030;
+    openFirewall = true;
+    database = {
+      createLocally = true;
+      dbname = "sstoryline";
+      user = "sstoryline";
+      # WARNING: ! Don't use this in production !
+      # Use a proper secret-management solution like `sops` or `agenix`.
+      passwordFile = pkgs.writeText "database-secret" "sst_1234";
+    };
   };
-
-  services.postgresql = {
-    enable = true;
-    ensureUsers = [
-      {
-        name = "sstoryline";
-        ensureDBOwnership = true;
-      }
-    ];
-    ensureDatabases = [ "sstoryline" ];
-    # WARNING: handling passwords in plaintext is not secure in production and
-    # is merely used for illustrative purposes, here.
-    initialScript = pkgs.writeText "postgresql-password" ''
-      CREATE ROLE sstoryline WITH LOGIN PASSWORD 'sst_1234' CREATEDB;
-    '';
-  };
-
-  # make sure SSToryTime only starts after the database has been initialized
-  systemd.services.sstorytime.requires = [ "postgresql.target" ];
-  systemd.services.sstorytime.after = [ "postgresql.target" ];
 }
