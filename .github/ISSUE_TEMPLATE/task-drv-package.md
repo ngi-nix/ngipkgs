@@ -1,7 +1,7 @@
 ---
-name: "Task: Package derivation"
+name: "Task: Derivation package"
 about: "Package a derivation for NGIpkgs/Nixpkgs"
-title: "Package DERIVATION_NAME for NGIpkgs/Nixpkgs"
+title: "PROJECT_NAME: Package a PACKAGE_NAME for NGIpkgs/Nixpkgs"
 projects: Nix@NGI
 type: task
 labels: 'derivation'
