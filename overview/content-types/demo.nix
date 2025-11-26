@@ -36,7 +36,7 @@ in
       ngipkgs ? import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/main") { },
     }:
     ngipkgs.demo-${config.type} (
-      ${toString (lib.indent "  " (builtins.readFile config.module))}
+      ${toString (lib.trim (lib.indent "  " (builtins.readFile config.module)))}
     )
   '';
 }
