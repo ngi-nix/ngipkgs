@@ -62,6 +62,40 @@
 
       # open browser
       server.succeed("su - alice -c '${env} chromium http://127.0.0.1:9090 >&2 &'")
+      server.wait_for_text(r"(Welcome|Setup|Openfire)")
+
+      # Lagnuage Selection
+      server.send_key("end")
+      server.wait_for_text(r"(language|translation|Continue)")
+      click_position(873, 540) # Continue
+
+      # Server Settings
+      server.wait_for_text(r"(network|XMPP|FQDN|Restrict|Console|Access)")
+      click_position(460, 462) # Restrict Admin Console Access (disable)
+      click_position(873, 670) # Continue
+
+      # Database Settings
+      server.wait_for_text(r"(Standard|Connection|Embedded|HSQLDB)")
+      click_position(300, 400) # Embedded Database
+      click_position(873, 490) # Continue
+
+      # Profile Settings
+      server.wait_for_text(r"(Profile|Default|user|group|LDAP)")
+      click_position(873, 510) # Continue
+
+      # Admin Account
+      server.wait_for_text(r"(Administrator|Email|Address|Password)")
+      server.send_chars("admin")
+      server.send_key("tab")
+      server.send_chars("admin\n")
+
+      server.wait_for_console_text("Finished processing all plugins.")
+      click_position(361, 382) # Login to the admin console
+
+      server.wait_for_text(r"(openfire|Administration|console|username|password)")
+      server.send_chars("admin")
+      server.send_key("tab")
+      server.send_chars("admin\n")
     '';
 
   # ssh -o User=root vsock/3
@@ -92,6 +126,8 @@
               # web binding
               7979
               7443
+              # # galene
+              # 7443
             ];
       };
   };

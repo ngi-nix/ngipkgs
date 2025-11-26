@@ -9,6 +9,7 @@
 
   plugins ? with openfire-plugins; [
     rest-api
+    galene
   ],
 
   plugins-old ? [ "org.igniterealtime:rest-api-client:1.1.5" ],
