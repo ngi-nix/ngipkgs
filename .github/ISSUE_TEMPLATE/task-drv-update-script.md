@@ -1,7 +1,7 @@
 ---
-name: "Task: add update script"
-about: "Add an update script to a derivation"
-title: "Add an update script to DERIVATION_NAME"
+name: "Task: Update script"
+about: "Implement an update script for a derivation"
+title: "PROJECT_NAME: Implement an update script for a DERIVATION_NAME"
 projects: Nix@NGI
 type: task
 labels: ''

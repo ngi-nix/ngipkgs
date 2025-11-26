@@ -1,5 +1,5 @@
 ---
-name: "Task: Triage project"
+name: "Task: Project triage"
 about: "Collect information about an NGI project"
 title: "PROJECT_NAME: Triage metadata"
 projects: Nix@NGI

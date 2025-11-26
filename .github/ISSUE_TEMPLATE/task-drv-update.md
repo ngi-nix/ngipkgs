@@ -1,5 +1,5 @@
 ---
-name: "Task: Update derivation"
+name: "Task: Derivation update"
 about: "Update a derivation"
 title: "Update DERIVATION_NAME to the latest version"
 projects: Nix@NGI
