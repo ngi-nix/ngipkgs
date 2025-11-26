@@ -48,7 +48,7 @@
     # py
     ''
       def click_position(x: int, y: int):
-        server.succeed(f"su - alice -c '${env} xdotool mousemove --sync {x} {y} click 1'")
+        server.succeed(f"su - alice -c 'xdotool mousemove --sync {x} {y} click 1'")
         server.sleep(1)
 
       start_all()
@@ -96,6 +96,22 @@
       server.send_chars("admin")
       server.send_key("tab")
       server.send_chars("admin\n")
+
+      server.wait_for_text(r"(Information|Realtime|News|Uptime|Version)")
+      click_position(194, 214) # Server Settings
+
+      server.wait_for_text(r"(Profile|Client|Resource|Private|REST|API)")
+      click_position(74, 671) # REST API
+
+      server.wait_for_text(r"(REST|API|secret|key|auth|authentication)")
+      click_position(318, 473) # Enabled
+      server.send_key("end")
+      server.wait_for_text(r"(Save|Additional|Logging)")
+      click_position(305, 646) # Save Settings
+
+      # Reload rest-api plugin
+      server.succeed("touch ${nodes.server.services.openfire.stateDir}/plugins/rest-api.jar")
+      server.wait_for_console_text("Finished processing all plugins.")
     '';
 
   # ssh -o User=root vsock/3
