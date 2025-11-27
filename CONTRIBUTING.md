@@ -21,12 +21,7 @@ However, there may be reasons speaking against that, including:
 
 In any case, it is encouraged to create a pull request to Nixpkgs, then to this repository, with a comment linking to the Nixpkgs pull request in the description and the Nix expressions.
 
-## Documentation style guide
-
-When contributing documentation, do not split lines at arbitrary character lengths.
-Instead, write one sentence per line, as this makes it easier to review changes.
-
-## How to create pull requests to NGIpkgs
+## How to contribute to NGIpkgs
 
 1. Set up a local version of NGIpkgs.
    If you don't have write access to NGIpkgs, create a [fork](https://github.com/ngi-nix/ngipkgs/fork) of the repository and clone it.
@@ -42,178 +37,30 @@ Instead, write one sentence per line, as this makes it easier to review changes.
    git checkout -b some-branch
    ```
 
-1. To add a package, start by creating a `package.nix` file in the package directory `pkgs/by-name/some-package`, where `some-package` will be the package attribute name.
-
-   ```ShellSession
-   mkdir -p pkgs/by-name/some-package
-   $EDITOR pkgs/by-name/some-package/package.nix
-   ```
-
-   Make sure to:
-
-   - Test the package on `x86_64-linux`.
-
-     ```ShellSession
-     git add pkgs/by-name/some-package
-     nix build .#some-package
-     ```
-
-   - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
-
-     ```ShellSession
-     nix fmt pkgs/by-name/some-package
-     ```
-
-   An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/68a338cea336662afdb7c6c3037a136b7eaa8ce2/pkgs/by-name/libgnunetchat/package.nix).
-
 1. When contributing to a project, start by checking if it has an entry in `projects/some-project`.
-   If the entry does not exist, copy the project template and edit it with relevant details:
+   If the entry does not exist, copy the [project template](./maintainers/templates/project) and edit it with relevant details:
 
    ```shellSession
    cp -r maintainers/templates/project projects/some-project
    $EDITOR projects/some-project/default.nix
    ```
 
-   Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-application) workflow and create a new issue, detailing some information about this project.
-   This will allow you to get more familiar with the project and fill out the template more easily.
+   Note that for new projects, it's ideal that you follow the [triaging template](#triaging-an-ngi-application) workflow and create a new issue for each task.
 
-1. To add a NixOS service module, start by editing the `default.nix` file in the directory `projects/some-project`.
+   Project tracking issues are labeled with [`NGI Project`](https://github.com/ngi-nix/ngipkgs/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22NGI%20Project%22).
 
-   ```shellSession
-   $EDITOR projects/some-project/default.nix
-   ```
-
-   Make sure to:
-
-   - Add the module options in `module.nix`, and reference that file in `default.nix`.
-     For example:
-
-     ```nix
-     nixos.modules = {
-       services.some-project.module = ./module.nix;
-     };
-     ```
-
-     The module will then be accessible from `nixosModules.services.some-project`.
-
-   - Add the module tests in `test.nix`, or under a test directory, and reference that file in `default.nix`.
-     For example:
-
-     ```nix
-     nixos.tests.some-test = import ./test.nix args;
-     ```
-
-     The module tests will then be accessible from `checks.<system>.some-project`.
-
-   - Test the module on `x86_64-linux`.
-
-     ```shellSession
-     git add pkgs/by-name/some-package projects/some-project
-     nix build .#checks.x86_64-linux.projects/some-project/nixos/tests/some-test.driverInteractive
-     ./result/bin/nixos-test-driver # Start a shell
-     # Once in the spawned shell, start a VM that will execute the tests
-     start_all() # Run the VM
-     ```
-
-   - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
-
-     ```ShellSession
-     nix fmt projects/some-project
-     ```
-
-   An existing example is [AtomicData](https://github.com/ngi-nix/ngipkgs/tree/main/projects/AtomicData).
+1. Add your contribution
 
 1. Commit the changes and push the commits.
 
    ```ShellSession
-   git commit -m "some-message"
+   git commit -m "projects(PROJECT_NAME): some-message"
    git push --set-upstream origin some-branch
    ```
 
 1. Create a [pull request to NGIpkgs](https://github.com/ngi-nix/ngipkgs/pulls).
    Respond to review comments, potential CI failures, and potential merge conflicts by updating the pull request.
    Always keep the pull request in a mergeable state.
-
-## How to update a package
-
-1. To update a package, open the `pkgs/by-name/some-package/package.nix` in your text editor, where `some-package` will be the package attribute name.
-
-   ```ShellSession
-   $EDITOR pkgs/by-name/some-package/package.nix
-   ```
-
-1. Open the package's homepage or source repository and check if a new version is available, which can be the latest release tag or the commit revision.
-   This information is usually available from the `meta.homepage` attribute, but can also be found in `src` as well.
-
-1. Replace the `version` attribute in the derivation with the new version, but make sure that the package versioning fits the [Nixpkgs guidelines](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#versioning).
-
-1. Replace hashes with empty strings. Example:
-
-   ```nix
-   sha256 = "sha256-18FKwP0XHoq/F8oF8BCLlul/Xb30sd0iOWuiKkzpPLI=";
-     |
-     v
-   sha256 = "";
-   ```
-
-1. Build the package
-
-   ```
-   nix build .#checks.x86_64-linux.packages/<package_name>
-   ```
-
-1. The build will fail because the hashes are empty, but it will return the correct hash.
-   Replace the empty hash with the correct hash and build again. Example:
-
-   ```
-   error: hash mismatch in fixed-output derivation '/nix/store/xxkj74gnza5rw5xyawzvlafbvbb76qdq-source.drv':
-           likely URL: https://github.com/holepunchto/corestore/archive/v7.0.23.tar.gz
-            specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-               got:    sha256-oAsyv10BcmInvlZMzc/vJEJT9r+q/Rosm19EyblIDCM=
-   ```
-
-1. Make sure that all vendored hashes are also updated as well (e.g. cargoHash, npmDepsHash, ...)
-
-1. After the build succeeds, verify that the package works, if possible.
-   This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
-
-## Implementing a program
-
-A program is a software applications that can be executed in the user's shell, which may have a Command-Line Interface (CLI), Terminal User Interface (TUI), or Graphical User Interface (GUI).
-
-1. To start, implement a NixOS module that adheres to the [program type](./projects/types.nix):
-
-<!-- TODO: figure out how to get this automatically from types.nix -->
-<!-- TODO: link to docs section on implementing an example? -->
-
-   ```nix
-   {
-     nixos.modules.programs.foobar = {
-       module = ./programs/foobar/module.nix;
-       examples."Enable foobar" = {
-         module = ./programs/foobar/examples/basic.nix;
-         description = "Usage instructions for foobar";
-         tests.basic.module = import ./programs/foobar/tests/basic.nix args;
-       };
-     };
-   }
-   ```
-
-1. Verify that the module is valid:
-
-   ```shellSession
-   nix-build -A checks.PROJECT_NAME
-   ```
-
-1. Run the tests, if they exist, and make sure they pass:
-
-   ```shellSession
-   nix-build -A projects.PROJECT_NAME.nixos.tests.TEST_NAME
-   ```
-
-1. [Run the overview locally](#running-and-testing-the-overview-locally), navigate to the project page and make sure that the program options and examples shows up correctly.
-
-1. [Make a Pull Request on GitHub](#how-to-create-pull-requests-to-ngipkgs)
 
 ## Triaging an NGI application
 
@@ -359,7 +206,7 @@ List all project components and include links to any relevant documentation or i
 
 ### Previous packaging
 
-To avoid duplicaiton of effort and to correctly track our packaging progress, we also want to know whether or not any prior work has gone through packaging the project.
+To avoid duplication of effort and to correctly track our packaging progress, we also want to know whether or not any prior work has gone through packaging the project.
 
 To do this, please go and search for the project's name and note any results from the following places:
     - The [ngipkgs/projects](https://github.com/ngi-nix/ngipkgs/tree/main/projects) and [pkgs/by-name](https://github.com/ngi-nix/ngipkgs/tree/main/pkgs/by-name) directories
@@ -370,7 +217,7 @@ To do this, please go and search for the project's name and note any results fro
 
    <!-- For example, for `Liberaforms`:
    - project: https://github.com/ngi-nix/ngipkgs/tree/main/projects/Liberaforms
-     - programs/serivces:
+     - programs/services:
        - https://github.com/ngi-nix/ngipkgs/blob/main/projects/Liberaforms/service.nix
      - examples:
        - https://github.com/ngi-nix/ngipkgs/tree/main/projects/Liberaforms/example.nix
@@ -417,30 +264,168 @@ For services, click on the module name to reveal more details, then copy the nam
 >
 > Example: Searching for Oku (web browser) might also return Okular (document viewver), which share a similar names, but which are totally unrelated.
 
-## Exposing an NGI project
+## Adding a package
 
-In order to display a project on <ngi.nixos.org>, its metadata must be added to this repository's source code in a certain format.
+1. To add a package, start by creating a `package.nix` file in the package directory `pkgs/by-name/some-package`, where `some-package` will be the package attribute name.
 
-1. Copy the [project template](./maintainers/templates/project) to the projects directory:
-
-   ```
-   cp -r maintainers/templates/project projects/<project_name>
-   ```
-
-1. Follow the instructions inside the [`projects/<project_name>/default.nix`](./maintainers/templates/project/default.nix) file, and fill in the data based on the project's tracking issue.
-
-   Project tracking issues are labeled with [`NGI Project`](https://github.com/ngi-nix/ngipkgs/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22NGI%20Project%22).
-
-1. Check that the code is valid by running the test locally:
-
-   ```
-   nix build .#checks.x86_64-linux.projects/<project_name>/nixos/tests/<test_name>
+   ```ShellSession
+   mkdir -p pkgs/by-name/some-package
+   $EDITOR pkgs/by-name/some-package/package.nix
    ```
 
-1. Run the Nix code formatter with `nix fmt`
-1. Commit your changes and [create a new PR](#how-to-create-pull-requests-to-ngipkgs)
+   Make sure to:
 
-## How to add an example
+   - Test the package on `x86_64-linux`.
+
+     ```ShellSession
+     git add pkgs/by-name/some-package
+     nix build .#some-package
+     ```
+
+   - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
+
+     ```ShellSession
+     nix fmt
+     ```
+
+   An existing example is [libgnunetchat](https://github.com/ngi-nix/ngipkgs/blob/68a338cea336662afdb7c6c3037a136b7eaa8ce2/pkgs/by-name/libgnunetchat/package.nix).
+
+## Updating a package
+
+### Manual process
+
+1. To update a package, open the `pkgs/by-name/some-package/package.nix` in your text editor, where `some-package` will be the package attribute name.
+
+   ```ShellSession
+   $EDITOR pkgs/by-name/some-package/package.nix
+   ```
+
+1. Open the package's homepage or source repository and check if a new version is available, which can be the latest release tag or the commit revision.
+   This information is usually available from the `meta.homepage` attribute, but can also be found in `src` as well.
+
+1. Replace the `version` attribute in the derivation with the new version, but make sure that the package versioning fits the [Nixpkgs guidelines](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#versioning).
+
+1. Replace hashes with empty strings. Example:
+
+   ```nix
+   hash = "sha256-18FKwP0XHoq/F8oF8BCLlul/Xb30sd0iOWuiKkzpPLI=";
+     |
+     v
+   hash = "";
+   ```
+
+1. Build the package
+
+   ```
+   nix build .#checks.x86_64-linux.packages/<package_name>
+   ```
+
+1. The build will fail because the hashes are empty, but it will return the correct hash.
+   Replace the empty hash with the correct hash and build again. Example:
+
+   ```
+   error: hash mismatch in fixed-output derivation '/nix/store/xxkj74gnza5rw5xyawzvlafbvbb76qdq-source.drv':
+           likely URL: https://github.com/holepunchto/corestore/archive/v7.0.23.tar.gz
+            specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+               got:    sha256-oAsyv10BcmInvlZMzc/vJEJT9r+q/Rosm19EyblIDCM=
+   ```
+
+1. Make sure that all vendored hashes are also updated as well (e.g. cargoHash, npmDepsHash, ...)
+
+1. After the build succeeds, verify that the package works, if possible.
+   This means running package tests if they're available or at least verify that the built package is not broken with something like `program_name --help`.
+
+### Automated process
+
+1. To update package automatically run `nix-shell --run 'update <PACKAGE-NAME> --use-update-script'`.
+
+## Implementing a service module
+
+1. To add a NixOS service module, start by editing the `default.nix` file in the directory `projects/some-project`.
+
+   ```shellSession
+   $EDITOR projects/some-project/default.nix
+   ```
+
+   Make sure to:
+
+   - Add the module options in `module.nix`, and reference that file in `default.nix`.
+     For example:
+
+     ```nix
+     nixos.modules = {
+       services.some-project.module = ./module.nix;
+     };
+     ```
+
+     The module will then be accessible from `nixosModules.services.some-project`.
+
+   - Add the module tests in `test.nix`, or under a test directory, and reference that file in `default.nix`.
+     For example:
+
+     ```nix
+     nixos.tests.some-test = import ./test.nix args;
+     ```
+
+     The module tests will then be accessible from `checks.<system>.some-project`.
+
+   - Test the module on `x86_64-linux`.
+
+     ```shellSession
+     git add pkgs/by-name/some-package projects/some-project
+     nix build .#checks.x86_64-linux.projects/some-project/nixos/tests/some-test.driverInteractive
+     ./result/bin/nixos-test-driver # Start a shell
+     # Once in the spawned shell, start a VM that will execute the tests
+     start_all() # Run the VM
+     ```
+
+   - Format the Nix expressions with [nix fmt](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html).
+
+     ```ShellSession
+     nix fmt
+     ```
+
+   An existing example is [AtomicData](https://github.com/ngi-nix/ngipkgs/tree/main/projects/AtomicData).
+
+## Implementing a program module
+
+A program is a software application that can be executed in the user's shell, which may have a Command-Line Interface (CLI), Terminal User Interface (TUI), or Graphical User Interface (GUI).
+
+1. To start, implement a NixOS module that adheres to the [program type](./projects/types.nix):
+
+<!-- TODO: figure out how to get this automatically from types.nix -->
+<!-- TODO: link to docs section on implementing an example? -->
+
+   ```nix
+   {
+     nixos.modules.programs.foobar = {
+       module = ./programs/foobar/module.nix;
+       examples."Enable foobar" = {
+         module = ./programs/foobar/examples/basic.nix;
+         description = "Usage instructions for foobar";
+         tests.basic.module = import ./programs/foobar/tests/basic.nix args;
+       };
+     };
+   }
+   ```
+
+1. Verify that the module is valid:
+
+   ```shellSession
+   nix-build -A checks.PROJECT_NAME
+   ```
+
+1. Run the tests, if they exist, and make sure they pass:
+
+   ```shellSession
+   nix-build -A projects.PROJECT_NAME.nixos.tests.TEST_NAME
+   ```
+
+1. [Run the overview locally](#running-the-overview-page-locally), navigate to the project page and make sure that the program options and examples show up correctly.
+
+1. [Make a Pull Request on GitHub](#how-to-contribute-to-ngipkgs)
+
+## Implementing an example
 
 An example, is a valid configuration of an existing application module that illustrates how to use it.
 Examples should capture a characteristic use case of the application and work exactly as shown.
@@ -451,7 +436,7 @@ To add an example:
 > [!IMPORTANT]
 > If there exists an upstream test in NixOS, split out the configuration under test into a separate file and use those as the example and its test and skip to step 4.
 
-1. Figure out the application module options and how they are configured. For instace, this can be done by looking at the module's source code.
+1. Figure out the application module options and how they are configured. For instance, this can be done by looking at the module's source code.
 
 2. Create a new `.nix` file to contain the valid example configuration.
 
@@ -471,16 +456,21 @@ To add an example:
    nixos.modules.services.some-service = {
      module = ./services/some-service/module.nix;
      examples."Basic mail server setup with default ports" = {
-      module = ./services/some-service/examples/basic.nix;
-      description = "Send email via SMTP to port 587 to check that it works";
+       module = ./services/some-service/examples/basic.nix;
+       description = "Send email via SMTP to port 587 to check that it works";
      };
    };
    ```
 
 4. Ensure the example works by building and running its test.
+
 <!--TODO: Reference the tests section when it is written -->
 
-## Running and testing the overview locally
+## Overview page
+
+All projects merged to the main branch are listed in [NGIpkgs overview page](ngi.nixos.org).
+
+### Running the overview page locally
 
 1. To preview a local version of the [overview](https://ngi.nixos.org/), run a live watcher with:
 
@@ -499,3 +489,9 @@ If you make any changes to the overview while running `devmode`, the server will
 ## Asking for help
 
 Please ask questions on the [public NGIpkgs Matrix room](https://matrix.to/#/#ngipkgs:matrix.org).
+
+## Documentation style guide
+
+When contributing documentation, do not split lines at arbitrary character lengths.
+Instead, write one sentence per line, as this makes it easier to review changes.
+
