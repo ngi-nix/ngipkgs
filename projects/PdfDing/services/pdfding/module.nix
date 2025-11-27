@@ -419,7 +419,7 @@ in
       };
     };
 
-    systemd.services.pdfding-huey = lib.mkIf (cfg.consume.enable || cfg.backup.enable) {
+    systemd.services.pdfding-background = lib.mkIf (cfg.consume.enable || cfg.backup.enable) {
       description = "PdfDing Background Tasks (Huey)";
       after = [ "pdfding.service" ];
       wantedBy = [ "multi-user.target" ];
