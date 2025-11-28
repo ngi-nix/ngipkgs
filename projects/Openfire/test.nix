@@ -108,13 +108,31 @@
         server.wait_for_console_text("Finished processing all plugins.")
         click_position(361, 382) # Login to the admin console
 
-      with subtest("Enable Rest API"):
+        # Login
         server.wait_for_text(r"(openfire|Administration|console|username|password)")
         server.send_chars("admin")
         server.send_key("tab")
         server.send_chars("admin\n")
-
         server.wait_for_text(r"(Information|Realtime|News|Uptime|Version)")
+
+      with subtest("Enable Rest API"):
+        # Enable `adminConsole.access.allow-wildcards-in-excludes` property (required)
+        server.succeed("""
+          su - alice -c '${env} chromium "http://localhost:9090/server-properties.jsp?sortOrder=1&sortColumnNumber=0&searchName=allow-wildcards-in-excludes" >&2 &'
+        """)
+        server.wait_for_text(r"(allow|wildcards|excludes|System|Properties|Name|Value)")
+
+        # scroll to the right
+        for i in range(10):
+          server.send_key("right")
+
+        click_position(978, 538) # Edit property
+        server.send_key("ctrl-a")
+        server.send_chars("false")
+        click_position(319, 622) # Save property
+        server.wait_for_text(r"(properties|updated|hidden|system)")
+
+        # Enable Rest API
         click_position(194, 214) # Server Settings
 
         server.wait_for_text(r"(Profile|Client|Resource|Private|REST|API)")
@@ -125,6 +143,7 @@
         server.send_key("end")
         server.wait_for_text(r"(Save|Additional|Logging)")
         click_position(305, 646) # Save Settings
+
 
         # Reload rest-api plugin
         server.succeed("touch ${cfg.stateDir}/plugins/${pkgs.openfire-plugins.rest-api.jarName}.jar")
@@ -146,10 +165,6 @@
                "description": "Global chat room"
             }'
       """)
-
-      server.succeed("""su - alice -c '${env} chromium "http://localhost:9090/server-properties.jsp?sortOrder=1&sortColumnNumber=0&searchName=allow-wildcards-in-excludes" >&2 &'""")
-      click_position(341, 472) # Property Name field
-      server.send_chars("allow-wildcards-in-excludes\n")
 
       # server.succeed("su - alice -c '${env} xterm >&2 &'")
       # server.send_chars("xdotool getmouselocation --shell\n")
