@@ -51,6 +51,20 @@
         server.succeed(f"su - alice -c 'xdotool mousemove --sync {x} {y} click 1'")
         server.sleep(1)
 
+      def create_user(name: str, password: str):
+        server.succeed(f"""
+          curl -f \
+            http://localhost:9090/plugins/restapi/v1/users \
+            -u "admin:admin" \
+            -H "Accept: application/json" \
+            -H "Content-Type: application/json" \
+            --data \
+              '{{ \
+                "username": "{name}", \
+                "password": "{password}" \
+              }}'
+        """)
+
       start_all()
 
       server.wait_for_unit("openfire-server.service")
@@ -64,54 +78,80 @@
       server.succeed("su - alice -c '${env} chromium http://127.0.0.1:9090 >&2 &'")
       server.wait_for_text(r"(Welcome|Setup|Openfire)")
 
-      # Lagnuage Selection
-      server.send_key("end")
-      server.wait_for_text(r"(language|translation|Continue)")
-      click_position(873, 540) # Continue
+      with subtest("Setup Openfire"):
+        # Lagnuage Selection
+        server.send_key("end")
+        server.wait_for_text(r"(language|translation|Continue)")
+        click_position(873, 540) # Continue
 
-      # Server Settings
-      server.wait_for_text(r"(network|XMPP|FQDN|Restrict|Console|Access)")
-      click_position(460, 462) # Restrict Admin Console Access (disable)
-      click_position(873, 670) # Continue
+        # Server Settings
+        server.wait_for_text(r"(network|XMPP|FQDN|Restrict|Console|Access)")
+        click_position(460, 462) # Restrict Admin Console Access (disable)
+        click_position(873, 670) # Continue
 
-      # Database Settings
-      server.wait_for_text(r"(Standard|Connection|Embedded|HSQLDB)")
-      click_position(300, 400) # Embedded Database
-      click_position(873, 490) # Continue
+        # Database Settings
+        server.wait_for_text(r"(Standard|Connection|Embedded|HSQLDB)")
+        click_position(300, 400) # Embedded Database
+        click_position(873, 490) # Continue
 
-      # Profile Settings
-      server.wait_for_text(r"(Profile|Default|user|group|LDAP)")
-      click_position(873, 510) # Continue
+        # Profile Settings
+        server.wait_for_text(r"(Profile|Default|user|group|LDAP)")
+        click_position(873, 510) # Continue
 
-      # Admin Account
-      server.wait_for_text(r"(Administrator|Email|Address|Password)")
-      server.send_chars("admin")
-      server.send_key("tab")
-      server.send_chars("admin\n")
+        # Admin Account
+        server.wait_for_text(r"(Administrator|Email|Address|Password)")
+        server.send_chars("admin")
+        server.send_key("tab")
+        server.send_chars("admin\n")
 
-      server.wait_for_console_text("Finished processing all plugins.")
-      click_position(361, 382) # Login to the admin console
+        server.wait_for_console_text("Finished processing all plugins.")
+        click_position(361, 382) # Login to the admin console
 
-      server.wait_for_text(r"(openfire|Administration|console|username|password)")
-      server.send_chars("admin")
-      server.send_key("tab")
-      server.send_chars("admin\n")
+      with subtest("Enable Rest API"):
+        server.wait_for_text(r"(openfire|Administration|console|username|password)")
+        server.send_chars("admin")
+        server.send_key("tab")
+        server.send_chars("admin\n")
 
-      server.wait_for_text(r"(Information|Realtime|News|Uptime|Version)")
-      click_position(194, 214) # Server Settings
+        server.wait_for_text(r"(Information|Realtime|News|Uptime|Version)")
+        click_position(194, 214) # Server Settings
 
-      server.wait_for_text(r"(Profile|Client|Resource|Private|REST|API)")
-      click_position(74, 671) # REST API
+        server.wait_for_text(r"(Profile|Client|Resource|Private|REST|API)")
+        click_position(74, 671) # REST API
 
-      server.wait_for_text(r"(REST|API|secret|key|auth|authentication)")
-      click_position(318, 473) # Enabled
-      server.send_key("end")
-      server.wait_for_text(r"(Save|Additional|Logging)")
-      click_position(305, 646) # Save Settings
+        server.wait_for_text(r"(REST|API|secret|key|auth|authentication)")
+        click_position(318, 473) # Enabled
+        server.send_key("end")
+        server.wait_for_text(r"(Save|Additional|Logging)")
+        click_position(305, 646) # Save Settings
 
-      # Reload rest-api plugin
-      server.succeed("touch ${nodes.server.services.openfire-server.stateDir}/plugins/rest-api.jar")
-      server.wait_for_console_text("Finished processing all plugins.")
+        # Reload rest-api plugin
+        server.succeed("touch ${nodes.server.services.openfire-server.stateDir}/plugins/restAPI.jar")
+        server.wait_for_console_text("Finished processing all plugins.")
+
+      create_user("alice", "alice")
+      create_user("bob", "bob")
+
+      server.succeed("""
+        curl -f \
+          http://localhost:9090/plugins/restapi/v1/chatrooms \
+          -u "admin:admin" \
+          -H "Accept: application/json" \
+          -H "Content-Type: application/json" \
+          --data \
+            '{ \
+               "roomName": "global", \
+               "naturalName": "global-2", \
+               "description": "Global chat room"
+            }'
+      """)
+
+      server.succeed("""su - alice -c '${env} chromium "http://localhost:9090/server-properties.jsp?sortOrder=1&sortColumnNumber=0&searchName=allow-wildcards-in-excludes" >&2 &'""")
+      click_position(341, 472) # Property Name field
+      server.send_chars("allow-wildcards-in-excludes\n")
+
+      # server.succeed("su - alice -c '${env} xterm >&2 &'")
+      # server.send_chars("xdotool getmouselocation --shell\n")
     '';
 
   # ssh -o User=root vsock/3
