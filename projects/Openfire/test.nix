@@ -110,7 +110,7 @@
       click_position(305, 646) # Save Settings
 
       # Reload rest-api plugin
-      server.succeed("touch ${nodes.server.services.openfire.stateDir}/plugins/rest-api.jar")
+      server.succeed("touch ${nodes.server.services.openfire-server.stateDir}/plugins/rest-api.jar")
       server.wait_for_console_text("Finished processing all plugins.")
     '';
 
