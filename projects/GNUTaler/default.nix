@@ -16,6 +16,7 @@
       Review = [
         "GNUTaler"
         "GNUTaler-KYC"
+        "MTE" # MirageOS Taler Exchange
       ];
     };
     links = {
