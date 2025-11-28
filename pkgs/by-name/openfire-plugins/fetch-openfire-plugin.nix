@@ -2,6 +2,7 @@
   lib,
   stdenv,
   stripJavaArchivesHook,
+  fetchurl,
 }:
 lib.extendMkDerivation {
   constructDrv = stdenv.mkDerivation;
@@ -10,13 +11,19 @@ lib.extendMkDerivation {
     {
       pname,
       version,
-      src,
+      jarName ? null,
+      jarHash ? "",
       meta ? { },
       ...
     }:
     {
       pname = "openfire-${pname}";
-      inherit version src;
+      inherit version;
+
+      src = fetchurl {
+        url = "https://www.igniterealtime.org/projects/openfire/plugins/${finalAttrs.version}/${finalAttrs.jarName}.jar";
+        hash = jarHash;
+      };
 
       nativeBuildInputs = [
         stripJavaArchivesHook # removes timestamp metadata from jar files
@@ -27,7 +34,7 @@ lib.extendMkDerivation {
       installPhase = ''
         runHook preInstall
 
-        install -Dm755 $src $out/opt/plugins/${pname}.jar
+        install -Dm755 $src $out/opt/plugins/${jarName}.jar
 
         runHook postInstall
       '';
