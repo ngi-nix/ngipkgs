@@ -41,7 +41,8 @@
   testScript =
     { nodes, ... }:
     let
-      port = toString nodes.server.services.openfire-server.servicePort;
+      cfg = nodes.server.services.openfire-server;
+      port = toString cfg.servicePort;
       user = nodes.server.users.users.alice;
       env = "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${toString user.uid}/bus DISPLAY=:0";
     in
@@ -126,7 +127,7 @@
         click_position(305, 646) # Save Settings
 
         # Reload rest-api plugin
-        server.succeed("touch ${nodes.server.services.openfire-server.stateDir}/plugins/restAPI.jar")
+        server.succeed("touch ${cfg.stateDir}/plugins/${pkgs.openfire-plugins.rest-api.jarName}.jar")
         server.wait_for_console_text("Finished processing all plugins.")
 
       create_user("alice", "alice")
