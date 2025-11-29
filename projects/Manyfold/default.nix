@@ -53,6 +53,23 @@
       module = ./services/manyfold/examples/postgresql.nix;
       module-demo = ./demo/module-demo.nix;
       description = "Deployment for demo purposes";
+      usage-instructions = [
+        {
+          instruction = ''
+            Visit [http://127.0.0.1:3214](http://127.0.0.1:3214) in your browser
+          '';
+        }
+        {
+          instruction = ''
+            Follow on screen instructions to create an account and a library.
+          '';
+        }
+        {
+          instruction = ''
+            Try to upload 3D model assets.
+          '';
+        }
+      ];
       tests.postgresql.module = import ./services/manyfold/tests/postgresql.nix args;
     };
   };
