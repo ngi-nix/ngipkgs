@@ -6,15 +6,15 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-matomo";
-  version = "1.0.2";
+  version = "0-unstable-2025-11-20";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "9bd2db9033c11c650cdf1035f7eed6f4ba61cf54";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
     sparseCheckout = [ "peertube-plugin-matomo" ];
-    hash = "sha256-c7Wnli7L382XbfEOApPlqALkjK8Le9A9xvUOdMRq4Io=";
+    hash = "sha256-b1sO11NnFpir/AEkIYlNXN3d2vYjKlkU1JxJ/+ceAE0=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-matomo";
