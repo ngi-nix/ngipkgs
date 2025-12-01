@@ -5,18 +5,19 @@
   pkg-config,
   dart-sass,
   vips,
+  node-gyp,
   nix-update-script,
 }:
 
 buildNpmPackage (finalAttrs: {
   pname = "nodebb";
-  version = "4.6.3";
+  version = "4.7.0";
 
   src = fetchFromGitHub {
     owner = "NodeBB";
     repo = "NodeBB";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-iPDKXoaB/eCsnCP/AgH/D3zfnhA1aKQTL0xxJ9vB5Qo=";
+    hash = "sha256-u36ZYkzPUzI9RtkJLulC07dsbWqZ4lMyrTSXMsAsj8s=";
     postFetch = ''
       cp $out/install/package.json $out
     '';
@@ -26,13 +27,14 @@ buildNpmPackage (finalAttrs: {
     cp ${./package-lock.json} ./package-lock.json
   '';
 
-  npmDepsHash = "sha256-XCr+0gHtJX+Uehy4LhvQfXXRpn9GBfzjHhhJiFNTs9g=";
+  npmDepsHash = "sha256-uQbUsggF9i/GWjmWYbdnc4hgIsGtYg7yV+8HpkOJId0=";
 
   nativeBuildInputs = [ pkg-config ];
 
   buildInputs = [
     dart-sass
     vips
+    node-gyp
   ];
 
   buildPhase = ''
