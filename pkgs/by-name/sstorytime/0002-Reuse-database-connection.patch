@@ -1,0 +1,435 @@
+From 6ca32140abe9d2db7c5949654a5a066fc33cdd8c Mon Sep 17 00:00:00 2001
+From: eljamm <fedi.jamoussi@protonmail.ch>
+Date: Tue, 2 Dec 2025 11:43:25 +0100
+Subject: [PATCH 2/2] Reuse database connection
+
+---
+ pkg/SSTorytime/SSTorytime.go                  | 19 ++++++++++++-------
+ src/demo_pocs/postgres_ball.go                | 13 ++-----------
+ src/demo_pocs/postgres_conepaths.go           | 13 ++-----------
+ src/demo_pocs/postgres_datatypes.go           | 13 ++-----------
+ src/demo_pocs/postgres_futurecone.go          | 13 ++-----------
+ .../postgres_futurecone_stored_function.go    | 13 ++-----------
+ src/demo_pocs/postgres_matching_chapter.go    | 10 ----------
+ src/demo_pocs/postgres_matching_context.go    | 10 ----------
+ src/demo_pocs/postgres_matching_sql.go        | 10 ----------
+ src/demo_pocs/postgres_multiarray.go          | 13 ++-----------
+ src/demo_pocs/search_by_name.go               | 10 ----------
+ src/demo_pocs/search_by_name_unicode.go       | 10 ----------
+ src/demo_pocs/search_by_node_text.go          | 10 ----------
+ src/demo_pocs/search_contrawave.go            | 10 ----------
+ src/demo_pocs/search_simple_text.go           | 10 ----------
+ 15 files changed, 24 insertions(+), 153 deletions(-)
+
+diff --git a/pkg/SSTorytime/SSTorytime.go b/pkg/SSTorytime/SSTorytime.go
+index 91b7717..4a0392f 100644
+--- a/pkg/SSTorytime/SSTorytime.go
++++ b/pkg/SSTorytime/SSTorytime.go
+@@ -482,10 +482,7 @@ type LastSeen struct {
+ // Open Library Context
+ //******************************************************************
+ 
+-func Open(load_arrows bool) PoSST {
+-
+-	var sst PoSST
+-	var err error
++func GetConnectionString() string {
+ 
+ 	// Replace this with a private file
+ 
+@@ -496,7 +493,7 @@ func Open(load_arrows bool) PoSST {
+ 		dbname   = "sstoryline"
+ 	)
+ 
+-	user,password,dbname = OverrideCredentials(user,password,dbname)
++	user, password, dbname = OverrideCredentials(user, password, dbname)
+ 
+ 	PGUSER := os.Getenv("PGUSER")
+ 	PGHOST := os.Getenv("PGHOST")
+@@ -523,8 +520,16 @@ func Open(load_arrows bool) PoSST {
+ 		password = string(content)
+ 	}
+ 
+-	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", user, password, host, dbname)
+-	fmt.Println("DEBUGPRINT[395]: SSTorytime.go:521: connStr= ", connStr)
++	connStr := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=disable", user, password, host, dbname)
++	return connStr
++}
++
++func Open(load_arrows bool) PoSST {
++
++	var sst PoSST
++	var err error
++
++	connStr := GetConnectionString()
+ 
+         sst.DB, err = sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/postgres_ball.go b/src/demo_pocs/postgres_ball.go
+index 62dbe2e..18cc549 100644
+--- a/src/demo_pocs/postgres_ball.go
++++ b/src/demo_pocs/postgres_ball.go
+@@ -14,25 +14,16 @@ import (
+ 	"strings"
+ 	"sort"
+ 
++	SST "SSTorytime"
+ 	_ "github.com/lib/pq"
+ 
+ )
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+-        connStr := "user="+user+" dbname="+dbname+" password="+password+" sslmode=disable"
++	connStr := SST.GetConnectionString()
+ 
+         db, err := sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/postgres_conepaths.go b/src/demo_pocs/postgres_conepaths.go
+index 1f5fd15..ef35455 100644
+--- a/src/demo_pocs/postgres_conepaths.go
++++ b/src/demo_pocs/postgres_conepaths.go
+@@ -13,25 +13,16 @@ import (
+ 	"os"
+ 	"strings"
+ 
++        SST "SSTorytime"
+ 	_ "github.com/lib/pq"
+ 
+ )
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+-        connStr := "user="+user+" dbname="+dbname+" password="+password+" sslmode=disable"
++	connStr := SST.GetConnectionString()
+ 
+         db, err := sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/postgres_datatypes.go b/src/demo_pocs/postgres_datatypes.go
+index 0e89e66..1000bc3 100644
+--- a/src/demo_pocs/postgres_datatypes.go
++++ b/src/demo_pocs/postgres_datatypes.go
+@@ -13,22 +13,13 @@ import (
+ 	"os"
+ 	"strings"
+ 
++        SST "SSTorytime"
+ 	_ "github.com/lib/pq"
+ 
+ )
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ type Link struct {
+      Weight float64
+      Reln int
+@@ -49,7 +40,7 @@ func main() {
+ 
+ 	// db, err := sql.Open("postgres", "postgres://sstoryline:sst_1234@localhost:5432/sst?sslmode=disable")
+ 
+-        connStr := "user="+user+" dbname="+dbname+" password="+password+" sslmode=disable"
++	connStr := SST.GetConnectionString()
+ 
+         db, err := sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/postgres_futurecone.go b/src/demo_pocs/postgres_futurecone.go
+index 5302185..3c7d42d 100644
+--- a/src/demo_pocs/postgres_futurecone.go
++++ b/src/demo_pocs/postgres_futurecone.go
+@@ -13,25 +13,16 @@ import (
+ 	"os"
+ 	"strings"
+ 
++        SST "SSTorytime"
+ 	_ "github.com/lib/pq"
+ 
+ )
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+-        connStr := "user="+user+" dbname="+dbname+" password="+password+" sslmode=disable"
++	connStr := SST.GetConnectionString()
+ 
+         db, err := sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/postgres_futurecone_stored_function.go b/src/demo_pocs/postgres_futurecone_stored_function.go
+index f3dab77..6073f88 100644
+--- a/src/demo_pocs/postgres_futurecone_stored_function.go
++++ b/src/demo_pocs/postgres_futurecone_stored_function.go
+@@ -13,25 +13,16 @@ import (
+ 	"os"
+ 	"strings"
+ 
++        SST "SSTorytime"
+ 	_ "github.com/lib/pq"
+ 
+ )
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+-        connStr := "user="+user+" dbname="+dbname+" password="+password+" sslmode=disable"
++	connStr := SST.GetConnectionString()
+ 
+         db, err := sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/postgres_matching_chapter.go b/src/demo_pocs/postgres_matching_chapter.go
+index d4c4247..ed4e527 100644
+--- a/src/demo_pocs/postgres_matching_chapter.go
++++ b/src/demo_pocs/postgres_matching_chapter.go
+@@ -13,16 +13,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+diff --git a/src/demo_pocs/postgres_matching_context.go b/src/demo_pocs/postgres_matching_context.go
+index 30e0b9c..d17398b 100644
+--- a/src/demo_pocs/postgres_matching_context.go
++++ b/src/demo_pocs/postgres_matching_context.go
+@@ -13,16 +13,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+diff --git a/src/demo_pocs/postgres_matching_sql.go b/src/demo_pocs/postgres_matching_sql.go
+index d68bbb9..6e5d482 100644
+--- a/src/demo_pocs/postgres_matching_sql.go
++++ b/src/demo_pocs/postgres_matching_sql.go
+@@ -13,16 +13,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+diff --git a/src/demo_pocs/postgres_multiarray.go b/src/demo_pocs/postgres_multiarray.go
+index 6334a3a..8fea4b1 100644
+--- a/src/demo_pocs/postgres_multiarray.go
++++ b/src/demo_pocs/postgres_multiarray.go
+@@ -19,25 +19,16 @@ import (
+ 	"os"
+ 	"strings"
+ 
++        SST "SSTorytime"
+ 	_ "github.com/lib/pq"
+ 
+ )
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "newdb"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+-        connStr := "user="+user+" dbname="+dbname+" password="+password+" sslmode=disable"
++	connStr := SST.GetConnectionString()
+ 
+         db, err := sql.Open("postgres", connStr)
+ 
+diff --git a/src/demo_pocs/search_by_name.go b/src/demo_pocs/search_by_name.go
+index 6a45b3d..cb9a876 100644
+--- a/src/demo_pocs/search_by_name.go
++++ b/src/demo_pocs/search_by_name.go
+@@ -17,16 +17,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "sstoryline"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+diff --git a/src/demo_pocs/search_by_name_unicode.go b/src/demo_pocs/search_by_name_unicode.go
+index 96c68fe..e6a8973 100644
+--- a/src/demo_pocs/search_by_name_unicode.go
++++ b/src/demo_pocs/search_by_name_unicode.go
+@@ -17,16 +17,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "sstoryline"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+diff --git a/src/demo_pocs/search_by_node_text.go b/src/demo_pocs/search_by_node_text.go
+index 7377d17..9d78620 100644
+--- a/src/demo_pocs/search_by_node_text.go
++++ b/src/demo_pocs/search_by_node_text.go
+@@ -19,16 +19,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "sstoryline"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+diff --git a/src/demo_pocs/search_contrawave.go b/src/demo_pocs/search_contrawave.go
+index 66e3712..6e02830 100644
+--- a/src/demo_pocs/search_contrawave.go
++++ b/src/demo_pocs/search_contrawave.go
+@@ -18,16 +18,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "sstoryline"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := true
+diff --git a/src/demo_pocs/search_simple_text.go b/src/demo_pocs/search_simple_text.go
+index 76d8597..dcddbd2 100644
+--- a/src/demo_pocs/search_simple_text.go
++++ b/src/demo_pocs/search_simple_text.go
+@@ -21,16 +21,6 @@ import (
+ 
+ //******************************************************************
+ 
+-const (
+-	host     = "localhost"
+-	port     = 5432
+-	user     = "sstoryline"
+-	password = "sst_1234"
+-	dbname   = "sstoryline"
+-)
+-
+-//******************************************************************
+-
+ func main() {
+ 
+ 	load_arrows := false
+-- 
+2.50.1
+
