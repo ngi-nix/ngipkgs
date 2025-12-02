@@ -9,28 +9,33 @@
 
 buildGoModule (finalAttrs: {
   pname = "sstorytime";
-  version = "0.1.3-alpha-unstable-2025-11-17";
+  version = "0.1.0-beta-unstable-2025-12-01";
 
   src = fetchFromGitHub {
     owner = "markburgess";
     repo = "SSTorytime";
-    rev = "fd6df05d9019a279d72adb8093ccde8028e9e312";
-    hash = "sha256-G4FsxFrRrDoH7XUMH/uiMaWVbm3M7tsLRVdQ/8AecTA=";
+    rev = "dddcfb68fcf811e914ec96331c30aaacab8cc2a0";
+    hash = "sha256-eqVex9Cje05G776pl/lMRGDPopGSTdfpPkORtjUNK6k=";
   };
 
-  sourceRoot = "${finalAttrs.src.name}/src";
+  patches = [
+    ./0001-Get-database-credentials-from-environment-variables.patch
+    ./0002-Reuse-database-connection.patch
+  ];
 
-  vendorHash = "sha256-H2iZoaR1QNbczteebbFzc0hkqHeRgZCviZVHcq7GgQM=";
+  vendorHash = "sha256-7Ac+Ml8+8IJ4KAMjaYCgLrcX8yOL2LPCAjC4Q3ZfHjQ=";
 
   # make port configurable
   postPatch = ''
-    substituteInPlace server/http_server.go \
+    substituteInPlace src/server/http_server.go \
       --replace-fail \
         'srv := &http.Server{Addr: "0.0.0.0:8080"' \
         'port := os.Getenv("SST_SERVER_PORT"); if port == "" { port = "8080" }; srv := &http.Server{Addr: "0.0.0.0:" + port' \
       --replace-fail \
         '"Server starting on http://localhost:8080"' \
         '"Server starting on http://localhost:" + port'
+
+    cd src
   '';
 
   ldflags = [
