@@ -9,12 +9,28 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "taldir";
-  version = "1.0.5-unstable-2025-10-15";
+  version = "1.0.5-unstable-2025-11-07";
 
   src = fetchgit {
-    url = "https://git.taler.net/taldir.git";
-    rev = "8fbc813afb14807dbc62c4c95402f282a8165f07";
-    hash = "sha256-2tIS98MTPGTEYym7L9ch+tWdDJBvKVQwpfAkxZiJaSc=";
+    url = "https://git-www.taler.net/taldir.git";
+    rev = "dc4fbabd435b108a78d0cc445bb4225f92eb0e22";
+    hash = "sha256-WgkOZ+FWN6NLL8DR/wcscKJ0h2uOs+pi3BbT8t3/XE4=";
+    # Update submodules to use `git-www.taler.net` since `git.gnunet.org` no
+    # longer hosts source code.
+    leaveDotGit = true;
+    fetchSubmodules = false;
+    postFetch = ''
+      pushd $out
+        git reset --hard HEAD
+
+        substituteInPlace .gitmodules \
+          --replace-fail "git.gnunet.org" "git-www.taler.net"
+
+        git submodule update --init --recursive
+
+        rm -rf .git
+      popd
+    '';
   };
 
   vendorHash = "sha256-G8eujeYLSlQ95hNLspAlWSj7MSB/eyg4iD2pp3kSupQ=";
