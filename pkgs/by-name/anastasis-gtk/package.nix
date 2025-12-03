@@ -28,7 +28,7 @@ stdenv.mkDerivation (finalAttrs: {
   version = "0.6.3";
 
   src = fetchgit {
-    url = "https://git.taler.net/anastasis-gtk.git";
+    url = "https://git-www.taler.net/anastasis-gtk.git";
     rev = "v${finalAttrs.version}";
     hash = "sha256-nMkoLTuOCQ0p//MnY0f++rpmylLznn0n/1h0IGBp8G0=";
   };
