@@ -27,7 +27,7 @@ stdenv.mkDerivation (finalAttrs: {
   version = "0.6.4";
 
   src = fetchgit {
-    url = "https://git.taler.net/anastasis.git";
+    url = "https://git-www.taler.net/anastasis.git";
     tag = "v${finalAttrs.version}";
     hash = "sha256-I666RLo3rsmnxp9ET+RDy4wQgOIomuTg7LqVvxL7nIc=";
   };
