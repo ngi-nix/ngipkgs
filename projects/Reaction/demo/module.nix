@@ -1,0 +1,4 @@
+{ ... }:
+{
+  services.reaction.enable = true;
+}
