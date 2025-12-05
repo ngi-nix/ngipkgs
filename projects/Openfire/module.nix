@@ -200,6 +200,9 @@ in
               --chmod=u=rwX,go=rX \
               "${cfg.package}/opt/" \
               "${cfg.stateDir}/"
+
+            mv ${cfg.stateDir}/conf/openfire.xml ${cfg.stateDir}/conf/openfire.xml.bak
+            cp --no-preserve=mode ${configFile} ${cfg.stateDir}/conf/openfire.xml
           else
             if [ ${toString cfg.autoUpdateState} ]; then
               ${updateState}

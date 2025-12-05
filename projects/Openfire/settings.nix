@@ -20,6 +20,24 @@ in
       description = "Enable autosetup feature.";
     };
 
+    adminConsole = {
+      port = mkOption {
+        type = types.port;
+        default = 9090;
+      };
+      securePort = mkOption {
+        type = types.port;
+        default = 9091;
+      };
+      access = {
+        allow-wildcards-in-excludes = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Whether to allow wildcards in excludes.";
+        };
+      };
+    };
+
     locale = mkOption {
       type = types.str;
       default = "en";
