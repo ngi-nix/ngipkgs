@@ -29,6 +29,10 @@ in
         type = types.port;
         default = 9091;
       };
+      interface = mkOption {
+        type = types.str;
+        default = "127.0.0.1";
+      };
       access = {
         allow-wildcards-in-excludes = mkOption {
           type = types.bool;
@@ -187,5 +191,12 @@ in
         };
         description = "User configurations.";
       };
+  };
+
+  jive.connectionProvider = {
+    className = mkOption {
+      type = types.str;
+      default = "org.jivesoftware.database.EmbeddedConnectionProvider";
+    };
   };
 }
