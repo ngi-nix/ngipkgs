@@ -153,6 +153,7 @@ in
       ensureUsers = [
         {
           name = cfg.database.user;
+          ensureDBOwnership = true;
         }
       ];
       ensureDatabases = [
@@ -167,11 +168,5 @@ in
         host ${cfg.database.dbname} ${cfg.database.user} localhost trust
       '';
     };
-
-    systemd.services.postgresql-setup.postStart = lib.optionalString localDB ''
-      psql -tA <<'EOF'
-        ALTER DATABASE "${cfg.database.dbname}" OWNER TO "${cfg.database.user}"
-      EOF
-    '';
   };
 }
