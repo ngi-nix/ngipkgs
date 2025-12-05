@@ -12,34 +12,13 @@ in
 # See:
 # - https://download.igniterealtime.org/openfire/docs/latest/documentation/install-guide.html#autosetup
 # - https://github.com/igniterealtime/Openfire/tree/7693a6f8a19f61b5b026a54fe73f6d735dbe8336/xmppserver/src/main/webapp/setup
+# TODO: cleanup
 {
   jive.autosetup = {
     run = mkOption {
       type = types.bool;
       default = true;
       description = "Whether to enable autosetup feature.";
-    };
-
-    adminConsole = {
-      port = mkOption {
-        type = types.port;
-        default = 9090;
-      };
-      securePort = mkOption {
-        type = types.port;
-        default = 9091;
-      };
-      interface = mkOption {
-        type = types.str;
-        default = "127.0.0.1";
-      };
-      access = {
-        allow-wildcards-in-excludes = mkOption {
-          type = types.bool;
-          default = true;
-          description = "Whether to allow wildcards in excludes.";
-        };
-      };
     };
 
     locale = mkOption {
@@ -85,50 +64,53 @@ in
     };
 
     database = {
-      # TODO: enum?
       mode = mkOption {
-        type = types.str;
-        default = "standard";
+        type = types.enum [
+          "standard"
+          "embedded"
+        ];
+        default = "embedded";
         description = "Database mode.";
       };
 
-      defaultProvider = {
-        driver = mkOption {
-          type = types.str;
-          default = "org.postgresql.Driver";
-          description = "Database driver.";
-        };
-        serverURL = mkOption {
-          type = types.str;
-          default = "jdbc:postgresql://localhost:5432/a-database";
-          description = "Database server URL.";
-        };
-        username = mkOption {
-          type = types.str;
-          default = "a-database";
-          description = "Database username.";
-        };
-        password = mkOption {
-          type = types.str;
-          default = "a-password";
-          description = "Database password.";
-        };
-        minConnections = mkOption {
-          type = types.int;
-          default = 5;
-          description = "Minimum connections to the database.";
-        };
-        maxConnections = mkOption {
-          type = types.int;
-          default = 25;
-          description = "Maximum connections to the database.";
-        };
-        connectionTimeout = mkOption {
-          type = types.float;
-          default = 1.0;
-          description = "Timeout for database connections (in seconds).";
-        };
-      };
+      # TODO:
+      # defaultProvider = {
+      #   driver = mkOption {
+      #     type = types.str;
+      #     default = "org.postgresql.Driver";
+      #     description = "Database driver.";
+      #   };
+      #   serverURL = mkOption {
+      #     type = types.str;
+      #     default = "jdbc:postgresql://localhost:5432/a-database";
+      #     description = "Database server URL.";
+      #   };
+      #   username = mkOption {
+      #     type = types.str;
+      #     default = "a-database";
+      #     description = "Database username.";
+      #   };
+      #   password = mkOption {
+      #     type = types.str;
+      #     default = "a-password";
+      #     description = "Database password.";
+      #   };
+      #   minConnections = mkOption {
+      #     type = types.int;
+      #     default = 5;
+      #     description = "Minimum connections to the database.";
+      #   };
+      #   maxConnections = mkOption {
+      #     type = types.int;
+      #     default = 25;
+      #     description = "Maximum connections to the database.";
+      #   };
+      #   connectionTimeout = mkOption {
+      #     type = types.float;
+      #     default = 1.0;
+      #     description = "Timeout for database connections (in seconds).";
+      #   };
+      # };
     };
 
     admin = {
@@ -197,6 +179,28 @@ in
     className = mkOption {
       type = types.str;
       default = "org.jivesoftware.database.EmbeddedConnectionProvider";
+    };
+  };
+
+  jive.adminConsole = {
+    # Some plugins (like restAPI) may need to allow this since they load admin
+    # console authentication bypass patterns that includes a wildcard.
+    access.allow-wildcards-in-excludes = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to allow wildcards in excludes.";
+    };
+    port = mkOption {
+      type = types.port;
+      default = 9998;
+    };
+    securePort = mkOption {
+      type = types.port;
+      default = 9999;
+    };
+    interface = mkOption {
+      type = types.str;
+      default = "localhost";
     };
   };
 }

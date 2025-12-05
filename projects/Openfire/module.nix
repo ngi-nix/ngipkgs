@@ -91,6 +91,15 @@ in
     services.openfire-server.dataDir = lib.mkDefault "${cfg.package}/opt";
     # config.openfire-server.package = lib.mkDefault cfg.package.override { inherit (cfg) plugins; };
 
+    services.openfire-server.settings.jive.autosetup.users = {
+      alice = {
+        username = "alice";
+        password = "alice";
+        name = "Alice";
+        email = "alice@example.org";
+      };
+    };
+
     # TODO: for debugging. remove, later
     environment.etc = {
       "openfire.xml" = {
