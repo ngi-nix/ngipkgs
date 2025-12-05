@@ -1,8 +1,6 @@
 pdfding:
     django:
         secret_key: ENC[AES256_GCM,data:HViE2/LVRlecba+tlPpPhatncZu4EhM=,iv:NLQPmUmIG+ypu8fdRfKOISxkGZGEozTn9u1CBgm4Q10=,tag:urmz/yU6kaskxrn3VG+bcQ==,type:str]
-    database:
-        password: ENC[AES256_GCM,data:H8lnlVCOB8XZ5YC+A+S1a6WQMD9x66Q=,iv:58tI2hVvjuw3QnkmYXcJAGZ9mhfJoefwdn0wAQ9ukfY=,tag:JxGCTAJhSwg8x7xKpowQhg==,type:str]
     minio:
         user: ENC[AES256_GCM,data:RAudEEw=,iv:QPkMjPv2PDVWcc2GmN4eCE5Mw7j0iyR3aw0LBaGnGgA=,tag:drQFdDqcdYrL8gH3dOSRdA==,type:str]
         password: ENC[AES256_GCM,data:O8x8eUEK7INQ5E8FmBu8W2pdgC4Ioq4=,iv:v6P4symgKI+BCklW+7H6WRzpNlLAqmifcl6yGx67pVc=,tag:N9Q+tCIv28fyJp9fgKgHMg==,type:str]
@@ -44,7 +42,7 @@ sops:
             dmNaMVQ5alo1dkFRa1lvbVlockYrNlUKTQ8LzlEwEzm/7hNdMLidmQyR4ddyleS2
             ANoywmxn2jZaeAf/RAqaMiJmr/ak5KrXOw+paptcuMEtnFBfEwS4UA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-23T15:46:14Z"
-    mac: ENC[AES256_GCM,data:cmxtwTgJtRpXPCx+/v3gvhxUCS3lHu1C8nz09gaNkJHq66DYAHlkZ6Sm1VsGDaTggr0pXmGTDYJEGc3YX1kseiv7IxMEH+dxY9rh7bIDoPsLHILZeIlBdgRe0CXYRQFGkR/geywcH54ipA0DUEeN7VgfzcxX27RZgfNM2yn6vLI=,iv:6RHGA0oEjAroQrIBIr8Us8WsDzeDuTE2i9AmerTGKMI=,tag:umu9103WXernrCtRaRuNOg==,type:str]
+    lastmodified: "2025-12-05T11:24:50Z"
+    mac: ENC[AES256_GCM,data:8xIaMPMXAFgercDmsRLjHfvH97BWR4ZU5nzchAButpiLZKAN561DnswcxdQz2eCWo0i8pT81gQNPIUB3Esl6di4yAHrVA3JCHCQnz93nHzJE4BEZGtKIcPyyeOKd5ih6Y4BfbbC61Q0YNUNQv3yzjl0bkBDMhhYnalkgIzFqA4M=,iv:VItCFwO53tNJiDpQOWf/hruZ8/YFluWY0qUagKVNXes=,tag:/MWeyW29J5Im7mVmb8CU2w==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
