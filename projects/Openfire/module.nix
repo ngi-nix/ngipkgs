@@ -1,16 +1,26 @@
 {
-  config,
   lib,
   pkgs,
+  config,
   ...
-}:
+}@args:
 let
   cfg = config.services.openfire-server;
+  settingsFormat = pkgs.formats.xml { };
+  configFile = settingsFormat.generate "openfire.xml" cfg.settings;
 in
 {
   options.services.openfire-server = {
     enable = lib.mkEnableOption "Openfire XMPP server";
     package = lib.mkPackageOption pkgs "openfire-wrapped" { };
+
+    settings = lib.mkOption {
+      type = lib.types.submodule {
+        freeformType = settingsFormat.type;
+        options = import ./settings.nix args;
+      };
+      default = { };
+    };
 
     autoUpdateState = lib.mkOption {
       type = lib.types.bool;
@@ -80,6 +90,13 @@ in
   config = lib.mkIf cfg.enable {
     services.openfire-server.dataDir = lib.mkDefault "${cfg.package}/opt";
     # config.openfire-server.package = lib.mkDefault cfg.package.override { inherit (cfg) plugins; };
+
+    # TODO: for debugging. remove, later
+    environment.etc = {
+      "openfire.xml" = {
+        source = configFile;
+      };
+    };
 
     users.users.openfire = {
       description = "Openfire server daemon user";
