@@ -13,7 +13,7 @@ in
 # - https://download.igniterealtime.org/openfire/docs/latest/documentation/install-guide.html#autosetup
 # - https://github.com/igniterealtime/Openfire/tree/7693a6f8a19f61b5b026a54fe73f6d735dbe8336/xmppserver/src/main/webapp/setup
 {
-  autosetup = {
+  jive.autosetup = {
     enable = mkOption {
       type = types.bool;
       default = true;
