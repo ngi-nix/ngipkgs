@@ -33,6 +33,19 @@
 
         # more memory for chrome
         virtualisation.memorySize = 4096;
+
+        services.openfire-server = {
+          settings.jive.adminConsole.interface = "0.0.0.0";
+          settings.jive.autosetup.run = true;
+          settings.jive.autosetup.users = {
+            alice = {
+              username = "alice";
+              password = "alice";
+              name = "Alice";
+              email = "alice@example.org";
+            };
+          };
+        };
       };
   };
 

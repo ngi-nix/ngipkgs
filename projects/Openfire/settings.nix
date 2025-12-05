@@ -11,13 +11,14 @@ let
 in
 # See:
 # - https://download.igniterealtime.org/openfire/docs/latest/documentation/install-guide.html#autosetup
+# - https://github.com/igniterealtime/Openfire/blob/7693a6f8a19f61b5b026a54fe73f6d735dbe8336/xmppserver/src/main/java/org/jivesoftware/openfire/XMPPServer.java#L432
 # - https://github.com/igniterealtime/Openfire/tree/7693a6f8a19f61b5b026a54fe73f6d735dbe8336/xmppserver/src/main/webapp/setup
 # TODO: cleanup
 {
   jive.autosetup = {
     run = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = "Whether to enable autosetup feature.";
     };
 
@@ -30,12 +31,12 @@ in
     xmpp = {
       domain = mkOption {
         type = types.str;
-        default = "localhost";
+        default = "server";
         description = "XMPP domain.";
       };
       fqdn = mkOption {
         type = types.str;
-        default = "localhost";
+        default = "server";
         description = "Fully qualified domain name.";
       };
       auth.anonymous = mkOption {
@@ -192,11 +193,11 @@ in
     };
     port = mkOption {
       type = types.port;
-      default = 9998;
+      default = 9090;
     };
     securePort = mkOption {
       type = types.port;
-      default = 9999;
+      default = 9091;
     };
     interface = mkOption {
       type = types.str;
