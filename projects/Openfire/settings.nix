@@ -14,10 +14,10 @@ in
 # - https://github.com/igniterealtime/Openfire/tree/7693a6f8a19f61b5b026a54fe73f6d735dbe8336/xmppserver/src/main/webapp/setup
 {
   jive.autosetup = {
-    enable = mkOption {
+    run = mkOption {
       type = types.bool;
       default = true;
-      description = "Enable autosetup feature.";
+      description = "Whether to enable autosetup feature.";
     };
 
     adminConsole = {
