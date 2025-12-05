@@ -177,9 +177,9 @@
           -H "Content-Type: application/json" \
           --data \
             '{ \
-               "roomName": "global", \
-               "naturalName": "global-2", \
-               "description": "Global chat room"
+              "roomName": "global", \
+              "naturalName": "global-2", \
+              "description": "Global chat room"
             }'
       """)
 
