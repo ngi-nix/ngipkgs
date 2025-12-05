@@ -1,8 +1,8 @@
 {
-  pkgs,
   lib,
+  pkgs,
   dream2nix,
-  mkSbtDerivation,
+  sources,
 }:
 let
   inherit (builtins)
@@ -57,6 +57,20 @@ let
     evaluated.config.public;
 
   callPackage = pkgs.newScope (self // { inherit callPackage; });
+
+  mkSbtDerivation =
+    x:
+    import sources.sbt-derivation (
+      x
+      // {
+        inherit pkgs;
+        overrides = {
+          sbt = pkgs.sbt.override {
+            jre = pkgs.jdk17_headless;
+          };
+        };
+      }
+    );
 
   self = mapAttrs (
     _: directory:

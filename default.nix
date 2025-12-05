@@ -1,281 +1,139 @@
-let
-  flake-inputs = import (fetchTarball {
+{
+  flake-inputs ? import (fetchTarball {
     url = "https://github.com/fricklerhandwerk/flake-inputs/tarball/4.1.0";
     sha256 = "1j57avx2mqjnhrsgq3xl7ih8v7bdhz1kj3min6364f486ys048bm";
-  });
-  inherit (flake-inputs)
-    import-flake
-    ;
-in
-{
-  flake ? import-flake { src = ./.; },
+  }),
+  flake ? flake-inputs.import-flake { src = ./.; },
   sources ? flake.inputs,
   system ? builtins.currentSystem,
   pkgs ? import sources.nixpkgs {
     config = { };
-    overlays = import ./pkgs/overlays.nix { inherit lib; };
+    overlays = import ./pkgs/overlays.nix { lib = nixpkgsLib; };
     inherit system;
   },
-  lib ? import "${sources.nixpkgs}/lib",
+  nixpkgsLib ? import "${sources.nixpkgs}/lib",
 }:
 let
-  dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
-  nixdoc-to-github = pkgs.callPackage sources.nixdoc-to-github { };
-  mkSbtDerivation =
-    x:
-    import sources.sbt-derivation (
-      x
-      // {
-        inherit pkgs;
-        overrides = {
-          sbt = pkgs.sbt.override {
-            jre = pkgs.jdk17_headless;
-          };
-        };
-      }
-    );
+  lib = default.lib;
 
-  extension = import ./pkgs/lib.nix { inherit lib sources system; };
-  extended = lib.extend (_: _: extension);
+  flakeAttrs = default.import ./maintainers/flake { };
 
-  ngipkgs = import ./pkgs/by-name {
-    inherit
-      pkgs
-      dream2nix
-      mkSbtDerivation
-      ;
-    lib = extended;
-  };
-in
-rec {
-  lib = extended;
+  default = nixpkgsLib.makeScope pkgs.newScope (self: {
+    lib = nixpkgsLib.extend self.overlays.customLib;
 
-  inherit
-    pkgs
-    system
-    sources
-    extension
-    ngipkgs
-    ;
-
-  overlays.default =
-    final: prev:
-    import ./pkgs/by-name {
-      pkgs = prev;
-      inherit lib dream2nix mkSbtDerivation;
+    # Similar to `pkgs.callPackage`, but aware of `default` scope attributes.
+    # The result is overridable.
+    call = self.newScope {
+      nixdoc-to-github = pkgs.callPackage sources.nixdoc-to-github { };
+      dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
     };
 
-  # apply package fixes
-  overlays.fixups = import ./pkgs/overlays.nix { inherit lib; };
-
-  examples =
-    with lib;
-    mapAttrs (
-      _: project: mapAttrs (_: example: example.module) project.nixos.examples
-    ) hydrated-projects;
-
-  nixos-modules =
-    with lib;
-    # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
-    {
-      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-      ngipkgs =
-        { ... }:
-        {
-          nixpkgs.overlays = [ overlays.default ] ++ overlays.fixups;
-        };
-    }
-    // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues hydrated-projects));
-
-  extendedNixosModules =
-    let
-      ngipkgsModules = lib.attrValues (lib.flattenAttrs "." nixos-modules);
-      nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
-    in
-    nixosModules ++ ngipkgsModules;
-
-  overview = import ./overview {
-    inherit lib projects;
-    self = flake;
-    pkgs = pkgs.extend overlays.default;
-    options = optionsDoc.optionsNix;
-  };
-
-  optionsDoc = pkgs.nixosOptionsDoc {
-    inherit
-      (lib.evalModules {
-        modules = [
-          {
-            nixpkgs.hostPlatform = system;
-
-            networking = {
-              domain = "invalid";
-              hostName = "options";
-            };
-
-            system.stateVersion = "23.05";
-          }
-          ./overview/demo/shell.nix
+    # Similar to `import`, but aware of `default` scope attributes.
+    # The result is non-overridable.
+    import =
+      file: args:
+      let
+        result = self.call file args;
+      in
+      if lib.isAttrs result then
+        removeAttrs result [
+          "override"
+          "overrideDerivation"
         ]
-        ++ extendedNixosModules;
-        specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
-      })
-      options
-      ;
-  };
+      else
+        result;
 
-  inherit
-    (import ./projects {
-      inherit lib system;
-      pkgs = pkgs.extend overlays.default;
+    inherit
+      pkgs
+      system
+      sources
+      flake
+      default # expose final scope
+      flakeAttrs
+      ;
+
+    ngipkgs = self.import ./pkgs/by-name { };
+
+    shell = self.import ./maintainers/shells/default.nix { };
+
+    overlays = {
+      default =
+        final: prev:
+        self.import ./pkgs/by-name {
+          pkgs = prev;
+        };
+
+      customLib =
+        _: _:
+        import ./pkgs/lib.nix {
+          lib = nixpkgsLib;
+          inherit sources system;
+        };
+
+      fixups = self.call ./pkgs/overlays.nix { };
+    };
+
+    optionsDoc = pkgs.nixosOptionsDoc {
+      inherit (self.project-utils.eval-projects) options;
+    };
+
+    overview = self.import ./overview {
+      self = flake;
+      pkgs = pkgs.extend self.overlays.default;
+      options = self.optionsDoc.optionsNix;
+    };
+
+    nixos-modules =
+      # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
+      {
+        # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+        ngipkgs =
+          { ... }:
+          {
+            nixpkgs.overlays = [ self.overlays.default ] ++ self.overlays.fixups;
+          };
+      }
+      // lib.foldl lib.recursiveUpdate { } (
+        map (project: project.nixos.modules) (lib.attrValues self.hydrated-projects)
+      );
+
+    project-utils = self.import ./projects {
+      pkgs = pkgs.extend default.overlays.default;
       sources = {
         inputs = sources;
-        modules = nixos-modules;
-        inherit examples;
+        modules = default.nixos-modules;
+        examples = lib.mapAttrs (
+          _: project: lib.mapAttrs (_: example: example.module) project.nixos.examples
+        ) self.hydrated-projects;
       };
-    })
-    checks
-    projects
-    hydrated-projects
-    ;
+    };
 
-  shell = pkgs.mkShellNoCC {
-    packages = [
-      # live overview watcher
-      (pkgs.devmode.override {
-        buildArgs = "-A overview --show-trace -v";
-      })
-
-      (pkgs.writeShellApplication {
-        # TODO: have the program list available tests
-        name = "ngipkgs-test";
-        text = ''
-          export pr="$1"
-          export proj="$2"
-          export test="$3"
-          # remove the first args and feed the rest (for example flags)
-          export args="''${*:4}"
-
-          nix build --override-input nixpkgs "github:NixOS/nixpkgs?ref=pull/$pr/merge" .#checks.x86_64-linux.projects/"$proj"/nixos/tests/"$test" "$args"
-        '';
-      })
-
-      # NOTE: currently, this only works with flakes, because `nix-update` can't
-      # find `maintainers/scripts/update.nix` otherwise
-      #
-      # nix-shell --run 'update PACKAGE_NAME --use-update-script'
-      (pkgs.writeShellApplication {
-        name = "update";
-        runtimeInputs = with pkgs; [ nix-update ];
-        text = ''
-          package=$1; shift # past value
-          nix-update --flake --use-update-script "$package" "$@"
-        '';
-      })
-
-      (pkgs.writeShellApplication {
-        name = "update-all";
-        runtimeInputs = with pkgs; [ nix-update ];
-        text =
-          let
-            skipped-packages = [
-              "atomic-browser" # -> atomic-server
-              "atomic-cli" # -> atomic-server
-              "firefox-meta-press" # -> meta-press
-              "inventaire" # -> inventaire-client
-              "kbin" # -> kbin-backend
-              "kbin-frontend" # -> kbin-backend
-              "pretalxFull" # -> pretalx
-              # FIX: needs custom update script
-              "marginalia-search"
-              "peertube-plugin-livechat"
-              # FIX: dream2nix
-              "corestore"
-              "liberaforms"
-              # FIX: package scope
-              "bigbluebutton"
-              "heads"
-              # FIX: don't update `sparql-queries` if there is no version change
-              "inventaire-client"
-              # fetcher not supported
-              "libervia-backend"
-              "libervia-desktop-kivy"
-              "libervia-media"
-              "libervia-templates"
-              "sat-tmp"
-              "urwid-satext"
-              # broken package
-              "libresoc-nmigen"
-              "libresoc-verilog"
-              # other issues
-              "kazarma"
-              "anastasis"
-            ];
-            update-packages = with lib; filter (x: !elem x skipped-packages) (attrNames ngipkgs);
-            update-commands = lib.concatMapStringsSep "\n" (package: ''
-              if ! nix-update --flake --use-update-script "${package}" "$@"; then
-                echo "${package}" >> "$TMPDIR/failed_updates.txt"
-              fi
-            '') update-packages;
-          in
-          # bash
-          ''
-            TMPDIR=$(mktemp -d)
-
-            echo -n> "$TMPDIR/failed_updates.txt"
-
-            ${update-commands}
-
-            if [ -s "$TMPDIR/failed_updates.txt" ]; then
-              echo -e "\nFailed to update the following packages:"
-              cat "$TMPDIR/failed_updates.txt"
-            else
-              echo "All packages updated successfully!"
-            fi
-          '';
-      })
-
-      # nix-shell --run nixdoc-to-github
-      (nixdoc-to-github.lib.nixdoc-to-github.run {
-        description = "NGI Project Types";
-        category = "";
-        file = "${toString ./projects/types.nix}";
-        output = "${toString ./maintainers/docs/project.md}";
-      })
-    ];
-  };
-
-  metrics = import ./maintainers/metrics.nix {
-    inherit
-      lib
-      pkgs
-      ngipkgs
+    inherit (self.project-utils)
+      checks
+      projects
+      hydrated-projects
       ;
-    raw-projects = hydrated-projects;
-  };
 
-  report = import ./maintainers/report {
-    inherit lib pkgs metrics;
-  };
+    demo-utils = self.import ./overview/demo {
+      ngipkgs-modules = lib.attrValues (lib.flattenAttrs "." self.nixos-modules);
+    };
 
-  inherit
-    (import ./overview/demo {
-      inherit
-        lib
-        pkgs
-        sources
-        system
-        projects
-        ;
-      nixos-modules = extendedNixosModules;
-    })
-    # for demo code activation. used in the overview code snippets
-    demo-shell
-    demo-vm
-    # - $(nix-build -A demos.PROJECT_NAME)
-    # - nix run .#demos.PROJECT_NAME
-    demos
-    ;
-}
+    inherit (self.demo-utils)
+      # for demo code activation. used in the overview code snippets
+      demo-shell
+      demo-vm
+      # - $(nix-build -A demos.PROJECT_NAME)
+      # - nix run .#demos.PROJECT_NAME
+      demos
+      ;
+
+    metrics = self.import ./maintainers/metrics.nix {
+      raw-projects = self.hydrated-projects;
+    };
+
+    report = self.import ./maintainers/report { };
+  });
+in
+default
 # required for update scripts
-// ngipkgs
+// default.ngipkgs
