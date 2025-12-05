@@ -214,4 +214,13 @@ in
       description = "";
     };
   };
+
+  # TODO: only enable if the plugin is included?
+  jive.plugin.restapi = {
+    enabled = mkOption {
+      type = types.bool;
+      default = true;
+      description = "";
+    };
+  };
 }
