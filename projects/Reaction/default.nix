@@ -27,7 +27,33 @@
     };
   };
 
-  # TODO exists mainly for examples, demo vm and tests, upstream wants it in nixpkgs directly not ngipkgs
+  /*
+    TODO
+    exists mainly for examples, demo vm and tests
+    upstream wants it in nixpkgs directly not ngipkgs
+
+    - [ ] module (in nixpkgs)
+      - [x] system.checks
+      - [ ] iptables firewall.service issue
+      - [ ] runAsRoot
+      - [ ] nixosTests
+        - [ ] runAsRoot
+        - [ ] !runAsRoot
+        - [ ] fail2ban equivalent (same as basic example test in nigpkgs?)
+    - [ ] tests
+      - [ ] basic example tests
+      - [ ] benchmarks
+        - nginx access.log test can't be done but the other two
+        - 2 separate tests, one per benchmark?
+      - [ ] nixpkgs nixosTests?
+    - [ ] examples
+      - [ ] basic
+      - [ ] maybe googlebot and ai-crawlers
+      - But upstream is very much for maintaining examples (without tests as of now)
+    - [ ] demo-vm (can't be shell)
+      - [ ] tied to basic example test from above
+      - [ ] basic usage/test instructions
+  */
   nixos.modules.services = {
     reaction = {
       name = "Reaction";
