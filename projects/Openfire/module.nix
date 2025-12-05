@@ -20,6 +20,7 @@ in
         options = import ./settings.nix args;
       };
       default = { };
+      description = "Openfire settings.";
     };
 
     autoUpdateState = lib.mkOption {

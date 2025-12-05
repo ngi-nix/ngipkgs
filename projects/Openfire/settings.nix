@@ -130,6 +130,7 @@ in
     authprovider.mode = mkOption {
       type = types.str;
       default = "default";
+      description = "";
     };
 
     users =
@@ -137,21 +138,26 @@ in
         user.options = {
           username = mkOption {
             type = types.str;
+            description = "";
           };
           password = mkOption {
             type = types.str;
+            description = "";
           };
           name = mkOption {
             type = types.str;
             default = "";
+            description = "";
           };
           email = mkOption {
             type = types.str;
             default = "";
+            description = "";
           };
           roster = mkOption {
             type = types.attrs;
             default = { };
+            description = "";
           };
         };
       in
@@ -180,6 +186,7 @@ in
     className = mkOption {
       type = types.str;
       default = "org.jivesoftware.database.EmbeddedConnectionProvider";
+      description = "";
     };
   };
 
@@ -194,14 +201,17 @@ in
     port = mkOption {
       type = types.port;
       default = 9090;
+      description = "";
     };
     securePort = mkOption {
       type = types.port;
       default = 9091;
+      description = "";
     };
     interface = mkOption {
       type = types.str;
       default = "localhost";
+      description = "";
     };
   };
 }
