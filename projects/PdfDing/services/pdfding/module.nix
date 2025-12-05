@@ -49,12 +49,18 @@ let
 
   envFile = pkgs.writeText "pdfding.env" (
     concatStringsSep "\n" (
-      mapAttrsToList (name: value: "${name}=\"${toString value}\"") (filterAttrs (n: v: v != "") envVars)
+      mapAttrsToList (name: value: "${name}=\"${toString value}\"") (
+        (filterAttrs (n: v: v != "") envVars)
+        // optionalAttrs (usePostgres && cfg.database.createLocally) {
+          # Uses the unix domain socket https://docs.djangoproject.com/en/6.0/ref/settings/#host
+          POSTGRES_HOST = "";
+        }
+      )
     )
   );
 
   loadCreds =
-    optionalString usePostgres ''
+    optionalString (usePostgres && !cfg.database.createLocally) ''
       export POSTGRES_PASSWORD="$(<${cfg.database.passwordFile})"
     ''
     + ''
@@ -288,16 +294,16 @@ in
         message = "services.pdfding.secretKeyFile must be set when using PdfDing";
       }
       {
-        assertion = usePostgres -> cfg.database.passwordFile != null;
-        message = "services.pdfding.database.passwordFile must be set when using PostgreSQL";
-      }
-      {
         assertion = cfg.backup.enable -> envVars.BACKUP_ENDPOINT != null;
         message = "services.pdfding.extraEnvironment.BACKUP_ENDPOINT must be set when backup is enabled";
       }
       {
         assertion = cfg.database.createLocally -> usePostgres;
         message = "services.pdfding.database.createLocally is enabled but not database.type is not postgres";
+      }
+      {
+        assertion = cfg.database.createLocally -> cfg.database.passwordFile == null;
+        message = "specifying services.pdfding.database.passwordFile is not supported when used along with a local db setup";
       }
     ];
 
@@ -350,9 +356,7 @@ in
     systemd.services.pdfding = {
       description = "PdfDing Web Service";
       after = [ "network.target" ];
-      bindsTo =
-        (optional usePostgres "postgresql.target")
-        ++ (optional cfg.database.createLocally "pdfdingPostgreSQLInit.service");
+      bindsTo = lib.optionals usePostgres [ "postgresql.target" ];
       wantedBy = [ "multi-user.target" ];
 
       preStart = ''
@@ -423,42 +427,15 @@ in
       };
     };
 
-    # postgres setup
-    services.postgresql.enable = lib.mkDefault (usePostgres && cfg.database.createLocally);
-
-    # copied from keycloak module in nixpkgs
-    systemd.services.pdfdingPostgreSQLInit = lib.mkIf (usePostgres && cfg.database.createLocally) {
-      after = [ "postgresql.target" ];
-      before = [ "pdfding.service" ];
-      bindsTo = [ "postgresql.target" ];
-      path = [ config.services.postgresql.package ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        User = "postgres";
-        Group = "postgres";
-        LoadCredential = [ "db_password:${cfg.database.passwordFile}" ];
-      };
-      script =
-        # bash
-        ''
-          set -o errexit -o pipefail -o nounset -o errtrace
-          shopt -s inherit_errexit
-
-          create_role="$(mktemp)"
-          trap 'rm -f "$create_role"' EXIT
-
-          # escape any single quotes by adding additional single
-          # quotes after them, following the rules laid out here:
-          # https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-CONSTANTS
-          POSTGRES_PASSWORD="$(<"$CREDENTIALS_DIRECTORY/db_password")"
-          POSTGRES_PASSWORD="''${POSTGRES_PASSWORD//\'/\'\'}"
-
-          echo "CREATE ROLE pdfding WITH LOGIN PASSWORD '$POSTGRES_PASSWORD' CREATEDB" > "$create_role"
-          psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='pdfding'" | grep -q 1 || psql -tA --file="$create_role"
-          psql -tAc "SELECT 1 FROM pg_database WHERE datname = 'pdfding'" | grep -q 1 || psql -tAc 'CREATE DATABASE "pdfding" OWNER "pdfding"'
-        '';
-      enableStrictShellChecks = true;
+    services.postgresql = lib.mkIf cfg.database.createLocally {
+      enable = true;
+      ensureDatabases = [ cfg.database.name ];
+      ensureUsers = [
+        {
+          name = cfg.database.user;
+          ensureDBOwnership = true;
+        }
+      ];
     };
   };
 }
