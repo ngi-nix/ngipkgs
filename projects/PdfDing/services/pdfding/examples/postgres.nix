@@ -5,7 +5,6 @@
     secretKeyFile = config.sops.secrets."pdfding/django/secret_key".path;
     database.createLocally = true;
     database.type = "postgres";
-    database.passwordFile = config.sops.secrets."pdfding/database/password".path;
     consume.enable = true; # allows bulk importing pdf files from the backend
     consume.schedule = "*/1 * * * *"; # once every minute
   };
@@ -17,10 +16,6 @@
     defaultSopsFile = "/dev/null"; # For a production configuration, set this option.
     validateSopsFiles = false; # For a production configuration, remove this line.
     secrets."pdfding/django/secret_key" = {
-      owner = config.services.pdfding.user;
-      group = config.services.pdfding.group;
-    };
-    secrets."pdfding/database/password" = {
       owner = config.services.pdfding.user;
       group = config.services.pdfding.group;
     };
