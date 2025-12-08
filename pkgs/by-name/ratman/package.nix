@@ -36,10 +36,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   cargoBuildFlags = [
-    "-p"
-    "ratmand"
-    "-p"
-    "ratman-tools"
+    "--no-default-features"
+    "--features inet,lan,datalink"
+    "-p ratmand"
+    "-p ratman-tools"
   ];
   cargoTestFlags = finalAttrs.cargoBuildFlags;
 
