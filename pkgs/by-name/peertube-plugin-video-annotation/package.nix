@@ -6,15 +6,15 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-video-annotation";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-11-20";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
     sparseCheckout = [ "peertube-plugin-video-annotation" ];
-    hash = "sha256-YLEhMJuOFiX9SE+XjhOPZ2kHvAM+arFYmuHXWZDa6+0=";
+    hash = "sha256-PRcqzDyo5tJRjGGn0GYqtvGrevEpFaYchf2oK53LK3M=";
   };
 
   # prepare script breaks installation at peertube plugin time
