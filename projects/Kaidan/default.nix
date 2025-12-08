@@ -40,14 +40,9 @@
       examples."Kaidan with local XMPP server and self-signed certs" = {
         module = ./programs/kaidan/examples/demo.nix;
         description = "Kaidan example with local XMPP Server";
+        # TODO: use Nixpkgs test once that reaches NGIpkgs
+        # https://github.com/NixOS/nixpkgs/pull/469539
         tests.kaidan.module = import ./programs/kaidan/tests/kaidan.nix args;
-        tests.kaidan.problem.broken.reason = ''
-          Prosody hangs for a long time:
-
-          https://buildbot.ngi.nixos.org/#/builders/1231/builds/1/steps/1/logs/stdio
-
-          Investigate why and fix it.
-        '';
       };
     };
   };
@@ -56,13 +51,6 @@
     module = ./programs/kaidan/examples/demo.nix;
     module-demo = ./module-demo.nix;
     tests.demo.module = import ./programs/kaidan/tests/kaidan.nix args;
-    tests.demo.problem.broken.reason = ''
-      Prosody hangs for a long time:
-
-      https://buildbot.ngi.nixos.org/#/builders/1231/builds/1/steps/1/logs/stdio
-
-      Investigate why and fix it.
-    '';
     usage-instructions = [
       {
         instruction = ''

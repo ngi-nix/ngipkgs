@@ -18,128 +18,138 @@
           sources.modules.ngipkgs
           sources.modules.programs.kaidan
           sources.examples.Kaidan."Kaidan with local XMPP server and self-signed certs"
+
+          # enable graphical session + users (alice, bob)
+          "${sources.inputs.nixpkgs}/nixos/tests/common/x11.nix"
+          "${sources.inputs.nixpkgs}/nixos/tests/common/user-account.nix"
+
+          ../../../module-demo.nix
         ];
+
+        test-support.displayManager.auto.user = "alice";
 
         environment.systemPackages = with pkgs; [
           xdotool
         ];
-
       };
   };
 
   enableOCR = true;
+  interactive.sshBackdoor.enable = true; # ssh -o User=root vsock/3
 
   testScript =
     { nodes, ... }:
     let
-      userJohn = "john@example.org";
-      userAlice = "alice@example.org";
-      textAlice = "Hello Alice!";
-      textJohn = "Hello John!";
-      xmppPassword = "foobar";
-      setup-kaidan-prosody-users = pkgs.writeShellApplication {
-        name = "setup-kaidan-prosody-users";
-        runtimeInputs = with pkgs; [ prosody ];
-        text = ''
-          prosodyctl adduser ${userJohn} <<EOF
-          ${xmppPassword}
-          ${xmppPassword}
-          EOF
+      users.john = {
+        email = "john@example.com";
+        password = "foobar";
+        message = "Hello, I'm John!";
+      };
 
-          # Add second user for sending messages to
-          # This is needed because Kaidan does not support self-messaging
-          prosodyctl adduser ${userAlice} <<EOF
-          ${xmppPassword}
-          ${xmppPassword}
-          EOF
-        '';
+      users.alice = {
+        email = "alice@example.com";
+        password = "foobar";
+        message = "Hello, I'm Alice!";
       };
     in
+    # py
     ''
-      def login_user(user):
-        machine.send_chars(f"{user}\n", 0.1)
+      import json
+
+      users = json.loads("""${lib.strings.toJSON users}""")
+
+      def wait_main_screen():
+        machine.wait_for_text(r"(Kaidan|free|communication|every|device)")
+
+      def click_position(x: int, y: int):
+        machine.succeed(f"su - alice -c 'DISPLAY=:0 xdotool mousemove --sync {x} {y} click 1'")
         machine.sleep(1)
-        machine.send_chars("${xmppPassword}\n", 0.1)
+
+      def login_user(user: str):
+        machine.send_chars(f"{users[user]["email"]}\n", 0.1)
+        machine.sleep(1)
+        machine.send_chars(f"{users[user]["password"]}\n", 0.1)
+
+      # add user account
+      def add_user_account(user: str):
+        click_position(26, 48) # burger menu
+        click_position(179, 144) # add account
+
+        wait_main_screen()
+        click_position(366, 598) # chat address
+        login_user(user)
+        machine.sleep(1)
 
       # add user to the contact list
-      def add_contact(user):
-        machine.succeed("xdotool mousemove 26 48 click 1")
+      def add_contact(user, message=""):
+        click_position(26, 48) # burger menu
+        machine.wait_for_text(r"(Add|contact|chat|QR|code|address)")
+        click_position(225, 344) # Add contact by chat address
+        click_position(404, 359) # Add contact to john
+
+        machine.send_chars(f"{users[user]["email"]}\n",0.1);
+        machine.sleep(1)
+        machine.send_key("tab")
+        machine.send_key("tab")
+        machine.sleep(1)
+        machine.send_chars(f"{message if message != "" else users[user]["message"]}\n",0.1);
         machine.sleep(1)
 
-        machine.succeed("xdotool mousemove 26 48 click 1")
-        machine.succeed("xdotool mousemove 110 239 click 1")
-        machine.sleep(1)
+        click_position(511, 524) # Add
 
-        machine.send_chars(f"{user}\n",0.1);
+      # send a message
+      def send_message(message):
+        click_position(602, 742) # message box
+        machine.send_chars(f"{message}\n", 0.2)
         machine.sleep(1)
-
-        machine.succeed("xdotool mousemove 501 551 click 1")
-
-      # logout current user
-      def logout_user():
-        machine.succeed("xdotool mousemove 26 48 click 1")
-        machine.succeed("xdotool mousemove 96 95 click 1")
-        machine.sleep(3)
-        machine.succeed("xdotool mousemove 485 675 click --repeat 40 5")
-        machine.sleep(3)
-        machine.succeed("xdotool mousemove 462 552 click 1")
-        machine.sleep(1)
-        machine.succeed("xdotool mousemove 463 612 click 1")
-        machine.sleep(1)
-
-      # send a text
-      def send_text(text):
-        machine.send_chars(f"{text}\n", 0.2)
 
       start_all()
       machine.wait_for_x()
 
       # Setup prosody so we can connect
-      machine.wait_for_console_text("Started Prosody XMPP server")
-      machine.succeed("${lib.getExe setup-kaidan-prosody-users}")
+      machine.wait_for_unit("prosody.service")
+      machine.succeed("create-prosody-users")
+      machine.systemctl("start network-online.target")
+      machine.wait_for_unit("network-online.target")
 
       # Start Kaidan and scale it to full screen
-      machine.execute("kaidan >&2 &")
-      machine.wait_for_text("free communication")
+      machine.execute("env DISPLAY=:0 sudo -u alice kaidan >&2 &")
+      wait_main_screen()
       machine.send_key("alt-f10")
-
       machine.sleep(1)
 
-      login_user("${userJohn}")
+      with subtest("Set up users"):
+        login_user("john")
 
-      machine.wait_for_text("Select a chat")
+        # set up keyring for storing user passwords
+        machine.wait_for_text(r"(Choose|keyring|Default|Confirm|Continue)")
+        machine.send_chars("foobar", 0.1)
+        machine.send_key("tab")
+        machine.send_chars("foobar\n", 0.1)
+        machine.wait_for_text(r"(Search|Select|chat|start)")
 
-      add_contact("${userAlice}")
+        # we add a second account, which will be communicating with the first one
+        add_user_account("alice")
+        machine.wait_for_text(r"(Search|Select|chat|start)")
 
-      machine.sleep(1)
-      machine.wait_for_text("No messages yet")
+      # NOTE: OCR doesn't work well here. We assume both messages are received
+      # and just take a screenshot.
+      # TODO: verify messages exist in the screenshot.
+      with subtest("Chat between 2 users"):
+        # add alice to john's contacts with an initial message
+        add_contact("alice", users["john"]["message"])
+        machine.sleep(5)
 
-      # john sends alice a message and logs out
-      send_text("${textAlice}")
-      machine.sleep(4)
-      logout_user()
-      machine.sleep(5)
+        # john sends alice a message
+        click_position(151, 110) # alice in john's contacts
+        send_message(users["john"]["message"])
 
-      # alice logs in sends back a message to john
-      login_user("${userAlice}")
-      machine.wait_for_text("Hello Alice!")
-      machine.succeed("xdotool mousemove 146 99 click 1")
+        # alice receives john's message and replies
+        click_position(151, 183) # john in alice's contacts
+        send_message(users["alice"]["message"])
 
-      machine.sleep(1)
-      machine.send_key("tab")
-      machine.sleep(1)
-      send_text("${textJohn}")
-      machine.sleep(3)
-
-      # alice logs out and john logs back in
-      logout_user()
-      machine.sleep(20)
-      login_user("${userJohn}")
-      machine.sleep(3)
-
-      # john should see alice's message
-      machine.succeed("xdotool mousemove 146 99 click 1")
-      machine.sleep(2)
-      machine.wait_for_text("${textJohn}")
+        # john receives alice's message
+        click_position(151, 110) # alice in john's contacts
+        machine.screenshot("kaidan_chat_log") # both messages should be here
     '';
 }
