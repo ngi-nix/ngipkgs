@@ -17,15 +17,15 @@
 }:
 ocamlPackages.buildDunePackage (finalAttrs: {
   pname = "0wm-server";
-  version = "0-unstable-2025-11-24";
+  version = "0-unstable-2025-12-04";
 
   duneVersion = "3";
 
   src = fetchFromGitHub {
     owner = "lab0-cc";
     repo = "0WM-Server";
-    rev = "1e8c2708eab570f5bc7d54d3fc792f03e27f2d45";
-    hash = "sha256-FOALrLfLopGaBZfX0C5HA5UYEvJ2XyH0VMSZbXW0BHQ=";
+    rev = "8633ebbfeaf799336574e1b559f0958b127b5419";
+    hash = "sha256-a66oMeg8f/5hsUjhISHXNXL01pnoF1Nkhrf4xYJq37s=";
   };
 
   nativeBuildInputs = [
