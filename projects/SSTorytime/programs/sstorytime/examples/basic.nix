@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   programs.sstorytime.enable = true;
 }
