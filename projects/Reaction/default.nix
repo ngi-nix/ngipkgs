@@ -27,6 +27,34 @@
     };
   };
 
+  /*
+    Notes:
+    exists mainly for examples, demo vm and tests
+    upstream author wants the module to be merged directly in nixpkgs not ngipkgs
+
+    - [x] module (in nixpkgs)
+      - [x] system.checks
+      - [x] iptables firewall.service issue
+        - [x] nixosTest assert it is successful
+      - [x] runAsRoot
+      - [x] nixosTests
+        - [x] runAsRoot
+        - [x] !runAsRoot
+        - [x] fail2ban equivalent (same as basic example test in nigpkgs?)
+    - [x] tests
+      - [x] basic example tests
+      - [x] (NO) benchmarks
+        - nginx access.log test can't be done but the other two
+        - [ ] 2 separate tests, one per benchmark?
+      - [x] nixpkgs nixosTests?
+    - [x] examples
+      - [x] basic
+      - [x] (NO) maybe googlebot and ai-crawlers
+      - But upstream is very much for maintaining examples (without tests as of now)
+    - [x] demo-vm (can't be shell)
+      - [x] tied to basic example test from above
+      - [x] basic usage/test instructions
+  */
   nixos.modules.services = {
     reaction = {
       name = "Reaction";
