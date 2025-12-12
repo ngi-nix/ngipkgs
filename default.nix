@@ -28,61 +28,46 @@ let
       default # expose final scope
       flakeAttrs
       ;
-  overlays.default =
-    final: prev:
-    import ./pkgs/by-name {
-      pkgs = prev;
-      inherit lib dream2nix mkSbtDerivation;
-    };
 
-  # apply package fixes
-  overlays.fixups = import ./pkgs/overlays.nix { inherit lib; };
     ngipkgs = self.import ./pkgs/by-name { };
 
     shell = self.import ./maintainers/shells/default.nix { };
 
-  nixos-modules =
-    with lib;
-    # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
-    {
-      # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
-      ngipkgs =
-        { ... }:
-        {
-          nixpkgs.overlays = [ overlays.default ] ++ overlays.fixups;
+    overlays = {
+      default =
+        final: prev:
+        self.import ./pkgs/by-name {
+          pkgs = prev;
         };
-    }
-    // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues hydrated-projects));
 
-  overview = import ./overview {
-    inherit lib projects;
-    self = flake;
-    pkgs = pkgs.extend overlays.default;
-    options = optionsDoc.optionsNix;
-  };
+      devLib = _: _: devLib;
 
-  optionsDoc = pkgs.nixosOptionsDoc {
-    inherit
-      (lib.evalModules {
-        modules = [
+      fixups = self.call ./pkgs/overlays.nix { };
+    };
+
+    optionsDoc = pkgs.nixosOptionsDoc {
+      inherit (self.project-utils.eval-projects) options;
+    };
+
+    overview = self.import ./overview {
+      self = flake;
+      pkgs = pkgs.extend self.overlays.default;
+      options = self.optionsDoc.optionsNix;
+    };
+
+    nixos-modules =
+      # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
+      {
+        # Allow using packages from `ngipkgs` to be used alongside regular `pkgs`
+        ngipkgs =
+          { ... }:
           {
-            nixpkgs.hostPlatform = system;
-
-            networking = {
-              domain = "invalid";
-              hostName = "options";
-            };
-
-            system.stateVersion = "23.05";
-          }
-          ./overview/demo/shell.nix
-        ]
-        ++ extendedNixosModules;
-        specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
-      })
-      options
-      ;
-  };
+            nixpkgs.overlays = [ self.overlays.default ] ++ self.overlays.fixups;
+          };
+      }
+      // lib.foldl lib.recursiveUpdate { } (
+        map (project: project.nixos.modules) (lib.attrValues self.hydrated-projects)
+      );
 
     project-utils = self.import ./projects {
       pkgs = pkgs.extend default.overlays.default;
