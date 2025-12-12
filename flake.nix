@@ -20,70 +20,25 @@
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
 
+  # Flake attributes are defined in ./maintainers/flake and imported from ./default.nix
   outputs =
     {
       self,
-      nixpkgs,
       flake-utils,
-      pre-commit-hooks,
       ...
     }@inputs:
     let
-      classic' = import ./. {
-        flake = self;
-        system = null;
-      };
-      inherit (classic') lib extension;
+      flake = self;
+      sources = inputs;
 
-      inherit (lib)
-        concatMapAttrs
-        filterAttrs
-        ;
+      importFlake =
+        arg: (system: (import ./. { inherit flake sources system; }).flakeAttrs.${arg} or { });
 
-      overlay = classic'.overlays.default;
+      # system-independant (e.g. nixosModules)
+      systemAgnosticOutputs = flake-utils.lib.eachDefaultSystemPassThrough (importFlake "systemAgnostic");
 
-      toplevel = machine: machine.config.system.build.toplevel;
-
-      # Finally, define the system-agnostic outputs.
-      systemAgnosticOutputs = {
-        lib = extension;
-
-        nixosConfigurations = {
-          makemake = import ./infra/makemake { inherit inputs; };
-        };
-
-        # WARN: this is currently unstable and subject to change in the future
-        nixosModules = classic'.nixos-modules;
-
-        # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
-        overlays.default = overlay;
-      };
-
-      eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (
-        system:
-        let
-          classic = import ./. {
-            flake = self;
-            inherit system;
-          };
-
-          inherit (classic) pkgs ngipkgs optionsDoc;
-        in
-        rec {
-          packages = ngipkgs // {
-            inherit (classic) overview demos;
-
-            options =
-              pkgs.runCommand "options.json"
-                {
-                  build = optionsDoc.optionsJSON;
-                }
-                ''
-                  mkdir $out
-                  cp $build/share/doc/nixos/options.json $out/
-                '';
-          };
-
+      # depends on the system (e.g. packages.x86_64-linux)
+      eachDefaultSystemOutputs = flake-utils.lib.eachDefaultSystem (importFlake "perSystem");
     in
     eachDefaultSystemOutputs // systemAgnosticOutputs;
 }
