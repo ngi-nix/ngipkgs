@@ -68,6 +68,11 @@ rec {
   # apply package fixes
   overlays.fixups = import ./pkgs/overlays.nix { inherit lib; };
 
+  doc = pkgs.callPackage doc/default.nix rec {
+    version = "0.0.0"; # FixMe(maint): use something better, alas self.rev is not available there.
+    revision = "release-${version}";
+  };
+
   examples =
     with lib;
     mapAttrs (
@@ -242,7 +247,8 @@ rec {
         file = "${toString ./projects/types.nix}";
         output = "${toString ./maintainers/docs/project.md}";
       })
-    ];
+    ]
+    ++ lib.attrValues (doc.shell.packages);
   };
 
   metrics = import ./maintainers/metrics.nix {
