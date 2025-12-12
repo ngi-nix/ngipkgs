@@ -1,10 +1,5 @@
 {
-  django-admin-tools,
-  django-constance,
-  django-honeypot,
-  django-simple-math-captcha,
   fetchFromGitHub,
-  ixxy-email-logger,
   lib,
   makeWrapper,
   python3,
@@ -13,6 +8,11 @@ let
   python3' = python3.override {
     packageOverrides = final: prev: {
       django = final.django_5;
+      django-admin-tools = final.callPackage ./django-admin-tools.nix { };
+      django-constance = final.callPackage ./django-constance.nix { };
+      django-honeypot = final.callPackage ./django-honeypot.nix { };
+      django-simple-math-captcha = final.callPackage ./django-simple-math-captcha.nix { };
+      ixxy-email-logger = final.callPackage ./ixxy-email-logger.nix { };
     };
   };
   python3Packages = python3'.pkgs;
@@ -36,52 +36,43 @@ python3Packages.buildPythonApplication rec {
   ];
 
   dependencies =
-    (map (p: p.override { inherit python3Packages; }) [
-      django-admin-tools
-      django-constance
-      django-honeypot
-      django-simple-math-captcha
-      ixxy-email-logger
-    ])
-    ++ (
-      with python3Packages;
-      [
-        b2sdk
-        bcrypt
-        boto3
-        botocore
-        django-autocomplete-light
-        django-axes
-        django-compressor
-        django-cors-headers
-        django-debug-toolbar
-        django-extensions
-        django-ratelimit
-        django-redis
-        django-import-export
-        django-libsass
-        django-maintenance-mode
-        django-ninja
-        django-silk
-        django-storages
-        django
-        gunicorn
-        huey
-        ijson
-        passlib
-        pillow
-        psycopg2
-        pydantic
-        pyjwt
-        python-magic
-        requests
-        s3transfer
-        sentry-sdk
-      ]
-      ++ django-import-export.optional-dependencies.all
-      ++ pydantic.optional-dependencies.email
-      ++ sentry-sdk.optional-dependencies.django
-    );
+    with python3Packages;
+    [
+      b2sdk
+      bcrypt
+      boto3
+      botocore
+      django-autocomplete-light
+      django-axes
+      django-compressor
+      django-cors-headers
+      django-debug-toolbar
+      django-extensions
+      django-ratelimit
+      django-redis
+      django-import-export
+      django-libsass
+      django-maintenance-mode
+      django-ninja
+      django-silk
+      django-storages
+      django
+      gunicorn
+      huey
+      ijson
+      passlib
+      pillow
+      psycopg2
+      pydantic
+      pyjwt
+      python-magic
+      requests
+      s3transfer
+      sentry-sdk
+    ]
+    ++ django-import-export.optional-dependencies.all
+    ++ pydantic.optional-dependencies.email
+    ++ sentry-sdk.optional-dependencies.django;
 
   nativeBuildInputs = [
     makeWrapper
