@@ -53,13 +53,6 @@ let
     }
     // foldl recursiveUpdate { } (map (project: project.nixos.modules) (attrValues hydrated-projects));
 
-  extendedNixosModules =
-    let
-      ngipkgsModules = lib.attrValues (lib.flattenAttrs "." nixos-modules);
-      nixosModules = import "${sources.nixpkgs}/nixos/modules/module-list.nix";
-    in
-    nixosModules ++ ngipkgsModules;
-
   overview = import ./overview {
     inherit lib projects;
     self = flake;
@@ -217,6 +210,17 @@ let
       hydrated-projects
       ;
 
+    demo-utils = self.import ./overview/demo {
+      ngipkgs-modules = lib.attrValues (devLib.flattenAttrs "." self.nixos-modules);
+    };
+
+    inherit (self.demo-utils)
+      # for demo code activation. used in the overview code snippets
+      demo-shell
+      demo-vm
+      # - $(nix-build -A demos.PROJECT_NAME)
+      # - nix run .#demos.PROJECT_NAME
+      demos
       ;
     raw-projects = hydrated-projects;
   };
@@ -225,25 +229,6 @@ let
     inherit lib pkgs metrics;
   };
 
-  inherit
-    (import ./overview/demo {
-      inherit
-        lib
-        pkgs
-        sources
-        system
-        projects
-        ;
-      nixos-modules = extendedNixosModules;
-    })
-    # for demo code activation. used in the overview code snippets
-    demo-shell
-    demo-vm
-    # - $(nix-build -A demos.PROJECT_NAME)
-    # - nix run .#demos.PROJECT_NAME
-    demos
-    ;
-}
   });
 in
 default
