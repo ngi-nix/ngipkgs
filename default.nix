@@ -199,11 +199,6 @@ let
     ];
   };
 
-  metrics = import ./maintainers/metrics.nix {
-    inherit
-      lib
-      pkgs
-      ngipkgs
     inherit (self.project-utils)
       checks
       projects
@@ -222,13 +217,12 @@ let
       # - nix run .#demos.PROJECT_NAME
       demos
       ;
-    raw-projects = hydrated-projects;
-  };
 
-  report = import ./maintainers/report {
-    inherit lib pkgs metrics;
-  };
+    metrics = self.import ./maintainers/metrics.nix {
+      raw-projects = self.hydrated-projects;
+    };
 
+    report = self.import ./maintainers/report { };
   });
 in
 default
