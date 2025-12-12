@@ -16,6 +16,8 @@
 let
   devLib = import ./pkgs/lib.nix { inherit lib sources system; };
 
+  flakeAttrs = default.import ./maintainers/flake { };
+
   default = devLib.customScope pkgs.newScope (self: {
     lib = lib.extend self.overlays.devLib;
 
