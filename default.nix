@@ -14,32 +14,20 @@
   lib ? import "${sources.nixpkgs}/lib",
 }:
 let
-  dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
-  nixdoc-to-github = pkgs.callPackage sources.nixdoc-to-github { };
+  devLib = import ./pkgs/lib.nix { inherit lib sources system; };
 
-  extension = import ./pkgs/lib.nix { inherit lib sources system; };
-  extended = lib.extend (_: _: extension);
+  default = devLib.customScope pkgs.newScope (self: {
+    lib = lib.extend self.overlays.devLib;
 
-  ngipkgs = import ./pkgs/by-name {
     inherit
+      devLib
       pkgs
-      dream2nix
-      mkSbtDerivation
+      system
+      sources
+      flake
+      default # expose final scope
+      flakeAttrs
       ;
-    lib = extended;
-  };
-in
-rec {
-  lib = extended;
-
-  inherit
-    pkgs
-    system
-    sources
-    extension
-    ngipkgs
-    ;
-
   overlays.default =
     final: prev:
     import ./pkgs/by-name {
@@ -49,6 +37,7 @@ rec {
 
   # apply package fixes
   overlays.fixups = import ./pkgs/overlays.nix { inherit lib; };
+    ngipkgs = self.import ./pkgs/by-name { };
 
   examples =
     with lib;
@@ -259,5 +248,8 @@ rec {
     demos
     ;
 }
+  });
+in
+default
 # required for update scripts
-// ngipkgs
+// default.ngipkgs
