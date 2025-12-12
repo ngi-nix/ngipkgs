@@ -105,8 +105,8 @@ pkgs.mkShellNoCC {
     (nixdoc-to-github.lib.nixdoc-to-github.run {
       description = "NGI Project Types";
       category = "";
-      file = "${toString ./projects/types.nix}";
-      output = "${toString ./maintainers/docs/project.md}";
+      file = "${toString ../../projects/types.nix}";
+      output = "${toString ../../maintainers/docs/project.md}";
     })
   ];
 }
