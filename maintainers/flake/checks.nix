@@ -13,7 +13,10 @@
 # buildbot executes `nix flake check`, therefore this output
 # should only contain derivations that can built within CI.
 # See ./infra/makemake/buildbot.nix for how it is set up.
-# NOTE: `nix flake check` requires a flat attribute set of derivations, which is an annoying constraint...
+
+# NOTE: `nix flake check` requires a flat attribute set of derivations, which
+# is an annoying constraint...
+
 let
   inherit (lib)
     filterAttrs
@@ -23,6 +26,8 @@ let
   # TODO: rename toplevel attributes?
   self = flake;
   projects = hydrated-projects;
+
+  toplevel = machine: machine.config.system.build.toplevel; # for makemake
 
   # everything must evaluate for checks to run
   nonBrokenPackages = filterAttrs (_: v: !v.meta.broken or false) ngipkgs;
@@ -69,7 +74,7 @@ let
         nixfmt-rfc-style.enable = true;
       };
     };
-    "infra/makemake" = with self; toplevel nixosConfigurations.makemake;
+    "infra/makemake" = toplevel self.nixosConfigurations.makemake;
     "infra/overview" = overview;
   };
 in

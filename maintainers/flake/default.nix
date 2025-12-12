@@ -13,8 +13,6 @@
       makemake = import ../../infra/makemake { inputs = default.sources; };
     };
 
-    toplevel = machine: machine.config.system.build.toplevel; # for makemake
-
     # WARN: this is currently unstable and subject to change in the future
     nixosModules = default.nixos-modules;
 
