@@ -21,19 +21,6 @@ in
 let
   dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
   nixdoc-to-github = pkgs.callPackage sources.nixdoc-to-github { };
-  mkSbtDerivation =
-    x:
-    import sources.sbt-derivation (
-      x
-      // {
-        inherit pkgs;
-        overrides = {
-          sbt = pkgs.sbt.override {
-            jre = pkgs.jdk17_headless;
-          };
-        };
-      }
-    );
 
   extension = import ./pkgs/lib.nix { inherit lib sources system; };
   extended = lib.extend (_: _: extension);
