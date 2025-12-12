@@ -39,11 +39,6 @@ let
   overlays.fixups = import ./pkgs/overlays.nix { inherit lib; };
     ngipkgs = self.import ./pkgs/by-name { };
 
-  examples =
-    with lib;
-    mapAttrs (
-      _: project: mapAttrs (_: example: example.module) project.nixos.examples
-    ) hydrated-projects;
 
   nixos-modules =
     with lib;
@@ -95,20 +90,15 @@ let
       ;
   };
 
-  inherit
-    (import ./projects {
-      inherit lib system;
-      pkgs = pkgs.extend overlays.default;
+    project-utils = self.import ./projects {
+      pkgs = pkgs.extend default.overlays.default;
       sources = {
         inputs = sources;
-        modules = nixos-modules;
-        inherit examples;
+        modules = default.nixos-modules;
+        examples = lib.mapAttrs (
+          _: project: lib.mapAttrs (_: example: example.module) project.nixos.examples
+        ) self.hydrated-projects;
       };
-    })
-    checks
-    projects
-    hydrated-projects
-    ;
 
   shell = pkgs.mkShellNoCC {
     packages = [
@@ -221,6 +211,12 @@ let
       lib
       pkgs
       ngipkgs
+    inherit (self.project-utils)
+      checks
+      projects
+      hydrated-projects
+      ;
+
       ;
     raw-projects = hydrated-projects;
   };
