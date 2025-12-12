@@ -5,6 +5,54 @@
   ...
 }@args:
 rec {
+  /*
+    Adapted from `lib.customisation.makeScope`:
+    https://nixos.org/manual/nixpkgs/stable/#function-library-lib.customisation.makeScope
+
+    # Usage
+    - `fix`: compute the result of the final scope
+    - `call`: return an overridable result (e.g. packages that should be customizable)
+    - `import`: return a non-overridable result (e.g. top-level imports)
+  */
+  customScope =
+    newScope: f:
+    let
+      self = f self // {
+        newScope = scope: newScope (self // scope);
+        overrideScope = g: customScope newScope (lib.extends g f);
+        callPackage = self.newScope { };
+
+        # Compute a scope's fixpoint using `callPackage`
+        # Example: finalScope = scope.fix scope;
+        # See: https://nixos.org/manual/nixpkgs/unstable/#sec-functions-library-fixedPoints
+        fix = f;
+
+        # Similar to `pkgs.callPackage`, but aware of `default` scope attributes.
+        # The result is overridable.
+        call = self.newScope {
+          nixdoc-to-github = self.callPackage sources.nixdoc-to-github { };
+          dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
+        };
+
+        # Similar to `import`, but aware of `default` scope attributes.
+        # The result is not overridable.
+        import =
+          file: args:
+          let
+            result = self.call file args;
+          in
+          if lib.isAttrs result then
+            removeAttrs result [
+              "override"
+              "overrideDerivation"
+            ]
+          else
+            # Other results are expected for certain cases (e.g. functions).
+            result;
+      };
+    in
+    self;
+
   # Take an attrset of arbitrary nesting and make it flat
   # by concatenating the nested names with the given separator.
   flattenAttrs =
