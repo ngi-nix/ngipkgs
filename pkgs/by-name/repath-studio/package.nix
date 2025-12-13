@@ -1,13 +1,14 @@
 {
   lib,
   stdenv,
-  fetchpatch,
 
   buildNpmPackage,
   fetchFromGitHub,
+  pkg-config,
   electron,
   chromium,
   clojure,
+  vips,
 
   writeShellScriptBin,
   copyDesktopItems,
@@ -20,13 +21,13 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "repath-studio";
-  version = "0.4.10";
+  version = "0.4.11";
 
   src = fetchFromGitHub {
-    owner = "repath-project";
+    owner = "repath-studio";
     repo = "repath-studio";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-xV4/vJ3t9s1JPd++rTMngiVXB78/OHyKDNVGrCjufBk=";
+    hash = "sha256-C6/cch088QjiZ53LWyJ4Ss8fXow4h8ObV8UmRq67Og0=";
   };
 
   patches = [
@@ -38,20 +39,21 @@ buildNpmPackage (finalAttrs: {
         hash = "sha256-ZOv+9TxBsOnSSbfM7kJLP3cQH9FpgA15aETszg7YSes=";
       };
     })
-    # TODO: remove on next release
-    # repath-project -> repath-studio
-    ./0001-update-org.patch
   ];
 
   makeCacheWritable = true;
 
-  npmDepsHash = "sha256-++PG//GNThHpN/u6Za8css0ovj4RMjqWrIo8PjaO/eM=";
+  npmDepsHash = "sha256-ABP+X1fHMv6JDjOFCEPArMrKPHurmDIY3l8S1fVp224=";
 
   nativeBuildInputs = [
     finalAttrs.passthru.clojureWithCache
     makeWrapper
     copyDesktopItems
+    pkg-config # sharp
   ];
+
+  # For 'sharp' dependency, otherwise it will try to build it
+  buildInputs = [ vips ];
 
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = true;
@@ -102,7 +104,7 @@ buildNpmPackage (finalAttrs: {
 
       # FIX: this isn't 100% reproducible since it changes each time `clojure` is updated
       # https://github.com/ngi-nix/ngipkgs/pull/1727#discussion_r2470180998
-      outputHash = "sha256-BmbzkhIc15EnGZWe17VTQcZ8l+byFOZnH8lBgaji04k=";
+      outputHash = "sha256-kx+SRxiA2heXtIImQCHvb60LjIC8jtsdI5OvHM1qtks=";
       outputHashMode = "recursive";
       outputHashAlgo = "sha256";
     };
@@ -168,6 +170,7 @@ buildNpmPackage (finalAttrs: {
     runHook preCheck
     export ELECTRON_OVERRIDE_DIST_PATH=electron-dist/
     export PUPPETEER_EXECUTABLE_PATH=${chromium}/bin/chromium
+    export CHROME_BIN=${chromium}/bin/chromium
     npm run test
     unset ELECTRON_OVERRIDE_DIST_PATH
     runHook postCheck
@@ -189,10 +192,10 @@ buildNpmPackage (finalAttrs: {
   passthru.updateScript = nix-update-script { };
 
   meta = {
-    changelog = "https://github.com/repath-project/repath-studio/blob/v${finalAttrs.version}/CHANGELOG.md";
+    changelog = "https://github.com/repath-studio/repath-studio/blob/v${finalAttrs.version}/CHANGELOG.md";
     description = "Cross-platform vector graphics editor, that combines procedural tooling with traditional design workflows";
     homepage = "https://repath.studio";
-    downloadPage = "https://github.com/repath-project/repath-studio";
+    downloadPage = "https://github.com/repath-studio/repath-studio";
     license = lib.licenses.agpl3Only;
     mainProgram = "repath-studio";
     maintainers = with lib.maintainers; [ phanirithvij ];
