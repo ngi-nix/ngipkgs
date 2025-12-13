@@ -1,0 +1,4 @@
+{ ... }:
+{
+  services.goupile.enable = true;
+}
