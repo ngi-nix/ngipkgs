@@ -45,6 +45,13 @@ let
     mapAttrs
     ;
 
+  tryElse =
+    x: def:
+    let
+      res = builtins.tryEval x;
+    in
+    if res.success then res.value else def;
+
   myTeam = pkgs.lib.teams.${team};
 
   isMaintainedBy =
@@ -53,12 +60,7 @@ let
       pkg.meta.teams or [ ] ++ (flatten (map (x: x.members or [ ]) (pkg.meta.teams or [ ])))
     );
 
-  isDerivationRobust =
-    pkg:
-    let
-      result = builtins.tryEval (isDerivation pkg);
-    in
-    if result.success then result.value else false;
+  isDerivationRobust = pkg: tryElse (isDerivation pkg) false;
 
   brokenFilter =
     pkg:
@@ -72,12 +74,7 @@ let
     else
       false;
 
-  isPkgSet =
-    pkg:
-    let
-      result = builtins.tryEval ((isAttrs pkg) && (pkg.recurseForDerivations or false));
-    in
-    if result.success then result.value else false;
+  isPkgSet = pkg: tryElse ((isAttrs pkg) && (pkg.recurseForDerivations or false)) false;
 
   recursePackageSet =
     pkgSetName: pkgs:
