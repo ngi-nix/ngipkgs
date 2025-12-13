@@ -4,8 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### .github/ISSUE_TEMPLATE
+
+- Project templates cleanup
+
+
 ### Bug Fixes
 
+- *ci* Update archlinux packages before installing nix
+- *demo* Run command with flakes
 - *overview* Add fallback for overview version
 - Deprecated nixosTest alias
 - Don't evaluate paths in module options
@@ -15,24 +22,37 @@ All notable changes to this project will be documented in this file.
 
 - Fix changelog config with recent git-cliff
 - Add workflow to update changelog
+- Add automatic package updates workflow
 
 
 ### Documentation
 
+- *metrics* Remove Uncategorized grant from metrics
 - *report/packaging* Improve output of packaging report script
 - *report/packaging* Don't link to demo
 - *report/packaging* Remove redunadant information
+- *report/packaging* Remove Uncategorized grant category
 - Document metrics summary outputs
 - Automate packaging report
 - Add subgrant details for packaging report
 - Fix triaging instructions' bullet point indentation
 - Add reporting documentation
+- Move REPORTING documentation to maintainers dir
 
 
 ### Features
 
 - *types* Enforce subgrant structure in metadata
 - Count maintained derivations in Nixpkgs
+- Apply packages fixes inside tests
+
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG.md
+- Remove propagated package fixes
+- Disable kazarma and anastasis updates
+- Trim stray newline from demos
 
 
 ### Overview
@@ -48,15 +68,93 @@ All notable changes to this project will be documented in this file.
 - Use markdown for triage issue template
 
 
+### _0wm-client
+
+- 0-unstable-2025-10-16 -> 0-unstable-2025-10-27
+
+
+### _0wm-opmode
+
+- 0-unstable-2025-09-23 -> 0-unstable-2025-10-27
+
+
+### _0wm-server
+
+- 0-unstable-2025-09-23 -> 0-unstable-2025-11-24
+
+
 ### Bigbluebutton.bbb-freeswitch-core
 
 - Switch to overriding packages from Nixpkgs
 
 
+### Bigbluebutton.bbb-freeswitch-core.libks
+
+- Reapply patches that fix bugs in tests
+
+
+### Bigbluebutton.bbb-freeswitch-core.libwebsockets
+
+- Reapply CVE fix that is still relevant, drop irrelevant one
+
+
+### Demo
+
+- Refactor and expose in the toplevel
+
+
+### Helium
+
+- 5.1.1 -> 5.1.2
+
+
+### Inventaire-i18n
+
+- 0-unstable-2025-10-20 -> 0-unstable-2025-11-23
+
+
+### Meta-press
+
+- 1.9.1 -> 1.9.3
+
+
+### Nodebb
+
+- 4.6.0 -> 4.6.3
+
+
+### Peertube-plugin-akismet
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-ldap
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-openid-connect
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-saml2
+
+- 0.0.8 -> 0-unstable-2025-11-20
+
+
 ### Pkgs
 
 - *bigbluebutton.bbb-freeswitch-core* Fix build
+- *python3-sipsimple* Remove stale derivation
 - *repath-studio* Fix org change
+- *sstorytime* Init at 0.1.2-alpha
+- *sstorytime* 0.1.2-alpha -> 0.1.3-alpha-unstable-2025-11-17
+
+
+### Pkgs/pdfding
+
+- Init at 1.4.1
 
 
 ### Pkgs/tau-radio
@@ -71,12 +169,23 @@ All notable changes to this project will be documented in this file.
 
 ### Projects
 
+- *0WM* Fix dbus session address for test
+- *Blink* Enable dummy sound card in test
+- *Blink* Login with user SIP account in test
+- *Ethersync* Rename to Teamtype; refactor
 - *Marginalia* Mark as broken
+- *Nominatim* Fix test dependency
+- *Nominatim* Use tests from Nixpkgs
 
 
 ### Projects/Tau
 
 - Init
+
+
+### Python3Packages.sipsimple
+
+- Pin ffmpeg to version 7
 
 
 ### Treewide
