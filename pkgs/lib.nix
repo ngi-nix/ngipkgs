@@ -31,7 +31,7 @@ rec {
         # The result is overridable.
         call = self.newScope {
           nixdoc-to-github = self.callPackage sources.nixdoc-to-github { };
-          dream2nix = (import sources.dream2nix).overrideInputs { inherit (sources) nixpkgs; };
+          dream2nix = sources.dream2nix;
         };
 
         # Similar to `import`, but aware of `default` scope attributes.
