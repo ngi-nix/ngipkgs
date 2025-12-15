@@ -2,7 +2,7 @@
   lib,
   hillingar,
   fetchFromGitHub,
-  gmp,
+  pkgsStatic,
 }:
 
 let
@@ -21,16 +21,30 @@ let
         hash = "sha256-Q+g4SO2GDlD2wjz8sjfSEypObpoldkTUMth9RfP1ZdY=";
       })
       {
-        # in .cirrus.yml, there are ocaml versions used by upstream CI
         unikernelName = "dnsvizor";
-        depexts = [ gmp ];
+        depexts = [
+          pkgsStatic.gmp # some targets, such as hvt, need static gmp
+        ];
         monorepoQuery = {
+          uutf = "1.0.3+dune"; # default version is not in the dune overlay yet
         };
         query = {
+          # follow upstream CI version (.cirrus.yml) because newer ones fail to build
+          ocaml-base-compiler = "4.14.2";
         };
       };
 
-  enabledTargets = [ "unix" ]; # TODO(linj) build more targtes such as hvt
+  enabledTargets = [
+    "unix"
+    "hvt"
+    "spt"
+    "xen"
+    "qubes"
+    "virtio"
+    "muen"
+    # "macosx"
+    # "genode"
+  ];
 
   # This project has no release so the inferred version is "dev", which is invalid for nix.
   # Use this function to make it valid when necessary.
