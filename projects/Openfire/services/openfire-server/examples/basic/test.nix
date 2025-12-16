@@ -37,11 +37,17 @@
           settings.jive.adminConsole.interface = "0.0.0.0";
           settings.jive.autosetup.run = true;
           settings.jive.autosetup.users = {
-            alice = {
-              username = "alice";
-              password = "alice";
-              name = "Alice";
-              email = "alice@example.org";
+            user1 = {
+              username = "charlie";
+              password = "charlie";
+              name = "Charlie";
+              email = "charlie@example.org";
+            };
+            user2 = {
+              username = "david";
+              password = "david";
+              name = "David";
+              email = "david@example.org";
             };
           };
         };

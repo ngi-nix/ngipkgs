@@ -131,8 +131,6 @@ in
       description = "Authentication provider.";
     };
 
-    # TODO(@eljamm): test that users are created successfully
-    # TODO(@eljamm): should be incremental? (user1, user2, ...)
     users =
       let
         user.options = {
@@ -164,6 +162,7 @@ in
       mkOption {
         type = types.attrsOf (types.submodule user);
         default = { };
+        description = "User configurations.";
         example = {
           user1 = {
             username = "jane";
@@ -178,7 +177,29 @@ in
             ];
           };
         };
-        description = "User configurations.";
+
+        /*
+          NOTE: it's necessary that users are defined as increment numbers
+          (e.g. user1, user2, ...), else they're not created.
+          Instead of enforcing this as a check, we're creating a new attribute
+          set to fit this requirement, which arguably provides a better UX.
+
+          ## Example
+
+          ```
+          users = { alice = ...; bob = ...; }
+          ->
+          users = { user1 = ...; user2 = ...; }
+          ```
+        */
+        apply =
+          self:
+          let
+            # sort for consistency since it's not always guarenteed that items
+            # will be in the same order.
+            sortedUsers = lib.sortOn (x: x.username) (lib.attrValues self);
+          in
+          lib.listToAttrs (lib.imap1 (i: v: lib.nameValuePair "user${toString i}" v) sortedUsers);
       };
   };
 
