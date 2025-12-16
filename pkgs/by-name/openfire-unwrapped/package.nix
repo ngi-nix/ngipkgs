@@ -4,9 +4,10 @@
   fetchFromGitHub,
   jdk_headless,
   makeWrapper,
+  coreutils,
 }:
 maven.buildMavenPackage rec {
-  pname = "openfire";
+  pname = "openfire-unwrapped";
   version = "5.0.2";
 
   src = fetchFromGitHub {
@@ -23,6 +24,11 @@ maven.buildMavenPackage rec {
   mvnParameters = "-Dmaven.test.skip";
 
   nativeBuildInputs = [ makeWrapper ];
+
+  preBuild = ''
+    substituteInPlace distribution/src/bin/openfirectl \
+      --replace-fail '"$(id -u)"' '"$(${lib.getExe' coreutils "id"} -u)"'
+  '';
 
   installPhase = ''
     runHook preInstall
