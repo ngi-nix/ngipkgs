@@ -87,40 +87,11 @@
 
       server.wait_for_x()
 
-      # open browser
-      server.succeed("su - alice -c '${env} chromium http://localhost:${port} >&2 &'")
-      server.wait_for_text(r"(Welcome|Setup|Openfire)")
-
       with subtest("Setup Openfire"):
-        # Lagnuage Selection
-        server.send_key("end")
-        server.wait_for_text(r"(language|translation|Continue)")
-        click_position(873, 540) # Continue
-
-        # Server Settings
-        server.wait_for_text(r"(network|XMPP|FQDN|Restrict|Console|Access)")
-        click_position(460, 462) # Restrict Admin Console Access (disable)
-        click_position(873, 670) # Continue
-
-        # Database Settings
-        server.wait_for_text(r"(Standard|Connection|Embedded|HSQLDB)")
-        click_position(300, 400) # Embedded Database
-        click_position(873, 490) # Continue
-
-        # Profile Settings
-        server.wait_for_text(r"(Profile|Default|user|group|LDAP)")
-        click_position(873, 510) # Continue
-
-        # Admin Account
-        server.wait_for_text(r"(Administrator|Email|Address|Password)")
-        server.send_chars("admin")
-        server.send_key("tab")
-        server.send_chars("admin\n")
-
         server.wait_for_console_text("Finished processing all plugins.")
-        click_position(361, 382) # Login to the admin console
 
-        # Login
+        # Login as admin
+        server.succeed("su - alice -c '${env} chromium http://localhost:${port} >&2 &'")
         server.wait_for_text(r"(openfire|Administration|console|username|password)")
         server.send_chars("admin")
         server.sleep(1)
@@ -140,28 +111,6 @@
         server.send_key("end")
         server.wait_for_text(r"(Save|Additional|Logging)")
         click_position(305, 646) # Save Settings
-
-        with subtest("Enable `adminConsole.access.allow-wildcards-in-excludes` property"):
-          server.succeed("""
-            su - alice -c '${env} chromium "http://localhost:9090/server-properties.jsp?sortOrder=1&sortColumnNumber=0&searchName=allow-wildcards-in-excludes" >&2 &'
-          """)
-
-          # Login
-          server.wait_for_text(r"(openfire|Administration|console|username|password)")
-          server.send_chars("admin")
-          server.send_key("tab")
-          server.send_chars("admin\n")
-          server.wait_for_text(r"(allow|wildcards|excludes|System|Properties|Name|Value)")
-
-          # scroll to the right
-          for i in range(10):
-            server.send_key("right")
-
-          click_position(978, 538) # Edit property
-          server.send_key("ctrl-a")
-          server.send_chars("true")
-          click_position(319, 622) # Save property
-          server.wait_for_text(r"(properties|updated|hidden|system)")
 
         # Reload rest-api plugin
         server.succeed("touch ${cfg.stateDir}/plugins/${cfg.package.passthru.openfirePlugins.rest-api.jarName}.jar")
@@ -183,9 +132,6 @@
               "description": "Global chat room"
             }'
       """)
-
-      # server.succeed("su - alice -c '${env} xterm >&2 &'")
-      # server.send_chars("xdotool getmouselocation --shell\n")
     '';
 
   # ssh -o User=root vsock/3
