@@ -19,7 +19,12 @@ let
         owner = "linj-fork";
         repo = "dnsvizor";
         rev = "8b5281ebfdbd3eb0784f5ffdf145d955c438a634";
-        hash = "sha256-Q+g4SO2GDlD2wjz8sjfSEypObpoldkTUMth9RfP1ZdY=";
+        hash = "sha256-RyqSTxlJOMKQcZscH/ZcE5zuDYCsoHpr0f+cftMgc/I=";
+        # TODO(linj) enable test
+        # currently tests fail to build if target is not "unix"
+        postFetch = ''
+          rm -vrf $out/test
+        '';
       })
       {
         unikernelName = "dnsvizor";
