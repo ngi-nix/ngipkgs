@@ -62,7 +62,7 @@ in
 
     dataDir = lib.mkOption {
       type = lib.types.str;
-      defaultText = lib.literalExpression ''"''${config.services.openfire.package}/opt"'';
+      defaultText = lib.literalExpression ''"''${config.services.openfire-server.package}/opt"'';
       description = ''
         Where to load readonly data from.
       '';
