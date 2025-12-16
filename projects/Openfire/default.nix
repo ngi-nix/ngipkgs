@@ -22,4 +22,25 @@
       };
     };
   };
+
+  nixos.demo.vm = {
+    module = ./demo/module.nix;
+    module-demo = ./demo/module-demo.nix;
+    usage-instructions = [
+      {
+        instruction = ''
+          Visit [http://127.0.0.1:9090](http://127.0.0.1:9090) in your browser
+        '';
+      }
+      {
+        instruction = ''
+          Log in with the admin account:
+
+            - username: admin
+            - password: admin
+        '';
+      }
+    ];
+    tests.demo.module = import ./services/openfire-server/examples/basic/test.nix args;
+  };
 }
