@@ -15,10 +15,10 @@
 
   nixos.modules.services = {
     openfire-server = {
-      module = ./module.nix;
+      module = ./services/openfire-server/module/default.nix;
       examples."Enable Openfire server" = {
-        module = ./example.nix;
-        tests.basic.module = import ./test.nix args;
+        module = ./services/openfire-server/examples/basic/default.nix;
+        tests.basic.module = import ./services/openfire-server/examples/basic/test.nix args;
       };
     };
   };
