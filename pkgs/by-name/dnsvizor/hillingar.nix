@@ -3,6 +3,7 @@
   hillingar,
   fetchFromGitHub,
   pkgsStatic,
+  stdenv,
 }:
 
 let
@@ -34,7 +35,7 @@ let
         };
       };
 
-  enabledTargets = [
+  targets = [
     "unix"
     "hvt"
     "spt"
@@ -42,9 +43,31 @@ let
     "qubes"
     "virtio"
     "muen"
-    # "macosx"
-    # "genode"
+    "macosx"
+    "genode"
   ];
+
+  # not use lib.isDerivation because it triggers IFD error if there is one
+  isDerivation = target: _package: lib.elem target targets;
+
+  # bad: eval failure by IFD or build failure
+  # do not use/set meta.broken because it doesn't cover eval failure by IFD
+  knownBad =
+    target:
+    (lib.elem target [
+      "macosx"
+      "genode"
+    ])
+    || (
+      stdenv.hostPlatform.isAarch64
+      && lib.elem target [
+        "xen"
+        "qubes"
+        "virtio"
+        "muen"
+      ]
+    );
+  notKnownBad = target: _package: !(knownBad target);
 
   # This project has no release so the inferred version is "dev", which is invalid for nix.
   # Use this function to make it valid when necessary.
@@ -55,6 +78,8 @@ let
       __intentionallyOverridingVersion = true;
     });
 in
-lib.mapAttrs (_target: package: overrideVersionIfDev version package) (
-  lib.filterAttrs (target: _package: lib.elem target enabledTargets) unikernel
-)
+lib.pipe unikernel [
+  (lib.filterAttrs isDerivation)
+  (lib.filterAttrs notKnownBad)
+  (lib.mapAttrs (_target: package: overrideVersionIfDev version package))
+]
