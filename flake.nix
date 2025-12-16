@@ -22,18 +22,7 @@
   inputs.hillingar.inputs.opam-repository.follows = "opam-repository";
   inputs.hillingar.inputs.opam-overlays.follows = "opam-overlays";
   inputs.hillingar.inputs.mirage-opam-overlays.follows = "mirage-opam-overlays";
-  inputs.hillingar.inputs.opam-nix.follows = "opam-nix";
-  inputs.hillingar.inputs.opam2json.follows = "opam-nix/opam2json";
-  # TODO(linj) handle my patches proerly: upstream them
-  inputs.hillingar.url = "github:linj-fork/hillingar?ref=local/debug-clean";
-  inputs.opam-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.opam-nix.inputs.flake-utils.follows = "flake-utils";
-  inputs.opam-nix.inputs.opam2json.inputs.systems.follows = "systems";
-  inputs.opam-nix.inputs.opam-repository.follows = "opam-repository";
-  inputs.opam-nix.inputs.opam-overlays.follows = "opam-overlays";
-  inputs.opam-nix.inputs.mirage-opam-overlays.follows = "mirage-opam-overlays";
-  # update opam-nix to fix eval error of new Nixpkgs: attribute 'overrideScope'' missing
-  inputs.opam-nix.url = "github:tweag/opam-nix";
+  inputs.hillingar.url = "github:RyanGibb/hillingar";
   # update ocaml-related overlays to use new-enough ocaml packages
   inputs.opam-repository = {
     url = "github:ocaml/opam-repository";
