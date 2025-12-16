@@ -1,20 +1,32 @@
 {
-  config,
   lib,
   pkgs,
+  config,
   ...
-}:
+}@args:
 let
   cfg = config.services.openfire-server;
+  settingsFormat = pkgs.formats.xml { };
+  configFile = settingsFormat.generate "openfire.xml" cfg.settings;
 in
 {
   options.services.openfire-server = {
     enable = lib.mkEnableOption "Openfire XMPP server";
     package = lib.mkPackageOption pkgs "openfire" { };
 
+    settings = lib.mkOption {
+      type = lib.types.submodule {
+        freeformType = settingsFormat.type;
+        options = import ./settings.nix args;
+      };
+      default = { };
+      description = "Openfire settings.";
+    };
+
+    # TODO: improve how state migration is handled (e.g. create backups instead of deleting)
     autoUpdateState = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = ''
         When enabled, the state directory will be automatically updated to
         match the installed package version.
@@ -74,7 +86,7 @@ in
     services.openfire-server.dataDir = lib.mkDefault "${cfg.package}/opt";
 
     users.users.openfire = {
-      description = "openfire server daemon user";
+      description = "Openfire server daemon user";
       home = cfg.stateDir;
       createHome = false;
       isSystemUser = true;
@@ -169,7 +181,15 @@ in
 
           # Install package to state directory (initial run)
           if [ ! -e "${cfg.stateDir}"/version ]; then
-            rsync -a --chmod=u=rwX,go=rX "${cfg.package}/opt/" "${cfg.stateDir}/"
+            rsync \
+              --copy-links \
+              --archive \
+              --chmod=u=rwX,go=rX \
+              "${cfg.package}/opt/" \
+              "${cfg.stateDir}/"
+
+            mv ${cfg.stateDir}/conf/openfire.xml ${cfg.stateDir}/conf/openfire.xml.bak
+            cp --no-preserve=mode ${configFile} ${cfg.stateDir}/conf/openfire.xml
           else
             if [ ${toString cfg.autoUpdateState} ]; then
               ${updateState}
