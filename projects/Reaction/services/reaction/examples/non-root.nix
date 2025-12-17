@@ -3,7 +3,7 @@
   config = {
     services.reaction = {
       enable = true;
-      stopForFirewall = false;
+      stopForFirewall = true;
       # example.jsonnet/example.yml can be copied and modified from ${pkgs.reaction}/share/examples
       settingsFiles = [ "${pkgs.reaction}/share/examples/example.jsonnet" ];
       runAsRoot = false;
