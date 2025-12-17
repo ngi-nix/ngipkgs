@@ -2,6 +2,7 @@
   lib,
   callPackage,
   pkgsCross,
+  linkFarmFromDrvs,
 }:
 
 let
@@ -35,6 +36,8 @@ let
   }
   // crossTargets;
 
+  linux = callPackage ./common.nix { targets = allTargets; };
+
   crossPackages = lib.concatMapAttrs (
     toolchain: targets:
     let
@@ -49,6 +52,10 @@ let
   ) crossTargets;
 in
 {
-  linux = callPackage ./common.nix { targets = allTargets; };
+  inherit linux;
+
+  # Combine all derivations into a single one
+  # $ nix-build -A lean-ftl.release
+  release = linkFarmFromDrvs "lean-ftl-release" ([ linux ] ++ (lib.attrValues crossPackages));
 }
 // crossPackages
