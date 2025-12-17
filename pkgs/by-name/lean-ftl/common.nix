@@ -9,6 +9,7 @@
 
   targets,
   target ? "linux",
+  buildType ? "MinSizeRel",
 }:
 
 let
@@ -56,7 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
     "test"
   ];
 
-  cmakeBuildType = "MinSizeRel";
+  cmakeBuildType = buildType;
 
   # sorry, unimplemented: '-fstack-check=specific' for Thumb-1
   hardeningDisable = lib.optionals isEmbeddedArm [
