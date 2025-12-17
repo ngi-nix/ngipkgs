@@ -31,6 +31,10 @@ stdenv.mkDerivation (finalAttrs: {
   postPatch = ''
     substituteInPlace cmake/gcc-riscv-none-elf.cmake \
       --replace-fail "riscv-none-elf" "riscv32-none-elf"
+    substituteInPlace on/ch32v307-none-embed \
+        --replace-fail "riscv-none-embed" "riscv32-none-elf"
+    substituteInPlace on/ch32v307-wch-elf \
+        --replace-fail "riscv-wch-elf" "riscv32-none-elf"
 
     # tests fail with: conflicting CPU architectures ARM v4T vs ARM v8-M.mainline
     substituteInPlace on/nucleo-u5a5zj-q \
