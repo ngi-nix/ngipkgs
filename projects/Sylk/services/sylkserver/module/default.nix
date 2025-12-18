@@ -18,11 +18,6 @@ let
       EOF
     '') (lib.attrNames cfg.settings)}
   '';
-
-  logsDir = cfg.settings.config.Server.trace_dir;
-  spoolDir = cfg.settings.config.Server.spool_dir;
-  transferDir = cfg.settings.conference.Conference.file_transfer_dir;
-  screensharingDir = cfg.settings.conference.Conference.screensharing_images_dir;
 in
 
 {
@@ -121,24 +116,6 @@ in
       group = cfg.group;
     };
 
-    systemd.tmpfiles.settings.sylkserver =
-      let
-        ruleArgs = {
-          inherit (cfg) user group;
-          mode = "770";
-        };
-      in
-      {
-        "${transferDir}".d = ruleArgs;
-        "${screensharingDir}".d = ruleArgs;
-      }
-      // lib.optionalAttrs (logsDir != "/var/log/sylkserver") {
-        "${logsDir}".d = ruleArgs;
-      }
-      // lib.optionalAttrs (spoolDir != "/var/lib/sylkserver") {
-        "${spoolDir}".d = ruleArgs;
-      };
-
     systemd.services.sylkserver = {
       description = "SylkServer SIP/XMPP/WebRTC Application Server";
       serviceConfig = {
@@ -152,13 +129,17 @@ in
         ];
         StateDirectory = [
           "sylkserver"
+          "sylkserver/file_transfer"
+          "sylkserver/screensharing_images"
         ];
         LogsDirectory = [
           "sylkserver"
         ];
         BindPaths = [
-          "%S/sylkserver/file_transfer:${transferDir}"
-          "%S/sylkserver/screensharing_images:${screensharingDir}"
+          cfg.settings.conference.Conference.file_transfer_dir
+          cfg.settings.conference.Conference.screensharing_images_dir
+          cfg.settings.config.Server.spool_dir
+          cfg.settings.config.Server.trace_dir
         ];
         Restart = "on-failure";
         RestartSec = 5;
