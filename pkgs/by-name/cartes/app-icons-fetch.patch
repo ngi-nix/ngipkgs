@@ -1,0 +1,82 @@
+--- a/app/icons/fetch.ts
++++ b/app/icons/fetch.ts
+@@ -17,7 +17,8 @@
+ 
+ import { bash, BashError } from 'https://deno.land/x/bash/mod.ts'
+ 
+-const shouldDownload = Deno.env.get('DO_DOWNLOAD')
++const nixUsePrefetched = Deno.env.get('NIX_USE_PREFETCHED')
++const shouldDownload = nixUsePrefetched || Deno.env.get('DO_DOWNLOAD')
+ 
+ if (!shouldDownload) {
+ 	console.log(
+@@ -29,12 +30,18 @@
+ const downloadCommand = `curl -L https://github.com/osmandapp/OsmAnd-resources/tarball/master/ > osmand-resources.tar.gz`
+ 
+ try {
+-	console.log('Will download Github folder as tarball')
+-	const tarball = await bash(downloadCommand)
+-	console.log('Github folder download as tarball')
+-	const extract = await bash(
+-		`rm -rf public/osmand-icons && mkdir public/osmand-icons && tar -xzvf osmand-resources.tar.gz -C public/osmand-icons --strip-components=1 --wildcards osman*/icons/svg/`
+-	)
++	if (nixUsePrefetched) {
++		const extract = await bash(
++			`rm -rf public/osmand-icons && mkdir -p public/osmand-icons/icons && cp -r ${nixUsePrefetched}/icons/svg public/osmand-icons/icons/svg`
++		)
++	} else {
++		console.log('Will download Github folder as tarball')
++		const tarball = await bash(downloadCommand)
++		console.log('Github folder download as tarball')
++		const extract = await bash(
++			`rm -rf public/osmand-icons && mkdir public/osmand-icons && tar -xzvf osmand-resources.tar.gz -C public/osmand-icons --strip-components=1 --wildcards osman*/icons/svg/`
++		)
++	}
+ 
+ 	const newLastUpdateDate = new Date().toISOString().split('T')[0]
+ 	await bash(
+@@ -46,11 +53,16 @@
+ 	}
+ }
+ 
++let text
+ // This scripts relies on this file that contains all icon names
+-const req = await fetch(
+-	'https://raw.githubusercontent.com/osmandapp/OsmAnd-resources/master/icons/tools/sortfiles.sh'
+-)
+-const text = await req.text()
++if (nixUsePrefetched) {
++	text = await Deno.readTextFile(nixUsePrefetched + "/icons/tools/sortfiles.sh")
++} else {
++	const req = await fetch(
++		'https://raw.githubusercontent.com/osmandapp/OsmAnd-resources/master/icons/tools/sortfiles.sh'
++	)
++	text = await req.text()
++}
+ 
+ const results = text
+ 	.split('\n')
+@@ -58,11 +70,18 @@
+ 	.map((el) => el.split('#')[0].trimEnd()) // they can have comments to end the line
+ 	.filter((el) => el.length > 0)
+ 
+-const iconDirectories = await listDirectory(
+-	'osmandapp',
+-	'OsmAnd-resources',
+-	'icons/svg'
+-)
++let iconDirectories = []
++if (nixUsePrefetched) {
++	for await (const dirEntry of Deno.readDir("public/osmand-icons/icons/svg")) {
++		iconDirectories.push(dirEntry.name);
++	}
++} else {
++	iconDirectories = await listDirectory(
++		'osmandapp',
++		'OsmAnd-resources',
++		'icons/svg'
++	)
++}
+ 
+ //console.log('cyan', iconDirectories)
+ const iconUrls = results.map((el) => {
