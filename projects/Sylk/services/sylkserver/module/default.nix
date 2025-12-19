@@ -6,7 +6,8 @@
 }@args:
 
 let
-  cfg = config.services.sylkserver;
+  service = "sylkserver";
+  cfg = config.services.${service};
   settingsFormat = pkgs.formats.ini { };
 
   configDir = pkgs.runCommand "sylkserver-config-dir" { } ''
@@ -22,7 +23,7 @@ in
 
 {
   options = {
-    services.sylkserver = {
+    services.${service} = {
       enable = lib.mkEnableOption "the SylkServer SIP/XMPP/WebRTC Application Server";
       package = lib.mkPackageOption pkgs "sylkserver" { };
       debug = lib.mkEnableOption "verbose logging";
@@ -128,13 +129,11 @@ in
           "--config-dir ${configDir}"
         ];
         StateDirectory = [
-          "sylkserver"
-          "sylkserver/file_transfer"
-          "sylkserver/screensharing_images"
+          service
+          "${service}/file_transfer"
+          "${service}/screensharing_images"
         ];
-        LogsDirectory = [
-          "sylkserver"
-        ];
+        LogsDirectory = [ service ];
         BindPaths = [
           cfg.settings.conference.Conference.file_transfer_dir
           cfg.settings.conference.Conference.screensharing_images_dir
