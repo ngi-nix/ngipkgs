@@ -34,18 +34,6 @@ in
         description = "Whether to open ports in the firewall for SylkServer.";
       };
 
-      user = lib.mkOption {
-        type = lib.types.nonEmptyStr;
-        default = "sylkserver";
-        description = "User account under which SylkServer runs.";
-      };
-
-      group = lib.mkOption {
-        type = lib.types.nonEmptyStr;
-        default = "sylkserver";
-        description = "Group under which SylkServer runs.";
-      };
-
       # See configuration samples for options
       # e.g. https://github.com/AGProjects/sylkserver/blob/master/config.ini.sample
       settings = lib.mkOption {
@@ -110,18 +98,18 @@ in
     # TODO: dynamic user?
     # there were some issues with using a dynamic user (tied to uid and gid)
     # that may warrant patching the software
-    users.groups.${cfg.group} = { };
-    users.users.${cfg.user} = {
+    users.groups.${service} = { };
+    users.users.${service} = {
       description = "SylkServer service user";
       isSystemUser = true;
-      group = cfg.group;
+      group = service;
     };
 
-    systemd.services.sylkserver = {
+    systemd.services.${service} = {
       description = "SylkServer SIP/XMPP/WebRTC Application Server";
       serviceConfig = {
-        User = cfg.user;
-        Group = cfg.group;
+        User = service;
+        Group = service;
         ExecStart = toString [
           (lib.getExe' cfg.package "sylk-server")
           (lib.optionalString cfg.debug "--debug")
