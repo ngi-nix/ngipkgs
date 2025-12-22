@@ -25,13 +25,13 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "manyfold";
-  version = "0.129.1";
+  version = "0.130.1";
 
   src = fetchFromGitHub {
     owner = "manyfold3d";
     repo = "manyfold";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-L/kM5A47DxypckTYRno9qK4hYYD9HC6CXxIzCRlOAWU=";
+    hash = "sha256-AqgbY/SEwDxfmI54szxac/LSyvotUkmy6ygRfrW6TRU=";
   };
 
   prePatch = ''
@@ -51,7 +51,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   missingHashes = ./missing-hashes.json;
   offlineCache = yarn-berry.fetchYarnBerryDeps {
     inherit (finalAttrs) src missingHashes;
-    hash = "sha256-Hrw7+1DOkKuoq4IUR/Gr/wMVjAPHGdI0nElYAgqAvnU=";
+    hash = "sha256-dhWz3B2PANyIC3ZGl/XKAEi8nNGekKKYh3SnPOZtWOk=";
   };
 
   # dynamically loaded by ruby gems
