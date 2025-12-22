@@ -7,23 +7,25 @@
 }:
 
 let
-  version = "0-unstable-2025-12-15";
+  version = "0-unstable-2025-12-17";
 
   unikernel =
     lib.flip hillingar.mkUnikernelPackages
       (fetchFromGitHub {
-        # owner = "robur-coop";
-        # TODO(linj) handle my patches properly
-        #   - upstream them to dnsvizor
-        #   - convert them arguments of mkUnikernelPackages: query, monorepoQuery
-        owner = "linj-fork";
+        owner = "robur-coop";
         repo = "dnsvizor";
-        rev = "8b5281ebfdbd3eb0784f5ffdf145d955c438a634";
-        hash = "sha256-RyqSTxlJOMKQcZscH/ZcE5zuDYCsoHpr0f+cftMgc/I=";
-        # TODO(linj) enable test
-        # currently tests fail to build if target is not "unix"
+        rev = "57dbfa7208c765ba531995d9638f4a68b4cc6c15";
+        hash = "sha256-heiCAB+1TlAVa23r1GD6WP2w3Ha8kbqKup/gzJz0EW8=";
+        # ideally we should use postPatch, but we cannot
         postFetch = ''
+          # TODO(linj) enable test
+          # currently tests fail to build if target is not "unix"
           rm -vrf $out/test
+
+          # TODO(linj) remove this patch after dnsvizor#114 is merged
+          substituteInPlace $out/config.ml --replace-fail \
+            'package ~min:"0.5.0" "metrics";' \
+            'package ~min:"0.5.0" "metrics"; package ~min:"0.5.0" "metrics-lwt";'
         '';
       })
       {
