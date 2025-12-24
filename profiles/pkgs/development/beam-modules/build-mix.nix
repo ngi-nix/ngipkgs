@@ -32,12 +32,14 @@ lib.extendMkDerivation {
       postPatch ? "",
       meta ? { },
       erlangCompilerOptions ? finalAttrs.erlangCompilerOptions or [ ],
-      # Deterministic Erlang builds remove full system paths from debug information
-      # among other things to keep builds more reproducible. See their docs for more:
-      # https://www.erlang.org/doc/man/compile
-      # Default to false because it breaks apps using Surface
-      # and does not improve determinisme within a sandboxed nix build
-      # which always builds in the same path.
+      # Description: deterministic omits the options and source tuples
+      # in the list returned by Module:module_info(compile),
+      # and reduce the paths in stack traces to the module name alone.
+      # Documentation: https://www.erlang.org/doc/man/compile
+      #
+      # Explanation: default to false because it breaks apps using Surface
+      # and does not improve determinism within a sandboxed nix build
+      # which always builds in the same path anyway.
       erlangDeterministicBuilds ? finalAttrs.erlangDeterministicBuilds or false,
       beamDeps ? finalAttrs.beamDeps or [ ],
       compilePorts ? finalAttrs.compilePorts or false,
