@@ -17,6 +17,26 @@
   inputs.nixdoc-to-github.flake = false;
   inputs.nixdoc-to-github.url = "github:fricklerhandwerk/nixdoc-to-github";
 
+  inputs.hillingar.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.hillingar.inputs.flake-utils.follows = "flake-utils";
+  inputs.hillingar.inputs.opam-repository.follows = "opam-repository";
+  inputs.hillingar.inputs.opam-overlays.follows = "opam-overlays";
+  inputs.hillingar.inputs.mirage-opam-overlays.follows = "mirage-opam-overlays";
+  inputs.hillingar.url = "github:RyanGibb/hillingar";
+  # update ocaml-related overlays to use new-enough ocaml packages
+  inputs.opam-repository = {
+    url = "github:ocaml/opam-repository";
+    flake = false;
+  };
+  inputs.opam-overlays = {
+    url = "github:dune-universe/opam-overlays";
+    flake = false;
+  };
+  inputs.mirage-opam-overlays = {
+    url = "github:dune-universe/mirage-opam-overlays";
+    flake = false;
+  };
+
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
 
