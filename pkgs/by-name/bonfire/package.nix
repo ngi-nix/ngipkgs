@@ -1,0 +1,395 @@
+{
+  lib,
+  fetchFromGitHub,
+  beam,
+  callPackage,
+  rustc,
+  cargo,
+  pkgs,
+  _experimental-update-script-combinators,
+  fetchpatch2,
+  gitUpdater,
+  nodejs,
+  yarnConfigHook,
+  FLAVOUR ? "social",
+  mixEnv ? "prod",
+  ...
+}:
+let
+  # Explanation: unstable version which includes fixes from:
+  # https://github.com/bonfire-networks/bonfire-app/issues/1637
+  version = "1.0.1-alpha.28";
+  env = {
+    # ToDo(functional/completeness): try open-science
+    inherit FLAVOUR;
+    # Explanation: config/bonfire_common.exs
+    # uses this to set :rustler_precompiled, force_build_all
+    # which is needed to let nix provision Rust libraries.
+    RUSTLER_BUILD_ALL = "true";
+  };
+
+  src = fetchFromGitHub {
+    owner = "bonfire-networks";
+    repo = "bonfire-app";
+    tag = "v${version}";
+    hash = "sha256-RIZbBBGom4223EXAZe1WN/S9qF5kYXdxs+xJpJt9jvs=";
+  };
+
+  beamPkgs = beam.packagesWith beam.interpreters.erlang_28;
+
+  # Explanation: to build its Erlang config (config/)
+  # and some JavaScript imports (**/deps.hooks.js)
+  # bonfire-app overlays symlinks from bonfire-app, ember and ${env.FLAVOUR}.
+  bonfireSetup =
+    let
+      # Explanation: only used to get the `src`s, but without `beamPackages`
+      # to avoid an infinite recursion.
+      # Warning: this require deps.nix to already have those `src`s.
+      deps = import ./deps.nix {
+        inherit lib pkgs;
+        beamPackages = beamPkgs;
+      };
+    in
+    pkgs.runCommandLocal "bonfire-setup"
+      {
+        inherit src;
+        nativeBuildInputs = [
+          pkgs.just
+        ];
+      }
+      (
+        lib.concatStringsSep "\n" [
+          ''
+            set -eu -o pipefail
+            mkdir $out
+            cd $out
+          ''
+
+          # Explanation: reuse justfile's convoluted rules to merge configs.
+          # Note that:
+          # - libraries (eg. surface_from_helpers) want to replace files inside config/
+          # - there are relative paths **inside** files (eg. ../../deps/… paths in **/deps.hook.js),
+          # preventing the use of symlinks for them
+          # because their path is canonicalized before including them,
+          # so that cannot be a symlink pointing out of this setup…
+          #
+          # Note that `just _assets-ln` is not called,
+          # since bonfire_ui_common has not been built yet,
+          # assets/ will be set later when building the bonfire package with mixRelease.
+          ''
+            mkdir extensions
+            ${lib.optionalString (deps ? ember) ''
+              cp --no-preserve=mode -r ${deps.ember.src} extensions/ember
+            ''}
+            ${lib.optionalString (deps ? ${env.FLAVOUR} && env.FLAVOUR != "ember") ''
+              cp --no-preserve=mode -r ${deps.${env.FLAVOUR}.src} extensions/${env.FLAVOUR}
+            ''}
+            cp --no-preserve=mode -r ${src}/config .
+            cp --no-preserve=mode -rs ${src}/justfile .
+            just flavour_make_symlinks ${env.FLAVOUR}
+          ''
+
+          # Explanation: from: just _flavour_install
+          ''
+            $SHELL extensions/${env.FLAVOUR}/install.sh --yes
+          ''
+
+          # Explanation: unsymlink config/config.exs to modify it
+          ''
+            cp --no-preserve=mode --remove-destination --force "$(realpath config/config.exs)" config/config.exs
+          ''
+
+          # Explanation: set skip_compilation? to let nix provide Rust libraries,
+          # and load_from because rustler defaults to priv/native/#{crate}
+          # but deps_nix installs into priv/native/lib#{crate}.
+          #
+          # Issue: https://github.com/code-supply/deps_nix/issues/36
+          ''
+            cat >>config/config.exs <<EOF
+
+            config :autumn,
+                   Autumn.Native,
+                   skip_compilation?: true,
+                   load_from: {:autumn, "priv/native/libautumnus_nif"}
+            config :mdex,
+                   MDEx.Native,
+                   skip_compilation?: true,
+                   load_from: {:mdex, "priv/native/libcomrak_nif"}
+            config :mjml,
+                   Mjml.Native,
+                   skip_compilation?: true,
+                   load_from: {:mjml, "priv/native/libmjml_nif"}
+            EOF
+          ''
+        ]
+      );
+
+  beamPackages = beamPkgs // {
+    buildMix =
+      previousArgs:
+      beamPkgs.buildMix (
+        lib.recursiveUpdate previousArgs {
+          erlangDeterministicBuilds = false;
+          postUnpack = previousArgs.postUnpack or "" + ''
+            mkdir -p $out
+            mv $sourceRoot $out/src
+            sourceRoot=$out/src
+            src=$(mktemp -d)
+          '';
+          postInstall = previousArgs.postInstall or "" + ''
+            src=$out/src
+            rm -rf _build
+          '';
+
+          # Explanation: in some of its own dependencies,
+          # bonfire uses Mess for managing dependencies,
+          # which requires to vendor-in mess.exs,
+          # but as of Bonfire 1.0.0 some are outdated wrt. bonfire-app/lib/mix/mess.exs
+          # causing mix to fail hard… so, override globally without remorse.
+          postPatch = ''
+            if grep -qF Mess mix.exs; then
+              ln -fns \${src + "/lib/mix/mess.exs"} mess.exs
+              # Explanation: some mix.exs depend on mess.exs but do not load it…
+              sed -i mix.exs -e 's/^ *# *Code.eval_file(\"mess.exs\"/Code.eval_file(\"mess.exs\"/'
+            fi
+          ''
+          + previousArgs.postPatch or "";
+
+          # Explanation: get a writable extensions.
+          # Because some dependencies generate files into them,
+          # eg. surface_form_helpers generates into config/current_flavour/assets/hooks/
+          # which points to extensions/social/assets/hooks/
+          appConfigPath = "${bonfireSetup}/config";
+          inherit env mixEnv;
+          postConfigure = ''
+            cp --no-preserve=mode -r ${bonfireSetup}/extensions .
+          '';
+        }
+      );
+  };
+  mixNixDeps = import ./deps.nix {
+    inherit lib pkgs beamPackages;
+    overrideFenixOverlay = finalPkgs: previousPkgs: {
+      # Explanation: deps_nix generates a ./deps.nix
+      # assuming fenix is used to provide rustToolchain,
+      # but so far the rustc and cargo from nixpkgs are enough,
+      # and more likely already in one's Nix store.
+      fenix = {
+        stable = {
+          inherit rustc cargo;
+        };
+      };
+    };
+    overrides = lib.composeManyExtensions (
+      lib.map
+        (lib.flip callPackage {
+          inherit beamPackages bonfireSetup;
+          inherit (env) FLAVOUR;
+        })
+        [
+          deps/bonfire_common.nix
+          deps/bonfire_data_access_control.nix
+          deps/bonfire_data_activity_pub.nix
+          deps/bonfire_data_edges.nix
+          deps/bonfire_editor_milkdown.nix
+          deps/bonfire_federate_activitypub.nix
+          deps/bonfire_geolocate.nix
+          deps/bonfire_ui_common.nix
+          deps/bonfire_ui_me.nix
+          deps/ember.nix
+          deps/evision.nix
+          deps/ex_cldr.nix
+          deps/iconify_ex.nix
+          deps/lazy_html.nix
+          deps/social.nix
+        ]
+    );
+  };
+
+  update = callPackage ./update.nix { };
+  passthru = {
+    inherit
+      beamPackages
+      bonfireSetup
+      mixNixDeps
+      update
+      ;
+    env = env // {
+      WITH_IMAGE_VIX = "true";
+      WITH_GIT_DEPS = "1";
+      WITH_FORKS = "0";
+      WITH_DOCKER = "no";
+
+      # Explanation: from justfile's _ext-migrations-copy
+      MIX_OS_DEPS_COMPILE_PARTITION_COUNT = "1";
+
+      # Remark: somehow lib/api/graphql_masto_adapter.ex
+      # has become extremely slow to compile.
+      # Issue: https://github.com/bonfire-networks/bonfire-app/issues/916#issuecomment-3656556058
+      WITH_API_GRAPHQL = "1";
+
+      # ToDo(functional/completeness): support this?
+      #WITH_XMPP = "1";
+    };
+    # Warning(maint/update): bonfire having a huge dependency closure,
+    # expect a lot of downloads during several minutes.
+    updateScript = _experimental-update-script-combinators.sequence [
+      (gitUpdater {
+        rev-prefix = "v";
+      })
+      {
+        command = [ (lib.getExe update.script) ];
+        # Explanation: required by _experimental-update-script-combinators.sequence:
+        # > error: Combining update scripts with features enabled
+        # > (other than “silent” scripts and an optional single script with “commit”)
+        # > is currently unsupported.
+        supportedFeatures = [ "silent" ];
+      }
+    ];
+  };
+in
+beamPackages.mixRelease {
+  pname = "bonfire";
+  inherit version;
+  inherit src;
+  inherit (beamPackages) erlang elixir;
+  inherit mixNixDeps;
+  inherit passthru;
+  inherit mixEnv;
+  erlangDeterministicBuilds = false;
+
+  # ToDo(optimize/size): test if it works.
+  #stripDebug = true;
+
+  nativeBuildInputs = [
+    yarnConfigHook
+    nodejs
+  ];
+
+  patches = [
+    # Explanation: fix installing a `FLAVOUR` different than base_flavour (aka. ember),
+    # eg. enable to install `FLAVOUR=social`.
+    (fetchpatch2 {
+      name = "fix-installing-flavour";
+      url = "https://github.com/bonfire-networks/bonfire-app/pull/1652.patch";
+      hash = "sha256-iasWT0/vJnRlZUaujXtLR7hftDXZL064+KXUOYa9CvQ=";
+    })
+  ];
+
+  # Explanation: to run yarnConfigHook multiple times manually.
+  dontYarnInstallDeps = true;
+
+  postConfigure = lib.concatStringsSep "\n" [
+    # Explanation: bonfire_ui_common & co. look like Elixir libraries,
+    # but can only be built correctly inside bonfire-app.
+    ''
+      cp --no-preserve=mode -r ${bonfireSetup}/* .
+      mkdir -p extensions
+      ln -s ../deps/bonfire_ui_common \
+            extensions/bonfire_ui_common
+      ln -s extensions/bonfire_ui_common/assets \
+            assets
+    ''
+
+    # Explanation: yarn assets are not real libraries,
+    # they can only be built in bonfire-app.
+    (lib.concatMapStringsSep "\n"
+      (name: ''
+        rm -rf deps/${name}
+        cp --no-preserve=mode -r \
+           ${mixNixDeps.${name}.src} \
+           deps/${name}
+        pushd deps/${name}/assets
+        yarnOfflineCache="${mixNixDeps.${name}.yarnOfflineCache}" \
+        yarnConfigHook
+        popd
+      '')
+      (
+        lib.attrNames (
+          lib.filterAttrs (name: _value: mixNixDeps.${name}.passthru ? "yarnOfflineCache") mixNixDeps
+        )
+      )
+    )
+
+    # FixMe(functional/completeness): workaround :mime having a different value set
+    # for key :extensions during runtime compared to compile time.
+    # Issue: https://github.com/bonfire-networks/bonfire-app/issues/1696
+    ''
+      substituteInPlace mix.exs \
+        --replace-fail "runtime_config_path:" "validate_compile_env: false, runtime_config_path:"
+    ''
+
+    # Explanation: make runtime.exs configurable at runtime
+    # (eg. in a NixOS module) without rebuilding the package.
+    ''
+      cat >>config/runtime.exs <<EOF
+        Code.eval_file(System.get_env("BONFIRE_RUNTIME_CONFIG"))
+      EOF
+    ''
+
+    # See: justfile#_deps-post-get
+    ''
+      mkdir -p data
+      mkdir -p data/uploads
+      mkdir -p priv/static/data
+      (cd priv/static/data && ln -fns ../../../data/uploads)
+    ''
+  ];
+
+  preBuild = lib.concatStringsSep "\n" [
+    # Explanation: call lib/mix/tasks/sync_themes.ex
+    # See: justfile#_flavour_install ${env.FLAVOUR}
+    ''
+      mix bonfire.sync_themes
+    ''
+
+    # Explanation: install SQL migrations.
+    # See: justfile#_ext-migrations-copy
+    # which calls:
+    #
+    # mix bonfire.install.copy_migrations --force
+    #
+    # implemented in deps/bonfire_common/lib/mix_tasks/install/
+    # and callable with:
+    #
+    # Mix.Tasks.Bonfire.Install.CopyMigrations.copy_all(nil, [{:force, true}, {:to, "priv/repo/migrations/"}])
+    #
+    # But within the nix setup this fails without my knowing why
+    # either by hanging when copying, or by not copying all migrations.
+    # Note that all files are also copied, including those with *.exs.wip.
+    ''
+      rm -rf ./priv/repo/*
+      mkdir -p priv/repo/migrations/
+      for file in deps/bonfire_*/priv/repo/migrations/*; do
+        cp -ft priv/repo/migrations/ "$file"
+      done
+    ''
+  ];
+
+  postBuild = lib.concatStringsSep "\n" [
+    # See: justfile#_rel-compile-assets
+    ''
+      pushd assets
+      yarn --offline build
+      popd
+      mix phx.digest --no-deps-check
+    ''
+  ];
+
+  # Explanation: only concern buildtime debugging,
+  # by being more verbose about what mixRelease
+  # and mix do (through MIX_DEBUG=1).
+  enableDebugInfo = true;
+
+  meta = {
+    description = "An open-source framework for building federated digital spaces where people can gather, interact, and form communities online";
+    homepage = "https://bonfirenetworks.org";
+    license = with lib.licenses; [
+      agpl3Only
+      cc0
+    ];
+    maintainers = with lib.maintainers; [ julm ];
+    teams = [ lib.teams.ngi ];
+    mainProgram = "bonfire";
+  };
+}
