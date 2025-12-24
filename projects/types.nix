@@ -73,14 +73,17 @@ rec {
         name = mkOption {
           type = types.str;
           default = name;
+          description = "Project name";
         };
         metadata = mkOption {
           type = with types; nullOr metadata;
           default = null;
+          description = "Metadata about the project";
         };
         binary = mkOption {
           type = with types; attrsOf binary;
           default = { };
+          description = "Binary assets and firmware associated with the project";
         };
         nixos = mkOption {
           type =
@@ -111,10 +114,17 @@ rec {
                 };
                 demo = mkOption {
                   type = nullOr (attrTag {
-                    vm = mkOption { type = demo; };
-                    shell = mkOption { type = demo; };
+                    vm = mkOption {
+                      type = demo;
+                      description = "Virtual Machine";
+                    };
+                    shell = mkOption {
+                      type = demo;
+                      description = "Terminal shell";
+                    };
                   });
                   default = null;
+                  description = "Environment for running the application demonstration";
                 };
                 /**
                   Configuration of an existing application module that illustrates how to use it.
@@ -137,9 +147,11 @@ rec {
                 tests = mkOption {
                   type = attrsOf test;
                   default = { };
+                  description = "NixOS test that ensures project components behave as intended";
                 };
               };
             };
+          description = "NixOS-related components";
         };
       };
     };
@@ -166,10 +178,12 @@ rec {
         summary = mkOption {
           type = nullOr str;
           default = null;
+          description = "Short description of the project";
         };
         subgrants = mkOption {
           type = with types; nullOr subgrant;
           default = null;
+          description = "Funding that projects receive from NLnet";
         };
         links = mkOption {
           type = types.submodule {
@@ -195,6 +209,7 @@ rec {
             };
           };
           default = { };
+          description = "Resources and links related to the project";
         };
       };
     };
@@ -296,6 +311,7 @@ rec {
           # TODO: add syntax checking
           url = mkOption {
             type = str;
+            description = "URL of the linked resource";
           };
         };
       }
@@ -324,10 +340,12 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = "Name of the binary asset";
           };
           data = mkOption {
             type = nullOr (either path package);
             default = null;
+            description = "Data of the binary asset (raw, firmware, schematics, ...)";
           };
         };
       }
@@ -405,6 +423,7 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = "Name of the program";
           };
           module = mkOption {
             type = nullOr deferredModule;
@@ -449,6 +468,7 @@ rec {
           extensions = mkOption {
             type = attrsOf (nullOr plugin);
             default = { };
+            description = "Component extensions for the program";
           };
         };
       }
@@ -526,6 +546,7 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = "Name of the service";
           };
           module = mkOption {
             type = nullOr deferredModule;
@@ -536,14 +557,19 @@ rec {
           examples = mkOption {
             type = attrsOf example;
             default = { };
+            description = "Configuration examples for the service";
           };
           extensions = mkOption {
             type = nullOr (attrsOf (nullOr plugin));
             default = null;
+            description = "Component extensions for the service";
           };
           links = mkOption {
             type = attrsOf link;
             default = { };
+            description = ''
+              Links to documentation or resources that may help building, configuring and testing the service.
+            '';
           };
         };
       }
@@ -750,10 +776,12 @@ rec {
             "shell"
           ];
           default = name;
+          description = "Type of demo environment";
         };
         problem = mkOption {
           type = types.nullOr problem;
           default = null;
+          description = "Any known problems or issues with the demo";
           example = {
             problem.broken = {
               reason = "Does not work as intended. Needs fixing.";
@@ -788,8 +816,10 @@ rec {
 
   problem = types.attrTag {
     broken = mkOption {
+      description = "Indicates that a component is broken and needs fixing";
       type = types.submodule {
         options.reason = mkOption {
+          description = "Explanation of why a component is broken, with links to logs, issues, or potential fixes";
           type = types.str;
         };
       };
@@ -840,15 +870,18 @@ rec {
       module = mkOption {
         type = with types; nullOr (either deferredModule package);
         default = null;
+        description = "NixOS test module";
       };
       problem = mkOption {
         type = types.nullOr problem;
         default = null;
+        description = "Any known problems or issues with the test";
       };
     };
   };
 
   options.projects = mkOption {
     type = with types; attrsOf (submodule project);
+    description = "NGI-funded software application";
   };
 }
