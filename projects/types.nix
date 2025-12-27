@@ -73,14 +73,17 @@ rec {
         name = mkOption {
           type = types.str;
           default = name;
+          description = "name";
         };
         metadata = mkOption {
           type = with types; nullOr metadata;
           default = null;
+          description = "metadata";
         };
         binary = mkOption {
           type = with types; attrsOf binary;
           default = { };
+          description = "binary";
         };
         nixos = mkOption {
           type =
@@ -111,10 +114,17 @@ rec {
                 };
                 demo = mkOption {
                   type = nullOr (attrTag {
-                    vm = mkOption { type = demo; };
-                    shell = mkOption { type = demo; };
+                    vm = mkOption {
+                      type = demo;
+                      description = "vm";
+                    };
+                    shell = mkOption {
+                      type = demo;
+                      description = "shell";
+                    };
                   });
                   default = null;
+                  description = "demo";
                 };
                 /**
                   Configuration of an existing application module that illustrates how to use it.
@@ -137,9 +147,11 @@ rec {
                 tests = mkOption {
                   type = attrsOf test;
                   default = { };
+                  description = "tests";
                 };
               };
             };
+          description = "nixos";
         };
       };
     };
@@ -166,10 +178,12 @@ rec {
         summary = mkOption {
           type = nullOr str;
           default = null;
+          description = "summary";
         };
         subgrants = mkOption {
           type = with types; nullOr subgrant;
           default = null;
+          description = "subgrants";
         };
         links = mkOption {
           type = types.submodule {
@@ -195,6 +209,7 @@ rec {
             };
           };
           default = { };
+          description = "links";
         };
       };
     };
@@ -296,6 +311,7 @@ rec {
           # TODO: add syntax checking
           url = mkOption {
             type = str;
+            description = "url";
           };
         };
       }
@@ -324,10 +340,12 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = "name";
           };
           data = mkOption {
             type = nullOr (either path package);
             default = null;
+            description = "data";
           };
         };
       }
@@ -405,6 +423,7 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = "name";
           };
           module = mkOption {
             type = nullOr deferredModule;
@@ -449,6 +468,7 @@ rec {
           extensions = mkOption {
             type = attrsOf (nullOr plugin);
             default = { };
+            description = "extensions";
           };
         };
       }
@@ -526,6 +546,7 @@ rec {
           name = mkOption {
             type = str;
             default = name;
+            description = "name";
           };
           module = mkOption {
             type = nullOr deferredModule;
@@ -536,14 +557,17 @@ rec {
           examples = mkOption {
             type = attrsOf example;
             default = { };
+            description = "examples";
           };
           extensions = mkOption {
             type = nullOr (attrsOf (nullOr plugin));
             default = null;
+            description = "extensions";
           };
           links = mkOption {
             type = attrsOf link;
             default = { };
+            description = "links";
           };
         };
       }
@@ -750,10 +774,12 @@ rec {
             "shell"
           ];
           default = name;
+          description = "type";
         };
         problem = mkOption {
           type = types.nullOr problem;
           default = null;
+          description = "problem";
           example = {
             problem.broken = {
               reason = "Does not work as intended. Needs fixing.";
@@ -788,8 +814,10 @@ rec {
 
   problem = types.attrTag {
     broken = mkOption {
+      description = "broken";
       type = types.submodule {
         options.reason = mkOption {
+          description = "reason";
           type = types.str;
         };
       };
@@ -840,15 +868,18 @@ rec {
       module = mkOption {
         type = with types; nullOr (either deferredModule package);
         default = null;
+        description = "test";
       };
       problem = mkOption {
         type = types.nullOr problem;
         default = null;
+        description = "problem";
       };
     };
   };
 
   options.projects = mkOption {
     type = with types; attrsOf (submodule project);
+    description = "projects";
   };
 }

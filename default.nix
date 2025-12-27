@@ -57,6 +57,11 @@ let
       options = self.optionsDoc.optionsNix;
     };
 
+    manuals = pkgs.callPackage manuals/default.nix rec {
+      version = "0.0.0"; # FixMe(maint): use something better, alas self.rev is not available there.
+      revision = "release-${version}";
+    };
+
     nixos-modules =
       # TODO: this is a weird shape for what we need: ngipkgs, services, modules?
       {
