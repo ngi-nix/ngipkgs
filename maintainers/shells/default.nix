@@ -68,8 +68,6 @@ pkgs.mkShellNoCC {
             "libervia-desktop-kivy"
             "libervia-media"
             "libervia-templates"
-            "sat-tmp"
-            "urwid-satext"
             # broken package
             "libresoc-nmigen"
             "libresoc-verilog"
