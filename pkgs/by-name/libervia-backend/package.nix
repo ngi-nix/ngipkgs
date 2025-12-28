@@ -11,10 +11,8 @@
   libervia-media,
   libervia-templates,
   libnice,
-  sat-tmp,
   urwid-satext,
   which,
-  wokkel,
   wrapGAppsHook3,
 }:
 let
@@ -93,9 +91,7 @@ python3Packages.buildPythonApplication rec {
 
   propagatedBuildInputs = [
     libervia-templates
-    sat-tmp
     urwid-satext
-    wokkel
     oldmemo
     omemo
     twomemo
@@ -114,8 +110,8 @@ python3Packages.buildPythonApplication rec {
     html2text
     jinja2
     langid
-    lxml-html-clean
     lxml
+    lxml-html-clean
     markdown
     miniupnpc
     mutagen
@@ -130,17 +126,19 @@ python3Packages.buildPythonApplication rec {
     pygobject3
     pyopenssl
     python-dateutil
-    xlib
     pyxdg
     pyyaml
     rich
+    sat-tmp
     setuptools
     shortuuid
     sqlalchemy
-    twisted
     treq
+    twisted
     txdbus
     urwid
+    wokkel
+    xlib
     xmlschema
   ]);
 
