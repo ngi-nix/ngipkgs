@@ -56,7 +56,6 @@ pkgs.mkShellNoCC {
             "marginalia-search"
             "peertube-plugin-livechat"
             # FIX: dream2nix
-            "corestore"
             "liberaforms"
             # FIX: package scope
             "bigbluebutton"
