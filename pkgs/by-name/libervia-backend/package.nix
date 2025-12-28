@@ -11,7 +11,6 @@
   libervia-media,
   libervia-templates,
   libnice,
-  urwid-satext,
   which,
   wrapGAppsHook3,
 }:
@@ -91,7 +90,6 @@ python3Packages.buildPythonApplication rec {
 
   propagatedBuildInputs = [
     libervia-templates
-    urwid-satext
     oldmemo
     omemo
     twomemo
@@ -137,6 +135,7 @@ python3Packages.buildPythonApplication rec {
     twisted
     txdbus
     urwid
+    urwid-satext
     wokkel
     xlib
     xmlschema
