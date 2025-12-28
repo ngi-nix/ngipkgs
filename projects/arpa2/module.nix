@@ -17,7 +17,7 @@ in
       kip
       leaf
       lillydap
-      quicksasl
+      quick-sasl
       steamworks
       steamworks-pulleyback
       tlspool

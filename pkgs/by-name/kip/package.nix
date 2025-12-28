@@ -8,7 +8,7 @@
   arpa2common,
   quickmem,
   quickder,
-  quicksasl,
+  quick-sasl,
   unbound,
   openssl,
   e2fsprogs,
@@ -60,7 +60,7 @@ stdenv.mkDerivation (finalAttrs: {
     arpa2common
     quickmem
     quickder
-    quicksasl
+    quick-sasl
     unbound
     e2fsprogs
     cyrus_sasl
