@@ -25,13 +25,13 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "manyfold";
-  version = "0.129.1";
+  version = "0.130.2";
 
   src = fetchFromGitHub {
     owner = "manyfold3d";
     repo = "manyfold";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-L/kM5A47DxypckTYRno9qK4hYYD9HC6CXxIzCRlOAWU=";
+    hash = "sha256-0h3ridqGkQ8+yMfieFXltQj59BK7pJkJCcO5uRDjYlU=";
   };
 
   prePatch = ''
