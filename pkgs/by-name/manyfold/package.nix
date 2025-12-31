@@ -101,6 +101,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  passthru.updateScript.command = ./update.sh;
+
   meta = {
     description = "ActivityPub-powered tool for storing and sharing 3d models";
     homepage = "https://manyfold.app/";
