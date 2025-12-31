@@ -30,7 +30,7 @@
   nixos.modules.services = {
     reaction = {
       name = "Reaction";
-      module = ./services/reaction/module.nix;
+      module = lib.moduleLocFromOptionString "services.reaction";
       examples.non-root = {
         module = ./services/reaction/examples/non-root.nix;
         description = ''
@@ -40,7 +40,7 @@
             - to be allowed to read ssh journal logs (adding reaction user to systemd-journal group)
             - and allow changing firewall rules (adding CAP_NET_ADMIN previlige to reaciton systemd service)
         '';
-        tests.non-root.module = import ./services/reaction/tests/non-root.nix args;
+        tests.non-root.module = pkgs.nixosTests.reaction;
       };
       examples.root = {
         module = ./services/reaction/examples/root.nix;
@@ -49,7 +49,7 @@
 
           Prefer the non-root configuration and give the service and the reaction user fine-grained access based on your usecase for reaction.
         '';
-        tests.root.module = import ./services/reaction/tests/root.nix args;
+        tests.root.module = pkgs.nixosTests.reaction-firewall;
       };
     };
   };
@@ -88,6 +88,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./services/reaction/tests/root.nix args;
+    tests.demo.module = pkgs.nixosTests.reaction-firewall;
   };
 }
