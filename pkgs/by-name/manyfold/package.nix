@@ -19,7 +19,7 @@ let
     inherit ruby;
     gemdir = ./.;
     extraConfigPaths = [
-      "${writeTextDir ".ruby-version" "3.4.7"}/.ruby-version"
+      "${writeTextDir ".ruby-version" ruby.version}/.ruby-version"
     ];
   };
 in
@@ -35,15 +35,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   prePatch = ''
-    echo 3.4.7 >.ruby-version
+    echo ${gems.ruby.version} >.ruby-version
     substituteInPlace Gemfile.lock \
-      --replace-fail '   ruby 3.4.1p0' "   ruby 3.4.7" \
-      --replace-fail '   2.6.2' "   2.6.9"
+      --replace-fail '   ruby 3.4.1p0' "   ruby ${gems.ruby.version}" \
+      --replace-fail '   2.6.2' "   ${gems.bundler.version}"
   '';
 
   nativeBuildInputs = [
     nodejs_22
-    ruby
+    gems.ruby
     yarn-berry
     yarn-berry.yarnBerryConfigHook
   ];
