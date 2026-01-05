@@ -71,4 +71,55 @@
       '';
     });
   })
+  # https://github.com/NixOS/nixpkgs/pull/477157
+  (final: prev: {
+    python3 = prev.python3.override {
+      packageOverrides = pyfinal: pyprev: {
+        sipsimple = pyprev.sipsimple.overridePythonAttrs (
+          oldAttrs:
+          let
+            pjsip = oldAttrs.passthru.extDeps.pjsip;
+            zrtpcpp.src = final.fetchFromGitHub {
+              owner = "wernerd";
+              repo = "ZRTPCPP";
+              rev = "6b3cd8e6783642292bad0c21e3e5e5ce45ff3e03";
+              hash = "sha256-pGng1Y9N51nGBpiZbn2NTx4t2NGg4qkmbghTscJVhIA=";
+              postFetch = ''
+                # fix build with gcc15
+                sed -e '9i #include <cstdint>' -i $out/zrtp/EmojiBase32.cpp
+              '';
+            };
+            applyPatchesWhenAvailable =
+              extDep: dir:
+              lib.optionalString (extDep ? patches) (
+                lib.strings.concatMapStringsSep "\n" (patch: ''
+                  echo "Applying patch ${patch}"
+                  patch -p1 -d ${dir} < ${patch}
+                '') extDep.patches
+              );
+          in
+          {
+            preConfigure = ''
+              ln -s ${pjsip.src} deps/${pjsip.version}.tar.gz
+              cp -r --no-preserve=all ${zrtpcpp.src} deps/ZRTPCPP
+
+              bash ./get_dependencies.sh
+            ''
+            + applyPatchesWhenAvailable pjsip "deps/pjsip"
+            + applyPatchesWhenAvailable zrtpcpp "deps/ZRTPCPP"
+            + ''
+              # Fails to link some static libs due to missing -lc DSO. Just use the compiler frontend instead of raw ld.
+              substituteInPlace deps/pjsip/build/rules.mak \
+                --replace-fail '$(LD)' "$CC"
+
+              # Incompatible pointers (not const)
+              substituteInPlace deps/pjsip/pjmedia/src/pjmedia-codec/ffmpeg_vid_codecs.c \
+                --replace-fail '&payload,' '(const pj_uint8_t **)&payload,'
+            '';
+          }
+        );
+      };
+    };
+    python3Packages = final.python3.pkgs;
+  })
 ]
