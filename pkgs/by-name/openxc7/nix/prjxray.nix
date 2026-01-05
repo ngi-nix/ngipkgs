@@ -9,9 +9,9 @@
   python312,
   ...
 }:
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "prjxray";
-  version = "bdbc665852b82f589ff775a8f6498542dbec0a07";
+  version = "0-unstable-2024-06-08";
 
   src = fetchFromGitHub {
     owner = "f4pga";
@@ -32,11 +32,17 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    sed -i 's/cmake /cmake -Wno-deprecated /g' Makefile
-    sed -i '29 itarget_compile_options(libprjxray PUBLIC "-Wno-deprecated")' lib/CMakeLists.txt
+    runHook prePatch
+    # fix build with gcc15
+    substituteInPlace third_party/yaml-cpp/src/emitterutils.cpp \
+      --replace-fail "\"yaml-cpp/null.h\"" "\"yaml-cpp/null.h\"${"\n"}#include <cstdint>"
+    substituteInPlace lib/include/prjxray/memory_mapped_file.h \
+      --replace-fail "<absl/types/span.h>" "<absl/types/span.h>${"\n"}#include <cstdint>"
+    runHook postPatch
   '';
 
   installPhase = ''
+    runHook preInstall
     mkdir -p $out/bin
     cp -v tools/xc7frames2bit tools/bitread tools/xc7patch $out/bin
     cp -v $srcs/utils/fasm2frames.py $out/bin/fasm2frames
@@ -45,16 +51,22 @@ stdenv.mkDerivation rec {
     chmod 755 $out/bin/bit2fasm
     mkdir -p $out/usr/share/python3/
     cp -rv $srcs/prjxray $out/usr/share/python3/
+    runHook postInstall
   '';
 
   doCheck = false;
 
   env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
+  env.NIX_CFLAGS_COMPILE = toString [
+    "-Wno-deprecated"
+    # fix build for gcc 15
+    "-Wno-error=free-nonheap-object"
+  ];
 
-  meta = with lib; {
+  meta = {
     description = "Xilinx series 7 FPGA bitstream documentation";
     homepage = "https://github.com/f4pga/prjxray";
-    license = licenses.isc;
-    platforms = platforms.all;
+    license = lib.licenses.isc;
+    platforms = lib.platforms.all;
   };
 }
