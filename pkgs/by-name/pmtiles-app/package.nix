@@ -32,9 +32,8 @@ buildNpmPackage (finalAttrs: {
   };
 
   meta = {
-    description = "Web viewer for PMTiles - a single-file archive format for tiled data";
+    description = "Web viewer for PMTiles";
     homepage = "https://protomaps.com/docs/pmtiles";
-    changelog = "https://github.com/protomaps/PMTiles/blob/${finalAttrs.src.rev}/CHANGELOG.md";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.all;
