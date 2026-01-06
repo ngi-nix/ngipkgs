@@ -4,35 +4,60 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### .github/ISSUE_TEMPLATE
+
+- Project templates cleanup
+
+
 ### Bug Fixes
 
+- *Canaille* Disable tests; mark unbroken
+- *ci* Update archlinux packages before installing nix
+- *demo* Run command with flakes
 - *overview* Add fallback for overview version
 - Deprecated nixosTest alias
 - Don't evaluate paths in module options
+- Kaidan build with qt 6.10; switch to unstable
+- Nixdoc-to-github paths
 
 
 ### CI/CD
 
 - Fix changelog config with recent git-cliff
 - Add workflow to update changelog
+- Add automatic package updates workflow
 
 
 ### Documentation
 
+- *metrics* Remove Uncategorized grant from metrics
 - *report/packaging* Improve output of packaging report script
 - *report/packaging* Don't link to demo
 - *report/packaging* Remove redunadant information
+- *report/packaging* Remove Uncategorized grant category
 - Document metrics summary outputs
 - Automate packaging report
 - Add subgrant details for packaging report
 - Fix triaging instructions' bullet point indentation
 - Add reporting documentation
+- Move REPORTING documentation to maintainers dir
+- Clean-up contributing docs
 
 
 ### Features
 
 - *types* Enforce subgrant structure in metadata
 - Count maintained derivations in Nixpkgs
+- Apply packages fixes inside tests
+- Init `customScope` function
+
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG.md
+- Remove propagated package fixes
+- Disable kazarma and anastasis updates
+- Trim stray newline from demos
 
 
 ### Overview
@@ -46,6 +71,33 @@ All notable changes to this project will be documented in this file.
 - WrapGAppsHook -> wrapGAppsHook3
 - Pin flake-inputs hash
 - Use markdown for triage issue template
+- Call mkSbtDerivation from pkgs/by-name
+- Toplevel inputs
+- Construct toplevel using customScope
+- Toplevel projects call
+- Toplevel demo call
+- Toplevel metrics
+- Move development shell to separate file
+- Toplevel overlays, nixos-modules, and overview
+- Move flake checks to separate file
+- Construct flake attributes from default scope
+- Move toplevel function to checks
+- Dream2nix inputs
+
+
+### _0wm-client
+
+- 0-unstable-2025-10-16 -> 0-unstable-2025-10-27
+
+
+### _0wm-opmode
+
+- 0-unstable-2025-09-23 -> 0-unstable-2025-10-27
+
+
+### _0wm-server
+
+- 0-unstable-2025-09-23 -> 0-unstable-2025-11-24
 
 
 ### Bigbluebutton.bbb-freeswitch-core
@@ -53,10 +105,119 @@ All notable changes to this project will be documented in this file.
 - Switch to overriding packages from Nixpkgs
 
 
+### Bigbluebutton.bbb-freeswitch-core.libks
+
+- Reapply patches that fix bugs in tests
+
+
+### Bigbluebutton.bbb-freeswitch-core.libwebsockets
+
+- Reapply CVE fix that is still relevant, drop irrelevant one
+
+
+### Demo
+
+- Refactor and expose in the toplevel
+- Fix trusted-public-keys, case sensitive
+
+
+### Helium
+
+- 5.1.1 -> 5.1.2
+
+
+### Inventaire-i18n
+
+- 0-unstable-2025-10-20 -> 0-unstable-2025-11-23
+
+
+### Manyfold
+
+- Init at 0.129.1
+
+
+### Meta-press
+
+- 1.9.1 -> 1.9.3
+
+
+### Nodebb
+
+- 4.6.0 -> 4.6.3
+- 4.6.3 -> 4.7.0
+
+
+### Pdfding
+
+- Add missing dependencies
+
+
+### Peertube-plugin-akismet
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-ldap
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-openid-connect
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-saml2
+
+- 0.0.8 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auto-block-videos
+
+- 0.0.2 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auto-mute
+
+- 0.0.6 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-hello-world
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-logo-framasoft
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-matomo
+
+- 1.0.2 -> 0-unstable-2025-11-20
+
+
 ### Pkgs
 
+- *anastasis{-gtk}* Switch to new git repo
+- *bbb-freeswitch-core* Bump minimum required cmake version
 - *bigbluebutton.bbb-freeswitch-core* Fix build
+- *openfire* Fix id command; rename to openfire-unwrapped
+- *openfire* Init plugins; wrap package with essential plugins
+- *python3-sipsimple* Remove stale derivation
+- *ratmand* Refactor cargo flags
 - *repath-studio* Fix org change
+- *repath-studio* 0.4.10 -> 0.4.11
+- *sstorytime* Init at 0.1.2-alpha
+- *sstorytime* 0.1.2-alpha -> 0.1.3-alpha-unstable-2025-11-17
+- *sstorytime* Make service port configurable
+- *sstorytime* 0.1.3-alpha-unstable-2025-11-17 -> 0.1.0-beta-unstable-2025-12-01
+- *taldir* 1.0.5-unstable-2025-10-15 -> 1.0.5-unstable-2025-11-07
+
+
+### Pkgs/pdfding
+
+- Init at 1.4.1
 
 
 ### Pkgs/tau-radio
@@ -71,12 +232,57 @@ All notable changes to this project will be documented in this file.
 
 ### Projects
 
+- *0WM* Fix dbus session address for test
+- *Blink* Enable dummy sound card in test
+- *Blink* Login with user SIP account in test
+- *Ethersync* Rename to Teamtype; refactor
+- *Kaidan* Fix and refactor NixOS test
 - *Marginalia* Mark as broken
+- *MirageOS* Init
+- *Nominatim* Fix test dependency
+- *Nominatim* Use tests from Nixpkgs
+- *Openfire* Add declarative autostart settings; refactor
+- *Openfire* Refactor example
+- *Openfire* Refactor test
+- *Openfire* Enable autosetup
+- *Openfire* Refactor file structure
+- *Openfire* Add demo
+- *Openfire* Fix users creation on autosetup
+- *PdfDing* Init examples
+- *PdfDing* Init nixosTests
+- *PdfDing* Init demo
+- *PdfDing* Improve demo experience
+- *SSTorytime* Init
+- *SSTorytime* Add options for local database
+- *sstorytime* Simplify database config options
+- *sylk* Init
+
+
+### Projects/Manyfold
+
+- Init
+- Add usage instructions
+
+
+### Projects/Reaction
+
+- Init project, demo
+- Pull in nixpkgs package, module, tests, examples
 
 
 ### Projects/Tau
 
 - Init
+
+
+### Projects/pdfding
+
+- Init
+
+
+### Python3Packages.sipsimple
+
+- Pin ffmpeg to version 7
 
 
 ### Treewide
