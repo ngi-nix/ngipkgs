@@ -3,6 +3,44 @@
   ...
 }:
 [
+  # misskey: 2025.7.0 -> 2025.12.2
+  # https://github.com/NixOS/nixpkgs/pull/477674
+  (final: prev: {
+    misskey = prev.misskey.overrideAttrs (oldAttrs: rec {
+      version = "2025.12.2";
+
+      src = final.fetchFromGitHub {
+        owner = "misskey-dev";
+        repo = "misskey";
+        tag = version;
+        hash = "sha256-7S6m97wHFeITABLcnQiPVGLg6d1xcPCHCp7/7d/w48E=";
+        fetchSubmodules = true;
+      };
+
+      pnpmDeps = final.fetchPnpmDeps {
+        inherit (oldAttrs) pname version src;
+        pnpm = final.pnpm_9;
+        fetcherVersion = 2;
+        hash = "sha256-GVzU5YQe7GHn2ddpaGPyLLmhOv5Fy33RL+gBLl3Oyis=";
+      };
+
+      patches = [ ];
+
+      # Misskey converts its YAML config to JSON at runtime, which doesn't work
+      # because it tries to write it to the Nix store. As a workaround, hardcode
+      # this to a path which the service can write to until a better solution is
+      # supported, upstream.
+      # https://github.com/misskey-dev/misskey/issues/17075
+      postPatch = ''
+        substituteInPlace packages/backend/src/config.ts \
+          --replace-fail \
+            "resolve(_dirname, '../../../built/.config.json')" \
+            "resolve('/run/misskey/default.json')"
+        substituteInPlace {.,packages/backend}/package.json \
+          --replace-fail "pnpm compile-config && " ""
+      '';
+    });
+  })
   (final: prev: {
     scion-apps = prev.scion-apps.overrideAttrs (oldAttrs: {
       checkFlags =
