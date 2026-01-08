@@ -23,7 +23,7 @@ in
       type = types.path;
       description = "Path to the directory containing the SSTconfig files.";
       default = "${cfg.package}/share/config/SSTconfig";
-      defaultText = lib.literalExpression "''${pkgs.sstorytime}/share/config/SSTconfig";
+      defaultText = lib.literalExpression "\${pkgs.sstorytime}/share/config/SSTconfig";
     };
   };
 

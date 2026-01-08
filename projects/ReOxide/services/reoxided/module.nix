@@ -56,7 +56,7 @@ in
           ghidra-install = [
             {
               enabled = true;
-              root-dir = "${pkgs.reoxide}/opt/ghidra";
+              root-dir = "''${pkgs.reoxide}/opt/ghidra";
             }
           ];
         };
