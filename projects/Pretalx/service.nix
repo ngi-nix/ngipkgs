@@ -163,6 +163,7 @@ in
             URL for pretalx. pretalx uses this value when it has to render full URLs, for example in emails or feeds. It is also used to determine the allowed incoming hosts.
           '';
           default = "http://${config.networking.fqdn}";
+          defaultText = lib.literalExpression "http://\${config.networking.fqdn}";
           example = "http://pretalx.example.com";
         };
 

@@ -134,7 +134,7 @@ in
 
     openFirewall = mkOption {
       type = types.bool;
-      description = "Opens ports 5353 and 5354, and enables [option]`${options.networking.firewall.checkReversePath}`.";
+      description = "Opens ports 5353 and 5354, and enables {option}`options.networking.firewall.checkReversePath`.";
       default = false;
     };
 

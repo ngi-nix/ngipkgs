@@ -13,6 +13,7 @@ in
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.proximity-matcher;
+      defaultText = lib.literalExpression "pkgs.proximity-matcher";
       description = "The package to use.";
     };
     listenAddress = lib.mkOption {
