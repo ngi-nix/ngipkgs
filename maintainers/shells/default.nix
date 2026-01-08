@@ -60,6 +60,7 @@ pkgs.mkShellNoCC {
             # FIX: package scope
             "bigbluebutton"
             "heads"
+            "lean-ftl"
             # FIX: don't update `sparql-queries` if there is no version change
             "inventaire-client"
             # fetcher not supported
