@@ -17,6 +17,7 @@ let
             vim
             tmux
             jq
+            nftables
           ];
           # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
           # to provide a slightly nicer console.
@@ -24,6 +25,12 @@ let
           services.kmscon = {
             enable = true;
             autologinUser = "root";
+            fonts = [
+              {
+                name = "Hack";
+                package = pkgs.hack-font;
+              }
+            ];
           };
         };
       debugging.interactive.nodes = lib.mapAttrs (_: _: tools) test.nodes;
