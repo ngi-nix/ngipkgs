@@ -17,6 +17,7 @@ let
             vim
             tmux
             jq
+            nftables
           ];
           # Use kmscon <https://www.freedesktop.org/wiki/Software/kmscon/>
           # to provide a slightly nicer console.
