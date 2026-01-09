@@ -24,6 +24,12 @@ let
           services.kmscon = {
             enable = true;
             autologinUser = "root";
+            fonts = [
+              {
+                name = "Hack";
+                package = pkgs.hack-font;
+              }
+            ];
           };
         };
       debugging.interactive.nodes = lib.mapAttrs (_: _: tools) test.nodes;
