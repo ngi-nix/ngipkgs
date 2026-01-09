@@ -136,4 +136,11 @@
       env.RUSTONIG_SYSTEM_LIBONIG = 1;
     });
   })
+  # Gnucap
+  # https://github.com/NixOS/nixpkgs/pull/478354
+  (final: prev: {
+    termcap = prev.termcap.overrideAttrs (oldAttrs: {
+      env.NIX_CFLAGS_COMPILE = oldAttrs.env.NIX_CFLAGS_COMPILE or "" + " -std=gnu89";
+    });
+  })
 ]
