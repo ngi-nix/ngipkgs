@@ -128,4 +128,12 @@
     };
     python3Packages = final.python3.pkgs;
   })
+  # https://github.com/NixOS/nixpkgs/pull/478324
+  (final: prev: {
+    oku = prev.oku.overrideAttrs (oldAttrs: {
+      # use system oniguruma since the bundled one fails to build with gcc15
+      buildInputs = oldAttrs.buildInputs ++ [ final.oniguruma ];
+      env.RUSTONIG_SYSTEM_LIBONIG = 1;
+    });
+  })
 ]
