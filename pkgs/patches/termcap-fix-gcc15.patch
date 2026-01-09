@@ -1,0 +1,110 @@
+From e97ea05a5c72255ef858c4f21fea41347061e627 Mon Sep 17 00:00:00 2001
+From: eljamm <fedi.jamoussi@protonmail.ch>
+Date: Fri, 9 Jan 2026 11:00:14 +0100
+Subject: [PATCH] Fix too many arguments to function with GCC15, C23
+
+The ISO C23, which is the default in GCC 15, changes the meaning of an
+empty argument list from an unspecified list to no arguments, thus
+breaking the build.
+
+This patch fixes that by specifying all the arguments.
+
+Note: this fix was possible thanks to a similar patch:
+https://github.com/NixOS/nixpkgs/blob/ed124dcd6e5e07395c7d7ec77cd54a962f59bedc/pkgs/by-name/sh/sharutils/gcc15-c23-port.patch
+---
+ termcap.c | 15 ++++++---------
+ termcap.h | 14 +++++++-------
+ tparam.c  |  2 +-
+ 3 files changed, 14 insertions(+), 17 deletions(-)
+
+diff --git a/termcap.c b/termcap.c
+index 1a90751..fca0e5e 100644
+--- a/termcap.c
++++ b/termcap.c
+@@ -126,7 +126,7 @@ xrealloc (ptr, size)
+    for tgetnum, tgetflag and tgetstr to find.  */
+ static char *term_entry;
+
+-static char *tgetst1 ();
++static char *tgetst1 (char *ptr, char **area);
+
+ /* Search entry BP for capability CAP.
+    Return a pointer to the capability (in BP) if found,
+@@ -314,10 +314,7 @@ static int speeds[] =
+ #endif /* not emacs */
+
+ void
+-tputs (str, nlines, outfun)
+-     register char *str;
+-     int nlines;
+-     register int (*outfun) ();
++tputs (register char *str, int nlines, register int (*outfun) (int))
+ {
+   register int padcount = 0;
+   register int speed;
+@@ -389,10 +386,10 @@ struct termcap_buffer
+
+ /* Forward declarations of static functions.  */
+
+-static int scan_file ();
+-static char *gobble_line ();
+-static int compare_contin ();
+-static int name_match ();
++static int scan_file (char *str, int fd, struct termcap_buffer *bufp);
++static char *gobble_line (int fd, struct termcap_buffer *bufp, char *append_end);
++static int compare_contin (char *str1, char *str2);
++static int name_match (char *line, char *name);
+
+ #ifdef VMS
+
+diff --git a/termcap.h b/termcap.h
+index b19fb0a..5726cd9 100644
+--- a/termcap.h
++++ b/termcap.h
+@@ -39,23 +39,23 @@ extern char *tgoto (const char *cstring, int hpos, int vpos);
+
+ #else /* not __STDC__ */
+
+-extern int tgetent ();
++extern int tgetent (char *buffer, const char *termtype);
+
+-extern int tgetnum ();
+-extern int tgetflag ();
+-extern char *tgetstr ();
++extern int tgetnum (const char *name);
++extern int tgetflag (const char *name);
++extern char *tgetstr (const char *name, char **area);
+
+ extern char PC;
+ extern short ospeed;
+
+-extern void tputs ();
++extern void tputs (const char *string, int nlines, int (*outfun) (int));
+
+-extern char *tparam ();
++extern char *tparam (const char *ctlstring, char *buffer, int size, ...);
+
+ extern char *UP;
+ extern char *BC;
+
+-extern char *tgoto ();
++extern char *tgoto (const char *cstring, int hpos, int vpos);
+
+ #endif /* not __STDC__ */
+
+diff --git a/tparam.c b/tparam.c
+index 5a9809a..3d35bf3 100644
+--- a/tparam.c
++++ b/tparam.c
+@@ -88,7 +88,7 @@ xrealloc (ptr, size)
+
+    The fourth and following args to tparam serve as the parameter values.  */
+
+-static char *tparam1 ();
++static char *tparam1 (char *string, char *outstring, int len, char *up, char *left, int *argp);
+
+ /* VARARGS 2 */
+ char *
+--
+2.51.2
+

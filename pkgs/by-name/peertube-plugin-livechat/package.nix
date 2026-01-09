@@ -250,5 +250,7 @@ buildNpmPackage {
       maintainers
       platforms
       ;
+    # FIX: https://github.com/ngi-nix/ngipkgs/issues/1943
+    broken = true;
   };
 }

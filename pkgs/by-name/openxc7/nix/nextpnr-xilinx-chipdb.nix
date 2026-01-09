@@ -1,6 +1,6 @@
 {
   stdenv,
-  nixpkgs,
+  runtimeShell,
   backend,
   nextpnr-xilinx,
   prjxray,
@@ -12,8 +12,8 @@
   ...
 }:
 
-stdenv.mkDerivation rec {
-  pname = "nextpnr-xilinx-chipdb";
+stdenv.mkDerivation (finalAttrs: {
+  pname = "nextpnr-xilinx-chipdb-${backend}";
   version = nextpnr-xilinx.version;
   inherit backend;
 
@@ -31,8 +31,9 @@ stdenv.mkDerivation rec {
     gnugrep
   ];
   buildPhase = ''
+    runHook preBuild
     mkdir -p $out
-    find ${src}/ -type d -name "*-*" -mindepth 1 -maxdepth 2 |\
+    find ${finalAttrs.src}/ -type d -name "*-*" -mindepth 1 -maxdepth 2 |\
       sed -e 's,.*/\(.*\)-.*$,\1,g' -e 's,\./,,g' |\
       sort |\
       uniq >\
@@ -55,7 +56,7 @@ stdenv.mkDerivation rec {
           continue
         fi
 
-        FIRST_SPEEDGRADE_DIR=`ls -d ${src}/$ARCH/$i-* | sort -n | head -1`
+        FIRST_SPEEDGRADE_DIR=`ls -d ${finalAttrs.src}/$ARCH/$i-* | sort -n | head -1`
         FIRST_SPEEDGRADE=`echo $FIRST_SPEEDGRADE_DIR | tr '/' '\n' | tail -1`
         pypy3.10 ${nextpnr-xilinx}/share/nextpnr/python/bbaexport.py --device $FIRST_SPEEDGRADE --bba $i.bba 2>&1
         bbasm -l $i.bba $out/$i.bin
@@ -67,10 +68,11 @@ stdenv.mkDerivation rec {
     # make the chipdb directory available
     mkdir -p $out/bin
     cat > $out/bin/get_chipdb_${backend}.sh <<EOF
-    #!${nixpkgs.runtimeShell}
+    #!${runtimeShell}
     echo -n $out
     EOF
     chmod 755 $out/bin/get_chipdb_${backend}.sh
+    runHook postBuild
   '';
 
   # TODO(jleightcap): the above buildPhase is adapated from a `builder`; which combines the process of
@@ -80,4 +82,4 @@ stdenv.mkDerivation rec {
   dontInstall = true;
 
   env.CMAKE_POLICY_VERSION_MINIMUM = "3.5";
-}
+})

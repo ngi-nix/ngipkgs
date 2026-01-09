@@ -40,7 +40,8 @@
             peertube-theme-framasoft
 
             # 3rd party plugins
-            peertube-plugin-livechat
+            # FIX: https://github.com/ngi-nix/ngipkgs/issues/1943
+            # peertube-plugin-livechat
           ];
 
         boot.kernelPackages = pkgs.linuxPackages_latest;
