@@ -21,7 +21,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.teamtype
-          sources.examples.Teamtype."Enable Teamtype"
+          sources.demos.Teamtype.shell
         ];
         services.getty.autologinUser = "root";
       };
