@@ -32,6 +32,7 @@ rec {
         call = self.newScope {
           nixdoc-to-github = self.callPackage sources.nixdoc-to-github { };
           dream2nix = sources.dream2nix;
+          hillingar = sources.hillingar.lib.${system};
         };
 
         # Similar to `import`, but aware of `default` scope attributes.
