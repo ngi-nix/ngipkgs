@@ -136,4 +136,13 @@
       env.RUSTONIG_SYSTEM_LIBONIG = 1;
     });
   })
+  # Gnucap
+  # https://github.com/NixOS/nixpkgs/pull/478354
+  (final: prev: {
+    termcap = prev.termcap.overrideAttrs (oldAttrs: {
+      patches = oldAttrs.patches or [ ] ++ [
+        ./patches/termcap-fix-gcc15.patch
+      ];
+    });
+  })
 ]
