@@ -31,7 +31,6 @@ rec {
         call = self.newScope {
           nixdoc-to-github = self.callPackage sources.nixdoc-to-github { };
           dream2nix = sources.dream2nix;
-          hillingar = sources.hillingar.lib.${system};
         };
 
         callPackage = self.call;

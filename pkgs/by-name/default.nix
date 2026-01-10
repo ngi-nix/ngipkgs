@@ -2,8 +2,8 @@
   lib,
   pkgs,
   dream2nix,
-  hillingar,
   sources,
+  system,
 }:
 let
   inherit (builtins)
@@ -57,7 +57,13 @@ let
     in
     evaluated.config.public;
 
-  callPackage = pkgs.newScope (self // { inherit callPackage; });
+  callPackage = pkgs.newScope (
+    self
+    // {
+      inherit callPackage;
+      opam-nix = sources.opam-nix.lib.${system};
+    }
+  );
 
   mkSbtDerivation =
     x:
@@ -82,10 +88,6 @@ let
     else if pathExists (directory + "/sbt-derivation.nix") then
       callPackage (directory + "/sbt-derivation.nix") {
         inherit mkSbtDerivation;
-      }
-    else if pathExists (directory + "/hillingar.nix") then
-      callPackage (directory + "/hillingar.nix") {
-        inherit hillingar;
       }
     else
       throw "No package.nix, dream2.nix or sbt-derivation.nix found in ${directory}"

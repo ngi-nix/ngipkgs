@@ -23,12 +23,21 @@
   inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
   inputs.devshell.url = "github:numtide/devshell";
 
-  inputs.hillingar.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.hillingar.inputs.flake-utils.follows = "flake-utils";
-  inputs.hillingar.inputs.opam-repository.follows = "opam-repository";
-  inputs.hillingar.inputs.opam-overlays.follows = "opam-overlays";
-  inputs.hillingar.inputs.mirage-opam-overlays.follows = "mirage-opam-overlays";
-  inputs.hillingar.url = "github:RyanGibb/hillingar";
+  inputs.nix-filter.url = "github:numtide/nix-filter/3e1fff9";
+
+  # FixMe(maint/upstream): merge this branch upstream
+  #inputs.opam-nix.url = "github:tweag/opam-nix";
+  inputs.opam-nix.url = "github:ju1m/opam-nix/materialize-monorepo";
+  inputs.opam-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.opam-nix.inputs.flake-utils.follows = "flake-utils";
+  inputs.opam-nix.inputs.opam2json.follows = "opam2json";
+  inputs.opam-nix.inputs.opam-repository.follows = "opam-repository";
+  inputs.opam-nix.inputs.opam-overlays.follows = "opam-overlays";
+  inputs.opam-nix.inputs.mirage-opam-overlays.follows = "mirage-opam-overlays";
+
+  inputs.opam2json.url = "github:tweag/opam2json";
+  inputs.opam2json.inputs.nixpkgs.follows = "nixpkgs";
+
   # update ocaml-related overlays to use new-enough ocaml packages
   inputs.opam-repository = {
     url = "github:ocaml/opam-repository";
