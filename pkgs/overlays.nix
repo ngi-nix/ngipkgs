@@ -176,4 +176,13 @@
       }
     );
   })
+  # https://github.com/NixOS/nixpkgs/pull/479380
+  (final: prev: {
+    gancio = prev.gancio.override {
+      nodejs = final.nodejs_22;
+      yarnConfigHook = prev.yarnConfigHook.override {
+        yarn = prev.yarn.override { nodejs = final.nodejs_22; };
+      };
+    };
+  })
 ]
