@@ -66,6 +66,8 @@
     });
   })
   (final: prev: {
+    # Remove on next release: https://github.com/NixOS/nixpkgs/pull/456442
+    canaille = prev.canaille.overridePythonAttrs { doCheck = false; };
     python3 = prev.python3.override {
       packageOverrides = pyfinal: pyprev: {
         # Canaille
@@ -79,6 +81,13 @@
             hash = "sha256-g5xl5CEfSZUbZxCLYykjd94eVjxzBAkgoBcR4y7IYfM=";
           };
           meta.broken = false;
+        };
+        # https://github.com/NixOS/nixpkgs/pull/479342
+        scim2-models = pyprev.scim2-models.overridePythonAttrs {
+          preCheck = ''
+            substituteInPlace doc/tutorial.rst \
+              --replace-fail "TzInfo(UTC)" "TzInfo(0)"
+          '';
         };
         # https://github.com/NixOS/nixpkgs/pull/477157
         sipsimple = pyprev.sipsimple.overridePythonAttrs (
