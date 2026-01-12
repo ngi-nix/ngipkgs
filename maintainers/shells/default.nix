@@ -56,7 +56,6 @@ pkgs.mkShellNoCC {
             "marginalia-search"
             "peertube-plugin-livechat"
             # FIX: dream2nix
-            "corestore"
             "liberaforms"
             # FIX: package scope
             "bigbluebutton"
@@ -68,8 +67,6 @@ pkgs.mkShellNoCC {
             "libervia-desktop-kivy"
             "libervia-media"
             "libervia-templates"
-            "sat-tmp"
-            "urwid-satext"
             # broken package
             "libresoc-nmigen"
             "libresoc-verilog"
