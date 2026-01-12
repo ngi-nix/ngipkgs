@@ -143,4 +143,28 @@
       env.NIX_CFLAGS_COMPILE = oldAttrs.env.NIX_CFLAGS_COMPILE or "" + " -std=gnu89";
     });
   })
+  # Reoxide
+  # https://github.com/NixOS/nixpkgs/pull/479336
+  (final: prev: {
+    ghidra = prev.ghidra.overrideAttrs (
+      oldAttrs:
+      let
+        pkg_path = "$out/lib/ghidra";
+      in
+      {
+        postFixup = ''
+          mkdir -p "$out/bin"
+          ln -s "${pkg_path}/ghidraRun" "$out/bin/ghidra"
+          for bin in ${pkg_path}/support/*; do
+            if [[ -x $bin ]]; then
+              ln -s "$bin" "$out/bin/ghidra-$(basename $bin)"
+            fi
+          done
+          wrapProgram "${pkg_path}/support/launch.sh" \
+            --set-default NIX_GHIDRAHOME "${pkg_path}/Ghidra" \
+            --prefix PATH : ${lib.makeBinPath [ final.openjdk21 ]}
+        '';
+      }
+    );
+  })
 ]
