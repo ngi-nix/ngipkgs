@@ -24,7 +24,6 @@ let
         "feedgen"
         "pyqrcode"
         "sqlalchemy-json"
-        "typed-ast"
         "unicodecsv"
       ]
       (name: {
@@ -150,6 +149,10 @@ in
         mkDerivation = {
           dontBuild = true;
         };
+      };
+      typed-ast = {
+        buildPythonPackage.pyproject = true;
+        mkDerivation.preBuild = "export CFLAGS=\"-std=c99 $CFLAGS\"";
       };
     }
     // pyprojectOverrides;
