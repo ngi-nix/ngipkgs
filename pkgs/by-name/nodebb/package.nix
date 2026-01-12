@@ -11,13 +11,13 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "nodebb";
-  version = "4.7.0";
+  version = "4.7.2";
 
   src = fetchFromGitHub {
     owner = "NodeBB";
     repo = "NodeBB";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-u36ZYkzPUzI9RtkJLulC07dsbWqZ4lMyrTSXMsAsj8s=";
+    hash = "sha256-jxEcnNgz9KQfxRUk/+q4IxdXssyC5vdUgJ0vV0S3Pbw=";
     postFetch = ''
       cp $out/install/package.json $out
     '';
@@ -27,7 +27,7 @@ buildNpmPackage (finalAttrs: {
     cp ${./package-lock.json} ./package-lock.json
   '';
 
-  npmDepsHash = "sha256-uQbUsggF9i/GWjmWYbdnc4hgIsGtYg7yV+8HpkOJId0=";
+  npmDepsHash = "sha256-1LCKWMH0j1Mmtm4xozsQhu4ctB1jUpF5ohe8ZzeMppc=";
 
   nativeBuildInputs = [ pkg-config ];
 
