@@ -57,6 +57,7 @@ let
       self = flake;
       pkgs = pkgs.extend self.overlays.default;
       options = self.optionsDoc.optionsNix;
+      projects = self.project-utils.projects;
     };
 
     nixos-modules =
@@ -86,12 +87,20 @@ let
 
     inherit (self.project-utils)
       checks
-      projects
       hydrated-projects
       ;
 
+    projects = lib.mapAttrs (name: value: {
+      tests = value.nixos.tests;
+      demo = default.demos.${name} or null;
+      module-check = default.checks.${name};
+    }) self.hydrated-projects;
+
+    tests = lib.mapAttrs (_: value: value.nixos.tests) self.hydrated-projects;
+
     demo-utils = self.import ./overview/demo {
       ngipkgs-modules = lib.attrValues (devLib.flattenAttrs "." self.nixos-modules);
+      projects = self.project-utils.projects;
     };
 
     inherit (self.demo-utils)
