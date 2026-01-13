@@ -5,7 +5,7 @@
   checks,
   formatter,
   hydrated-projects,
-  ngipkgs,
+  nonBrokenPackages,
   overview,
   ...
 }:
@@ -18,7 +18,6 @@
 
 let
   inherit (lib)
-    filterAttrs
     concatMapAttrs
     ;
 
@@ -27,9 +26,6 @@ let
   projects = hydrated-projects;
 
   toplevel = machine: machine.config.system.build.toplevel; # for makemake
-
-  # everything must evaluate for checks to run
-  nonBrokenPackages = filterAttrs (_: v: !v.meta.broken or false) ngipkgs;
 
   checksForAllProjects =
     let
@@ -41,7 +37,7 @@ let
           }) project.nixos.tests;
 
           checksForNixosTypes = {
-            "projects/${projectName}/nixos/check" = checks.${projectName};
+            "projects/${projectName}/nixos/module-check" = checks.${projectName};
           };
         in
         checksForNixosTests // checksForNixosTypes;

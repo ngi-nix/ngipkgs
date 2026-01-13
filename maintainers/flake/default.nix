@@ -4,6 +4,18 @@
   default,
   ...
 }:
+let
+  flattenFlakeAttrs =
+    attrs:
+    lib.pipe attrs [
+      (lib.flattenAttrs "/")
+      # everything must evaluate
+      (lib.filterAttrs (_: v: lib.isDerivation v && !v.meta.broken or false))
+    ];
+
+  flattenedProjects = flattenFlakeAttrs default.projects;
+  nonBrokenPackages = flattenFlakeAttrs default.ngipkgs;
+in
 {
   # system-independant (e.g. nixosModules)
   systemAgnostic = {
@@ -18,12 +30,14 @@
 
     # Overlays a package set (e.g. Nixpkgs) with the packages defined in this flake.
     overlays.default = default.overlays.default;
+
+    projects = flattenedProjects;
   };
 
   # depends on the system (e.g. packages.x86_64-linux)
   perSystem = rec {
-    packages = default.ngipkgs // {
-      inherit (default) overview demos;
+    packages = nonBrokenPackages // {
+      inherit (default) overview;
 
       options =
         pkgs.runCommand "options.json"
@@ -36,7 +50,7 @@
           '';
     };
 
-    checks = default.import ./checks.nix { };
+    checks = default.import ./checks.nix { inherit nonBrokenPackages; };
 
     devShells.default = pkgs.mkShell {
       inherit (checks."infra/pre-commit") shellHook;
