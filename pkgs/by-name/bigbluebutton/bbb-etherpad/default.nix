@@ -103,9 +103,9 @@ let
 
       pnpmDeps = fetchPnpmDeps {
         inherit (finalAttrs) pname src;
-        fetcherVersion = 2;
-        hash = "sha256-78cgB+2+30blVIELhOrAyEwJkgIt8TO6CJTKiJFY5rk=";
         inherit pnpm;
+        fetcherVersion = 3;
+        hash = "sha256-qiPkieYfS8otsROO8Jl1iAatryyYkqRVF3Q5jcHcVhY=";
       };
 
       strictDeps = true;
