@@ -490,17 +490,17 @@ beamPkgs.mixRelease (finalAttrs: {
               cat >>config/config.exs <<EOF
 
               config :autumn,
-                     Autumn.Native,
-                     skip_compilation?: true,
-                     load_from: {:autumn, "priv/native/libautumnus_nif"}
+                      Autumn.Native,
+                      skip_compilation?: true,
+                      load_from: {:autumn, "priv/native/libautumnus_nif"}
               config :mdex,
-                     MDEx.Native,
-                     skip_compilation?: true,
-                     load_from: {:mdex, "priv/native/libcomrak_nif"}
+                      MDEx.Native,
+                      skip_compilation?: true,
+                      load_from: {:mdex, "priv/native/libcomrak_nif"}
               config :mjml,
-                     Mjml.Native,
-                     skip_compilation?: true,
-                     load_from: {:mjml, "priv/native/libmjml_nif"}
+                      Mjml.Native,
+                      skip_compilation?: true,
+                      load_from: {:mjml, "priv/native/libmjml_nif"}
               EOF
             ''
           ]
@@ -611,8 +611,8 @@ beamPkgs.mixRelease (finalAttrs: {
     (lib.concatMapStringsSep "\n" (dep: ''
       rm -rf deps/${dep}
       cp --no-preserve=mode -r \
-         ${finalAttrs.passthru.mixNixDeps.${dep}.src} \
-         deps/${dep}
+        ${finalAttrs.passthru.mixNixDeps.${dep}.src} \
+        deps/${dep}
       pushd deps/${dep}/assets
       yarnOfflineCache="${finalAttrs.passthru.yarnOfflineCaches.${dep}.package}" \
       PATH="${lib.makeBinPath [ yarn ]}:$PATH" \
@@ -624,8 +624,8 @@ beamPkgs.mixRelease (finalAttrs: {
     (lib.concatMapStringsSep "\n" (dep: ''
       rm -rf deps/${dep}
       cp --no-preserve=mode -r \
-         ${finalAttrs.passthru.mixNixDeps.${dep}.src} \
-         deps/${dep}
+        ${finalAttrs.passthru.mixNixDeps.${dep}.src} \
+        deps/${dep}
       pushd deps/${dep}/assets
       yarnOfflineCache="${finalAttrs.passthru.yarnBerryOfflineCaches.${dep}.package}" \
       missingHashes="${finalAttrs.passthru.yarnBerryOfflineCaches.${dep}.package.missingHashes}" \
