@@ -10,17 +10,17 @@ let
   details = {
     livechat = rec {
       pname = "peertube-plugin-livechat";
-      version = "14.0.0";
+      version = "14.0.2";
       src = fetchFromGitHub {
         owner = "JohnXLivingston";
         repo = "peertube-plugin-livechat";
         rev = "refs/tags/v${version}";
-        hash = "sha256-5cq4Z0WQ/xbqoYlIia9KzglFtyExlK9cDyT6dyfZVr4=";
+        hash = "sha256-3lb0W/x5yuybxkev8vXgBej3WdqB0OeF++G+i1co9gQ=";
       };
       npmDeps = fetchNpmDeps {
         name = "${pname}-${version}-deps";
         inherit src;
-        hash = "sha256-B2VZnJ4G5uycEvB0jHdtvBVZet4oQSlY6E6lrwnWx9g=";
+        hash = "sha256-pumyBnl8KlvQsrTuComluc6dO0RSe9k7kOBEBwFjzPQ=";
       };
     };
 
