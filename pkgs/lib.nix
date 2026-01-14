@@ -61,7 +61,10 @@ rec {
       f = path: lib.concatMapAttrs (flatten path);
       flatten =
         path: name: value:
-        if lib.isAttrs value then f (path + name + separator) value else { ${path + name} = value; };
+        if (lib.isAttrs value) && (!lib.isDerivation value) then
+          f (path + name + separator) value
+        else
+          { ${path + name} = value; };
     in
     f "";
 
