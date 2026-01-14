@@ -1,10 +1,9 @@
 {
   lib,
   flake,
-  system,
-  sources,
 
   checks,
+  formatter,
   hydrated-projects,
   ngipkgs,
   overview,
@@ -66,14 +65,7 @@ let
     concatMapAttrs checksForPackage nonBrokenPackages;
 
   checksForInfrastructure = {
-    "infra/pre-commit" = sources.pre-commit-hooks.lib.${system}.run {
-      src = ./.;
-      hooks = {
-        actionlint.enable = true;
-        editorconfig-checker.enable = true;
-        nixfmt-rfc-style.enable = true;
-      };
-    };
+    "infra/pre-commit" = formatter.hooks.pre-commit;
     "infra/makemake" = toplevel self.nixosConfigurations.makemake;
     "infra/overview" = overview;
   };

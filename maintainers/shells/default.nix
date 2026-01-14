@@ -1,11 +1,21 @@
 {
   lib,
   pkgs,
-  ngipkgs,
   nixdoc-to-github,
+
+  # toplevel attributes
+  ngipkgs,
+  formatter,
   ...
 }:
 pkgs.mkShellNoCC {
+  inputsFrom = [
+    # Include all formatter packages. Format with:
+    # $ treefmt
+    # $ nix fmt
+    formatter.shell
+  ];
+
   packages = [
     # live overview watcher
     (pkgs.devmode.override {

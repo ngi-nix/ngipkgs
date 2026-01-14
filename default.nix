@@ -47,6 +47,8 @@ let
       fixups = self.call ./pkgs/overlays.nix { };
     };
 
+    formatter = self.call ./maintainers/formatter.nix { };
+
     optionsDoc = pkgs.nixosOptionsDoc {
       inherit (self.project-utils.eval-projects) options;
     };
