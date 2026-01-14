@@ -37,7 +37,7 @@
   libtool,
   ncurses,
   nix,
-  nixfmt-rfc-style,
+  nixfmt,
   nix-prefetch-scripts,
   nss,
   openssl,
@@ -413,7 +413,7 @@ let
             gnumake
             jq
             nix
-            nixfmt-rfc-style
+            nixfmt
             nix-prefetch-scripts
             xz
           ];

@@ -452,7 +452,7 @@ pkgs.runCommand "overview"
           pygments
         ]
       ))
-      nixfmt-rfc-style
+      nixfmt
     ];
   }
   (

@@ -2,7 +2,7 @@
   lib,
   cacert,
   gnused,
-  nixfmt-rfc-style,
+  nixfmt,
   deps_nix_injection_pattern,
   package,
   ...
@@ -25,7 +25,7 @@ package.overrideAttrs (
     nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [
       cacert
       gnused
-      nixfmt-rfc-style
+      nixfmt
     ];
     env = previousAttrs.env or { } // {
       # Explanation: relax limits to avoid error:
