@@ -39,22 +39,23 @@ package.overrideAttrs (
         # Applies: manuals/Contributor/Why_to/develop/a_package/using_Elixir/with_deps_nix.md
         ''
           substituteInPlace mix.exs \
-            --replace-fail '${deps_nix_injection_pattern}' \
-                           '${deps_nix_injection_pattern} [{ :deps_nix, git: "https://github.com/code-supply/deps_nix" }] ++'
+              --replace-fail \
+                '${deps_nix_injection_pattern}' \
+                '${deps_nix_injection_pattern} [{ :deps_nix, git: "https://github.com/code-supply/deps_nix" }] ++'
         ''
         # Explanation: re-enable downloading of well-known precompiled Rust libs.
         ''
           mkdir -p config
           cat >>config/config.exs <<EOF
           config :autumn,
-                 Autumn.Native,
-                 skip_compilation?: true
+                  Autumn.Native,
+                  skip_compilation?: true
           config :mdex,
-                 MDEx.Native,
-                 skip_compilation?: true
+                  MDEx.Native,
+                  skip_compilation?: true
           config :mjml,
-                 Mjml.Native,
-                 skip_compilation?: true
+                  Mjml.Native,
+                  skip_compilation?: true
           EOF
         ''
       ];

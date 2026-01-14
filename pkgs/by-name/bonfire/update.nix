@@ -5,7 +5,6 @@
   nix,
   nurl,
   writeShellApplication,
-  writeTextDir,
   callPackage,
 }:
 let
@@ -40,14 +39,17 @@ in
 
       # Description: update pkgs/by-name/bonfire/${FLAVOUR}/deps.nix
       # using deps_nix.
+      # bash
       ''
-        deps=$(nix -L --show-trace --extra-experimental-features "nix-command" \
-                   build \
-                   --option sandbox relaxed \
-                   --no-link --print-out-paths \
-                   --repair \
-                   -f . \
-                   bonfire.${FLAVOUR}.passthru.update.package )
+        deps=$(
+            nix -L --show-trace --extra-experimental-features "nix-command" \
+                build \
+                --option sandbox relaxed \
+                --no-link --print-out-paths \
+                --repair \
+                -f . \
+                bonfire.${FLAVOUR}.passthru.update.package
+        )
         cp -f "$deps" pkgs/by-name/bonfire/extensions/${FLAVOUR}/deps.nix
       ''
 
