@@ -1,5 +1,7 @@
 {
   lib,
+  fetchPnpmDeps,
+  pnpmConfigHook,
   buildNpmPackage,
   fetchFromGitHub,
   replaceVars,
@@ -99,18 +101,20 @@ let
         hash = "sha256-rSjEhBpAV44iDZVPx48Rg/abHOYghx4T4rHl3QQYmyg=";
       };
 
-      pnpmDeps = pnpm.fetchDeps {
+      pnpmDeps = fetchPnpmDeps {
         inherit (finalAttrs) pname src;
         fetcherVersion = 2;
         hash = "sha256-78cgB+2+30blVIELhOrAyEwJkgIt8TO6CJTKiJFY5rk=";
+        inherit pnpm;
       };
 
       strictDeps = true;
 
       nativeBuildInputs = [
-        pnpm.configHook
-        nodejs
+        pnpm
+        pnpmConfigHook
         npmHooks.npmInstallHook
+        nodejs
       ];
 
       # Seems to hang? Don't know why.
