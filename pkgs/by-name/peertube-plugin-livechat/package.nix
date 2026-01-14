@@ -5,6 +5,7 @@
   fetchFromGitHub,
   runCommand,
   prosody,
+  nodejs_22,
 }:
 let
   details = {
@@ -160,6 +161,9 @@ let
 
     makeCacheWritable = true;
 
+    # See <https://github.com/NixOS/nixpkgs/issues/474535>.
+    nodejs = nodejs_22;
+
     buildPhase = ''
       runHook preBuild
 
@@ -250,7 +254,5 @@ buildNpmPackage {
       maintainers
       platforms
       ;
-    # FIX: https://github.com/ngi-nix/ngipkgs/issues/1943
-    broken = true;
   };
 }

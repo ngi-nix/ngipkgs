@@ -61,11 +61,6 @@
             description = "Basic server configuration";
             tests.peertube-plugins.module = import ./services/peertube/tests/peertube-plugins.nix args;
             tests.peertube-plugin-livechat.module = import ./services/peertube/tests/peertube-plugin-livechat.nix args;
-            tests.peertube-plugin-livechat.problem.broken.reason = ''
-              Npm failed to install dependencies
-
-              https://github.com/ngi-nix/ngipkgs/issues/1943
-            '';
           };
         };
         peertube-runner = {
