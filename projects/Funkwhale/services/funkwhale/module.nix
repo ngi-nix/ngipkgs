@@ -209,7 +209,7 @@ in
 
         # Set `cfg.settings` environment variables.
         ${lib.concatMapAttrsStringSep "\n" (
-          name: value: ''export ${name}=${lib.escapeShellArg value}''
+          name: value: "export ${name}=${lib.escapeShellArg value}"
         ) cfg.settings}
 
         # Set secret environment variables.
