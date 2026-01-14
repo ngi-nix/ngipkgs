@@ -88,7 +88,7 @@ in
           ];
         }
         {
-          platform = "Ubuntu 25.04";
+          platform = "Ubuntu 25.04 and newer";
           shell-session.bash = [
             {
               input = ''
@@ -98,7 +98,7 @@ in
           ];
         }
         {
-          platform = "Ubuntu 24.04";
+          platform = "Ubuntu 24.04/24.10";
           shell-session.bash = [
             {
               input = ''
