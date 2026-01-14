@@ -49,8 +49,8 @@ in
   # ActivityPub server
   services.honk = {
     enable = true;
-    username = "username";
-    servername = "servername";
+    servername = "honk.localhost";
+    username = "honk";
     passwordFile = pkgs.writeText ''honk-password'' "password";
   };
 
