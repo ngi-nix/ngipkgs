@@ -1,8 +1,10 @@
 {
-  stdenv,
+  lib,
   nodejs,
   pnpm_9,
-  lib,
+  fetchPnpmDeps,
+  pnpmConfigHook,
+  stdenv,
   atomic-server,
 }:
 
@@ -14,15 +16,17 @@ stdenv.mkDerivation rec {
   inherit (atomic-server) version;
   src = "${atomic-server.src}/browser";
 
-  pnpmDeps = pnpm.fetchDeps {
+  pnpmDeps = fetchPnpmDeps {
     inherit src pname;
     fetcherVersion = 1;
     hash = "sha256-EurqNHOkUuu3bJ028Dz7y4ZWqKR46Vj798jbvDGA3g4=";
+    inherit pnpm;
   };
 
   nativeBuildInputs = [
     nodejs
-    pnpm.configHook
+    pnpm
+    pnpmConfigHook
   ];
 
   postBuild = ''
