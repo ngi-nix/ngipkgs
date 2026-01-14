@@ -1,4 +1,4 @@
-{fetchFromGitHub, ...}:
+{ fetchFromGitHub, ... }:
 fetchFromGitHub {
   owner = "bonfire-networks";
   repo = "open_science";

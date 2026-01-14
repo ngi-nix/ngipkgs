@@ -51,7 +51,7 @@ in
     enable = true;
     username = "username";
     servername = "servername";
-    passwordFile = pkgs.writeText ''honk-password'' "password";
+    passwordFile = pkgs.writeText "honk-password" "password";
   };
 
   services.matrix-synapse = {
