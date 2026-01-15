@@ -14,10 +14,17 @@
 let
   yarn-berry = yarn-berry_3;
   ruby = ruby_3_4;
-  gems = bundlerEnv {
+  gems = bundlerEnv rec {
     name = "manyfold-env";
     inherit ruby;
     gemdir = ./.;
+    gemset = lib.recursiveUpdate (import ./gemset.nix) {
+      byebug.platforms = [ ];
+      concurrent-ruby.platforms = [ ];
+      tzinfo-data.platforms = [ ];
+      tzinfo.platforms = [ ];
+    };
+    groups = [ "production" ];
     extraConfigPaths = [
       "${writeTextDir ".ruby-version" ruby.version}/.ruby-version"
     ];
@@ -25,13 +32,13 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "manyfold";
-  version = "0.129.1";
+  version = "0.131.0";
 
   src = fetchFromGitHub {
     owner = "manyfold3d";
     repo = "manyfold";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-L/kM5A47DxypckTYRno9qK4hYYD9HC6CXxIzCRlOAWU=";
+    hash = "sha256-fiSTrSctqpYrvjw+jT8g5oNWeAQfLAILcXM7P1sLxJ8=";
   };
 
   prePatch = ''
@@ -51,7 +58,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   missingHashes = ./missing-hashes.json;
   offlineCache = yarn-berry.fetchYarnBerryDeps {
     inherit (finalAttrs) src missingHashes;
-    hash = "sha256-Hrw7+1DOkKuoq4IUR/Gr/wMVjAPHGdI0nElYAgqAvnU=";
+    hash = "sha256-qnU96Iyaz+Yo1dWIK/c1lNPtPeL3AkaWTLZFA0YsI/8=";
   };
 
   # dynamically loaded by ruby gems

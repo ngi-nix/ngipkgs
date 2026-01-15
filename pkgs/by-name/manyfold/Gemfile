@@ -22,13 +22,13 @@ gem "redis", "~> 5.4"
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
-gem "dotenv-rails", "~> 3.1", group: :development
+gem "dotenv-rails", "~> 3.2", group: :development
 gem "acts-as-taggable-on", "~> 13.0"
 
 gem "ffi-libarchive", "~> 1.1"
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", "~> 1.18", require: false
+gem "bootsnap", "~> 1.20", require: false
 
 # Database adapters
 gem "activerecord-enhancedsqlite3-adapter", "~> 0.8"
@@ -53,14 +53,14 @@ group :development, :test do
   gem "rubocop-factory_bot", require: false
   gem "rubocop-capybara", require: false
   gem "rubocop-i18n", require: false
-  gem "rubocop-performance", "~> 1.23", require: false
+  gem "rubocop-performance", "~> 1.26", require: false
   gem "rubocop-pundit", github: "manyfold3d/rubocop-pundit", require: false
   gem "rubyzip", "~> 2.4"
-  gem "i18n-tasks", "~> 1.0"
+  gem "i18n-tasks", "~> 1.1"
   gem "simplecov", "~> 0.22", require: false
   gem "simplecov-cobertura", require: false
   gem "with_model", "~> 2.2"
-  gem "vcr", "~> 6.3"
+  gem "vcr", "~> 6.4"
 
   # system tests and custom screenshots
   gem "capybara"
@@ -84,7 +84,7 @@ gem "cocooned", "~> 2.5"
 
 gem "public_suffix", "~> 6.0"
 
-gem "activerecord-nulldb-adapter", "~> 1.1"
+gem "activerecord-nulldb-adapter", "~> 1.2"
 
 gem "memoist", "~> 0.16"
 gem "stopwords-filter2", require: "stopwords"
@@ -114,7 +114,7 @@ gem "pundit", "~> 2.5"
 gem "spdx", "~> 4.1"
 gem "rack-contrib", "~> 2.5"
 
-gem "rails-i18n", "~> 8.0"
+gem "rails-i18n", "~> 8.0.0"
 
 gem "erb_lint", "~> 0.9", group: :development, require: false
 
@@ -147,7 +147,7 @@ gem "shrine", "~> 3.6"
 gem "tus-server", "~> 2.3"
 gem "shrine-tus", "~> 2.1"
 
-gem "aws-sdk-s3", "< 1.204"
+gem "aws-sdk-s3", "< 1.212"
 
 gem "better_content_security_policy", "~> 0.1"
 
@@ -163,7 +163,6 @@ gem "nanoid", "~> 2.0"
 gem "kramdown", "~> 2.5"
 
 gem "omniauth", "~> 2.1"
-gem "omniauth-rails_csrf_protection", "~> 1.0"
 gem "omniauth_openid_connect", "~> 0.8"
 
 gem "sidekiq-cron", "~> 2.3"
@@ -217,3 +216,7 @@ gem "csv", "~> 3.3"
 gem "arel_extensions", "~> 2.3"
 
 gem "assimp-ffi", git: "https://github.com/Kerilk/assimp-ruby.git"
+
+gem "yard-lint", "~> 1.3", group: :development
+
+gem "zaru", "~> 1.0"
