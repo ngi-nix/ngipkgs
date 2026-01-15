@@ -17,21 +17,21 @@ let
   beamPackages' = beamPackages.extend (self: super: { elixir = self.elixir_1_17; });
 
   pname = "kazarma";
-  version = "1.0.0-alpha.1-unstable-2025-06-30";
+  version = "1.0.0-alpha.1-unstable-2025-12-24";
   src = fetchFromGitLab {
     group = "technostructures";
     owner = "kazarma";
     repo = "kazarma";
-    rev = "2cd1ca80d3c54e54a11fd3b9079f6c4fa6330302";
+    rev = "46dbc8d29006896b6b14057c1d0feb39bd768865";
     fetchSubmodules = true;
-    hash = "sha256-Ry5xgGeVzzjnumlYXrU8vzvf1l7IeVfSL+RvGPmWq9U=";
+    hash = "sha256-N8JP9I35sMxOj5BPIrwsfMb+puL9GXwdksnJR5CDcwg=";
   };
 
   cldr = fetchFromGitHub {
     owner = "elixir-cldr";
     repo = "cldr";
-    tag = "v2.37.2";
-    hash = "sha256-dDOQzLIi3zjb9xPyR7Baul96i9Mb3CFHUA+AWSexrk4=";
+    tag = "v2.43.2";
+    hash = "sha256-xSWZV4bDcy/P5sSDM7gvuaCLhk4bk3lL2/MB5cm5/PE=";
   };
 
   assets = buildNpmPackage (finalAttrs: {
@@ -51,7 +51,7 @@ beamPackages'.mixRelease {
   mixFodDeps = beamPackages'.fetchMixDeps {
     pname = "mix-deps-${pname}";
     inherit version src;
-    hash = "sha256-APOzFj+3yFrpDV8U2bZCJwZC9iHGISeKcZUGS8d3mtA=";
+    hash = "sha256-nsTAsVoDPmKQVjybaTDu18UGtqsvBz/A5mzzLKBqAHY=";
   };
 
   nativeBuildInputs = [
@@ -84,6 +84,7 @@ beamPackages'.mixRelease {
 
   # Can't update from GitLab with fetchSubmodules
   # https://github.com/Mic92/nix-update/issues/281
+  # TODO: also update `cldr`, if necessary
   passthru.updateScript = _experimental-update-script-combinators.sequence [
     (unstableGitUpdater { tagPrefix = "v"; }) # update version + source
     (nix-update-script { extraArgs = [ "--version=skip" ]; }) # update deps
