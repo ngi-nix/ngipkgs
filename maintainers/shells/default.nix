@@ -65,6 +65,7 @@ pkgs.mkShellNoCC {
             # FIX: needs custom update script
             "marginalia-search"
             "peertube-plugin-livechat"
+            "_0wm-server"
             # FIX: dream2nix
             "liberaforms"
             # FIX: package scope
