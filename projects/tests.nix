@@ -33,14 +33,14 @@ let
           };
         };
       debugging.interactive.nodes = lib.mapAttrs (_: _: tools) test.nodes;
-      args = lib.mergeAttrsList [
-        debugging
-        test
-        {
-          # we need to extend pkgs with ngipkgs, so it can't be read-only
-          node.pkgsReadOnly = false;
-        }
-      ];
+      args = {
+        imports = [
+          debugging
+          test
+        ];
+        # we need to extend pkgs with ngipkgs, so it can't be read-only
+        node.pkgsReadOnly = false;
+      };
     in
     if lib.isDerivation test then test else pkgs.testers.runNixOSTest args;
 
