@@ -1,1 +1,1 @@
-(import ./. { }).shell
+(import ./. { }).shell.finalPackage

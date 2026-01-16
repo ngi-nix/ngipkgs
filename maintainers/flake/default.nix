@@ -52,10 +52,14 @@ in
 
     checks = default.import ./checks.nix { inherit nonBrokenPackages; };
 
-    devShells.default = pkgs.mkShell {
-      inherit (checks."infra/pre-commit") shellHook;
-      buildInputs = checks."infra/pre-commit".enabledPackages ++ default.shell.nativeBuildInputs;
-    };
+    # devShells.default = default.shell.finalPackage;
+    devShells.default =
+      (default.shell.extend (
+        _: prev: {
+          packages = (prev.packages or [ ]) ++ checks."infra/pre-commit".enabledPackages;
+          shellHook = (prev.shellHook or "") + checks."infra/pre-commit".shellHook;
+        }
+      )).finalPackage;
 
     formatter = default.formatter.package;
   };

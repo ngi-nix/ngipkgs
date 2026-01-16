@@ -33,7 +33,9 @@ let
 
     ngipkgs = self.import ./pkgs/by-name { };
 
-    shell = self.import ./maintainers/shells/default.nix { };
+    shell = self.import ./maintainers/shells/default.nix {
+      devshell = import sources.devshell { nixpkgs = pkgs; };
+    };
 
     overlays = {
       default =
