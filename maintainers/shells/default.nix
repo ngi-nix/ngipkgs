@@ -113,7 +113,8 @@ let
     # Include all formatter packages. Format with:
     # $ treefmt
     # $ nix fmt
-    formatters = final.commandsFrom formatter.shell;
+    # formatters = final.commandsFrom formatter.shell;
+    formatters = (builtins.attrValues formatter.eval.config.build.programs) ++ [ formatter.package ];
 
     # Aliases are wrapper commands which will run the specified `cmd`
     # `help` exists to customise the menu entry
