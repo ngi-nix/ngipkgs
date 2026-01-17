@@ -31,17 +31,17 @@
         basic = {
           module = ./services/pdfding/examples/basic.nix;
           description = "Sqlite default service";
-          tests.basic.module = import ./services/pdfding/tests/basic.nix args;
+          tests.basic.module = ./services/pdfding/tests/basic.nix;
         };
         postgres = {
           module = ./services/pdfding/examples/postgres.nix;
           description = "Postgres and consume feature";
-          tests.postgres.module = import ./services/pdfding/tests/postgres.nix args;
+          tests.postgres.module = ./services/pdfding/tests/postgres.nix;
         };
         minio = {
           module = ./services/pdfding/examples/minio.nix;
           description = "Backup feature of pdfding";
-          tests.minio.module = import ./services/pdfding/tests/minio.nix args;
+          tests.minio.module = ./services/pdfding/tests/minio.nix;
         };
       };
       links = {
@@ -54,7 +54,7 @@
   };
 
   # e2e not tied to an example
-  nixos.tests.e2e.module = import ./services/pdfding/tests/e2e.nix args;
+  nixos.tests.e2e.module = ./services/pdfding/tests/e2e.nix;
 
   nixos.demo.vm = {
     module = ./demo/module.nix;
@@ -84,6 +84,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./services/pdfding/tests/basic.nix args;
+    tests.demo.module = ./services/pdfding/tests/basic.nix;
   };
 }

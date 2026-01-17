@@ -40,13 +40,13 @@
           A (very insecure!) example of setting up Inventaire and its dependencies on the local machine.
         '';
         module = ./examples/basic.nix;
-        tests.basic.module = import ./tests/basic.nix args;
+        tests.basic.module = ./tests/basic.nix;
       };
     };
     demo.vm = {
       module = ./examples/basic.nix;
       module-demo = ./module-demo.nix;
-      tests.basic.module = import ./tests/basic.nix args;
+      tests.basic.module = ./tests/basic.nix;
     };
   };
 }

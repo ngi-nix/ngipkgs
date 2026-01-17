@@ -29,7 +29,7 @@
       module = ./programs/0wm-client/module.nix;
       examples."Enable 0WM client" = {
         module = ./programs/0wm-client/examples/basic.nix;
-        tests.basic.module = import ./tests/basic.nix args;
+        tests.basic.module = ./tests/basic.nix;
       };
     };
   };
@@ -39,7 +39,7 @@
       module = ./services/0wm-server/module.nix;
       examples."Enable 0WM server" = {
         module = ./services/0wm-server/examples/basic.nix;
-        tests.basic.module = import ./tests/basic.nix args;
+        tests.basic.module = ./tests/basic.nix;
       };
     };
   };
@@ -92,6 +92,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./tests/basic.nix args;
+    tests.demo.module = ./tests/basic.nix;
   };
 }

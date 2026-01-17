@@ -43,6 +43,6 @@
   nixos.demo.vm = {
     module = ./demo.nix;
     description = "Deployment for demo purposes";
-    tests.demo.module = import ./demo-test.nix args;
+    tests.demo.module = ./demo-test.nix;
   };
 }

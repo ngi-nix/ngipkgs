@@ -34,7 +34,7 @@
       module = ./programs/teamtype/module.nix;
       examples."Enable Teamtype" = {
         module = ./programs/teamtype/examples/basic.nix;
-        tests.basic.module = import ./programs/teamtype/tests/basic.nix args;
+        tests.basic.module = ./programs/teamtype/tests/basic.nix;
         tests.basic.problem.broken.reason = ''
           Needs a self-hosted relay server to work non-interactively (without internet).
           Requires: https://github.com/teamtype/teamtype/issues/344
@@ -93,7 +93,7 @@
         '';
       }
     ];
-    tests.demo.module = import ./programs/teamtype/tests/basic.nix args;
+    tests.demo.module = ./programs/teamtype/tests/basic.nix;
     tests.demo.problem.broken.reason = ''
       Needs a self-hosted relay server to work non-interactively (without internet).
       Requires: https://github.com/teamtype/teamtype/issues/344

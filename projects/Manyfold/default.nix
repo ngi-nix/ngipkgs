@@ -40,7 +40,7 @@
         "Enable Manyfold with PostgreSQL" = {
           module = ./services/manyfold/examples/postgresql.nix;
           description = null;
-          tests.postgresql.module = import ./services/manyfold/tests/postgresql.nix args;
+          tests.postgresql.module = ./services/manyfold/tests/postgresql.nix;
           tests.postgresql.problem.broken.reason = ''
             Bundler is unlocking ruby, but the lockfile can't be updated because frozen mode is set (Bundler::ProductionError)
           '';
@@ -48,7 +48,7 @@
         "Enable Manyfold with SQLite" = {
           module = ./services/manyfold/examples/sqlite.nix;
           description = null;
-          tests.sqlite.module = import ./services/manyfold/tests/sqlite.nix args;
+          tests.sqlite.module = ./services/manyfold/tests/sqlite.nix;
           tests.sqlite.problem.broken.reason = ''
             Bundler is unlocking ruby, but the lockfile can't be updated because frozen mode is set (Bundler::ProductionError)
           '';
@@ -76,7 +76,7 @@
           '';
         }
       ];
-      tests.postgresql.module = import ./services/manyfold/tests/postgresql.nix args;
+      tests.postgresql.module = ./services/manyfold/tests/postgresql.nix;
     };
   };
 }

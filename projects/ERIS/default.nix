@@ -54,7 +54,7 @@
       examples.basic = {
         module = ./services/eris-server/examples/basic.nix;
         description = "";
-        tests.basic.module = import ./services/eris-server/tests/basic.nix args;
+        tests.basic.module = ./services/eris-server/tests/basic.nix;
         tests.basic.problem.broken.reason = ''
           Removed, upstream: https://github.com/NixOS/nixpkgs/pull/439158
         '';

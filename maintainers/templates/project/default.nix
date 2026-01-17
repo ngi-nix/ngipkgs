@@ -54,7 +54,7 @@
           2.
           3.
         '';
-        tests.basic.module = import ./programs/_programName_/tests/basic.nix args;
+        tests.basic.module = ./programs/_programName_/tests/basic.nix;
       };
       # Add relevant links to the program (optional)
       links = {
@@ -83,7 +83,7 @@
           2.
           3.
         '';
-        tests.basic.module = import ./services/_serviceName_/tests/basic.nix args;
+        tests.basic.module = ./services/_serviceName_/tests/basic.nix;
       };
       # Add relevant links to the program (optional)
       links = {
@@ -114,6 +114,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./programs/_programName_/tests/basic.nix args;
+    tests.demo.module = ./programs/_programName_/tests/basic.nix;
   };
 }

@@ -40,7 +40,7 @@
       module = ./programs/sylk/module.nix;
       examples."Enable Sylk (desktop client)" = {
         module = ./programs/sylk/examples/basic.nix;
-        tests.client.module = import ./programs/sylk/tests/basic.nix args;
+        tests.client.module = ./programs/sylk/tests/basic.nix;
       };
     };
   };
@@ -52,7 +52,7 @@
       module = ./services/sylkserver/module;
       examples."Enable Sylk (server)" = {
         module = ./services/sylkserver/examples/basic.nix;
-        tests.server.module = import ./services/sylkserver/tests/basic.nix args;
+        tests.server.module = ./services/sylkserver/tests/basic.nix;
       };
     };
   };

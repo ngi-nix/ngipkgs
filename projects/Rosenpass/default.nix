@@ -52,7 +52,7 @@
       examples.basic = {
         module = ./services/basic/examples/basic.nix;
         description = "";
-        tests.with-sops.module = import ./tests args;
+        tests.with-sops.module = ./tests;
         tests.without-sops.module = pkgs.nixosTests.rosenpass;
       };
     };

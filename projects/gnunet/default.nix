@@ -32,7 +32,7 @@
       examples.basic = {
         module = ./services/gnunet/examples/basic.nix;
         description = "";
-        tests.basic.module = import ./services/gnunet/tests/basic.nix args;
+        tests.basic.module = ./services/gnunet/tests/basic.nix;
       };
       links = {
         build = {

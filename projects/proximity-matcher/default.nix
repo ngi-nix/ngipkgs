@@ -23,7 +23,7 @@
         description = ''
           Sets up proximity-matcher with a basic configuration for TLSH and a location with known hashes.
         '';
-        tests.basic.module = import ./test.nix args;
+        tests.basic.module = ./test.nix;
       };
       links = {
         readme = {

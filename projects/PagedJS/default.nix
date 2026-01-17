@@ -36,7 +36,7 @@
         description = ''
           Enables PagedJS program.
         '';
-        tests.basic.module = import ./programs/pagedjs/tests/pagedjs.nix args;
+        tests.basic.module = ./programs/pagedjs/tests/pagedjs.nix;
       };
     };
   };
@@ -67,6 +67,6 @@
         '';
       }
     ];
-    tests.basic.module = import ./programs/pagedjs/tests/pagedjs.nix args;
+    tests.basic.module = ./programs/pagedjs/tests/pagedjs.nix;
   };
 }

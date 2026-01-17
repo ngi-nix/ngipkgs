@@ -43,7 +43,7 @@
           description = "Enables manually starting Libervia's backend and the use of its CLI and TUI clients.";
           module = ./examples/backend.nix;
           tests.backend = {
-            module = import ./tests/backend.nix args;
+            module = ./tests/backend.nix;
           };
         };
         desktop = {
@@ -51,7 +51,7 @@
           module = ./examples/desktop.nix;
           # FIX:
           tests.desktop = {
-            module = import ./tests/desktop.nix args;
+            module = ./tests/desktop.nix;
           };
         };
       };
@@ -60,7 +60,7 @@
     demo.vm = {
       module = ./examples/desktop.nix;
       module-demo = ./demo.nix;
-      tests.demo.module = import ./tests/desktop.nix args;
+      tests.demo.module = ./tests/desktop.nix;
       usage-instructions = [
         {
           instruction = ''

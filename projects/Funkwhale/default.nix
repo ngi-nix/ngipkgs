@@ -40,7 +40,7 @@
 
           You will still need to create an initial user with `sudo -u funkwhale funkwhale-manage fw users create --superuser`.
         '';
-        tests.basic.module = import ./services/funkwhale/tests/basic.nix args;
+        tests.basic.module = ./services/funkwhale/tests/basic.nix;
       };
     };
   };
@@ -59,6 +59,6 @@
         instruction = "You can log into the website at <http://localhost:12345>.";
       }
     ];
-    tests.demo-basic.module = import ./demo/tests/basic.nix args;
+    tests.demo-basic.module = ./demo/tests/basic.nix;
   };
 }

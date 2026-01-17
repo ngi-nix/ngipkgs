@@ -31,7 +31,7 @@
         description = ''
           This example shows how to enable xrsh and run a terminal inside WebXR.
         '';
-        tests.basic.module = import ./programs/xrsh/tests/basic.nix args;
+        tests.basic.module = ./programs/xrsh/tests/basic.nix;
       };
     };
   };
@@ -58,6 +58,6 @@
       }
 
     ];
-    tests.basic.module = import ./programs/xrsh/tests/basic.nix args;
+    tests.basic.module = ./programs/xrsh/tests/basic.nix;
   };
 }

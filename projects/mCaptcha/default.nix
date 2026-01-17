@@ -45,6 +45,6 @@
     };
   };
 
-  nixos.tests.bring-your-own-services.module = import ./services/mcaptcha/tests/bring-your-own-services.nix args;
-  nixos.tests.create-locally.module = import ./services/mcaptcha/tests/create-locally.nix args;
+  nixos.tests.bring-your-own-services.module = ./services/mcaptcha/tests/bring-your-own-services.nix;
+  nixos.tests.create-locally.module = ./services/mcaptcha/tests/create-locally.nix;
 }

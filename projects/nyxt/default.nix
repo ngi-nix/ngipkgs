@@ -26,7 +26,7 @@
       examples."Enable Nyxt" = {
         module = ./programs/nyxt/examples/basic.nix;
         description = "Enable the nyxt program";
-        tests.basic.module = import ./programs/nyxt/tests/shell.nix args;
+        tests.basic.module = ./programs/nyxt/tests/shell.nix;
       };
     };
   };
@@ -34,6 +34,6 @@
   nixos.demo.shell = {
     module = ./programs/nyxt/examples/basic.nix;
     description = "nyxt demo";
-    tests.basic.module = import ./programs/nyxt/tests/shell.nix args;
+    tests.basic.module = ./programs/nyxt/tests/shell.nix;
   };
 }
