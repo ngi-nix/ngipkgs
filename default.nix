@@ -49,10 +49,6 @@ let
 
     formatter = self.call ./maintainers/formatter.nix { };
 
-    optionsDoc = pkgs.nixosOptionsDoc {
-      inherit (self.project-utils.eval-projects) options;
-    };
-
     overview = self.import ./overview {
       self = flake;
       pkgs = pkgs.extend self.overlays.default;
@@ -88,6 +84,7 @@ let
     inherit (self.project-utils)
       checks
       hydrated-projects
+      optionsDoc
       ;
 
     projects = lib.mapAttrs (name: value: {
