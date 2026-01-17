@@ -3,6 +3,8 @@
   pkgs,
   sources,
   system,
+
+  nixos-modules,
   ...
 }@args:
 let
@@ -51,7 +53,7 @@ rec {
     modules = [
       raw-projects
     ];
-    specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
+    specialArgs.modulesPath = "${sources.inputs.nixpkgs}/nixos/modules";
   };
 
   projects = eval-projects.config.projects;
@@ -60,6 +62,31 @@ rec {
   checks = lib.mapAttrs (
     name: value: pkgs.writeText "${name}-eval-check" (lib.strings.toJSON value)
   ) (lib.forceEvalRecursive projects);
+
+  optionsDoc = pkgs.nixosOptionsDoc {
+    inherit
+      (lib.evalModules {
+        modules = [
+          {
+            # Don't check because NixOS options are not included.
+            # See comment in NixOS' `noCheckForDocsModule`.
+            config._module.check = false;
+
+            config.nixpkgs.hostPlatform = system;
+            config._module.args.pkgs = pkgs;
+
+            imports = lib.pipe nixos-modules [
+              (lib.filterAttrs (_: value: lib.isAttrs value))
+              (lib.mapAttrsToList (name: value: lib.attrValues value))
+              (lib.flatten)
+            ];
+          }
+        ];
+        specialArgs.modulesPath = "${sources.inputs.nixpkgs}/nixos/modules";
+      })
+      options
+      ;
+  };
 
   # TODO: no longer useful. refactor whatever needs this and remove.
   hydrated-projects =
