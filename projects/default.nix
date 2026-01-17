@@ -19,15 +19,13 @@ let
     mapAttrs
     ;
 
-  types = import ./types.nix { inherit lib; };
-
   baseDirectory = ./.;
 
   projectDirectories =
     let
       names =
         name: type:
-        if type == "directory" then
+        if type == "directory" && (!lib.elem name allowedFiles) then
           { ${name} = baseDirectory + "/${name}"; }
         # nothing else should be kept in this directory reserved for projects
         else
@@ -37,7 +35,7 @@ let
         "README.md"
         "default.nix"
         "tests.nix"
-        "types.nix"
+        "types.nix" # TODO: remove
       ];
     in
     # TODO: use fileset and filter for `gitTracked` files
@@ -45,15 +43,24 @@ let
 in
 rec {
   raw-projects = {
-    options.projects = types.options.projects;
+    imports = [ ../maintainers/types/projects.nix ];
     config.projects = mapAttrs (name: directory: import directory args) projectDirectories;
   };
 
   eval-projects = lib.evalModules {
     modules = [
-      raw-projects
+      {
+        imports = [ raw-projects ];
+
+        config = {
+          # Don't check because NixOS options are not included.
+          # See comment in NixOS' `noCheckForDocsModule`.
+          _module.check = false;
+
+          _module.args = args;
+        };
+      }
     ];
-    specialArgs.modulesPath = "${sources.inputs.nixpkgs}/nixos/modules";
   };
 
   projects = eval-projects.config.projects;
