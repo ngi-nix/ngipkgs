@@ -20,7 +20,7 @@
       examples.basic = {
         module = ./programs/Hypermachines/examples/basic.nix;
         description = "";
-        tests.basic.module = import ./programs/Hypermachines/tests/basic.nix args;
+        tests.basic.module = ./programs/Hypermachines/tests/basic.nix;
       };
     };
   };

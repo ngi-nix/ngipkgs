@@ -25,7 +25,7 @@
     examples.basic = {
       module = ./example.nix;
       description = "";
-      tests.basic.module = import ./test.nix args;
+      tests.basic.module = ./test.nix;
       # https://github.com/AliveToolkit/alive2#running-the-standalone-translation-validation-tool-alive-tv
       tests.translation.module = null;
     };

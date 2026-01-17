@@ -25,7 +25,7 @@
       examples.basic = {
         module = ./programs/jaq/examples/basic.nix;
         description = "Enable the jaq program";
-        tests.basic.module = import ./programs/jaq/tests/basic.nix args;
+        tests.basic.module = ./programs/jaq/tests/basic.nix;
       };
     };
   };
@@ -51,6 +51,6 @@
       $ echo "0, 1, 4, " | jaq
     '';
 
-    tests.basic.module = import ./programs/jaq/tests/shell.nix args;
+    tests.basic.module = ./programs/jaq/tests/shell.nix;
   };
 }

@@ -18,7 +18,7 @@
       module = ./services/openfire-server/module/default.nix;
       examples."Enable Openfire server" = {
         module = ./services/openfire-server/examples/basic/default.nix;
-        tests.basic.module = import ./services/openfire-server/examples/basic/test.nix args;
+        tests.basic.module = ./services/openfire-server/examples/basic/test.nix;
       };
     };
   };
@@ -41,6 +41,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./services/openfire-server/examples/basic/test.nix args;
+    tests.demo.module = ./services/openfire-server/examples/basic/test.nix;
   };
 }

@@ -44,7 +44,7 @@
       module = ./services/reoxided/module.nix;
       examples."Enable reoxided" = {
         module = ./services/reoxided/examples/basic.nix;
-        tests.basic.module = import ./services/reoxided/tests/basic.nix args;
+        tests.basic.module = ./services/reoxided/tests/basic.nix;
       };
     };
   };

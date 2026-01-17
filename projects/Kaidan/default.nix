@@ -42,7 +42,7 @@
         description = "Kaidan example with local XMPP Server";
         # TODO: use Nixpkgs test once that reaches NGIpkgs
         # https://github.com/NixOS/nixpkgs/pull/469539
-        tests.kaidan.module = import ./programs/kaidan/tests/kaidan.nix args;
+        tests.kaidan.module = ./programs/kaidan/tests/kaidan.nix;
       };
     };
   };
@@ -50,7 +50,7 @@
   nixos.demo.vm = {
     module = ./programs/kaidan/examples/demo.nix;
     module-demo = ./module-demo.nix;
-    tests.demo.module = import ./programs/kaidan/tests/kaidan.nix args;
+    tests.demo.module = ./programs/kaidan/tests/kaidan.nix;
     usage-instructions = [
       {
         instruction = ''

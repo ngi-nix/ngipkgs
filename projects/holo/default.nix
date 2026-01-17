@@ -20,7 +20,7 @@
       module = ./programs/holo/module.nix;
       examples."Enable the holo program" = {
         module = ./programs/holo/examples/basic.nix;
-        tests.basic.module = import ./programs/holo/tests/basic.nix args;
+        tests.basic.module = ./programs/holo/tests/basic.nix;
       };
     };
   };
@@ -37,7 +37,7 @@
         tests.ietf-bgp-policy.module = null;
         tests.ietf-ipv4-unicast-routing.module = null;
         tests.ietf-key-chain.module = null;
-        tests.ietf-ospfv3.module = import ./services/holo/tests/ietf-ospfv3.nix args;
+        tests.ietf-ospfv3.module = ./services/holo/tests/ietf-ospfv3.nix;
         tests.ietf-segment-routing.module = null;
       };
     };
@@ -66,6 +66,6 @@
 
       $ holo-cli -c 'show running format json'
     '';
-    tests.demo.module = import ./services/holo/tests/ietf-ospfv3.nix args;
+    tests.demo.module = ./services/holo/tests/ietf-ospfv3.nix;
   };
 }

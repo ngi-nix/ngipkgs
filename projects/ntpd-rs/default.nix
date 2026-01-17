@@ -29,12 +29,12 @@
     examples = {
       "Replace the default `timesyncd` service with `ntpd-rs`" = {
         module = ./examples/basic.nix;
-        tests.basic.module = import ./tests/basic.nix args;
+        tests.basic.module = ./tests/basic.nix;
       };
 
       "Use NTS (Network Time Security) servers instead with `ntpd-rs`" = {
         module = ./examples/nts.nix;
-        tests.nts.module = import ./tests/nts.nix args;
+        tests.nts.module = ./tests/nts.nix;
       };
 
       "Run `ntpd-rs` in server mode with observability features" = {
@@ -69,6 +69,6 @@
         '';
       }
     ];
-    tests.basic.module = import ./tests/basic.nix args;
+    tests.basic.module = ./tests/basic.nix;
   };
 }

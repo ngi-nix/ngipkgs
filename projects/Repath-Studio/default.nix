@@ -32,7 +32,7 @@
       module = ./programs/repath-studio/module.nix;
       examples."Enable repath-studio" = {
         module = ./programs/repath-studio/examples/basic.nix;
-        tests.basic.module = import ./programs/repath-studio/tests/basic.nix args;
+        tests.basic.module = ./programs/repath-studio/tests/basic.nix;
       };
       links = {
         build = {
@@ -62,6 +62,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./programs/repath-studio/tests/basic.nix args;
+    tests.demo.module = ./programs/repath-studio/tests/basic.nix;
   };
 }

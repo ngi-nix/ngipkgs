@@ -27,7 +27,7 @@
       examples.gnucap = {
         module = ./example.nix;
         description = "";
-        tests.basic.module = import ./test.nix args;
+        tests.basic.module = ./test.nix;
       };
 
       links = {

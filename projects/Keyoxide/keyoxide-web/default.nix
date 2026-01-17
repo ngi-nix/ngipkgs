@@ -5,14 +5,7 @@
   ...
 }@args:
 {
-  module =
-    { lib, pkgs, ... }:
-    {
-      options.services.keyoxide = {
-        enable = lib.mkEnableOption "keyoxide-web";
-        package = lib.mkPackageOption pkgs "nodePackages.keyoxide" { };
-      };
-    };
+  module = ./module.nix;
   links = {
     development = {
       text = "Local development using Nix";

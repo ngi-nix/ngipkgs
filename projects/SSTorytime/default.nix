@@ -34,7 +34,7 @@
       module = ./programs/sstorytime/module.nix;
       examples."Enable SSTorytime programs" = {
         module = ./programs/sstorytime/examples/basic.nix;
-        tests.basic.module = import ./services/sstorytime/tests/basic.nix args;
+        tests.basic.module = ./services/sstorytime/tests/basic.nix;
       };
     };
   };
@@ -46,7 +46,7 @@
         module = ./services/sstorytime/examples/basic.nix;
         # TODO: make more complex tests?
         # https://github.com/markburgess/SSTorytime/blob/1aa9255fd8afcae6e76b8555f4b0e938a12207cd/docs/N4L.md
-        tests.basic.module = import ./services/sstorytime/tests/basic.nix args;
+        tests.basic.module = ./services/sstorytime/tests/basic.nix;
       };
     };
   };
@@ -87,6 +87,6 @@
         '';
       }
     ];
-    tests.demo.module = import ./services/sstorytime/tests/basic.nix args;
+    tests.demo.module = ./services/sstorytime/tests/basic.nix;
   };
 }

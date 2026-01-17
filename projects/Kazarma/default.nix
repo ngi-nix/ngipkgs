@@ -39,7 +39,7 @@
       examples."Enable kazarma" = {
         module = ./services/kazarma/examples/basic.nix;
         description = null;
-        tests.basic.module = import ./services/kazarma/tests/basic.nix args;
+        tests.basic.module = ./services/kazarma/tests/basic.nix;
       };
     };
   };

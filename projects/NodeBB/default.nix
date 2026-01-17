@@ -40,11 +40,11 @@
         examples = {
           "Enable NodeBB with postgresql" = {
             module = ./services/nodebb/examples/postgresql.nix;
-            tests.postgresql.module = import ./services/nodebb/tests/postgresql.nix args;
+            tests.postgresql.module = ./services/nodebb/tests/postgresql.nix;
           };
           "Enable NodeBB with redis" = {
             module = ./services/nodebb/examples/redis.nix;
-            tests.redis.module = import ./services/nodebb/tests/redis.nix args;
+            tests.redis.module = ./services/nodebb/tests/redis.nix;
           };
         };
       };
@@ -53,7 +53,7 @@
       module = ./services/nodebb/examples/postgresql.nix;
       module-demo = ./module-demo.nix;
       description = "Deployment for demo purposes";
-      tests.postgresql.module = import ./services/nodebb/tests/postgresql.nix args;
+      tests.postgresql.module = ./services/nodebb/tests/postgresql.nix;
     };
   };
 }

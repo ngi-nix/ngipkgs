@@ -40,8 +40,8 @@
           module = ./services/ratmand/examples/basic.nix;
           description = "Basic ratmand configuration";
           tests = {
-            ratmand-config.module = import ./services/ratmand/tests/config.nix args;
-            peer-communication.module = import ./services/ratmand/tests/peer-communication.nix args;
+            ratmand-config.module = ./services/ratmand/tests/config.nix;
+            peer-communication.module = ./services/ratmand/tests/peer-communication.nix;
             peer-communication.problem.broken.reason = ''
               Test fails and is not reproducible, locally.
 
@@ -67,7 +67,7 @@
         instruction = "The ratmand dashboard is available at http://localhost:5850.";
       }
     ];
-    tests.demo-basic.module = import ./demo/tests/basic.nix args;
+    tests.demo-basic.module = ./demo/tests/basic.nix;
     tests.demo-basic.problem.broken.reason = ''
       This has been failing in CI for a while and the failure is not
       reproducible, locally.
