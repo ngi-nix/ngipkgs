@@ -78,6 +78,12 @@ let
         examples = lib.mapAttrs (
           _: project: lib.mapAttrs (_: example: example.module) project.nixos.examples
         ) self.hydrated-projects;
+        demos = lib.mapAttrs (
+            _: project: lib.filterAttrs (_: v: v != null) {
+              vm = project.nixos.demo.vm.module or null;
+              shell = project.nixos.demo.shell.module or null;
+            }
+          ) self.hydrated-projects;
       };
     };
 
