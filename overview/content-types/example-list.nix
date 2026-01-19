@@ -9,12 +9,7 @@ in
 {
   options = {
     examples = mkOption {
-      type =
-        with types;
-        listOf (submodule {
-          imports = [ ./example.nix ];
-          _module.args.utils = utils;
-        });
+      type = with types; listOf (utils.submoduleWithArgs ./example.nix);
     };
     __toString = mkOption {
       type = with types; functionTo str;

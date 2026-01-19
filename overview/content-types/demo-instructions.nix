@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   config,
   utils,
   ...
@@ -49,10 +48,7 @@ in
       ];
     };
     nix-config = mkOption {
-      type = types.submodule {
-        imports = [ ./nix-config.nix ];
-        _module.args.pkgs = pkgs;
-      };
+      type = utils.submoduleWithArgs ./nix-config.nix;
       default.settings = {
         substituters = [
           "https://cache.nixos.org/"
@@ -125,7 +121,7 @@ in
       ];
     };
     demo = mkOption {
-      type = types.submodule ./demo.nix;
+      type = utils.submoduleWithArgs ./demo.nix;
     };
     __toString = mkOption {
       type = with types; functionTo str;

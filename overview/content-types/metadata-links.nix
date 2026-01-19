@@ -1,4 +1,8 @@
-{ lib, config, ... }:
+{
+  lib,
+  ngiTypes,
+  ...
+}:
 let
   inherit (lib)
     mkOption
@@ -6,12 +10,10 @@ let
     optionalString
     concatMapAttrsStringSep
     ;
-
-  types' = import ../../maintainers/types { inherit lib; };
 in
 {
   options = {
-    inherit (types'.metadata.getSubOptions { }) links;
+    inherit (ngiTypes.metadata.getSubOptions { }) links;
 
     __toString = mkOption {
       type = with types; functionTo str;

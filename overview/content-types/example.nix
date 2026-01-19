@@ -2,6 +2,7 @@
   lib,
   config,
   utils,
+  ngiTypes,
   ...
 }:
 let
@@ -12,12 +13,10 @@ let
     any
     attrValues
     ;
-
-  types' = import ../../maintainers/types { inherit lib; };
 in
 {
   options = {
-    inherit (types'.example.getSubOptions { })
+    inherit (ngiTypes.example.getSubOptions { })
       description
       module
       name

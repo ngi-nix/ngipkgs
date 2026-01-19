@@ -22,13 +22,7 @@ in
       type = with lib.types; nullOr path;
     };
     project-options = mkOption {
-      type =
-        with types;
-        listOf (submodule {
-          imports = [ ./option.nix ];
-          _module.args.pkgs = pkgs;
-          _module.args.utils = utils;
-        });
+      type = with types; listOf (utils.submoduleWithArgs ./option.nix);
       default = [ ];
     };
     __toString = mkOption {
