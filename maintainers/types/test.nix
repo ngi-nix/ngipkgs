@@ -8,7 +8,7 @@
   ```nix
   { ... }@args:
   {
-    tests.basic.module = import ./test.nix args;
+    tests.basic.module = ./test.nix;
   }
   ```
 
@@ -58,6 +58,14 @@ in
 {
   options = {
     module = mkOption {
+      # NOTE:
+      # Tests are composed to derivations, but we don't want to
+      # evaluate them as such because that slows down the overview build
+      # considerably.
+      #
+      # This is because test nodes are eagerly evaluated to create the
+      # driver's `vmStartScripts` (see `nixos/lib/testing/driver.nix` in
+      # NixOS).
       type = with types; nullOr (either deferredModule package);
       default = null;
       description = "NixOS test module";

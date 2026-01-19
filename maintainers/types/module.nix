@@ -11,7 +11,7 @@
         examples."Enable PROGRAM_NAME" = {
           module = ./programs/PROGRAM_NAME/examples/basic.nix;
           description = "Basic configuration example for PROGRAM_NAME";
-          tests.basic.module = import ./programs/PROGRAM_NAME/tests/basic.nix args;
+          tests.basic.module = ./programs/PROGRAM_NAME/tests/basic.nix;
         };
       };
     }
@@ -29,7 +29,7 @@
         examples."Enable SERVICE_NAME" = {
           module = ./services/SERVICE_NAME/examples/basic.nix;
           description = "Basic configuration example for SERVICE_NAME";
-          tests.basic.module = import ./services/SERVICE_NAME/tests/basic.nix args;
+          tests.basic.module = ./services/SERVICE_NAME/tests/basic.nix;
         };
       };
     }
@@ -120,7 +120,7 @@ in
       description = "Name of the ${type}";
     };
     module = mkOption {
-      type = with types; nullOr deferredModule;
+      type = with types; nullOr path;
       description = ''
         Contains the path to the NixOS module for the ${type}.
       '';

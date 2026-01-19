@@ -10,7 +10,7 @@
       "Basic mail server setup with default ports" = {
         module = ./services/SERVICE_NAME/examples/basic.nix;
         description = "Send email via SMTP to port 587 to check that it works";
-        tests.basic.module = import ./services/SERVICE_NAME/tests/basic.nix args;
+        tests.basic.module = ./services/SERVICE_NAME/tests/basic.nix;
       };
     };
   }

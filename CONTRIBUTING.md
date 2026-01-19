@@ -364,7 +364,7 @@ For services, click on the module name to reveal more details, then copy the nam
      For example:
 
      ```nix
-     nixos.tests.some-test = import ./test.nix args;
+     nixos.tests.some-test = ./test.nix;
      ```
 
      The module tests will then be accessible from `checks.<system>.some-project`.
@@ -403,7 +403,7 @@ A program is a software application that can be executed in the user's shell, wh
        examples."Enable foobar" = {
          module = ./programs/foobar/examples/basic.nix;
          description = "Usage instructions for foobar";
-         tests.basic.module = import ./programs/foobar/tests/basic.nix args;
+         tests.basic.module = ./programs/foobar/tests/basic.nix;
        };
      };
    }
