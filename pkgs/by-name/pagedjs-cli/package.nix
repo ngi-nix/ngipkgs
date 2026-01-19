@@ -11,16 +11,16 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "pagedjs-cli";
-  version = "0-unstable-2024-05-31";
+  version = "0-unstable-2026-01-05";
 
   src = fetchFromGitHub {
     owner = "pagedjs";
     repo = "pagedjs-cli";
-    rev = "d682e19ee5d14bfe07ad1726540e2423ede75a05";
-    hash = "sha256-7DXfBMi6OPNUT1XM5Gtsbk8xK4rz5xmDbJAPulrVTmE=";
+    rev = "1fc8c8956d665347a6a105c927be405a3ac462d6";
+    hash = "sha256-393Q2B64lIPSYIckPOqVdhhQiHKcUE1jOpsYlFsiJvg=";
   };
 
-  npmDepsHash = "sha256-QX7TkGQ47UunRjsRHn5muE1a6X84GZyHdCEa+blx9Ik=";
+  npmDepsHash = "sha256-h3R+L9gROCqvKpzTg9woI0Om1J5Eo4NA1FCXjfnjwdU=";
 
   # Skip Puppeteer's Chrome download during dependency installation
   env = {
