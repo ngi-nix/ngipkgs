@@ -6,15 +6,15 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-transcoding-custom-quality";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-12-18";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    rev = "b035a3b7b109b1227c9afa6d105ea8d017bcf963";
     sparseCheckout = [ "peertube-plugin-transcoding-custom-quality" ];
-    hash = "sha256-DEYyrQtogtKCSZM8nIBZiKIcbbG22RmXsenGPd9hTGE=";
+    hash = "sha256-m+oFaX9/8MyDAUt4omsdliAR5ZHFJzfeGkuxufWZTjM=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-transcoding-custom-quality";
