@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  sources,
   project,
   examples,
   ...
@@ -58,10 +59,10 @@ let
 in
 lib.mapAttrs (
   _: test:
-  if lib.isString test.module then
+  if lib.isString test.module || lib.isPath test.module then
     nixosTest (
       import test.module {
-        inherit pkgs lib;
+        inherit pkgs lib sources;
         inherit (pkgs) system;
       }
     )

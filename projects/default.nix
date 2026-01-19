@@ -121,7 +121,12 @@ rec {
             // (filter-map (project.nixos.modules.services or { }) "examples")
           );
           nixos.tests = import ./tests.nix {
-            inherit lib pkgs project;
+            inherit
+              lib
+              pkgs
+              sources
+              project
+              ;
             inherit (nixos) examples;
           };
         };

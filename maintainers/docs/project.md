@@ -146,7 +146,7 @@ Software that runs in a shell.
 >     examples."Enable PROGRAM_NAME" = {
 >       module = ./programs/PROGRAM_NAME/examples/basic.nix;
 >       description = "Basic configuration example for PROGRAM_NAME";
->       tests.basic.module = import ./programs/PROGRAM_NAME/tests/basic.nix args;
+>       tests.basic.module = ./programs/PROGRAM_NAME/tests/basic.nix;
 >     };
 >   };
 > }
@@ -208,7 +208,7 @@ Software that runs as a background process.
 >     examples."Enable SERVICE_NAME" = {
 >       module = ./services/SERVICE_NAME/examples/basic.nix;
 >       description = "Basic configuration example for SERVICE_NAME";
->       tests.basic.module = import ./services/SERVICE_NAME/tests/basic.nix args;
+>       tests.basic.module = ./services/SERVICE_NAME/tests/basic.nix;
 >     };
 >   };
 > }
@@ -269,7 +269,7 @@ Configuration of an application module that illustrates how to use it.
 >     "Basic mail server setup with default ports" = {
 >       module = ./services/SERVICE_NAME/examples/basic.nix;
 >       description = "Send email via SMTP to port 587 to check that it works";
->       tests.basic.module = import ./services/SERVICE_NAME/tests/basic.nix args;
+>       tests.basic.module = ./services/SERVICE_NAME/tests/basic.nix;
 >     };
 >   };
 > }
@@ -376,7 +376,7 @@ You can write a module as outlined in the [NixOS manual](https://nixos.org/manua
 ```nix
 { ... }@args:
 {
-  tests.basic.module = import ./test.nix args;
+  tests.basic.module = ./test.nix;
 }
 ```
 

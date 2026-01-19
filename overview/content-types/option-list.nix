@@ -19,7 +19,7 @@ in
       type = with types; listOf str;
     };
     module = mkOption {
-      type = with lib.types; nullOr deferredModule;
+      type = with lib.types; nullOr path;
     };
     project-options = mkOption {
       type =
