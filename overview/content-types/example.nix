@@ -13,7 +13,7 @@ let
     attrValues
     ;
 
-  types' = import ../../projects/types.nix { inherit lib; };
+  types' = import ../../maintainers/types { inherit lib; };
 in
 {
   options = {

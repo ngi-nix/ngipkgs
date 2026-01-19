@@ -35,7 +35,6 @@ let
         "README.md"
         "default.nix"
         "tests.nix"
-        "types.nix" # TODO: remove
       ];
     in
     # TODO: use fileset and filter for `gitTracked` files

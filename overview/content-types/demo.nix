@@ -7,7 +7,7 @@
 let
   inherit (lib) mkOption types;
 
-  types' = import ../../projects/types.nix { inherit lib; };
+  types' = import ../../maintainers/types { inherit lib; };
 in
 {
   imports = [ ./code-snippet.nix ];
