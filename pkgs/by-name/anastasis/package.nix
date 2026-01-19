@@ -19,7 +19,6 @@
   jq,
   texinfo,
   which,
-  callPackage,
   gitUpdater,
 }:
 stdenv.mkDerivation (finalAttrs: {
@@ -99,7 +98,6 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  passthru.tests.vmTest = callPackage ./test.nix { anastasis = finalAttrs.finalPackage; };
   passthru.updateScript = gitUpdater { rev-prefix = "v"; };
 
   meta = {

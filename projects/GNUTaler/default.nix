@@ -43,7 +43,7 @@
       };
       examples."Backup with anastasis" = {
         module = ./examples/backup.nix;
-        tests.anastasis.module = ../../pkgs/by-name/anastasis/test.nix;
+        tests.anastasis.module = ./tests/backup.nix;
       };
     };
   };
