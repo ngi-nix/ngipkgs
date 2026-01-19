@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  anastasis,
   ...
 }:
 pkgs.testers.nixosTest {
@@ -13,7 +12,7 @@ pkgs.testers.nixosTest {
         systemd.services.anastasis-httpd = {
           wantedBy = [ "multi-user.target" ];
           serviceConfig.ExecStart = ''
-            ${anastasis}/bin/anastasis-httpd
+            ${pkgs.anastasis}/bin/anastasis-httpd
           '';
         };
         environment.systemPackages = with pkgs; [
@@ -49,7 +48,7 @@ pkgs.testers.nixosTest {
     let
       check-anastasis = pkgs.writeScript "check-anastasis" ''
         # Load test fixture data into the vm $HOME (/root)
-        cd ${anastasis.configured} && find . -type f -exec install -Dm 755 "{}" "$HOME/{}" \;
+        cd ${pkgs.anastasis.configured} && find . -type f -exec install -Dm 755 "{}" "$HOME/{}" \;
         cd $HOME
         # Patch some paths
         sed=${pkgs.gnused}/bin/sed
