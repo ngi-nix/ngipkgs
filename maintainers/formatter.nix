@@ -28,7 +28,10 @@ lib.makeExtensible (self: {
   eval = self.treefmt.evalModule pkgs self.config;
 
   # treefmt package
-  package = self.treefmt.mkWrapper pkgs self.config;
+  # FIXME(phanirithvij): fix the missing description issue properly, this is a workaround
+  package = self.eval.config.build.wrapper.overrideAttrs {
+    meta = { inherit (pkgs.treefmt.meta) description; };
+  };
 
   # development shell that contains all formatters
   shell = self.eval.config.build.devShell;
