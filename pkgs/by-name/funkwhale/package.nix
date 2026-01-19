@@ -31,7 +31,7 @@ let
 in
 python.pkgs.buildPythonApplication rec {
   pname = "funkwhale";
-  version = "2.0.0-alpha.2";
+  version = "1.4.1";
   pyproject = true;
 
   src = fetchFromGitLab {
@@ -39,7 +39,7 @@ python.pkgs.buildPythonApplication rec {
     owner = "funkwhale";
     repo = "funkwhale";
     tag = version;
-    hash = "sha256-4WvTyVqFuSlkim/9S88tutvXJqA4VHsILH5q4WKsjo8=";
+    hash = "sha256-eCSYdZZdxfvUk1WGSGWpsme8K6sdboFGaE9eixFVNg8=";
   };
   sourceRoot = "${src.name}/api";
 
@@ -195,7 +195,7 @@ python.pkgs.buildPythonApplication rec {
 
       yarnOfflineCache = fetchYarnDeps {
         yarnLock = "${src}/front/yarn.lock";
-        hash = "sha256-+rGiKBg18XL6W5b5VaYAbwbF+kQGX8JBIn0ATJyd9Bg=";
+        hash = "sha256-ouDw90BqwlzIhaiWmo3gQUOX+6O/8zgHJEvV5V17BVI=";
       };
 
       yarnBuildScript = "build:deployment";
