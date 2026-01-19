@@ -2,7 +2,9 @@
   lib,
   config,
   options,
+  modulesPath,
   pkgs,
+  utils,
   ...
 }:
 let
@@ -11,7 +13,7 @@ in
 {
   options =
     let
-      nix-module = import "${pkgs.path}/nixos/modules/config/nix.nix" {
+      nix-module = import (modulesPath + "/config/nix.nix") {
         inherit config lib pkgs;
       };
     in

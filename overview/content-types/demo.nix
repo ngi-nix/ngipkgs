@@ -2,18 +2,17 @@
   lib,
   config,
   pkgs,
+  ngiTypes,
   ...
 }:
 let
   inherit (lib) mkOption types;
-
-  types' = import ../../maintainers/types { inherit lib; };
 in
 {
   imports = [ ./code-snippet.nix ];
 
   options = {
-    inherit (types'.demo.getSubOptions { })
+    inherit (ngiTypes.demo.getSubOptions { })
       tests
       problem
       description

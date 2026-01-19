@@ -17,7 +17,29 @@ let
     toString
     ;
 
-  eval = module: (lib.evalModules { modules = [ module ]; }).config;
+  ngiTypes = import ../maintainers/types { inherit lib; };
+
+  moduleArgs = {
+    config._module.args.pkgs = pkgs;
+    config._module.args.utils = utils;
+    config._module.args.ngiTypes = ngiTypes;
+    config._module.args.modulesPath = "${self.inputs.nixpkgs}/nixos/modules";
+  };
+
+  submoduleWithArgs =
+    modules:
+    lib.types.submodule {
+      imports = [ moduleArgs ] ++ toList modules;
+    };
+
+  eval =
+    module:
+    (lib.evalModules {
+      modules = [
+        module
+        moduleArgs
+      ];
+    }).config;
 
   inherit (lib)
     concatLines
@@ -26,6 +48,7 @@ let
     filterAttrs
     mapAttrs'
     nameValuePair
+    toList
     ;
 
   empty =
@@ -66,6 +89,8 @@ let
       self.dirtyRev or "dev";
 
   utils = {
+    inherit submoduleWithArgs;
+
     # This doesn't actually produce a HTML string but a Jinja2 template string
     # literal, that is then replaced by it's HTML translation at the last build
     # step.
@@ -122,8 +147,6 @@ let
       prefix: project:
       eval {
         imports = [ ./content-types/option-list.nix ];
-        _module.args.pkgs = pkgs;
-        _module.args.utils = utils;
 
         inherit prefix;
         module = lib.attrByPath (prefix ++ [ "module" ]) null project.nixos.modules;
@@ -201,7 +224,6 @@ let
 
         examples = eval {
           imports = [ ./content-types/example-list.nix ];
-          _module.args.utils = utils;
           examples = map (value: {
             inherit (value)
               description
@@ -241,8 +263,6 @@ let
       type: demo:
       eval {
         imports = [ ./content-types/demo-instructions.nix ];
-        _module.args.pkgs = pkgs;
-        _module.args.utils = utils;
 
         heading = heading 2 "demo" (
           if type == "shell" then "Try the program in a shell" else "Try the service in a VM"
@@ -257,7 +277,6 @@ let
             description
             usage-instructions
             ;
-          _module.args.pkgs = pkgs;
         };
       };
   };
@@ -284,7 +303,6 @@ let
                 description
                 problem
                 ;
-              _module.args.pkgs = pkgs;
             }).filepath;
         in
         if demo != null then lib.concatMapAttrs mkDemoFile demo else null;

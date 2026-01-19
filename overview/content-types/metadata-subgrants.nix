@@ -1,15 +1,17 @@
-{ lib, config, ... }:
+{
+  lib,
+  ngiTypes,
+  ...
+}:
 let
   inherit (lib)
     mkOption
     types
     ;
-
-  types' = import ../../maintainers/types { inherit lib; };
 in
 {
   options = {
-    inherit (types'.metadata.getSubOptions { }) subgrants;
+    inherit (ngiTypes.metadata.getSubOptions { }) subgrants;
 
     __toString = mkOption {
       type = with types; functionTo str;
