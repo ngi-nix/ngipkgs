@@ -11,6 +11,7 @@
   inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
   inputs.treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sbt-derivation.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.sbt-derivation.inputs.flake-utils.follows = "flake-utils";
   inputs.sbt-derivation.url = "github:zaninime/sbt-derivation";
   inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.sops-nix.url = "github:Mic92/sops-nix";
