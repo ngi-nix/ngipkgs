@@ -100,7 +100,7 @@ let
     else if test ? meta.broken && test.meta.broken then
       null
     else
-      pkgs.testers.runNixOSTest args;
+      lib.lazyDerivation { derivation = pkgs.testers.runNixOSTest args; };
 
   callTest =
     module:
