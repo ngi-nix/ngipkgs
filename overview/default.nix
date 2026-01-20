@@ -17,14 +17,17 @@ let
     toString
     ;
 
-  ngiTypes = import ../maintainers/types { inherit lib; };
+  moduleArgs =
+    { options, ... }:
+    {
+      imports = [ ../maintainers/types ];
 
-  moduleArgs = {
-    config._module.args.pkgs = pkgs;
-    config._module.args.utils = utils;
-    config._module.args.ngiTypes = ngiTypes;
-    config._module.args.modulesPath = "${self.inputs.nixpkgs}/nixos/modules";
-  };
+      config._module.args.pkgs = pkgs;
+      config._module.args.utils = utils;
+      config._module.args.ngiTypes = options.ngiTypes.default;
+      config._module.args.toplevelOptions = options;
+      config._module.args.modulesPath = "${self.inputs.nixpkgs}/nixos/modules";
+    };
 
   submoduleWithArgs =
     modules:

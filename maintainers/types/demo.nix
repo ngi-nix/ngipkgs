@@ -87,6 +87,7 @@
 {
   lib,
   name,
+  ngiTypes,
   ...
 }:
 
@@ -95,8 +96,6 @@ let
     types
     mkOption
     ;
-
-  ngiTypes = import ./. { inherit lib; };
 
   inherit (ngiTypes)
     example
