@@ -1,25 +1,33 @@
 {
   lib,
   config,
-  options,
   modulesPath,
   pkgs,
-  utils,
   ...
 }:
 let
-  inherit (lib) mkOption types;
+  inherit (lib)
+    mkOption
+    types
+    ;
 in
 {
   options =
     let
-      nix-module = import (modulesPath + "/config/nix.nix") {
-        inherit config lib pkgs;
-      };
+      nix-module = import (modulesPath + "/config/nix.nix") { inherit config lib pkgs; };
+      nixOpts = nix-module.options.nix.settings.type.getSubOptions { };
     in
     {
-      inherit (nix-module.options) nix;
-
+      settings = mkOption {
+        type = types.submodule {
+          options = {
+            inherit (nixOpts)
+              substituters
+              trusted-public-keys
+              ;
+          };
+        };
+      };
       __toString = mkOption {
         type = with types; functionTo str;
         readOnly = true;
@@ -48,7 +56,7 @@ in
               else if strings.isConvertibleWithToString v then
                 toString v
               else
-                abort "The nix conf value: ${toPretty { } v} can not be encoded";
+                abort "The nix conf value: ${generators.toPretty { } v} can not be encoded";
 
             mkKeyValue = k: v: "${escape [ "=" ] k} = ${mkValueString v}";
 
@@ -60,20 +68,6 @@ in
             ${mkKeyValuePairs (filterAttrs (key: value: !(isExtra key)) self.settings)}
             ${mkKeyValuePairs (filterAttrs (key: value: isExtra key) self.settings)}
           '';
-      };
-      settings = mkOption {
-        type = types.submodule {
-          options =
-            let
-              nixOpts = options.nix.settings.type.getSubOptions { };
-            in
-            {
-              inherit (nixOpts)
-                substituters
-                trusted-public-keys
-                ;
-            };
-        };
       };
     };
 }
