@@ -57,6 +57,7 @@ let
       pkgs = pkgs.extend self.overlays.default;
       options = self.optionsDoc.optionsNix;
       projects = self.project-utils.projects;
+      examples = self.project-utils.compat._examples;
     };
 
     manuals = self.call manuals/default.nix {
@@ -74,9 +75,7 @@ let
             nixpkgs.overlays = [ self.overlays.default ] ++ self.overlays.fixups;
           };
       }
-      // lib.foldl lib.recursiveUpdate { } (
-        map (project: project.nixos.modules) (lib.attrValues self.hydrated-projects)
-      );
+      // self.project-utils.compat._modules;
 
     project-utils = self.import ./projects {
       pkgs = pkgs.extend default.overlays.default;
@@ -84,10 +83,14 @@ let
         inputs = sources;
         modules = default.nixos-modules;
         examples = lib.mapAttrs (
-          _: project: lib.mapAttrs (_: example: example.module) project.nixos.examples
-        ) self.hydrated-projects;
+          _: project: lib.mapAttrs (_: example: example.module) project
+        ) self.project-utils.compat._examples;
       };
     };
+
+    examples = lib.mapAttrs (
+      _: project: lib.mapAttrs (_: example: example.module) project
+    ) self.project-utils.compat._examples;
 
     inherit (self.project-utils)
       checks
@@ -95,13 +98,13 @@ let
       optionsDoc
       ;
 
-    projects = lib.mapAttrs (name: value: {
-      tests = value.nixos.tests;
+    projects = lib.genAttrs self.project-utils.project-names (name: {
       demo = default.demos.${name} or null;
+      tests = self.project-utils.tests.${name};
       module-check = default.checks.${name};
-    }) self.hydrated-projects;
+    });
 
-    tests = lib.mapAttrs (_: value: value.nixos.tests) self.hydrated-projects;
+    tests = self.project-utils.tests;
 
     demo-utils = self.import ./overview/demo {
       ngipkgs-modules = lib.attrValues (devLib.flattenAttrs "." self.nixos-modules);
@@ -118,6 +121,7 @@ let
       ;
 
     metrics = self.import ./maintainers/metrics.nix {
+      # TODO: raw-projects = self.project-utils.compat.projects;
       raw-projects = self.hydrated-projects;
     };
 
