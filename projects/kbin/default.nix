@@ -26,10 +26,10 @@
   };
 
   nixos.modules.services = {
-    kbin = {
+    kbin-service = {
       name = "kbin";
       module = ./services/kbin/module.nix;
-      examples.basic = {
+      examples.basic-service = {
         module = ./services/kbin/examples/basic.nix;
         description = "";
         tests.basic.module = ./services/kbin/tests/basic.nix;

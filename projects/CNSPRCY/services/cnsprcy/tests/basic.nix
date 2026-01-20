@@ -11,8 +11,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.cnsprcy
-          sources.examples.CNSPRCY.basic
+          sources.modules.services.cnsprcy-server
+          sources.examples.CNSPRCY."Enable CNSPRCY service"
         ];
         networking.firewall.enable = false;
       };
@@ -21,8 +21,8 @@
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.cnsprcy
-          sources.examples.CNSPRCY.basic
+          sources.modules.services.cnsprcy-server
+          sources.examples.CNSPRCY."Enable CNSPRCY service"
         ];
         networking.firewall.enable = false;
       };
