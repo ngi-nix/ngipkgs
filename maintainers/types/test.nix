@@ -39,6 +39,7 @@
 */
 {
   lib,
+  ngiTypes,
   ...
 }:
 
@@ -47,8 +48,6 @@ let
     types
     mkOption
     ;
-
-  ngiTypes = import ./. { inherit lib; };
 
   inherit (ngiTypes)
     problem

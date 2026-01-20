@@ -42,6 +42,7 @@
 {
   lib,
   name,
+  ngiTypes,
   ...
 }:
 let
@@ -49,8 +50,6 @@ let
     types
     mkOption
     ;
-
-  ngiTypes = import ./. { inherit lib; };
 
   inherit (ngiTypes)
     metadata

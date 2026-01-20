@@ -42,7 +42,7 @@ let
 in
 rec {
   raw-projects = {
-    imports = [ ../maintainers/types/projects.nix ];
+    imports = [ ../maintainers/types ];
     config.projects = mapAttrs (name: directory: import directory args) projectDirectories;
   };
 
@@ -59,6 +59,13 @@ rec {
           _module.args = args;
         };
       }
+      # TODO: flatten when we fully migrate to the module system
+      (
+        { options, ... }:
+        {
+          options.projects = options.ngiTypes.default.projects;
+        }
+      )
     ];
   };
 
