@@ -88,7 +88,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Wax Platform web server for collaborative document editing";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ themadbit ];
-    team = with lib.teams; [ ngi ];
+    teams = with lib.teams; [ ngi ];
     platforms = lib.platforms.all;
     mainProgram = "wax-server";
   };
