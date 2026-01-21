@@ -100,7 +100,7 @@ let
     else if test ? meta.broken && test.meta.broken then
       null
     else
-      pkgs.testers.runNixOSTest args;
+      lib.lazyDerivation { derivation = pkgs.testers.runNixOSTest args; };
 
   callTest =
     module:
@@ -128,7 +128,9 @@ in
       # This is because test nodes are eagerly evaluated to create the
       # driver's `vmStartScripts` (see `nixos/lib/testing/driver.nix` in
       # NixOS).
-      type = with types; nullOr (coercedTo (either deferredModule package) callTest (nullOr package));
+      type =
+        with types;
+        nullOr (coercedTo (either deferredModule package) callTest (nullOr deferredModule));
       default = null;
       description = "NixOS test module";
     };
