@@ -1,10 +1,22 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  sources,
+  ...
+}:
 {
   imports = [
     ./services.nix
     ./users.nix
     ./virtualisation.nix
   ];
+
+  # enable Nix inside the VM
+  environment.variables.NIX_PATH = lib.mkForce "nixpkgs=${sources.nixpkgs}";
+
+  # enable flakes
+  nix.extraOptions = "experimental-features = nix-command flakes";
+  nix.registry.nixpkgs.flake = sources.nixpkgs;
 
   # not relevant for our purposes
   documentation.nixos.enable = false;
