@@ -36,6 +36,7 @@ let
 
   # metrics
   nixos = lib.mapAttrsRecursive (path: toString) metrics.summary.nixos;
+  nixpkgs = lib.mapAttrsRecursive (path: toString) metrics.summary.nixpkgs;
   ngipkgs = lib.mapAttrsRecursive (path: toString) metrics.summary.ngipkgs;
   prev-project-count = toString (lib.length prev-project-names);
 in
@@ -49,10 +50,10 @@ pkgs.writeText "report-packaging.md" ''
 
   ## Metrics
   ### NGIpkgs (monorepo)
-    - ${nixos.demos} projects have a demo, available
+    - ${ngipkgs.derivations} package derivations, ${ngipkgs.update-scripts} of which have an explicit update script
     - ${nixos.services} services and ${nixos.programs} programs
     - ${nixos.tests} NixOS tests, associated with ${nixos.examples} examples
-    - ${ngipkgs.derivations} derivations, ${ngipkgs.update-scripts} of which have an explicit update script
+    - ${nixos.demos} projects have a demo available
     - Subgrants
       - ${ngipkgs.metadata.subgrants.Commons} Commons
       - ${ngipkgs.metadata.subgrants.Core} Core
@@ -60,5 +61,5 @@ pkgs.writeText "report-packaging.md" ''
       - ${ngipkgs.metadata.subgrants.Review} Review
 
   ### Nixpkgs (upstream)
-    - Maintaining ${nixos.derivations} derivations, ${nixos.update-scripts} of which have an explicit update script
+    - Maintaining ${nixpkgs.derivations} package derivations in upstream Nixpkgs, ${nixpkgs.update-scripts} of which have an explicit update script
 ''
