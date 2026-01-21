@@ -18,6 +18,10 @@
       host.port = port;
       proto = "tcp";
     }) config.networking.firewall.allowedTCPPorts;
+
+    # allows Nix commands to re-use and write to the host's store
+    mountHostNixStore = true;
+    writableStoreUseTmpfs = false;
   };
 
   # better integration with the desktop
