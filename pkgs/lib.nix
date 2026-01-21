@@ -20,7 +20,6 @@ rec {
       self = f self // {
         newScope = scope: newScope (self // scope);
         overrideScope = g: customScope newScope (lib.extends g f);
-        callPackage = self.newScope { };
 
         # Compute a scope's fixpoint using `callPackage`
         # Example: finalScope = scope.fix scope;
@@ -33,6 +32,8 @@ rec {
           nixdoc-to-github = self.callPackage sources.nixdoc-to-github { };
           dream2nix = sources.dream2nix;
         };
+
+        callPackage = self.call;
 
         # Similar to `import`, but aware of `default` scope attributes.
         # The result is not overridable.
