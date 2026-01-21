@@ -1,10 +1,9 @@
 {
-  lib,
   sources,
   system,
   ...
 }@args:
-rec {
+lib: previousLib: {
   /*
     Adapted from `lib.customisation.makeScope`:
     https://nixos.org/manual/nixpkgs/stable/#function-library-lib.customisation.makeScope
@@ -19,7 +18,7 @@ rec {
     let
       self = f self // {
         newScope = scope: newScope (self // scope);
-        overrideScope = g: customScope newScope (lib.extends g f);
+        overrideScope = g: lib.customScope newScope (lib.extends g f);
         callPackage = self.newScope { };
 
         # Compute a scope's fixpoint using `callPackage`
@@ -83,7 +82,7 @@ rec {
     let
       lines = lib.splitString "\n" s;
     in
-    join "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
+    lib.join "\n" ([ (head lines) ] ++ (map (x: if x == "" then x else "${prefix}${x}") (tail lines)));
 
   # Recursively evaluate attributes for an attribute set.
   # Coupled with an evaluated nixos configuration, this presents an efficient
@@ -98,7 +97,7 @@ rec {
           # if eval fails
           if !(builtins.tryEval i).success then
             # recursively recurse into attrsets
-            if lib.isAttrs i then forceEvalRecursive i else (builtins.tryEval i).success
+            if lib.isAttrs i then lib.forceEvalRecursive i else (builtins.tryEval i).success
           else
             (builtins.tryEval i).success
         ) v

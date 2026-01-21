@@ -14,12 +14,13 @@
   lib ? import "${sources.nixpkgs}/lib",
 }:
 let
-  devLib = import ./pkgs/lib.nix { inherit lib sources system; };
+  devLibOverlay = import ./pkgs/lib.nix { inherit sources system; };
+  devLib = lib.extend devLibOverlay;
 
   flakeAttrs = default.import ./maintainers/flake { };
 
   default = devLib.customScope pkgs.newScope (self: {
-    lib = lib.extend self.overlays.devLib;
+    lib = devLib;
 
     inherit
       devLib
@@ -40,9 +41,12 @@ let
         final: prev:
         self.import ./pkgs/by-name {
           pkgs = prev;
+        }
+        // {
+          # Explanation: use extended lib everywhere,
+          # including in modules given to pkgs.testers.runNixOSTest.
+          lib = devLib;
         };
-
-      devLib = _: _: devLib;
 
       fixups = self.call ./pkgs/overlays.nix { };
     };
