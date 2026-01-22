@@ -1,7 +1,7 @@
 {
   lib,
   pkgs,
-  nixdoc-to-github,
+  callPackage,
 
   # toplevel attributes
   ngipkgs,
@@ -111,11 +111,6 @@ pkgs.mkShellNoCC {
     })
 
     # nix-shell --run nixdoc-to-github
-    (nixdoc-to-github.lib.nixdoc-to-github.run {
-      description = "NGI Project Types";
-      category = "";
-      file = "${toString ../../projects/types.nix}";
-      output = "${toString ../../maintainers/docs/project.md}";
-    })
+    (callPackage ./nixdoc-to-github.nix { })
   ];
 }
