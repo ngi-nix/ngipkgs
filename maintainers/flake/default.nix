@@ -36,10 +36,10 @@ in
 
   # depends on the system (e.g. packages.x86_64-linux)
   perSystem = rec {
-    packages = nonBrokenPackages // {
-      inherit (default) manuals overview;
+    packages = {
+      inherit (default) overview;
 
-      # Combined overview and html manual
+      # Combined overview and HTML manual
       overview-with-manual = pkgs.runCommand "overview-with-manual" { } ''
         mkdir -p $out
         cp -r ${default.overview}/* $out/
@@ -57,7 +57,9 @@ in
             mkdir $out
             cp $build/share/doc/nixos/options.json $out/
           '';
-    };
+    }
+    // nonBrokenPackages
+    // flattenFlakeAttrs { inherit (default) manuals; };
 
     checks = default.import ./checks.nix { inherit nonBrokenPackages; };
 
