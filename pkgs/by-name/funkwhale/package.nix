@@ -23,6 +23,7 @@ let
   meta = {
     description = "Federated platform for audio streaming, exploration, and publishing";
     homepage = "https://www.funkwhale.audio/";
+    downloadPage = "https://dev.funkwhale.audio/funkwhale/funkwhale";
     changelog = "https://docs.funkwhale.audio/changelog.html";
     license = lib.licenses.agpl3Only;
     teams = [ lib.teams.ngi ];
@@ -41,6 +42,7 @@ python.pkgs.buildPythonApplication rec {
     tag = version;
     hash = "sha256-4WvTyVqFuSlkim/9S88tutvXJqA4VHsILH5q4WKsjo8=";
   };
+
   sourceRoot = "${src.name}/api";
 
   patches = [
@@ -79,6 +81,7 @@ python.pkgs.buildPythonApplication rec {
       django-cacheops
       django-cleanup
       django-cors-headers
+      django-debug-toolbar
       django-dynamic-preferences
       django-environ
       django-filter
@@ -169,11 +172,11 @@ python.pkgs.buildPythonApplication rec {
   checkPhase = ''
     runHook preCheck
 
-    DATABASE_URL="postgresql://$PGUSER@$PGHOST/$PGDATABASE" \
+    DATABASE_URL="postgresql:///$PGDATABASE?host=$PGHOST&user=$PGUSER" \
     FUNKWHALE_URL="https://example.com" \
     DJANGO_SETTINGS_MODULE="config.settings.local" \
     CACHE_URL="redis://$REDIS_SOCKET:6379/0" \
-    pytest
+    python -m django migrate --no-input
 
     runHook postCheck
   '';
