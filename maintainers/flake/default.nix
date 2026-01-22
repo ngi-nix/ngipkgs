@@ -36,28 +36,31 @@ in
 
   # depends on the system (e.g. packages.x86_64-linux)
   perSystem = rec {
-    packages = nonBrokenPackages // {
-      inherit (default) manuals overview;
+    packages =
+      nonBrokenPackages
+      // {
+        inherit (default) overview;
 
-      # Combined overview and html manual
-      overview-with-manual = pkgs.runCommand "overview-with-manual" { } ''
-        mkdir -p $out
-        cp -r ${default.overview}/* $out/
-        mkdir -p $out/manual
-        cp -r ${default.manuals.html}/* $out/manual/
-      '';
+        # Combined overview and HTML manuals
+        overview-with-manuals = pkgs.runCommand "overview-with-manuals" { } ''
+          mkdir -p $out
+          cp -r ${default.overview}/* $out/
+          mkdir -p $out/manuals
+          cp -r ${default.manuals.html}/* $out/manuals/
+        '';
 
-      # Configuration options in JSON
-      options =
-        pkgs.runCommand "options.json"
-          {
-            build = default.optionsDoc.optionsJSON;
-          }
-          ''
-            mkdir $out
-            cp $build/share/doc/nixos/options.json $out/
-          '';
-    };
+        # Configuration options in JSON
+        options =
+          pkgs.runCommand "options.json"
+            {
+              build = default.optionsDoc.optionsJSON;
+            }
+            ''
+              mkdir $out
+              cp $build/share/doc/nixos/options.json $out/
+            '';
+      }
+      // flattenFlakeAttrs { inherit (default) manuals; };
 
     checks = default.import ./checks.nix { inherit nonBrokenPackages; };
 
