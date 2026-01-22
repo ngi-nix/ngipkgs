@@ -44,7 +44,7 @@ let
     let
       projectRoot = "$(${lib.getExe gitMinimal} rev-parse --show-toplevel)";
       outFile = "$projectRoot/maintainers/docs/project.md";
-      typesDir = ../types;
+      typesDir = ../../types;
 
       types = [
         "default"

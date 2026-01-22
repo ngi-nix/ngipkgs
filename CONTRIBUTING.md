@@ -37,6 +37,12 @@ In any case, it is encouraged to create a pull request to Nixpkgs, then to this 
    git checkout -b some-branch
    ```
 
+1. Enter the project's development environment by running `nix-shell` or `nix develop` (if you have flakes support enabled).
+
+   You will see a welcome screen listing available commands and their descriptions (e.g., `devmode`).
+
+   To disable the welcome message, set the environment variable `DEVSHELL_NO_MOTD=1` before entering the shell.
+
 1. When contributing to a project, start by checking if it has an entry in `projects/some-project`.
    If the entry does not exist, copy the [project template](./maintainers/templates/project) and edit it with relevant details:
 
@@ -495,3 +501,20 @@ Please ask questions on the [public NGIpkgs Matrix room](https://matrix.to/#/#ng
 When contributing documentation, do not split lines at arbitrary character lengths.
 Instead, write one sentence per line, as this makes it easier to review changes.
 
+## Tips and Tricks
+
+### Using direnv for development shell
+
+1. Use [`direnv`](https://direnv.net) to automatically enter the Nix development environment.
+
+   It includes built-in support for Nix and flakes.
+
+   Check out these [Nix integrations](https://github.com/direnv/direnv/wiki/Nix) for direnv, as they offer improvements over the built-in `use_nix` implementation.
+
+1. Add `DEVSHELL_NO_MOTD=1` and other environment variables to `.envrc` if using direnv.
+
+1. To prevent accidental commits of local configuration, add `.envrc` and `.direnv/` to your local git exclude file.
+
+   ```
+   echo -en '.direnv\n.envrc' >> .git/info/exclude
+   ```

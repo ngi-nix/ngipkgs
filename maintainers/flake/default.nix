@@ -61,10 +61,7 @@ in
 
     checks = default.import ./checks.nix { inherit nonBrokenPackages; };
 
-    devShells.default = pkgs.mkShell {
-      inherit (checks."infra/pre-commit") shellHook;
-      buildInputs = checks."infra/pre-commit".enabledPackages ++ default.shell.nativeBuildInputs;
-    };
+    devShells.default = default.shell.finalPackage;
 
     formatter = default.formatter.package;
   };
