@@ -21,13 +21,13 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "repath-studio";
-  version = "0.4.11";
+  version = "0.4.12";
 
   src = fetchFromGitHub {
     owner = "repath-studio";
     repo = "repath-studio";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-C6/cch088QjiZ53LWyJ4Ss8fXow4h8ObV8UmRq67Og0=";
+    hash = "sha256-sdM3owUYI0P12+R4YyYtF/20Zl0EpJY6t4Z1q/K5EqM=";
   };
 
   patches = [
@@ -43,7 +43,7 @@ buildNpmPackage (finalAttrs: {
 
   makeCacheWritable = true;
 
-  npmDepsHash = "sha256-ABP+X1fHMv6JDjOFCEPArMrKPHurmDIY3l8S1fVp224=";
+  npmDepsHash = "sha256-Zihy5VYlkeQtmZUS25kgu3aYGPfQdUxjNSK33WHOEeQ=";
 
   nativeBuildInputs = [
     finalAttrs.passthru.clojureWithCache
@@ -104,7 +104,7 @@ buildNpmPackage (finalAttrs: {
 
       # FIX: this isn't 100% reproducible since it changes each time `clojure` is updated
       # https://github.com/ngi-nix/ngipkgs/pull/1727#discussion_r2470180998
-      outputHash = "sha256-kx+SRxiA2heXtIImQCHvb60LjIC8jtsdI5OvHM1qtks=";
+      outputHash = "sha256-ytS7JiQUC7U0vxuQddxQfDnm0Pt4stkRBfiIlbOpeTk=";
       outputHashMode = "recursive";
       outputHashAlgo = "sha256";
     };
