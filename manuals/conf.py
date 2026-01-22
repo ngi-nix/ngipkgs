@@ -130,6 +130,8 @@ todo_include_todos = True
 
 # -- Options for HTML output ----------------------------------------------
 
+html_title = "NGIpkgs"
+
 html_baseurl = "https://ngi.nixos.org/manuals/"
 
 html_theme = "sphinx_book_theme"
@@ -156,7 +158,7 @@ html_theme_options = {
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = None
+html_logo = "_static/_img/nix.jpg"
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -187,7 +189,6 @@ html_sidebars = {
     "**": [
         "about.html",
         "search-field.html",
-        "sbt-sidebar-nav.html",
     ],
 }
 
