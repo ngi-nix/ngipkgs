@@ -20,6 +20,8 @@
   inputs.buildbot-nix.url = "github:nix-community/buildbot-nix";
   inputs.nixdoc-to-github.flake = false;
   inputs.nixdoc-to-github.url = "github:fricklerhandwerk/nixdoc-to-github";
+  inputs.devshell.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.devshell.url = "github:numtide/devshell";
 
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";

@@ -1,116 +1,159 @@
 {
   lib,
   pkgs,
+  sources,
   callPackage,
+  overrideScope,
 
   # toplevel attributes
-  ngipkgs,
   formatter,
   ...
 }:
-pkgs.mkShellNoCC {
-  inputsFrom = [
+let
+  devshell = import sources.devshell { nixpkgs = pkgs; };
+
+  devshellEnv = lib.makeExtensible (final: {
+    name = "devshell";
+
+    motd = ''
+
+      {33}❄️ Welcome to NGIpkgs{reset}
+
+      {85}📖 Docs: https://ngi.nixos.org/manuals 💬 Chat: #ngipkgs:nixos.org (Matrix){reset}
+      $(type -p menu &>/dev/null && menu)
+
+      {123}Tip:{reset} DEVSHELL_NO_MOTD=1 will disable this welcome message
+    '';
+
+    generalCategory = "[general commands]";
+
+    mkAliases =
+      {
+        aliases,
+        category ? final.generalCategory,
+      }:
+      lib.mapAttrsToList (name: value: {
+        inherit name;
+        command = value.cmd;
+        # fallback to category and thus generalCategory if not specified
+        category = value.category or category;
+        # fallback to `cmd` if help is not specified
+        help = value.help or value.cmd;
+      }) aliases;
+
+    mapCommands =
+      category: packages:
+      builtins.map (p: {
+        inherit category;
+        package = p;
+      }) packages;
+
+    commands = (final.mapCommands "formatter" final.formatters) ++ final.defaultCmds ++ final.aliases;
+
+    packages = [
+      (callPackage ./packages/nixdoc-to-github.nix { })
+    ]; # packages are hidden in the menu
+
+    packagesFrom = [ ]; # inputsFrom equivalent, are hidden in the menu
+
+    finalPackage = final.eval.shell;
+
+    eval = devshell.eval {
+      configuration = (
+        lib.filterAttrs (
+          name: value:
+          # filter only the valid args for devshell.eval
+          builtins.elem name [
+            "name"
+            "motd"
+            "commands"
+            "packages"
+            "packagesFrom"
+
+            "devshell"
+            "bash"
+          ]
+        ) final
+      );
+    };
+
+    # devshell accepts no shellHook but we can use the extra or interactive blocks it provides
+    # also can use devshell.startup.* or devshell.interactive.* with lib.noDepEntry
+    devshell.startup.bash_extra_more = lib.noDepEntry final.shellHook;
+
+    # disables devshell to change the prompt in anyway
+    devshell.interactive.PS1 = lib.noDepEntry "";
+
+    # default empty shellHook, implies no override
+    shellHook = "";
+
+    # from numtide/devshell, copyright Numtide, MIT licensed
+    # Returns a list of all the input derivation ... for a derivation.
+    inputsOf =
+      drv:
+      lib.filter lib.isDerivation (
+        (drv.buildInputs or [ ])
+        ++ (drv.nativeBuildInputs or [ ])
+        ++ (drv.propagatedBuildInputs or [ ])
+        ++ (drv.propagatedNativeBuildInputs or [ ])
+      );
+
+    # from numtide/devshell, copyright Numtide, MIT licensed
+    # given a shell get the "packages" from the shell
+    commandsFrom' = shell: lib.foldl' (sum: drv: sum ++ (final.inputsOf drv)) [ ] [ shell ];
+
     # Include all formatter packages. Format with:
     # $ treefmt
     # $ nix fmt
-    formatter.shell
-  ];
+    formatters = final.commandsFrom' formatter.shell;
 
-  packages = [
-    # live overview watcher
-    (pkgs.devmode.override {
-      buildArgs = "-A overview --show-trace -v";
-    })
+    # Aliases are wrapper commands which will run the specified `cmd`
+    # `help` exists to customise the menu entry
+    aliases = final.mkAliases {
+      aliases = {
+        reload.cmd = "direnv reload";
+        reload.help = "reload the direnv shell";
 
-    (pkgs.writeShellApplication {
-      # TODO: have the program list available tests
-      name = "ngipkgs-test";
-      text = ''
-        export pr="$1"
-        export proj="$2"
-        export test="$3"
-        # remove the first args and feed the rest (for example flags)
-        export args="''${*:4}"
+        # Adds a `shell` wrapper/alias pointing to the currently active shell
+        shell.cmd = "${final.name} \"$@\"";
+        shell.help = "run any command via the devshell, see shell -h";
 
-        nix build --override-input nixpkgs "github:NixOS/nixpkgs?ref=pull/$pr/merge" .#checks.x86_64-linux.projects/"$proj"/nixos/tests/"$test" "$args"
-      '';
-    })
+        gen-project-md.cmd = "set -x; nix-shell --run nixdoc-to-github";
+        gen-project-md.help = "convert NGI-project types' nixdoc to GitHub markdown";
+        gen-project-md.category = "maintainance";
+      };
+    };
+    # requires a different name as "commands" can't be used
+    # because unlike other attributes "commands" needs to be built from a few `final` attributes
+    defaultCmds =
+      let
+        src = ./commands;
 
-    # NOTE: currently, this only works with flakes, because `nix-update` can't
-    # find `maintainers/scripts/update.nix` otherwise
-    #
-    # nix-shell --run 'update PACKAGE_NAME --use-update-script'
-    (pkgs.writeShellApplication {
-      name = "update";
-      runtimeInputs = with pkgs; [ nix-update ];
-      text = ''
-        package=$1; shift # past value
-        nix-update --flake --use-update-script "$package" "$@"
-      '';
-    })
+        files = lib.fileset.toList (
+          lib.fileset.intersection (lib.fileset.gitTracked ../..) (
+            lib.fileset.fileFilter (file: file.hasExt "nix") src
+          )
+        );
 
-    (pkgs.writeShellApplication {
-      name = "update-all";
-      runtimeInputs = with pkgs; [ nix-update ];
-      text =
-        let
-          skipped-packages = [
-            "atomic-browser" # -> atomic-server
-            "atomic-cli" # -> atomic-server
-            "firefox-meta-press" # -> meta-press
-            "inventaire" # -> inventaire-client
-            "kbin" # -> kbin-backend
-            "kbin-frontend" # -> kbin-backend
-            "pretalxFull" # -> pretalx
-            # FIX: needs custom update script
-            "marginalia-search"
-            "peertube-plugin-livechat"
-            "_0wm-server"
-            # FIX: dream2nix
-            "liberaforms"
-            # FIX: package scope
-            "bigbluebutton"
-            "heads"
-            "lean-ftl"
-            # FIX: don't update `sparql-queries` if there is no version change
-            "inventaire-client"
-            # fetcher not supported
-            "libervia-backend"
-            "libervia-desktop-kivy"
-            "libervia-media"
-            "libervia-templates"
-            # broken package
-            "libresoc-nmigen"
-            "libresoc-verilog"
-            # other issues
-            "kazarma"
-            "anastasis"
-          ];
-          update-packages = with lib; filter (x: !elem x skipped-packages) (attrNames ngipkgs);
-          update-commands = lib.concatMapStringsSep "\n" (package: ''
-            if ! nix-update --flake --use-update-script "${package}" "$@"; then
-              echo "${package}" >> "$TMPDIR/failed_updates.txt"
-            fi
-          '') update-packages;
-        in
-        # bash
-        ''
-          TMPDIR=$(mktemp -d)
+        callPackage' = (overrideScope (_: _: { devshellEnv = final; })).callPackage;
 
-          echo -n> "$TMPDIR/failed_updates.txt"
+        # ./commands/<category>/<command.nix> - [category]
+        # ./commands/<command.nix>            - [[genral commands]]
+        getCategory =
+          file:
+          let
+            parentDir = dirOf file;
+          in
+          if parentDir == src then final.generalCategory else baseNameOf parentDir;
 
-          ${update-commands}
-
-          if [ -s "$TMPDIR/failed_updates.txt" ]; then
-            echo -e "\nFailed to update the following packages:"
-            cat "$TMPDIR/failed_updates.txt"
-          else
-            echo "All packages updated successfully!"
-          fi
-        '';
-    })
-
-    # nix-shell --run nixdoc-to-github
-    (callPackage ./nixdoc-to-github.nix { })
-  ];
-}
+        groupedFiles = lib.groupBy getCategory files;
+      in
+      lib.concatLists (
+        lib.mapAttrsToList (
+          category: categoryFiles:
+          final.mapCommands category (builtins.map (path: callPackage' path { }) categoryFiles)
+        ) groupedFiles
+      );
+  });
+in
+devshellEnv
