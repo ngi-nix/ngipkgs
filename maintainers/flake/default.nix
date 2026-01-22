@@ -37,10 +37,7 @@ in
   # depends on the system (e.g. packages.x86_64-linux)
   perSystem = rec {
     packages = nonBrokenPackages // {
-      inherit (default) overview;
-
-      # All manual outputs
-      manuals = default.manuals;
+      inherit (default) manuals overview;
 
       # Combined overview and html manual
       overview-with-manual = pkgs.runCommand "overview-with-manual" { } ''
