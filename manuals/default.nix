@@ -30,7 +30,6 @@ let
             lib.any file.hasExt [
               "md"
               "nix"
-              "svg"
             ]
           ) ../.)
           ./Makefile
@@ -63,8 +62,9 @@ let
       done
 
       mkdir -p manuals/_static/_img
-      ln -s ${finalAttrs.passthru.logo.svg} manuals/_static/_img/nix.svg
-      magick ${finalAttrs.passthru.logo.svg} \
+      ln -s ${finalAttrs.passthru.logos.ngi.png} manuals/_static/_img/ngi.png
+      ln -s ${finalAttrs.passthru.logos.nix.svg} manuals/_static/_img/nix.svg
+      magick ${finalAttrs.passthru.logos.nix.svg} \
         -background transparent \
         -define icon:auto-resize=32 \
         -extent "%[fx:max(w,h)]x%[fx:max(w,h)]" \
@@ -89,9 +89,15 @@ let
         "Options"
         "User"
       ];
-      logo.svg = fetchurl {
-        url = "https://brand.nixos.org/logos/nixos-logomark-default-gradient-minimal.svg";
-        hash = "sha256-YrOle9qo0G92vvCjy9FAkyNOdyAz1DR+xoc+/CpK0yk=";
+      logos = {
+        nix.svg = fetchurl {
+          url = "https://brand.nixos.org/logos/nixos-logomark-default-gradient-minimal.svg";
+          hash = "sha256-YrOle9qo0G92vvCjy9FAkyNOdyAz1DR+xoc+/CpK0yk=";
+        };
+        ngi.png = fetchurl {
+          url = "https://ngi.eu/wp-content/uploads/sites/77/2019/06/Logo-NGI_Explicit-with-baseline-rgb.png";
+          hash = "sha256-m5f2WVVj1b7dyxBle/Ug959DAJ7PYinK0OlkD/zxh0s=";
+        };
       };
       pythonPackages = python3.withPackages (
         pyPkgs: with pyPkgs; [
