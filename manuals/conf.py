@@ -191,13 +191,6 @@ html_sidebars = {
     ],
 }
 
-singlehtml_sidebars = {
-    "**": [
-        "about.html",
-        "sbt-sidebar-nav.html",
-    ],
-}
-
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
 # html_additional_pages = {}
