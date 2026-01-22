@@ -155,20 +155,4 @@ lib.recurseIntoAttrs {
       runHook postInstall
     '';
   });
-
-  singlehtml = common.overrideAttrs (
-    finalAttrs: previousAttrs: {
-      passthru = previousAttrs.passthru or { } // {
-        format = "singlehtml";
-      };
-      installPhase = ''
-        runHook preInstall
-        cp -R manuals/build/singlehtml $out/
-        cp -t $out \
-          manuals/netlify.toml \
-          manuals/robots.txt
-        runHook postInstall
-      '';
-    }
-  );
 }
