@@ -74,9 +74,9 @@ copyright = "2026-" + str(date.today().year) + ", NixOS Foundation / Nix@NGI Tea
 # The short X.Y version.
 release = ""
 
-# Explanation: many options {option}`foo` are NixOS options,
-# hence not available in NGIpkgs manuals.
 suppress_warnings = [
+    # Explanation: many options {option}`foo` are NixOS options,
+    # hence not available in NGIpkgs manuals.
     "ref.option",
 ]
 
