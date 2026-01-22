@@ -188,7 +188,6 @@ html_sidebars = {
         "about.html",
         "search-field.html",
         "sbt-sidebar-nav.html",
-        "download-links.html",
     ],
 }
 
@@ -196,7 +195,6 @@ singlehtml_sidebars = {
     "**": [
         "about.html",
         "sbt-sidebar-nav.html",
-        "download-links.html",
     ],
 }
 
@@ -247,78 +245,6 @@ html_search_language = 'en'
 
 # Output file base name for HTML help builder.
 # htmlhelp_basename = 'nixpkgs-'
-
-# -- Options for LaTeX output ---------------------------------------------
-
-# Documentation: https://www.sphinx-doc.org/en/master/latex.html
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    'papersize': 'a4paper',
-    # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    'preamble': r'''
-      \setcounter{tocdepth}{0}
-    ''',
-    'sphinxsetup': r'TitleColor={RGB}{87, 154, 202}',
-    # Latex figure (float) alignment
-    #'figure_align': 'htbp',
-    'extrapackages': r'''
-    ''',
-}
-
-# Grouping the document tree into LaTeX files.
-# Documentation: https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-latex_documents
-latex_documents = [
-    (
-        "Contributor",
-        "NGIpkgs_Contributor_Manual.tex",
-        "NGIpkgs Contributor Manual",
-        "NGIpkgs Contributor",
-        "manual",
-        False,
-    ),
-    (
-        "Options",
-        "NGIpkgs_Options.tex",
-        "NGIpkgs Options",
-        "NGIpkgs Contributors",
-        "howto",
-        False,
-    ),
-    (
-        "User",
-        "NGIpkgs_User_Manual.tex",
-        "NGIpkgs User Manual",
-        "NGIpkgs Contributors",
-        "manual",
-        False,
-    ),
-]
-
-latex_engine = "lualatex"
-# The name of an image file (relative to this directory) to place at the top of
-# the title page.
-latex_logo = "_static/_img/nix.pdf"
-
-# For "manual" documents, if this is true, then toplevel headings are parts,
-# not chapters.
-# latex_use_parts = False
-
-latex_use_xindy = False
-
-# If true, show page references after internal links.
-latex_show_pagerefs = True
-
-# If true, show URL addresses after external links.
-latex_show_urls = 'footnote'
-
-# Documents to append as an appendix to all manuals.
-# latex_appendices = []
-
-# If false, no module index is generated.
-# latex_domain_indices = True
-
 
 # -- Options for manual page output ---------------------------------------
 
