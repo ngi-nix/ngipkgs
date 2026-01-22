@@ -39,6 +39,18 @@ in
     packages = nonBrokenPackages // {
       inherit (default) overview;
 
+      # All manual outputs
+      manuals = default.manuals;
+
+      # Combined overview and html manual
+      overview-with-manual = pkgs.runCommand "overview-with-manual" { } ''
+        mkdir -p $out
+        cp -r ${default.overview}/* $out/
+        mkdir -p $out/manual
+        cp -r ${default.manuals.html}/* $out/manual/
+      '';
+
+      # Configuration options in JSON
       options =
         pkgs.runCommand "options.json"
           {
