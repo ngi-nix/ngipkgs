@@ -1,3 +1,8 @@
+/**
+  This is a reference document that describes the structure of an NGI project as defined in [maintainers/types](https://github.com/ngi-nix/ngipkgs/tree/main/maintainers/types) and how to implement each of its components.
+
+  To implement a full project, please refer to [`CONTRIBUTING.md`](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md) and the [project template](https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/templates/project/default.nix).
+*/
 {
   lib,
   ...

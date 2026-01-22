@@ -1,5 +1,6 @@
 # NGI Project Types
-This is a reference document that describes the structure of an NGI project as defined in [projects/types.nix](https://github.com/ngi-nix/ngipkgs/blob/main/projects/types.nix) and how to implement each of its components.
+
+This is a reference document that describes the structure of an NGI project as defined in [maintainers/types](https://github.com/ngi-nix/ngipkgs/tree/main/maintainers/types) and how to implement each of its components.
 
 To implement a full project, please refer to [`CONTRIBUTING.md`](https://github.com/ngi-nix/ngipkgs/blob/main/CONTRIBUTING.md) and the [project template](https://github.com/ngi-nix/ngipkgs/blob/main/maintainers/templates/project/default.nix).
 
@@ -132,9 +133,9 @@ Binary files (raw, firmware, schematics, ...).
 > ```
 >
 
-## `lib.program`
+## `lib.module`
 
-Software that runs in a shell.
+NixOS module, either for a program that runs in the shell, or a service that runs in the background.
 
 > **Example**
 >
@@ -147,6 +148,23 @@ Software that runs in a shell.
 >       module = ./programs/PROGRAM_NAME/examples/basic.nix;
 >       description = "Basic configuration example for PROGRAM_NAME";
 >       tests.basic.module = ./programs/PROGRAM_NAME/tests/basic.nix;
+>     };
+>   };
+> }
+> ```
+>
+
+> **Example**
+>
+> ```nix
+> { ... }@args:
+> {
+>   nixos.modules.services.SERVICE_NAME = {
+>     module = ./services/SERVICE_NAME/module.nix;
+>     examples."Enable SERVICE_NAME" = {
+>       module = ./services/SERVICE_NAME/examples/basic.nix;
+>       description = "Basic configuration example for SERVICE_NAME";
+>       tests.basic.module = ./services/SERVICE_NAME/tests/basic.nix;
 >     };
 >   };
 > }
@@ -185,76 +203,16 @@ Where `module.nix` contains:
 }
 ```
 
-> [!TIP]
-> You can use the [NixOS Search](https://search.nixos.org/options?channel=unstable) to check if modules exist upstream.
-
-> [!NOTE]
-> - Each program must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
-> - Examples must be tested (see [test](#libtest)).
-
-After implementing the program, run the [checks](#checks) to make sure that everything is correct.
-
-## `lib.service`
-
-Software that runs as a background process.
-
-> **Example**
->
-> ```nix
-> { ... }@args:
-> {
->   nixos.modules.services.SERVICE_NAME = {
->     module = ./services/SERVICE_NAME/module.nix;
->     examples."Enable SERVICE_NAME" = {
->       module = ./services/SERVICE_NAME/examples/basic.nix;
->       description = "Basic configuration example for SERVICE_NAME";
->       tests.basic.module = ./services/SERVICE_NAME/tests/basic.nix;
->     };
->   };
-> }
-> ```
->
-
-For modules that reside in NixOS, use:
-
-```nix
-{ lib, ... }:
-{
-  nixos.modules.services.SERVICE_NAME.module = lib.moduleLocFromOptionString "services.SERVICE_NAME";
-}
-```
-
-If you want to extend such modules, you can import them in a new module:
-
-```nix
-{
-  nixos.modules.services.SERVICE_NAME.module = ./module.nix;
-}
-```
-
-Where `module.nix` contains:
-
-```nix
-{ lib, ... }:
-{
-  imports = [
-    (lib.moduleLocFromOptionString "services.SERVICE_NAME")
-  ];
-
-  options.services.SERVICE_NAME = {
-    extraOption = lib.mkEnableOption "extra option";
-  };
-}
-```
+The same applies to services as well for the examples, above.
 
 > [!TIP]
 > You can use the [NixOS Search](https://search.nixos.org/options?channel=unstable) to check if modules exist upstream.
 
 > [!NOTE]
-> - Each service must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
+> - Each module must include at least one example, so users get an idea of what to do with it (see [example](#libexample)).
 > - Examples must be tested (see [test](#libtest)).
 
-After implementing the service, run the [checks](#checks) to make sure that everything is correct.
+After implementing the module, run the [checks](#checks) to make sure that everything is correct.
 
 ## `lib.example`
 
@@ -363,7 +321,21 @@ For the latter, it could be something like:
 > [!TIP]
 > [Example](#libexample) modules can also be used for demos, if they clearly describe how the application should be configured and used.
 
-After implementing the demo, run the [checks](#checks) to make sure that everything is correct.
+After implementing the demo, run the following commands to test it:
+
+- With classic Nix:
+
+  ```shellSession
+  nix-build -A demos.PROJECT_NAME
+  ```
+
+- With flakes:
+
+  ```shellSession
+  nix run .#demos.PROJECT_NAME
+  ```
+
+Then, run the [checks](#checks) to make sure that everything is correct.
 
 ## `lib.test`
 
@@ -403,5 +375,4 @@ Tests with issues need to be labeled as broken, with a clear description of the 
 > '';
 > ```
 >
-
 
