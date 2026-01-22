@@ -130,8 +130,6 @@ todo_include_todos = True
 
 # -- Options for HTML output ----------------------------------------------
 
-html_title = "NGIpkgs"
-
 html_baseurl = "https://ngi.nixos.org/manuals/"
 
 html_theme = "sphinx_book_theme"
@@ -143,6 +141,7 @@ html_theme_options = {
     "path_to_docs": "manuals",
     "use_repository_button": True,
     "show_navbar_depth": 2,
+    "max_navbar_depth": 100,
 }
 
 
@@ -151,14 +150,15 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
-# html_title = 'nixpkgs-cookbook vrolling'
+html_title = "NGIpkgs Manuals"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-# html_short_title = None
+html_short_title = "NGIpkgs"
+
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_static/_img/nix.jpg"
+html_logo = "_static/_img/nix.svg"
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -188,7 +188,8 @@ html_extra_path = ["robots.txt"]
 html_sidebars = {
     "**": [
         "about.html",
-        "search-field.html",
+        "search-button-field.html",
+        "sbt-sidebar-nav.html",
     ],
 }
 
