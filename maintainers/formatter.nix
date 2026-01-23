@@ -33,10 +33,14 @@ lib.makeExtensible (self: {
   # development shell that contains all formatters
   shell = self.eval.config.build.devShell;
 
-  hooks.pre-commit = self.pre-commit-hooks.run {
-    src = ../.;
-    hooks.treefmt.package = self.package;
-  };
+  hooks = lib.genAttrs [ "pre-commit" "pre-commit-format" ] (
+    name:
+    self.pre-commit-hooks.run {
+      src = ../.;
+      hooks.treefmt.package = self.package;
+      hooks.treefmt.entry = "treefmt" + lib.optionalString (name == "pre-commit-format") " --ci";
+    }
+  );
 
   # NOTE: this is only meant to be run with flake checks (which is what CI currently does)
   ci = pkgs.runCommand "treefmt-ci" { } ''
