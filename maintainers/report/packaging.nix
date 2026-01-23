@@ -76,10 +76,10 @@ pkgs.writeText "report-packaging.md" ''
 
   ## Metrics
   ### NGIpkgs (monorepo)
-    - ${ngipkgs.derivations} package derivations, ${ngipkgs.update-scripts} of which have an explicit update script
+    - ${ngipkgs.derivations} package derivations with ${ngipkgs.update-scripts} update scripts
     - ${nixos.services} services and ${nixos.programs} programs
-    - ${nixos.tests} NixOS tests, associated with ${nixos.examples} examples
-    - ${nixos.demos} projects have a demo available
+    - ${nixos.tests} NixOS tests with ${nixos.examples} examples
+    - ${nixos.demos} projects with demo
     - Subgrants
       - ${ngipkgs.metadata.subgrants.Commons} Commons
       - ${ngipkgs.metadata.subgrants.Core} Core
@@ -87,5 +87,5 @@ pkgs.writeText "report-packaging.md" ''
       - ${ngipkgs.metadata.subgrants.Review} Review
 
   ### Nixpkgs (upstream)
-    - Maintaining ${nixpkgs.derivations} package derivations in upstream Nixpkgs, ${nixpkgs.update-scripts} of which have an explicit update script
+    - ${nixpkgs.derivations} package derivations with ${nixpkgs.update-scripts} update scripts
 ''
