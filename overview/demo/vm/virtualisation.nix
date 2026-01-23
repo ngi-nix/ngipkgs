@@ -1,4 +1,8 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  ...
+}:
 {
   virtualisation = {
     memorySize = 4096;
@@ -12,12 +16,15 @@
     ];
 
     # ssh + open service ports
-    forwardPorts = map (port: {
-      from = "host";
-      guest.port = port;
-      host.port = port;
-      proto = "tcp";
-    }) config.networking.firewall.allowedTCPPorts;
+    forwardPorts = lib.pipe config.networking.firewall.allowedTCPPorts [
+      (lib.filter (port: port >= 1024)) # skip privileged
+      (map (port: {
+        from = "host";
+        guest.port = port;
+        host.port = port;
+        proto = "tcp";
+      }))
+    ];
 
     # allows Nix commands to re-use and write to the host's store
     mountHostNixStore = true;
