@@ -37,4 +37,12 @@ lib.makeExtensible (self: {
     src = ../.;
     hooks.treefmt.package = self.package;
   };
+
+  # NOTE: this is only meant to be run with flake checks (which is what CI currently does)
+  ci = pkgs.runCommand "treefmt-ci" { } ''
+    TMPDIR=$(mktemp -d)
+    trap "rm -rf '$TMPDIR'" EXIT
+    cp -R --no-preserve=mode "${../.}"/** "$TMPDIR"
+    ${lib.getExe self.package} --ci --working-dir "$TMPDIR"
+  '';
 })
