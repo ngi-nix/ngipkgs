@@ -35,6 +35,7 @@ lib.makeExtensible (self: {
 
   hooks.pre-commit = self.pre-commit-hooks.run {
     src = ../.;
-    hooks.treefmt.package = self.package;
+    hooks.treefmt.enable = true;
+    hooks.treefmt.packageOverrides.treefmt = self.package;
   };
 })
