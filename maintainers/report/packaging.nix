@@ -2,48 +2,74 @@
   lib,
   pkgs,
   metrics,
+  # Optional: set to a commit hash to compare against previous state
+  prev-rev ? null,
   ...
 }:
 let
-  # previous version of NGIpkgs to compare against
-  prev-rev = "40be4af909abc7e0e11ab45b90f34c8f8714aa56"; # 24.09
-  prev-ngipkgs = import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/${prev-rev}") { };
-  prev-date =
-    let
-      sub = start: len: lib.substring start len base-flake.lastModifiedDate;
-      base-flake = builtins.getFlake "github:ngi-nix/ngipkgs/${prev-rev}";
-    in
-    "${sub 0 4}-${sub 4 2}-${sub 6 2}";
-
-  prev-project-names = lib.attrNames prev-ngipkgs.projects;
   current-project-names = metrics.metrics.projects;
 
-  # get links for newly added projects
-  project-names = lib.filter (x: !lib.elem x prev-project-names) current-project-names;
+  # Only fetch previous state if prev-rev is provided
+  hasPrevious = prev-rev != null;
+  prev-ngipkgs =
+    if hasPrevious then
+      import (fetchTarball "https://github.com/ngi-nix/ngipkgs/tarball/${prev-rev}") { }
+    else
+      null;
+  prev-date =
+    if hasPrevious then
+      let
+        sub = start: len: lib.substring start len base-flake.lastModifiedDate;
+        base-flake = builtins.getFlake "github:ngi-nix/ngipkgs/${prev-rev}";
+      in
+      "${sub 0 4}-${sub 4 2}-${sub 6 2}"
+    else
+      null;
+  prev-project-names = if hasPrevious then lib.attrNames prev-ngipkgs.projects else [ ];
+  prev-project-count = if hasPrevious then toString (lib.length prev-project-names) else null;
+
+  # Get links for newly added projects (or all projects if no previous state)
+  project-names =
+    if hasPrevious then
+      lib.filter (x: !lib.elem x prev-project-names) current-project-names
+    else
+      current-project-names;
+
   project-links = lib.concatMapStringsSep "\n" (
     name:
     let
+      subgrants = metrics.project-metrics.${name}.metadata.subgrants or { };
       subgrant-count =
-        project:
-        toString (
-          lib.mapAttrsToList (
-            subgrant: count: "\n    - ${subgrant}: ${toString count}"
-          ) metrics.project-metrics.${project}.metadata.subgrants
-        );
+        if subgrants == { } then
+          ""
+        else
+          lib.concatStringsSep "" (
+            lib.mapAttrsToList (subgrant: count: "\n    - ${subgrant}: ${toString count}") subgrants
+          );
     in
-    "  - [${name}](https://ngi.nixos.org/project/${name})" + subgrant-count name
+    "  - [${name}](https://ngi.nixos.org/project/${name})${subgrant-count}"
   ) project-names;
 
   # metrics
   nixos = lib.mapAttrsRecursive (path: toString) metrics.summary.nixos;
   nixpkgs = lib.mapAttrsRecursive (path: toString) metrics.summary.nixpkgs;
   ngipkgs = lib.mapAttrsRecursive (path: toString) metrics.summary.ngipkgs;
-  prev-project-count = toString (lib.length prev-project-names);
+
+  # Generate header based on whether we have previous state
+  header =
+    if hasPrevious then
+      ''
+        - Start date: ${prev-date}
+        - Projects count at the start: ${prev-project-count}
+        - Projects count at the end: ${ngipkgs.projects}
+      ''
+    else
+      ''
+        - Total projects: ${ngipkgs.projects}
+      '';
 in
 pkgs.writeText "report-packaging.md" ''
-  - Start date: ${prev-date}
-  - Projects count at the start: ${prev-project-count}
-  - Projects count at the end: ${ngipkgs.projects}
+  ${header}
 
   ## Projects
   ${project-links}
