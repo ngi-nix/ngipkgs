@@ -13,15 +13,15 @@
 
 clangStdenv.mkDerivation (finalAttrs: {
   pname = "reoxide-plugin-simple";
-  version = "0-unstable-2025-09-04";
+  version = "0-unstable-2026-01-15";
 
   # use latest dev branch commit
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "ReOxide";
     repo = "plugin-template";
-    rev = "ef4856f1a4a146b6b07e5969ad60289f9ce47abd";
-    hash = "sha256-/kROJRarla8uV3jRMgyuNVJ5wxC8OfliwHG5iRl6yiE=";
+    rev = "f473cc6d789fcbae35124e0a220da76eafcc678c";
+    hash = "sha256-AA/rinhKW6IuYxsw5jiHKThXRWiZ/LBckwnNb/D906I=";
   };
 
   nativeBuildInputs = [
