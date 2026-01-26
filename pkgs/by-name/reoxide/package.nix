@@ -13,7 +13,7 @@
 }:
 python3.pkgs.buildPythonApplication rec {
   pname = "reoxide";
-  version = "0.7.1";
+  version = "0.7.2";
   pyproject = true;
 
   src = fetchFromGitea {
@@ -21,7 +21,7 @@ python3.pkgs.buildPythonApplication rec {
     owner = "ReOxide";
     repo = "reoxide";
     tag = "v${version}";
-    hash = "sha256-1MliGYuwAt5Mvqyd3q2dHtimoYlJ2Cwkx/PyoViZbJo=";
+    hash = "sha256-/JPsRBTSUtlnDEcUMGp7YKBvOGdeG4jsp1j7FBybPyM=";
 
     nativeBuildInputs = [
       meson
