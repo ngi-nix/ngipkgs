@@ -39,15 +39,13 @@ let
     name:
     let
       subgrants = metrics.project-metrics.${name}.metadata.subgrants or { };
-      subgrant-count =
+      subgrant-list =
         if subgrants == { } then
           ""
         else
-          lib.concatStringsSep "" (
-            lib.mapAttrsToList (subgrant: count: "\n    - ${subgrant}: ${toString count}") subgrants
-          );
+          "\n    - Subgrants: " + (lib.concatStringsSep ", " (lib.attrNames subgrants));
     in
-    "  - [${name}](https://ngi.nixos.org/project/${name})${subgrant-count}"
+    "  - ${name}\n    - URL: https://ngi.nixos.org/project/${name}${subgrant-list}"
   ) project-names;
 
   # metrics
