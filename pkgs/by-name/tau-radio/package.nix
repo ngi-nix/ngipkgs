@@ -15,16 +15,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "tau-radio";
-  version = "0-unstable-2025-10-13";
+  version = "0.2.101-unstable-2025-12-17";
 
   src = fetchFromGitHub {
     owner = "tau-org";
     repo = "tau-radio";
-    rev = "7ccc9ae83f4dc92d6eb813feb1ab7e56c5aa250a";
-    hash = "sha256-bPTwuIURsiMnHqS4L6WlScGUqRyV+dyYJscTJwmWizU=";
+    rev = "1847e4b4d91e941c19072752ed3afa95f2941a68";
+    hash = "sha256-DW37p4FCK78Yk4KUtOcSfgjZGXhRytQA3/fR+ZkijxQ=";
   };
 
-  cargoHash = "sha256-+GD0yDnihCrdpyRAbdWSGkPW+1RajYYVAmeqdNXIXFU=";
+  cargoHash = "sha256-zqucj1iNsUdA06D+tDyYkevF/gio31JmcP00bk5PC18=";
 
   nativeBuildInputs = [
     pkg-config
