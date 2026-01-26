@@ -22,19 +22,19 @@
           with pkgs;
           lib.mkForce [
             # Official plugins
-            peertube-plugin-akismet
-            peertube-plugin-auth-ldap
-            peertube-plugin-auth-openid-connect
-            peertube-plugin-auth-saml2
-            peertube-plugin-auto-block-videos
-            peertube-plugin-auto-mute
-            peertube-plugin-hello-world
-            peertube-plugin-logo-framasoft
-            peertube-plugin-matomo
-            peertube-plugin-privacy-remover
-            peertube-plugin-transcoding-custom-quality
-            peertube-plugin-transcoding-profile-debug
-            peertube-plugin-video-annotation
+            peertube-plugins.akismet
+            peertube-plugins.auth-ldap
+            peertube-plugins.auth-openid-connect
+            peertube-plugins.auth-saml2
+            peertube-plugins.auto-block-videos
+            peertube-plugins.auto-mute
+            peertube-plugins.hello-world
+            peertube-plugins.logo-framasoft
+            peertube-plugins.matomo
+            peertube-plugins.privacy-remover
+            peertube-plugins.transcoding-custom-quality
+            peertube-plugins.transcoding-profile-debug
+            peertube-plugins.video-annotation
             peertube-theme-background-red
             peertube-theme-dark
             peertube-theme-framasoft
@@ -83,7 +83,7 @@
       # And the plugins should now be loaded
       # The order of the checks here is based on when different plugins emit their log messages
 
-      with subtest("peertube plugin ${pkgs.peertube-plugin-hello-world.pname} works"):
+      with subtest("peertube plugin ${pkgs.peertube-plugins.hello-world.pname} works"):
           server.wait_for_console_text("hello world PeerTube admin")
     '';
 }

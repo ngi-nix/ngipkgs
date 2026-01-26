@@ -2,7 +2,6 @@
   lib,
   buildNpmPackage,
   fetchFromGitLab,
-  peertube-plugin-akismet,
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-auto-block-videos";
@@ -13,8 +12,7 @@ buildNpmPackage (finalAttrs: {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
-    sparseCheckout = [ "peertube-plugin-auto-block-videos" ];
-    hash = "sha256-fe6P6jmJMRL0Tzq4LB57TPAoFQTQYdrUG26mYUBjOqk=";
+    hash = "sha256-6yFcBmtKKSD6mfVAQsHDXaxb8i9t4LvN2eelQrjL7Hc=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-auto-block-videos";
@@ -23,13 +21,11 @@ buildNpmPackage (finalAttrs: {
 
   dontNpmBuild = true;
 
-  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
-
   meta = {
     description = "Auto block videos based on public blocklists";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-auto-block-videos";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
+    teams = with lib.teams; [ ngi ];
   };
 })
