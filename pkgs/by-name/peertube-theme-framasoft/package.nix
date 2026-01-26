@@ -2,7 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
-  peertube-plugin-akismet,
+  peertube-plugins,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-theme-framasoft";
@@ -30,13 +30,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
+  passthru.updateScript = peertube-plugins.akismet.updateScript;
 
   meta = {
     description = "PeerTube Framasoft theme";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-theme-framasoft";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
+    teams = with lib.teams; [ ngi ];
   };
 })
