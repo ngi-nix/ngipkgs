@@ -10,14 +10,14 @@
 
 python3Packages.buildPythonPackage rec {
   pname = "helium";
-  version = "5.1.2";
+  version = "6.0.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "mherrmann";
     repo = "helium";
     rev = "refs/tags/v${version}";
-    hash = "sha256-0XpXG4G9iANHZ5YPhHFtgQmCnug6PlmAdErCYgBLOgs=";
+    hash = "sha256-d64nzFB8nzLZ7nmhh+xcui3jPFAbyAF+diRksnujzGU=";
   };
 
   strictDeps = true;
