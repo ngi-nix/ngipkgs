@@ -20,19 +20,17 @@
   };
 
   nixos.modules.programs.cnsprcy = {
-    name = "cnsprcy";
     module = ./programs/cnsprcy/module.nix;
-    examples.basic = {
+    examples."Enable CNSPRCY program" = {
       module = ./programs/cnsprcy/examples/basic.nix;
       description = "Checks for cnspr executable";
       tests.basic.module = ./programs/cnsprcy/tests/basic.nix;
     };
   };
 
-  nixos.modules.services.cnsprcy = {
-    name = "cnsprcy";
+  nixos.modules.services.cnsprcy-server = {
     module = ./services/cnsprcy/module.nix;
-    examples.basic = {
+    examples."Enable CNSPRCY service" = {
       module = ./services/cnsprcy/examples/basic.nix;
       description = "Checks that cnsprcy systemd service is running";
       tests.basic.module = ./services/cnsprcy/tests/basic.nix;

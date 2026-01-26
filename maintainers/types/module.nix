@@ -125,7 +125,7 @@ in
       '';
     };
     examples = mkOption {
-      type = with types; attrsOf example;
+      type = with types; lazyAttrsOf example;
       description = ''
         Configurations that illustrate how to set up the ${type}.
 
