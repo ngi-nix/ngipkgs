@@ -14,9 +14,6 @@
   lib ? import "${sources.nixpkgs}/lib",
 }:
 let
-  version = "26.05";
-  revision = flake.sourceInfo.shortRev or flake.sourceInfo.dirtyShortRev;
-
   devLib = import ./pkgs/lib.nix { inherit lib sources system; };
 
   flakeAttrs = default.import ./maintainers/flake { };
@@ -60,7 +57,8 @@ let
     };
 
     manuals = self.call manuals/default.nix {
-      inherit revision version;
+      version = lib.readFile ./.version;
+      revision = flake.sourceInfo.shortRev or flake.sourceInfo.dirtyShortRev;
       modulesPath = "${sources.nixpkgs}/nixos/modules";
     };
 

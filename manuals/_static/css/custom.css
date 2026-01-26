@@ -125,3 +125,17 @@ html[data-theme="dark"] details a {
 html[data-theme="light"] details a {
   color: #0042aa;
 }
+
+pre {
+  white-space:wrap;
+}
+
+h1 code .pre,
+h2 code .pre,
+h3 code .pre,
+h4 code .pre,
+h5 code .pre,
+h6 code .pre {
+  /* Enable wrapping in titles containing code */
+  white-space:pre-wrap;
+}
