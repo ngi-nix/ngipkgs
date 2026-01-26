@@ -47,8 +47,8 @@ let
     description = "Provides chat system for Peertube videos";
     homepage = "https://github.com/JohnXLivingston/peertube-plugin-livechat";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
+    teams = with lib.teams; [ ngi ];
   };
 
   # converse.js building needs generated translations from livechat
@@ -73,7 +73,7 @@ let
       inherit (commonMeta)
         homepage
         license
-        maintainers
+        teams
         platforms
         ;
     };
@@ -86,7 +86,7 @@ let
         meta = {
           description = "${commonMeta.description} - source with converse.js merged in";
           platforms = lib.platforms.all;
-          inherit (commonMeta) homepage license maintainers;
+          inherit (commonMeta) homepage license teams;
         };
       }
       ''
@@ -138,7 +138,7 @@ let
       inherit (commonMeta)
         homepage
         license
-        maintainers
+        teams
         platforms
         ;
     };
@@ -203,7 +203,7 @@ let
       description = "Web-based XMPP/Jabber chat client written in JavaScript";
       homepage = "https://conversejs.org";
       license = lib.licenses.mpl20;
-      inherit (commonMeta) maintainers platforms;
+      inherit (commonMeta) teams platforms;
     };
   };
 
@@ -251,7 +251,7 @@ buildNpmPackage {
       description
       homepage
       license
-      maintainers
+      teams
       platforms
       ;
   };
