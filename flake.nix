@@ -21,6 +21,35 @@
   inputs.nixdoc-to-github.flake = false;
   inputs.nixdoc-to-github.url = "github:fricklerhandwerk/nixdoc-to-github";
 
+  inputs.nix-filter.url = "github:numtide/nix-filter/3e1fff9";
+
+  # FixMe(maint/upstream): merge this branch upstream
+  #inputs.opam-nix.url = "github:tweag/opam-nix";
+  inputs.opam-nix.url = "github:ju1m/opam-nix/materialize-monorepo";
+  inputs.opam-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.opam-nix.inputs.flake-utils.follows = "flake-utils";
+  inputs.opam-nix.inputs.opam2json.follows = "opam2json";
+  inputs.opam-nix.inputs.opam-repository.follows = "opam-repository";
+  inputs.opam-nix.inputs.opam-overlays.follows = "opam-overlays";
+  inputs.opam-nix.inputs.mirage-opam-overlays.follows = "mirage-opam-overlays";
+
+  inputs.opam2json.url = "github:tweag/opam2json";
+  inputs.opam2json.inputs.nixpkgs.follows = "nixpkgs";
+
+  # update ocaml-related overlays to use new-enough ocaml packages
+  inputs.opam-repository = {
+    url = "github:ocaml/opam-repository";
+    flake = false;
+  };
+  inputs.opam-overlays = {
+    url = "github:dune-universe/opam-overlays";
+    flake = false;
+  };
+  inputs.mirage-opam-overlays = {
+    url = "github:dune-universe/mirage-opam-overlays";
+    flake = false;
+  };
+
   # See <https://github.com/ngi-nix/ngipkgs/issues/24> for plans to support Darwin.
   inputs.systems.url = "github:nix-systems/default-linux";
 

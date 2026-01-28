@@ -57,6 +57,7 @@ pkgs.mkShellNoCC {
           skipped-packages = [
             "atomic-browser" # -> atomic-server
             "atomic-cli" # -> atomic-server
+            "dnsvizor"
             "firefox-meta-press" # -> meta-press
             "inventaire" # -> inventaire-client
             "kbin" # -> kbin-backend
