@@ -76,6 +76,7 @@
       ];
       remotebuild = with keys; [
         getpsyched
+        phanirithvij-iron
         prince213
       ];
     in
