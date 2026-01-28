@@ -62,6 +62,7 @@ let
 
   checksForInfrastructure = {
     "infra/pre-commit" = formatter.hooks.pre-commit;
+    "infra/treefmt" = formatter.ci;
     "infra/makemake" = toplevel self.nixosConfigurations.makemake;
     "infra/overview" = overview;
   };
