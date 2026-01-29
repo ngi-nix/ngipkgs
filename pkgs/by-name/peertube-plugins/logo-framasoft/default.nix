@@ -2,7 +2,6 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
-  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-logo-framasoft";
@@ -13,8 +12,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "framasoft";
     repo = "peertube/official-plugins";
     rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
-    sparseCheckout = [ "peertube-plugin-logo-framasoft" ];
-    hash = "sha256-CEXnsBd7QnzodtsnbucCPv5SJCOU6AmTuKVpureeGLQ=";
+    hash = "sha256-6yFcBmtKKSD6mfVAQsHDXaxb8i9t4LvN2eelQrjL7Hc=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-logo-framasoft";
@@ -30,13 +28,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
-
   meta = {
     description = "Framasoft logo on PeerTube";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-logo-framasoft";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
+    teams = with lib.teams; [ ngi ];
   };
 })
