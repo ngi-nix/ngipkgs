@@ -56,6 +56,7 @@
 
   nixos.demo.vm = {
     module = ./demo/module.nix;
+    module-demo = ./demo/module-demo.nix;
     usage-instructions = [
       {
         instruction = ''
