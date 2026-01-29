@@ -56,6 +56,7 @@
 
   nixos.demo.vm = {
     module = ./demo/module.nix;
+    module-demo = ./demo/module-demo.nix;
     usage-instructions = [
       {
         instruction = ''
@@ -70,21 +71,31 @@
         instruction = ''
           Run the demo vm, it runs an ssh server at port 10022, a user `nixos` with password `nixos` exists.
 
-          Run `watch journalctl -u reaction --no-pager` inside the demo vm.
+          Run `journalctl -f` inside the demo vm.
         '';
       }
       {
         instruction = ''
-          Open a new terminal in your host system and run try this ssh command thrice.
+          Open a new terminal in your host system and run this ssh command:
 
           `ssh -p 10022 nixos@localhost -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null`
 
-          Attempt login to the demo vm with wrong passwords twice.
+          Attempt login to the demo vm with wrong passwords thrice.
         '';
       }
       {
         instruction = ''
           Go back to the demo vm terminal, and notice that you've been banned in the last line.
+        '';
+      }
+      {
+        instruction = ''
+          To unban yourself, go to the vm terminal and run: `sudo reaction flush`
+        '';
+      }
+      {
+        instruction = ''
+          Attempt to login with the correct password.
         '';
       }
     ];
