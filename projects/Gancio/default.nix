@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  sources,
   ...
 }@args:
 {
@@ -10,12 +9,27 @@
     subgrants.Core = [
       "Gancio"
     ];
+    links = {
+      repo = {
+        text = "Source repository";
+        url = "https://framagit.org/les/gancio";
+      };
+      homepage = {
+        text = "Homepage";
+        url = "https://gancio.org";
+      };
+      docs = {
+        text = "Documentation";
+        url = "https://gancio.org/contribute";
+      };
+    };
   };
+
   nixos.modules.services = {
     gancio = {
       module = lib.moduleLocFromOptionString "services.gancio";
       examples."Enable Gancio" = {
-        module = ./example.nix;
+        module = ./services/gancio/examples/basic.nix;
         tests.gancio.module = pkgs.nixosTests.gancio;
       };
     };
