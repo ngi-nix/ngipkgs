@@ -4,17 +4,23 @@
   ...
 }:
 let
-  cfg = config.programs.bonfire;
+  cfg = config.services.bonfire;
+  servicePort = 18000;
 in
 {
   config = lib.mkIf cfg.enable {
-    demo-shell = {
-      programs = {
-        bonfire = cfg.package;
-      };
-      env = {
-        PROGRAM_PORT = toString cfg.port;
-      };
-    };
+    programs.bash.interactiveShellInit = ''
+      echo "Bonfire is starting. Please wait ..."
+      until systemctl show bonfire.service | grep -q ActiveState=active; do sleep 1; done
+      echo "Bonfire is ready at http://localhost:${toString servicePort}"
+    '';
+
+    virtualisation.forwardPorts = [
+      {
+        from = "host";
+        host.port = servicePort;
+        guest.port = 80;
+      }
+    ];
   };
 }
