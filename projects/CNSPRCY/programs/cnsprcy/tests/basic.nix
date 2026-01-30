@@ -13,7 +13,7 @@
         imports = [
           sources.modules.ngipkgs
           sources.modules.programs.cnsprcy
-          sources.examples.CNSPRCY.basic
+          sources.examples.CNSPRCY."Enable CNSPRCY program"
         ];
       };
   };
