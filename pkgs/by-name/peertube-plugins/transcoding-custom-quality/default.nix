@@ -2,19 +2,17 @@
   lib,
   stdenvNoCC,
   fetchFromGitLab,
-  peertube-plugin-akismet,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-plugin-transcoding-custom-quality";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-11-20";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
-    sparseCheckout = [ "peertube-plugin-transcoding-custom-quality" ];
-    hash = "sha256-DEYyrQtogtKCSZM8nIBZiKIcbbG22RmXsenGPd9hTGE=";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
+    hash = "sha256-6yFcBmtKKSD6mfVAQsHDXaxb8i9t4LvN2eelQrjL7Hc=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-transcoding-custom-quality";
@@ -30,13 +28,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
-
   meta = {
     description = "Set a custom quality for transcoding";
     homepage = "https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-transcoding-custom-quality";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.unix;
+    teams = with lib.teams; [ ngi ];
   };
 })
