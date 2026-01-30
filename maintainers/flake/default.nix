@@ -35,17 +35,12 @@ in
   };
 
   # depends on the system (e.g. packages.x86_64-linux)
-  perSystem = rec {
+  perSystem = {
     packages = {
-      inherit (default) overview;
-
-      # Combined overview and HTML manual
-      overview-with-manual = pkgs.runCommand "overview-with-manual" { } ''
-        mkdir -p $out
-        cp -r ${default.overview}/* $out/
-        mkdir -p $out/manual
-        cp -r ${default.manuals.html}/* $out/manual/
-      '';
+      inherit (default)
+        overview
+        overview-with-manual
+        ;
 
       # Configuration options in JSON
       options =
