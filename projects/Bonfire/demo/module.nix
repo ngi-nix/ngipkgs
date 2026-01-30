@@ -1,5 +1,0 @@
-{ ... }:
-
-{
-  programs.bonfire.enable = true;
-}
