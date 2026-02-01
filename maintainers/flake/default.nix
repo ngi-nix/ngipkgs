@@ -39,7 +39,7 @@ in
     packages = {
       inherit (default)
         overview
-        overview-with-manual
+        overview-with-manuals
         ;
 
       # Configuration options in JSON
