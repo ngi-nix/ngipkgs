@@ -303,6 +303,10 @@ let
         patchShebangs \
           build/${arch}/coreboot-*/util/xcompile/xcompile \
           build/${arch}/coreboot-*/util/genbuild_h/genbuild_h.sh
+
+        # Make build mode verbose, avoid timeouts due to prolonged silence
+        substituteInPlace build/${arch}/coreboot-*/util/crossgcc/buildgcc \
+          --replace-fail '> build.log 2>&1' '2>&1 | tee build.log'
       '';
 
       strictDeps = true;
