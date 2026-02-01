@@ -62,12 +62,12 @@ let
       modulesPath = "${sources.nixpkgs}/nixos/modules";
     };
 
-    # Combined overview and HTML manual
-    overview-with-manual = pkgs.runCommand "overview-with-manual" { } ''
+    # Combined overview and HTML manuals
+    overview-with-manuals = pkgs.runCommand "overview-with-manuals" { } ''
       mkdir -p $out
       cp -r ${default.overview}/* $out/
-      mkdir -p $out/manual
-      cp -r ${default.manuals.html}/* $out/manual/
+      mkdir -p $out/manuals
+      cp -r ${default.manuals.html}/* $out/manuals/
     '';
 
     nixos-modules =
