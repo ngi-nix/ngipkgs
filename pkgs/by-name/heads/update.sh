@@ -5,11 +5,19 @@ set -x
 [ "${storeDir}" = "" ] && { echo "Missing variable: storeDir" >&2 && exit 1; }
 [ "${printHeadsVariablesMakefile}" = "" ] && { echo "Missing variable: printHeadsVariablesMakefile" >&2 && exit 1; }
 [ "${printMuslCrossMakeVariablesMakefile}" = "" ] && { echo "Missing variable: printMuslCrossMakeVariablesMakefile" >&2 && exit 1; }
+[ "${downloadDelay}" = "" ] && { echo "Missing variable: downloadDelay" >&2 && exit 1; }
+if ! [[ "${downloadDelay}" =~ ^[0-9]+$ ]]; then
+  echo "downloadDelay is not a number: ${downloadDelay}" >&2
+  exit 1
+elif [ "${downloadDelay}" -lt 10 ]; then
+  echo "downloadDelay is < 10: ${downloadDelay}" >&2
+  exit 1
+fi
 
-srcDir="$(nix --extra-experimental-features "nix-command flakes" build --no-link --print-out-paths .#heads.qemu-coreboot-fbwhiptail-tpm1-hotp.src)"
+srcDir="$(nix --extra-experimental-features "nix-command flakes" build --no-link --print-out-paths '.#"heads/qemu-coreboot-fbwhiptail-tpm1-hotp".src')"
 tmpDir="$(mktemp -d)"
 
-headsDir="$(dirname "$(nix --extra-experimental-features "nix-command flakes" eval --raw .#heads.qemu-coreboot-fbwhiptail-tpm1-hotp.meta.position | cut -d':' -f1)")"
+headsDir="$(dirname "$(nix --extra-experimental-features "nix-command flakes" eval --raw '.#"heads/qemu-coreboot-fbwhiptail-tpm1-hotp".meta.position' | cut -d':' -f1)")"
 # If absolute in store, make relative. We want to overwrite deps.nix down the line
 if [[ "$headsDir" == "$storeDir"* ]]; then
   storePrefix="$(echo "$headsDir" | grep -o "^${storeDir}/.*-source/")"
@@ -89,9 +97,8 @@ fixUrl() {
   fixedUrl="${fixedUrl/#"https://ftpmirror.gnu.org/gnu"/"https://ftp.gnu.org/gnu"}"
   fixedUrl="${fixedUrl/#"https://ftpmirror.gnu.org"/"https://ftp.gnu.org/gnu"}"
 
-  # Old acpica sources are painful, Intel downloadmirror gives access denied for acpica-unix2-20220331
-  # This source mirror is used for other versions, don't know why upstream isn't using it for this one as well
-  fixedUrl="${fixedUrl/#"https://downloadmirror.intel.com/774879"/"https://mirror.math.princeton.edu/pub/libreboot/misc/acpica"}"
+  # Old acpica sources are painful, Princeton University has a working mirror of old releases
+  fixedUrl="${fixedUrl/#"https://downloadmirror.intel.com/"+([0-9])"/acpica-"/"https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-"}"
 
   echo "$fixedUrl"
 }
@@ -105,7 +112,8 @@ getSriHash() {
 
   # In case of temporary gnu.org failure, let's not loose tons of progress - a human can re-attempt this manually
   hashRaw="$(nix-prefetch-url "$url" --type sha256 || true)"
-  if [ "x" != "x${hashRaw}" ]; then
+  sleep "${downloadDelay}"
+  if [ "${hashRaw}" != "" ]; then
     nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$hashRaw"
   fi
 }
@@ -197,10 +205,11 @@ while IFS= read -r moduleRepo; do
   commitHash=""
   if grep -w "^${module}_commit_hash =" "$tmpDir"/all.txt > /dev/null; then
     isPinned="true"
-    commitHash="$(grep -w "^${module}_commit_hash =" "$tmpDir"/all.txt | cut -d' ' -f3-)"
+    commitHash="$(grep -w "^${module}_commit_hash =" "$tmpDir"/all.txt | cut -d' ' -f3)"
   fi
 
   nix-prefetch-git "$repo" "$commitHash" --fetch-submodules > "$tmpDir"/"$module".nix-prefetch-git
+  sleep "${downloadDelay}"
   nixCommitHash="$(jq -r '.rev' "$tmpDir"/"$module".nix-prefetch-git)"
   nixHash="$(jq -r '.hash' "$tmpDir"/"$module".nix-prefetch-git)"
 
@@ -290,6 +299,7 @@ while IFS= read -r packageVersion; do
     # If coreboot package, get corresponding crossgcc packages
     if [[ "$package" == coreboot-* && "$package" != coreboot-blobs-* ]]; then
       archiveLocation="$(nix-prefetch-url "$archiveUrl" "$archiveHash" --type sha256 --print-path | tail -n1)"
+      sleep "${downloadDelay}"
       corebootSrcTmp="$(mktemp -d -p "$tmpDir")"
       xzcat "$archiveLocation" | tar -C "$corebootSrcTmp" -xf-
 
@@ -302,6 +312,7 @@ while IFS= read -r packageVersion; do
     # If musl-cross-make, get corresponding musl-cross-make packages
     if [ "$package" = "musl-cross-make" ]; then
       archiveLocation="$(nix-prefetch-url "$archiveUrl" "$archiveHash" --type sha256 --print-path | tail -n1)"
+      sleep "${downloadDelay}"
       muslCrossMakeSrcTmp="$(mktemp -d -p "$tmpDir")"
       gunzip -ck "$archiveLocation" | tar -C "$muslCrossMakeSrcTmp" -xf-
 
@@ -323,8 +334,9 @@ while IFS= read -r packageVersion; do
         # Need to override name, contains illegal ";"
         # In case of temporary gnu.org failure, let's not loose tons of progress - a human can re-attempt this manually
         configSubHashRaw="$(nix-prefetch-url "$configSubUrl" --type sha256 --name "config.sub" || true)"
+        sleep "${downloadDelay}"
         configSubHash=""
-        if [ "x" != "x${configSubHashRaw}" ]; then
+        if [ "${configSubHashRaw}" != "" ]; then
           configSubHash="$(nix --extra-experimental-features nix-command hash convert --from nix32 --hash-algo sha256 --to sri "$configSubHashRaw")"
         fi
 

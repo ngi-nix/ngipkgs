@@ -4,23 +4,49 @@
 # please check the diff of the resulting file.
 {
   boards = [
+    "EOL_librem_13v2"
+    "EOL_librem_13v4"
+    "EOL_librem_15v3"
+    "EOL_librem_15v4"
+    "EOL_librem_l1um"
+    "EOL_optiplex-7010_9010-hotp-maximized"
+    "EOL_optiplex-7010_9010-maximized"
+    "EOL_optiplex-7010_9010_TXT-hotp-maximized"
+    "EOL_optiplex-7010_9010_TXT-maximized"
+    "EOL_t420-hotp-maximized"
+    "EOL_t420-maximized"
+    "EOL_t430-hotp-maximized"
+    "EOL_t430-maximized"
+    "EOL_t440p-hotp-maximized"
+    "EOL_t440p-maximized"
+    "EOL_t480-hotp-maximized"
+    "EOL_t480-maximized"
+    "EOL_t480s-hotp-maximized"
+    "EOL_t480s-maximized"
+    "EOL_UNTESTED_t530-hotp-maximized"
+    "EOL_UNTESTED_t530-maximized"
+    "EOL_w530-hotp-maximized"
+    "EOL_w530-maximized"
+    "EOL_w541-hotp-maximized"
+    "EOL_w541-maximized"
+    "EOL_x220-hotp-maximized"
+    "EOL_x220-maximized"
+    "EOL_x230-hotp-maximized"
+    "EOL_x230-hotp-maximized-fhd_edp"
+    "EOL_x230-hotp-maximized_usb-kb"
+    "EOL_x230-maximized"
+    "EOL_x230-maximized-fhd_edp"
+    "EOL_z220-cmt-hotp-maximized"
+    "EOL_z220-cmt-maximized"
     "librem_11"
-    "librem_13v2"
-    "librem_13v4"
     "librem_14"
-    "librem_15v3"
-    "librem_15v4"
-    "librem_l1um"
     "librem_l1um_v2"
     "librem_mini"
     "librem_mini_v2"
+    "msi_z790p_ddr5"
     "novacustom-nv4x_adl"
     "novacustom-v540tu"
     "novacustom-v560tu"
-    "optiplex-7010_9010-hotp-maximized"
-    "optiplex-7010_9010-maximized"
-    "optiplex-7010_9010_TXT-hotp-maximized"
-    "optiplex-7010_9010_TXT-maximized"
     "qemu-coreboot-fbwhiptail-tpm1"
     "qemu-coreboot-fbwhiptail-tpm1-hotp"
     "qemu-coreboot-fbwhiptail-tpm1-hotp-prod"
@@ -39,43 +65,26 @@
     "qemu-coreboot-whiptail-tpm2-hotp"
     "qemu-coreboot-whiptail-tpm2-hotp-prod"
     "qemu-coreboot-whiptail-tpm2-prod"
-    "t420-hotp-maximized"
-    "t420-maximized"
-    "t430-hotp-maximized"
-    "t430-maximized"
-    "t480-hotp-maximized"
-    "t480-maximized"
-    "UNMAINTAINED_kgpe-d16_server"
-    "UNMAINTAINED_kgpe-d16_server-whiptail"
-    "UNMAINTAINED_kgpe-d16_workstation"
-    "UNMAINTAINED_kgpe-d16_workstation-usb_keyboard"
+    "UNTESTED_msi_z690a_ddr4"
+    "UNTESTED_msi_z690a_ddr5"
+    "UNTESTED_msi_z790p_ddr4"
     "UNTESTED_nitropad-ns50"
-    "UNTESTED_t440p-hotp-maximized"
-    "UNTESTED_t440p-maximized"
-    "UNTESTED_t530-hotp-maximized"
-    "UNTESTED_t530-maximized"
     "UNTESTED_talos-2"
-    "UNTESTED_w541-hotp-maximized"
-    "UNTESTED_w541-maximized"
-    "UNTESTED_z220-cmt-hotp-maximized"
-    "UNTESTED_z220-cmt-maximized"
-    "w530-hotp-maximized"
-    "w530-maximized"
-    "x220-hotp-maximized"
-    "x220-maximized"
-    "x230-hotp-maximized"
-    "x230-hotp-maximized-fhd_edp"
-    "x230-hotp-maximized_usb-kb"
-    "x230-maximized"
-    "x230-maximized-fhd_edp"
   ];
   modules = [
     {
-      name = "coreboot-24.12";
+      name = "coreboot-25.09";
       url = "https://github.com/coreboot/coreboot";
       pinned = true;
-      rev = "2f1e4e5e8515dd350cc9d68b48d32a5b6b02ae6a";
-      hash = "sha256-NA0yN4igJR7QTmdLzvvI2p21ObslqU8iFHynEWpLM5I=";
+      rev = "07df08836eca9dd755cc32b6d78727760d201605";
+      hash = "sha256-ItQVCDC/MiF5rgecmxeR000lqTQy1VCSSILl1z4bJmM=";
+    }
+    {
+      name = "coreboot-dasharo_msi";
+      url = "https://github.com/dasharo/coreboot";
+      pinned = true;
+      rev = "a5a05f133471c0463609631b599cdd88a623561f";
+      hash = "sha256-HfemObGcEZDNgOUCJTLhPTV416y68os7+pBslUxh4Ck=";
     }
     {
       name = "coreboot-dasharo";
@@ -379,7 +388,7 @@
     }
     {
       name = "purism-blobs-995f66c445841b86e6596e9b297cc4888c0257e5.tar.gz";
-      url = "https://source.puri.sm/firmware/purism-blobs/-/archive/995f66c445841b86e6596e9b297cc4888c0257e5/purism-blobs-995f66c445841b86e6596e9b297cc4888c0257e5.tar.gz";
+      url = "https://source.puri.sm/coreboot/purism-blobs/-/archive/995f66c445841b86e6596e9b297cc4888c0257e5/purism-blobs-995f66c445841b86e6596e9b297cc4888c0257e5.tar.gz";
       hash = "sha256-bSbBKf6NcZpJ9PcmODuq9+22ExGDutpBZ3EbWlMS9RY=";
     }
     {
@@ -424,16 +433,16 @@
     }
   ];
   crossgcc-deps = {
-    "coreboot-24.12" = [
+    "coreboot-25.09" = [
       {
         name = "coreboot-crossgcc-gmp-6.3.0.tar.xz";
         url = "https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz";
         hash = "sha256-o8K4AgG4nmhhb0rTC8Zq7kknw85Q4zkpyoGdXENTiJg=";
       }
       {
-        name = "coreboot-crossgcc-mpfr-4.2.1.tar.xz";
-        url = "https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.1.tar.xz";
-        hash = "sha256-J3gHNTpnJpeJlpRa8T5Sgp46vXqaW3+yeTiU4Y8fy7I=";
+        name = "coreboot-crossgcc-mpfr-4.2.2.tar.xz";
+        url = "https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.xz";
+        hash = "sha256-tnugOD736KhWNzTi6InvXsPDuJigHQD6CmhprYHGzgE=";
       }
       {
         name = "coreboot-crossgcc-mpc-1.3.1.tar.gz";
@@ -446,14 +455,14 @@
         hash = "sha256-p7Obxpy/niWCbFpgqyZHcAH3wI2FzsBLwOKcq+1vPMk=";
       }
       {
-        name = "coreboot-crossgcc-binutils-2.43.1.tar.xz";
-        url = "https://ftp.gnu.org/gnu/binutils/binutils-2.43.1.tar.xz";
-        hash = "sha256-E/dCAqPExREYt5ejnqQgDT9s++Ik2m0dlbuThIATLf0=";
+        name = "coreboot-crossgcc-binutils-2.44.tar.xz";
+        url = "https://ftp.gnu.org/gnu/binutils/binutils-2.44.tar.xz";
+        hash = "sha256-ziAX4FnWPmfduSQOnU7EnCiTYFA1zWDpKtUxd/Q3cjc=";
       }
       {
-        name = "coreboot-crossgcc-acpica-unix-20241212.tar.gz";
-        url = "https://github.com/acpica/acpica/releases/download/R2024_12_12/acpica-unix-20241212.tar.gz";
-        hash = "sha256-ncqDz+45C3EEhfvfeHBINwBJwFcjsQzCIM/vbhPDGWE=";
+        name = "coreboot-crossgcc-acpica-unix-20250404.tar.gz";
+        url = "https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-unix-20250404.tar.gz";
+        hash = "sha256-wIlUiebLLckuSdxgzflKwCsNM2AhZjVCZ7j0tlhsIxU=";
       }
       {
         name = "coreboot-crossgcc-lld-18.1.8.src.tar.xz";
@@ -491,9 +500,96 @@
         hash = "sha256-wxV30Wl4sNoORy73UfdIk6W0WafqSjg7dferk88eaHc=";
       }
       {
-        name = "coreboot-crossgcc-cmake-3.31.3.tar.gz";
-        url = "https://cmake.org/files/v3.31/cmake-3.31.3.tar.gz";
-        hash = "sha256-+sRbxtQQtJsxE6uGYHSIjWyencgaFBh0RG6yOaw4y4c=";
+        name = "coreboot-crossgcc-runtimes-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/runtimes-18.1.8.src.tar.xz";
+        hash = "sha256-mZfC6R5UOOKWMwa6UBnYW1OEtGdTVjJzjYZwztjwfLM=";
+      }
+      {
+        name = "coreboot-crossgcc-cmake-4.0.3.tar.gz";
+        url = "https://cmake.org/files/v4.0/cmake-4.0.3.tar.gz";
+        hash = "sha256-jTU3t7dzJmDqJHOY8Wa+iS/mEx1jzCkZRLRbkSefP/s=";
+      }
+      {
+        name = "coreboot-crossgcc-nasm-2.16.03.tar.bz2";
+        url = "https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.bz2";
+        hash = "sha256-vvPeFZvNYa35i7fMh+6QRulEZErXa3Yz8YqwY+2ynlc=";
+      }
+      {
+        name = "coreboot-crossgcc-gcc-14.2.0.tar.xz";
+        url = "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz";
+        hash = "sha256-p7Obxpy/niWCbFpgqyZHcAH3wI2FzsBLwOKcq+1vPMk=";
+      }
+    ];
+    "coreboot-dasharo_msi" = [
+      {
+        name = "coreboot-crossgcc-gmp-6.3.0.tar.xz";
+        url = "https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz";
+        hash = "sha256-o8K4AgG4nmhhb0rTC8Zq7kknw85Q4zkpyoGdXENTiJg=";
+      }
+      {
+        name = "coreboot-crossgcc-mpfr-4.2.1.tar.xz";
+        url = "https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.1.tar.xz";
+        hash = "sha256-J3gHNTpnJpeJlpRa8T5Sgp46vXqaW3+yeTiU4Y8fy7I=";
+      }
+      {
+        name = "coreboot-crossgcc-mpc-1.3.1.tar.gz";
+        url = "https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz";
+        hash = "sha256-q2QkkvXPiCt0qgy3MM1BCoHtzb7IlRg86TDnBsHHWbg=";
+      }
+      {
+        name = "coreboot-crossgcc-gcc-14.2.0.tar.xz";
+        url = "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz";
+        hash = "sha256-p7Obxpy/niWCbFpgqyZHcAH3wI2FzsBLwOKcq+1vPMk=";
+      }
+      {
+        name = "coreboot-crossgcc-binutils-2.43.1.tar.xz";
+        url = "https://ftp.gnu.org/gnu/binutils/binutils-2.43.1.tar.xz";
+        hash = "sha256-E/dCAqPExREYt5ejnqQgDT9s++Ik2m0dlbuThIATLf0=";
+      }
+      {
+        name = "coreboot-crossgcc-acpica-unix-20230628.tar.gz";
+        url = "https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-unix-20230628.tar.gz";
+        hash = "sha256-hodqdF49Ik3P0iLtPeRltHVZ6FgR3y25gg7wmp3/XM4=";
+      }
+      {
+        name = "coreboot-crossgcc-lld-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/lld-18.1.8.src.tar.xz";
+        hash = "sha256-gA5oBfthPrhCj3oZn20GxMGfePLbaRV6EpuwT8HJl2k=";
+      }
+      {
+        name = "coreboot-crossgcc-llvm-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz";
+        hash = "sha256-9oz5Dzabx9AVi6cNhgsMs028Fj1v8OvGz6XlFbmy4o0=";
+      }
+      {
+        name = "coreboot-crossgcc-clang-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang-18.1.8.src.tar.xz";
+        hash = "sha256-VyT+ChMIfVV5EEzt0vizvBCiEvt5oPzayY9IgOGfRRk=";
+      }
+      {
+        name = "coreboot-crossgcc-cmake-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/cmake-18.1.8.src.tar.xz";
+        hash = "sha256-Wbre9ZLdNIk80xnUKzI6qpkLRS0FxxgP8g8jqxtB6Dc=";
+      }
+      {
+        name = "coreboot-crossgcc-compiler-rt-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/compiler-rt-18.1.8.src.tar.xz";
+        hash = "sha256-4FTpmpySQHIGFukny1I2OrvItPHvAoa609957I/fiS8=";
+      }
+      {
+        name = "coreboot-crossgcc-clang-tools-extra-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang-tools-extra-18.1.8.src.tar.xz";
+        hash = "sha256-5Yh3/Nle0QaCS9GjEnbdF+0MU63NYMp1KJ6sBlTwp/E=";
+      }
+      {
+        name = "coreboot-crossgcc-libunwind-18.1.8.src.tar.xz";
+        url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/libunwind-18.1.8.src.tar.xz";
+        hash = "sha256-wxV30Wl4sNoORy73UfdIk6W0WafqSjg7dferk88eaHc=";
+      }
+      {
+        name = "coreboot-crossgcc-cmake-3.30.2.tar.gz";
+        url = "https://cmake.org/files/v3.30/cmake-3.30.2.tar.gz";
+        hash = "sha256-RgdMeB7M68Qz6Y8Lv6Jlyj/UOB8kXKOxQOdxFTHWDbI=";
       }
       {
         name = "coreboot-crossgcc-nasm-2.16.03.tar.bz2";
