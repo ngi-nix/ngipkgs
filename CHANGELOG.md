@@ -4,8 +4,401 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### CI/CD
+
+- Fix the overview build command
+
+
+### Build
+
+- Replace manual -> manuals
+
+
+### Heads
+
+- 0.2.1-unstable-2025-04-03 -> 0.2.1-unstable-2026-02-01
+- Drop EOL'd librem targets from default builds
+- Make coreboot build verbose
+
+
+## 26.01 - 2026-01-30
+
 ### Bug Fixes
 
+- *devLib* Don't flatten derivation attributes
+- *manuals* Add missing `defaultText`
+- Wrong optionsDoc for modules
+- Move anastasis test under the GNUTaler project
+- Remove duplicate flake-utils
+- Make scope callPackage aware of call inputs
+- Docs/project.md generation via nixdoc-to-github
+
+
+### CI/CD
+
+- Publish overview with manual
+- Check formatting in pre-commit hook
+
+
+### Documentation
+
+- *manuals* Use ./.version
+- *manuals* Move comment to its proper place
+- *manuals* Remove all content from home page
+
+
+### Features
+
+- *demo* Enable Nix inside VMs
+- *demo* Re-use and write to host store in VMs
+- *manuals* Init sphinx framework based upon nix.dev
+- Make top-level deliverable attributes consistent
+- Add manuals and overview-with-manual outputs
+- Use numtide/devshell to improve devshell experience
+
+
+### Miscellaneous Tasks
+
+- Remove old project types file
+- Remove propagated package fixes
+
+
+### Overview
+
+- Add devmode for overview+manuals
+
+
+### Refactor
+
+- *overview* Change Ubuntu platform labels
+- *overview* Pass args to (sub)modules
+- *overview* Make nix-config more readable
+- Separate formatter from git hooks
+- Modularize project types
+- Compose project modules as paths
+- Reuse treefmt eval to get the wrapper
+- Expose project types as an option
+
+
+### Styling
+
+- *manuals* Use NGI+Nix logos
+- *manuals* Configure theme
+- Format all files
+- Fix editorconfig formatting
+
+
+### Testing
+
+- Improve kmscon font for interactive tests
+- Let the module system merge interactive test configs
+
+
+### Build
+
+- *manuals* Export to flake interface
+- *optionsDoc.optionsCommonMark* Fix missing `description`s
+
+
+### Helium
+
+- 5.1.2 -> 6.0.0
+
+
+### Infra/makemake/keys
+
+- Add phanirithvij-iron
+
+
+### Maint/update
+
+- *bonfire* Build `deps.nix` using `--refresh`
+
+
+### Nodebb
+
+- 4.7.2 -> 4.8.0
+
+
+### Pagedjs-cli
+
+- 0-unstable-2024-05-31 -> 0-unstable-2026-01-05
+
+
+### Pkgs
+
+- *_0wm-server* Disable automatic update
+- *canaille* Fix build
+- *funkwhale* Fix checks and db connection
+- *gancio* Fix build by pinning nodejs
+- *gnucap* Fix build with gcc15
+- *inventaire-i18n* 0-unstable-2025-11-23 -> 0-unstable-2026-01-05
+- *kazarma* 1.0.0-alpha.1-unstable-2025-06-30 -> 1.0.0-alpha.1-unstable-2025-12-24
+- *liberaforms* Fix build with gcc15
+- *manyfold* Avoid hardcoding versions
+- *manyfold* Add update script
+- *manyfold* 0.129.1 -> 0.131.0
+- *misskey* 2025.7.0 -> 2025.12.2
+- *nodebb* 4.7.0 -> 4.7.2
+- *oku* Use system oniguruma and fix build with gcc15
+- *openfire-unwrapped* 5.0.2 -> 5.0.3
+- *openxc7* Fix build with gcc15
+- *openxc7* Refactor nextpnr-xilinx-chipdb composition
+- *peertube-plugin-livechat* 14.0.0 -> 14.0.2
+- *peertube-plugin-livechat* Fix build
+- *reaction* Upstreamed to nixpkgs
+- *reoxide* 0.7.0 -> 0.7.1; fix ghidra
+- *repath-studio* 0.4.11 -> 0.4.12
+- *wax-server* Fix typo in teams
+- Fix sipsimple build with gcc15
+- Clean up overlays
+
+
+### Pkgs/py3dtiles
+
+- Init at 12.0.0
+
+
+### Projects
+
+- *Forgejo* Fix test composition; add lts tests
+- *Gancio* Init demo
+- *Gancio* Add links; refactor example
+- *Hypermachine* Disable node libraries
+- *Manyfold* Mark tests as broken
+- *Mobilizon* Init
+- *PeerTube* Mark livechat plugin as broken
+- *Reaction* Use module and tests from Nixpkgs
+- *bonfire* Init service
+- *bonfire* Add demo; refactor
+- *hockeypuck* Init
+- *reaction* Fix the ssh demo
+
+
+### Projects/Py3DTiles
+
+- Init
+
+
+### Reoxide
+
+- 0.7.1 -> 0.7.2
+
+
+### Reoxide-plugin-simple
+
+- 0-unstable-2025-09-04 -> 0-unstable-2026-01-15
+
+
+### Tau-radio
+
+- 0-unstable-2025-10-13 -> 0.2.101-unstable-2025-12-17
+
+
+### Tau-tower
+
+- 0-unstable-2025-09-30 -> 0.2.101-unstable-2025-12-17
+
+
+### Unfeat
+
+- *manuals.latexpdf* Remove code to generate PDFs
+- *manuals.singlehtml* Remove code to generate single page HTML
+
+
+## 25.12 - 2026-01-12
+
+### Bug Fixes
+
+- *Canaille* Disable tests; mark unbroken
+- *beam-modules* Vendor-in nixpkgs' helpers
+- *beam-modules* Improve buildMix and mixRelease
+- Kaidan build with qt 6.10; switch to unstable
+- Nixdoc-to-github paths
+
+
+### Documentation
+
+- Clean-up contributing docs
+
+
+### Features
+
+- *beam-modules* Init mixUpdate
+- Init `customScope` function
+
+
+### Refactor
+
+- Call mkSbtDerivation from pkgs/by-name
+- Toplevel inputs
+- Construct toplevel using customScope
+- Toplevel projects call
+- Toplevel demo call
+- Toplevel metrics
+- Move development shell to separate file
+- Toplevel overlays, nixos-modules, and overview
+- Move flake checks to separate file
+- Construct flake attributes from default scope
+- Move toplevel function to checks
+- Dream2nix inputs
+
+
+### Corestore
+
+- Remove in favor of upstream
+
+
+### Demo
+
+- Fix trusted-public-keys, case sensitive
+
+
+### Funkwhale
+
+- Init at 2.0.0-alpha.2
+
+
+### Manyfold
+
+- Init at 0.129.1
+
+
+### Nodebb
+
+- 4.6.3 -> 4.7.0
+
+
+### Pdfding
+
+- Add missing dependencies
+
+
+### Peertube-plugin-auto-block-videos
+
+- 0.0.2 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auto-mute
+
+- 0.0.6 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-hello-world
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-logo-framasoft
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-matomo
+
+- 1.0.2 -> 0-unstable-2025-11-20
+
+
+### Pkgs
+
+- *anastasis{-gtk}* Switch to new git repo
+- *bbb-freeswitch-core* Bump minimum required cmake version
+- *bonfire* Init at 1.0.1-beta.11
+- *lean-ftl* Init at 0.1.0
+- *openfire* Fix id command; rename to openfire-unwrapped
+- *openfire* Init plugins; wrap package with essential plugins
+- *ratmand* Refactor cargo flags
+- *repath-studio* 0.4.10 -> 0.4.11
+- *taldir* 1.0.5-unstable-2025-10-15 -> 1.0.5-unstable-2025-11-07
+
+
+### Projects
+
+- *Kaidan* Fix and refactor NixOS test
+- *MirageOS* Init
+- *Openfire* Add declarative autostart settings; refactor
+- *Openfire* Refactor example
+- *Openfire* Refactor test
+- *Openfire* Enable autosetup
+- *Openfire* Refactor file structure
+- *Openfire* Add demo
+- *Openfire* Fix users creation on autosetup
+- *PdfDing* Init examples
+- *PdfDing* Init nixosTests
+- *PdfDing* Init demo
+- *PdfDing* Improve demo experience
+- *sstorytime* Simplify database config options
+- *sylk* Init
+
+
+### Projects/Funkwhale
+
+- Init
+
+
+### Projects/Manyfold
+
+- Init
+- Add usage instructions
+
+
+### Projects/Reaction
+
+- Init project, demo
+- Pull in nixpkgs package, module, tests, examples
+
+
+### Projects/lemmy
+
+- Init
+
+
+### Projects/owncast
+
+- Init
+
+
+### Projects/pdfding
+
+- Init
+
+
+### Python3-otr
+
+- Remove in favor of python3Packages.otr
+
+
+### Python3-xcaplib
+
+- Remove in favor of nixpkgs xcaplib
+
+
+### Quicksasl
+
+- Remove in favor of upstream quick-sasl
+
+
+### Shell
+
+- Remove sat-tmp, urwid-satext from update
+
+
+### Urwid-satext
+
+- Remove in favor of nixpkgs version
+
+
+## 25.11 - 2025-12-03
+
+### .github/ISSUE_TEMPLATE
+
+- Project templates cleanup
+
+
+### Bug Fixes
+
+- *ci* Update archlinux packages before installing nix
+- *demo* Run command with flakes
 - *overview* Add fallback for overview version
 - Deprecated nixosTest alias
 - Don't evaluate paths in module options
@@ -15,24 +408,37 @@ All notable changes to this project will be documented in this file.
 
 - Fix changelog config with recent git-cliff
 - Add workflow to update changelog
+- Add automatic package updates workflow
 
 
 ### Documentation
 
+- *metrics* Remove Uncategorized grant from metrics
 - *report/packaging* Improve output of packaging report script
 - *report/packaging* Don't link to demo
 - *report/packaging* Remove redunadant information
+- *report/packaging* Remove Uncategorized grant category
 - Document metrics summary outputs
 - Automate packaging report
 - Add subgrant details for packaging report
 - Fix triaging instructions' bullet point indentation
 - Add reporting documentation
+- Move REPORTING documentation to maintainers dir
 
 
 ### Features
 
 - *types* Enforce subgrant structure in metadata
 - Count maintained derivations in Nixpkgs
+- Apply packages fixes inside tests
+
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG.md
+- Remove propagated package fixes
+- Disable kazarma and anastasis updates
+- Trim stray newline from demos
 
 
 ### Overview
@@ -48,15 +454,95 @@ All notable changes to this project will be documented in this file.
 - Use markdown for triage issue template
 
 
+### _0wm-client
+
+- 0-unstable-2025-10-16 -> 0-unstable-2025-10-27
+
+
+### _0wm-opmode
+
+- 0-unstable-2025-09-23 -> 0-unstable-2025-10-27
+
+
+### _0wm-server
+
+- 0-unstable-2025-09-23 -> 0-unstable-2025-11-24
+
+
 ### Bigbluebutton.bbb-freeswitch-core
 
 - Switch to overriding packages from Nixpkgs
 
 
+### Bigbluebutton.bbb-freeswitch-core.libks
+
+- Reapply patches that fix bugs in tests
+
+
+### Bigbluebutton.bbb-freeswitch-core.libwebsockets
+
+- Reapply CVE fix that is still relevant, drop irrelevant one
+
+
+### Demo
+
+- Refactor and expose in the toplevel
+
+
+### Helium
+
+- 5.1.1 -> 5.1.2
+
+
+### Inventaire-i18n
+
+- 0-unstable-2025-10-20 -> 0-unstable-2025-11-23
+
+
+### Meta-press
+
+- 1.9.1 -> 1.9.3
+
+
+### Nodebb
+
+- 4.6.0 -> 4.6.3
+
+
+### Peertube-plugin-akismet
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-ldap
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-openid-connect
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-11-20
+
+
+### Peertube-plugin-auth-saml2
+
+- 0.0.8 -> 0-unstable-2025-11-20
+
+
 ### Pkgs
 
 - *bigbluebutton.bbb-freeswitch-core* Fix build
+- *python3-sipsimple* Remove stale derivation
 - *repath-studio* Fix org change
+- *sstorytime* Init at 0.1.2-alpha
+- *sstorytime* 0.1.2-alpha -> 0.1.3-alpha-unstable-2025-11-17
+- *sstorytime* Make service port configurable
+- *sstorytime* 0.1.3-alpha-unstable-2025-11-17 -> 0.1.0-beta-unstable-2025-12-01
+
+
+### Pkgs/pdfding
+
+- Init at 1.4.1
 
 
 ### Pkgs/tau-radio
@@ -71,12 +557,25 @@ All notable changes to this project will be documented in this file.
 
 ### Projects
 
+- *0WM* Fix dbus session address for test
+- *Blink* Enable dummy sound card in test
+- *Blink* Login with user SIP account in test
+- *Ethersync* Rename to Teamtype; refactor
 - *Marginalia* Mark as broken
+- *Nominatim* Fix test dependency
+- *Nominatim* Use tests from Nixpkgs
+- *SSTorytime* Init
+- *SSTorytime* Add options for local database
 
 
 ### Projects/Tau
 
 - Init
+
+
+### Python3Packages.sipsimple
+
+- Pin ffmpeg to version 7
 
 
 ### Treewide
