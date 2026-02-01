@@ -183,13 +183,13 @@ let
     }:
     stdenv.mkDerivation (finalAttrs: {
       pname = "heads-${board}";
-      version = "0.2.1-unstable-2025-04-03";
+      version = "0.2.1-unstable-2026-02-01";
 
       src = fetchFromGitHub {
         owner = "linuxboot";
         repo = "heads";
-        rev = "c627965397d5511513b4538ae60cdb067b67e519";
-        hash = "sha256-2RkAmZLtWfy/dwEkhwsiab8GZTmsa+zm9QtP5bDu25k=";
+        rev = "a601d05ac5d019195c8e97cba2f33e04f20b172b";
+        hash = "sha256-dlAFVPg+3oA15KsN4lIUlRLZdO/AoVO66Wau2C8ivDo=";
       };
 
       patches = [
@@ -206,13 +206,14 @@ let
           bin/fetch_coreboot_crossgcc_archive.sh \
           bin/fetch_source_archive.sh \
           bin/prepare_module_config.sh \
+          bin/validate_cbfs_ifd_fit.sh \
           blobs/p8z77-m_pro/download_BIOS_clean.sh \
           blobs/t440p/download-clean-me \
           blobs/w541/download-clean-me \
           blobs/xx20/download_parse_me.sh \
           blobs/xx30/download_clean_me.sh \
           blobs/xx30/optiplex_7010_9010.sh \
-          blobs/xx80/download_clean_deguard_me_pad_tb.sh \
+          blobs/xx80/*download_clean_deguard_me_pad_tb.sh \
           blobs/z220/download_BIOS_clean.sh \
 
         # Use "python"
@@ -220,7 +221,7 @@ let
           blobs/t440p/download-clean-me \
           blobs/w541/download-clean-me \
           blobs/xx30/download_clean_me.sh \
-          blobs/xx80/download_clean_deguard_me_pad_tb.sh \
+          blobs/xx80/*download_clean_deguard_me_pad_tb.sh \
           --replace-fail 'python ' 'python3 '
 
         # Default to 1 thread instead of all available, makeFlags will override as requested
@@ -421,6 +422,7 @@ let
             storeDir = builtins.storeDir;
             printHeadsVariablesMakefile = ./print-heads-variables.mak;
             printMuslCrossMakeVariablesMakefile = ./print-musl-cross-make-variables.mak;
+            downloadDelay = 10;
           };
           text = lib.strings.readFile ./update.sh;
         };
@@ -439,11 +441,7 @@ let
           let
             # Depends on coreboot-4.11, which wants to pull in an insecure expat version
             coreboot-411-boards = [
-              "librem_l1um"
-              "UNMAINTAINED_kgpe-d16_server"
-              "UNMAINTAINED_kgpe-d16_server-whiptail"
-              "UNMAINTAINED_kgpe-d16_workstation"
-              "UNMAINTAINED_kgpe-d16_workstation-usb_keyboard"
+              "EOL_librem_l1um"
             ];
           in
           # Not a user input, but let's make sure this doesn't silently bitrot
@@ -490,11 +488,11 @@ lib.makeScope newScope (
     # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
     allowedBoards = [
       "librem_11"
-      "librem_13v2"
-      "librem_13v4"
+      "EOL_librem_13v2"
+      "EOL_librem_13v4"
       "librem_14"
-      "librem_15v3"
-      "librem_15v4"
+      "EOL_librem_15v3"
+      "EOL_librem_15v4"
       "librem_l1um_v2"
       "librem_mini"
       "librem_mini_v2"
