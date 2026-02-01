@@ -488,11 +488,7 @@ lib.makeScope newScope (
     # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
     allowedBoards = [
       "librem_11"
-      "EOL_librem_13v2"
-      "EOL_librem_13v4"
       "librem_14"
-      "EOL_librem_15v3"
-      "EOL_librem_15v4"
       "librem_l1um_v2"
       "librem_mini"
       "librem_mini_v2"
