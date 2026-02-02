@@ -762,11 +762,11 @@
         url = "https://ftp.gnu.org/gnu/binutils/binutils-2.37.tar.xz";
         hash = "sha256-gg2XJPAgo+acszeJOgtjwtsWHa3LDgb8Edwp6x6Eoyw=";
       }
-
-      # Skipping acpica-unix2-20220331.tar.gz because we don't have a known-good mirror
-      # Candidate (Heads explicitly *doesn't* use this one for this version): https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-unix2-20220331.tar.gz
-      # Candidate (involves an archive rename): https://distfiles.macports.org/acpica/acpica-unix-20220331.tar.gz
-
+      {
+        name = "coreboot-crossgcc-acpica-unix2-20220331.tar.gz";
+        url = "https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-unix2-20220331.tar.gz";
+        hash = "sha256-HM2lxqCKkLFFd332NesJ+ZWzRysxKPN1AJxaawGgTHo=";
+      }
       {
         name = "coreboot-crossgcc-llvm-14.0.6.src.tar.xz";
         url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.6/llvm-14.0.6.src.tar.xz";

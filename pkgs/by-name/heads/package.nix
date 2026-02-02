@@ -5,6 +5,7 @@
   fetchFromGitHub,
   fetchgit,
   fetchurl,
+  fetchpatch,
   newScope,
   replaceVars,
   runCommand,
@@ -22,6 +23,7 @@
   cmake,
   cpio,
   curl,
+  dtc,
   elfutils,
   envsubst,
   flex,
@@ -126,6 +128,58 @@ let
       hash = "sha256-AQLVaSOf3BTKhqevxLFtKxJwNAGJC4PhiPNNI4RIcNw=";
     }
   ];
+  # skiboot sources that a target may build
+  skiboot = stdenv.mkDerivation (finalAttrs: {
+    pname = "skiboot-Dasharo-src";
+    version = "0-unstable-2023-05-11";
+
+    # CONFIG_SKIBOOT_* in config/coreboot-talos-2.config
+    src = fetchFromGitHub {
+      owner = "Dasharo";
+      repo = "skiboot";
+      rev = "1b14dd0b695b6113805186faad9b2def1d1bfeca";
+      hash = "sha256-UJG/0yhXDI6DOfLwvig/DdM275FRcO174wU9ki3+F5Q=";
+    };
+
+    patches = [
+      # Fixes compilation with newer GCC (>=9)
+      (fetchpatch {
+        name = "0001-skiboot-Dont-pack-p9_sbe_msg.patch";
+        url = "https://github.com/open-power/skiboot/commit/ef691db3533742d9dd6eed1a311472a7c52be94b.patch";
+        hash = "sha256-+RKlGc4eVUhaxzVXT7jxSxqw8Qd0p3M+ciVtIhnbw/w=";
+      })
+      (fetchpatch {
+        name = "0002-skiboot-Dont-pack-errorlog.patch";
+        url = "https://github.com/open-power/skiboot/commit/6080c106e797ea8375ac164e8f53de3308d42abb.patch";
+        hash = "sha256-gjycPm5nPRLYiPMHHajA/YXK8WOyM3MsmwlilIKj3Ck=";
+      })
+      (fetchpatch {
+        name = "0002-skiboot-Fix-printing-0x00-ptr.patch";
+        url = "https://github.com/open-power/skiboot/commit/ba977f2e4406f9de318afcdf5d666e77585ef269.patch";
+        hash = "sha256-JI799B9ApGHqt94Nn9G7zN3EADHtEWfQZHuHEK4TWFI=";
+      })
+    ];
+
+    configurePhase = ''
+      runHook preConfigure
+
+      echo ${finalAttrs.version} > .version
+
+      runHook postConfigure
+    '';
+
+    dontBuild = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      cp -r . $out
+
+      runHook postInstall
+    '';
+
+    dontFixup = true;
+  });
   makeBlobsDir =
     withBlobs:
     runCommand "blobs-collected" { } (
@@ -266,6 +320,14 @@ let
           # But we also want to write into this copy (i.e. the .canary), so make everything writable
           chmod -R +w build/${arch}/${details.name}
 
+          if [ -d build/${arch}/${details.name}/payloads/external/skiboot ]; then
+            echo "'${skiboot}' -> '$PWD/build/${arch}/${details.name}/payloads/external/skiboot/skiboot'"
+            cp -r ${skiboot} build/${arch}/${details.name}/payloads/external/skiboot/skiboot
+            chmod -R +w build/${arch}/${details.name}/payloads/external/skiboot/skiboot
+
+            patchShebangs build/${arch}/${details.name}/payloads/external/skiboot/skiboot/make_version.sh
+          fi
+
           echo '${details.url}|${pinnedRev}' > build/${arch}/${details.name}/.canary
         ''
       ) deps.modules
@@ -321,6 +383,7 @@ let
         cmake
         cpio
         curl # coreboot toolchain complains if it's missing
+        dtc
         flex
         gnum4
         git # applying patch files to fetched repos
@@ -491,6 +554,8 @@ lib.makeScope newScope (
     # install: cannot change permissions of '/build/source/install/x86/sbin/dmsetup.static': No such file or directory
     # https://github.com/ngi-nix/ngipkgs/pull/1433#issuecomment-3097099430
     allowedBoards = [
+      "UNTESTED_talos-2"
+
       "librem_11"
       "librem_14"
       "librem_l1um_v2"

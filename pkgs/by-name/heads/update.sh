@@ -169,24 +169,15 @@ collectCorebootCrossgccDeps() {
   while IFS= read -r -d ' ' crossgccDepUrl; do
     crossgccDepArchive="$(basename "$crossgccDepUrl")"
 
-    if [ "$crossgccDepArchive" == "acpica-unix2-20220331.tar.gz" ]; then
-      echo "Skipping due to no known safe mirror: ${crossgccDepArchive}"
-      echo "
-        # Skipping ${crossgccDepArchive} because we don't have a known-good mirror
-        # Candidate (Heads explicitly *doesn't* use this one for this version): https://mirror.math.princeton.edu/pub/libreboot/misc/acpica/acpica-unix2-20220331.tar.gz
-        # Candidate (involves an archive rename): https://distfiles.macports.org/acpica/acpica-unix-20220331.tar.gz
-      " >> "$appendToFile"
-    else
-      echo "Handling ${corebootName} crossgcc package: ${crossgccDepArchive}"
+    echo "Handling ${corebootName} crossgcc package: ${crossgccDepArchive}"
 
-      # Apply some common URL fixes
-      crossGccDepUrl="$(fixUrl "$crossgccDepUrl")"
+    # Apply some common URL fixes
+    crossGccDepUrl="$(fixUrl "$crossgccDepUrl")"
 
-      # nix-prefetch-url doesn't give the hash in SRI format :(
-      crossgccDepHash="$(getSriHash "$crossGccDepUrl")"
+    # nix-prefetch-url doesn't give the hash in SRI format :(
+    crossgccDepHash="$(getSriHash "$crossGccDepUrl")"
 
-      addPackageDefinition "coreboot-crossgcc-${crossgccDepArchive}" "$crossGccDepUrl" "$crossgccDepHash" "$appendToFile"
-    fi
+    addPackageDefinition "coreboot-crossgcc-${crossgccDepArchive}" "$crossGccDepUrl" "$crossgccDepHash" "$appendToFile"
   done < <(echo "$(env CROSSGCC_VERSION="$corebootName" "$crossgccSrc" --urls) " | tr -d '\t') # CROSSGCC_VERSION so git isn't invoked, trailing space for read to get last entry
 
   echo "];" >> "$appendToFile"
