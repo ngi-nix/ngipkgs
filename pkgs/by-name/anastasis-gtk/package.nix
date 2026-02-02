@@ -84,5 +84,7 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.gpl3Plus;
     mainProgram = "anastasis-gtk";
     platforms = lib.platforms.linux;
+    # https://buildbot.ngi.nixos.org/#/builders/10/builds/3519
+    broken = true;
   };
 })

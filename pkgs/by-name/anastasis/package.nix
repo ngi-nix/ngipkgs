@@ -108,5 +108,7 @@ stdenv.mkDerivation (finalAttrs: {
     '';
     license = lib.licenses.agpl3Plus; # from the README
     homepage = "https://anastasis.lu";
+    # https://buildbot.ngi.nixos.org/#/builders/10/builds/3519
+    broken = true;
   };
 })
