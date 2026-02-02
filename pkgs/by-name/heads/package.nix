@@ -246,6 +246,23 @@ let
         hash = "sha256-dlAFVPg+3oA15KsN4lIUlRLZdO/AoVO66Wau2C8ivDo=";
       };
 
+      # TODO
+      # Instead of validating that skiboot was updated and rejecting different skiboots,
+      # integrate skiboot.src into deps.nix & update.sh
+      postUnpack = lib.optionalString (board == "UNTESTED_talos-2") ''
+        echo "Verifying skiboot src:"
+
+        echo "- Repo"
+        echo "  - expected: $(grep "CONFIG_SKIBOOT_GIT_REPO" ${finalAttrs.src.name}/config/coreboot-talos-2.config | cut -d= -f2)"
+        echo "  - actual: ${skiboot.src.gitRepoUrl}"
+        grep 'CONFIG_SKIBOOT_GIT_REPO' ${finalAttrs.src.name}/config/coreboot-talos-2.config | grep ${skiboot.src.gitRepoUrl} >/dev/null
+
+        echo "- Revision"
+        echo "  - expected: $(grep "CONFIG_SKIBOOT_REVISION" ${finalAttrs.src.name}/config/coreboot-talos-2.config | cut -d= -f2)"
+        echo "  - actual: ${skiboot.src.rev}"
+        grep 'CONFIG_SKIBOOT_REVISION' ${finalAttrs.src.name}/config/coreboot-talos-2.config | grep ${skiboot.src.rev} >/dev/null
+      '';
+
       patches = [
         (replaceVars ./2001-heads-Take-blobs-from-prefetched-blobsDir.patch.in {
           blobsDir = makeBlobsDir withBlobs;
