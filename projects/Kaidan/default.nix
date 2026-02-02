@@ -43,6 +43,11 @@
         # TODO: use Nixpkgs test once that reaches NGIpkgs
         # https://github.com/NixOS/nixpkgs/pull/469539
         tests.kaidan.module = ./programs/kaidan/tests/kaidan.nix;
+        tests.kaidan.problem.broken.reason = ''
+          Mouse coordinates need updating.
+
+          https://github.com/ngi-nix/ngipkgs/issues/2031
+        '';
       };
     };
   };
@@ -51,6 +56,11 @@
     module = ./programs/kaidan/examples/demo.nix;
     module-demo = ./module-demo.nix;
     tests.demo.module = ./programs/kaidan/tests/kaidan.nix;
+    tests.demo.problem.broken.reason = ''
+      Mouse coordinates need updating.
+
+      https://github.com/ngi-nix/ngipkgs/issues/2031
+    '';
     usage-instructions = [
       {
         instruction = ''
