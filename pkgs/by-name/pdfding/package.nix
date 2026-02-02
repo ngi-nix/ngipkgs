@@ -153,6 +153,12 @@ python.pkgs.buildPythonPackage rec {
     "--cov-fail-under=100"
   ];
 
+  disabledTestPaths = [
+    # TODO: update, fixed in 1.5.0
+    # https://github.com/ngi-nix/ngipkgs/issues/2029
+    "users/tests/test_views.py"
+  ];
+
   /*
     fix two breaking tests by providing full out path
     AssertionError: Calls not found
