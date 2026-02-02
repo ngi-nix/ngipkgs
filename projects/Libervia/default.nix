@@ -42,17 +42,21 @@
         backend = {
           description = "Enables manually starting Libervia's backend and the use of its CLI and TUI clients.";
           module = ./examples/backend.nix;
-          tests.backend = {
-            module = ./tests/backend.nix;
-          };
+          # FIX:
+          tests.backend.module = ./tests/backend.nix;
+          tests.backend.problem.broken.reason = ''
+            Needs a fix or update:
+            https://github.com/ngi-nix/ngipkgs/issues/2030
+          '';
         };
         desktop = {
           description = "Enables the use of the Kivy desktop client for Libervia.";
           module = ./examples/desktop.nix;
-          # FIX:
-          tests.desktop = {
-            module = ./tests/desktop.nix;
-          };
+          tests.desktop.module = ./tests/desktop.nix;
+          tests.desktop.problem.broken.reason = ''
+            Needs a fix or update:
+            https://github.com/ngi-nix/ngipkgs/issues/2030
+          '';
         };
       };
     };
@@ -61,6 +65,10 @@
       module = ./examples/desktop.nix;
       module-demo = ./demo.nix;
       tests.demo.module = ./tests/desktop.nix;
+      tests.demo.problem.broken.reason = ''
+        Needs a fix or update:
+        https://github.com/ngi-nix/ngipkgs/issues/2030
+      '';
       usage-instructions = [
         {
           instruction = ''

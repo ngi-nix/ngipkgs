@@ -96,5 +96,9 @@ python3Packages.buildPythonApplication rec {
     teams = [
       lib.teams.ngi
     ];
+    # TODO: fix or update
+    # https://buildbot.ngi.nixos.org/#/builders/260/builds/2399
+    # https://github.com/ngi-nix/ngipkgs/issues/2030
+    broken = true;
   };
 }
