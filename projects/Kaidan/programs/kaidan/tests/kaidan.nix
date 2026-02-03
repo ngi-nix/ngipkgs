@@ -76,7 +76,7 @@
         click_position(179, 144) # add account
 
         wait_main_screen()
-        click_position(366, 598) # chat address
+        click_position(390, 598) # chat address
         login_user(user)
         machine.sleep(1)
 
@@ -85,7 +85,7 @@
         click_position(26, 48) # burger menu
         machine.wait_for_text(r"(Add|contact|chat|QR|code|address)")
         click_position(225, 344) # Add contact by chat address
-        click_position(404, 359) # Add contact to john
+        click_position(444, 359) # Add contact to john
 
         machine.send_chars(f"{users[user]["email"]}\n",0.1);
         machine.sleep(1)
@@ -95,11 +95,11 @@
         machine.send_chars(f"{message if message != "" else users[user]["message"]}\n",0.1);
         machine.sleep(1)
 
-        click_position(511, 524) # Add
+        click_position(511, 535) # Add
 
       # send a message
       def send_message(message):
-        click_position(602, 742) # message box
+        click_position(602, 772) # message box
         machine.send_chars(f"{message}\n", 0.2)
         machine.sleep(1)
 
