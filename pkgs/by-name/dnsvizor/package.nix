@@ -9,11 +9,10 @@
 let
   libMirage = callPackage ./mirage.nix { };
 in
-libMirage.builds {
+libMirage.build (finalAttrs: {
   pname = "dnsvizor";
   version = "0-unstable-2026-01-21";
-  monorepo-materialized-path = ./monorepo-materialized;
-  packages-materialized-path = ./packages-materialized;
+  materializedDir = ./materialized;
   src = fetchFromGitHub {
     owner = "robur-coop";
     repo = "dnsvizor";
@@ -26,7 +25,7 @@ libMirage.builds {
       rm -vrf $out/test
     '';
   };
-  overrideAttrs = finalAttrs: previousAttrs: {
+  overrideUnikernel = finalAttrs: previousAttrs: {
     buildInputs = previousAttrs.buildInputs or [ ] ++ [
       # Some targets, such as hvt, need static GMP (or MPIR)
       (
@@ -79,4 +78,4 @@ libMirage.builds {
       "xen"
     ]
   ) libMirage.possibleTargets;
-}
+})
