@@ -30,31 +30,24 @@ in
   overrideUnikernel = finalAttrs: previousAttrs: {
     buildInputs = previousAttrs.buildInputs or [ ] ++ [
       # Some targets, such as hvt, need static GMP (or MPIR)
-      (
-        (pkgsStatic.gmp.override {
-          # This compiles GMP with a GCC compiled with some flag implying --disable-tls
-          # Disabling or rather emulating TLS (Thread-Local Storage)
-          # is still required as of solo5-hvt-0.9.3 when compiling with OCaml-4
-          # to avoid a crash at startup in __gmpn_cpuvec_init at an instruction mov %fs:0x28,%r12
-          # accessing %fs (the address of the current thread's user-space thread structure):
-          #
-          # solo5-hvt-debug --dumpcore=dump --mem=512 --net:service=tap-unikernel -- \
-          #   $(nix -L build --print-out-paths --no-link -f. dnsvizor.hvt)/dnsvizor.hvt
-          #
-          # Solo5: trap: type=#PF ec=0x0 rip=0x466a86 rsp=0x1ffffc10 rflags=0x10002
-          # Solo5: trap: cr2=0x28
-          # Solo5: ABORT: cpu_x86_64.c:181: Fatal trap
-          stdenv = overrideCC pkgsStatic.stdenv pkgsStatic.stdenv.cc.cc;
-        }).overrideAttrs
-        (prevAttrs: {
-          # This is to support cxx = true which is not necessary for DNSvizor,
-          # but it's pkgs.gmp's default on most platforms.
-          depsBuildBuild = [
-            pkgsStatic.stdenv.cc
-            pkgsStatic.binutils
-          ];
-        })
-      )
+      (pkgsStatic.gmp.override {
+        # This compiles GMP with a GCC compiled with some flag implying --disable-tls
+        # Disabling or rather emulating TLS (Thread-Local Storage)
+        # is still required as of solo5-hvt-0.9.3 when compiling with OCaml-4
+        # to avoid a crash at startup in __gmpn_cpuvec_init at an instruction mov %fs:0x28,%r12
+        # accessing %fs (the address of the current thread's user-space thread structure):
+        #
+        # solo5-hvt-debug --dumpcore=dump --mem=512 --net:service=tap-unikernel -- \
+        #   $(nix -L build --print-out-paths --no-link -f. dnsvizor.hvt)/dnsvizor.hvt
+        #
+        # Solo5: trap: type=#PF ec=0x0 rip=0x466a86 rsp=0x1ffffc10 rflags=0x10002
+        # Solo5: trap: cr2=0x28
+        # Solo5: ABORT: cpu_x86_64.c:181: Fatal trap
+        stdenv = overrideCC pkgsStatic.stdenv pkgsStatic.stdenv.cc.cc;
+        # Can be supported by adding pkgsStatic.stdenv.{cc,binutils} to depsBuildBuild
+        # but DNSvizor does not need it.
+        cxx = false;
+      })
     ];
   };
   query = {
