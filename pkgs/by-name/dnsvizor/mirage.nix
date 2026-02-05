@@ -39,9 +39,9 @@ rec {
         runHook postBuild
       '';
       installPhase = ''
-        runHook preBuild
+        runHook preInstall
         cp -R . $out
-        runHook postBuild
+        runHook postInstall
       '';
     };
 
