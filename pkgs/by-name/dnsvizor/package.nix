@@ -5,11 +5,13 @@
   stdenv,
   callPackage,
   overrideCC,
+  unstableGitUpdater,
+  _experimental-update-script-combinators,
 }:
 let
   libMirage = callPackage ./mirage.nix { };
 in
-libMirage.build (finalAttrs: {
+(libMirage.build (finalAttrs: {
   pname = "dnsvizor";
   version = "0-unstable-2026-01-21";
   materializedDir = ./materialized;
@@ -59,8 +61,18 @@ libMirage.build (finalAttrs: {
     # follow upstream CI version (.cirrus.yml) because newer ones fail to build
     ocaml-base-compiler = "4.14.2";
   };
+  # ToDo(maint/update): increase the version boundary asserted
+  # or remove the pinned entries when no longer needed.
+  # Boundary literals are split in two when they would otherwise
+  # be replaced by update-source-version.
   monorepoQuery = {
-    uutf = "1.0.3+dune"; # default version is not in the dune overlay yet
+    # mirage-dnsvizor-hvt> File "duniverse/multipart_form/lib/dune", line 5, characters 31-35:
+    # mirage-dnsvizor-hvt> 5 |    base64.rfc2045 prettym pecu uutf fmt angstrom))
+    # mirage-dnsvizor-hvt>                                    ^^^^
+    # mirage-dnsvizor-hvt> Error: Library "uutf" not found.
+    uutf =
+      assert lib.versionAtLeast ("0" + "-unstable-2026-01-21") finalAttrs.version;
+      "1.0.3+dune"; # default version is not in the dune overlay yet
   };
 
   # Explanation: remove broken targets instead of setting meta.broken
@@ -78,4 +90,14 @@ libMirage.build (finalAttrs: {
       "xen"
     ]
   ) libMirage.possibleTargets;
-})
+})).overrideAttrs
+  (
+    finalAttrs: previousAttrs: {
+      passthru = previousAttrs.passthru or { } // {
+        updateScript = _experimental-update-script-combinators.sequence [
+          (unstableGitUpdater { })
+          (lib.getExe previousAttrs.passthru.updateScript)
+        ];
+      };
+    }
+  )
