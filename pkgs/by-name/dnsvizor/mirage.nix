@@ -6,6 +6,7 @@
   opam-nix,
   stdenv,
   writeShellApplication,
+  removeReferencesTo,
   ...
 }:
 
@@ -82,11 +83,17 @@ rec {
               ${name} = previousOpam.${name}.overrideAttrs (previousAttrs: {
                 inherit version;
                 __intentionallyOverridingVersion = true;
+
+                nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [
+                  removeReferencesTo
+                ];
+
                 env =
                   previousAttrs.env or { }
                   // lib.optionalAttrs (finalOpam ? "ocaml-solo5") {
                     OCAMLFIND_CONF = finalOpam.ocaml-solo5 + "/lib/findlib.conf";
                   };
+
                 buildPhase = ''
                   runHook preBuild
                   mkdir duniverse
@@ -101,11 +108,35 @@ rec {
                   dune build ${mirageDir} --profile release
                   runHook postBuild
                 '';
+
                 installPhase = ''
                   runHook preInstall
                   mkdir $out
                   cp -L ${mirageDir}/dist/${pname}* $out/
                   runHook postInstall
+                '';
+
+                # Reduce the full closure size by several hundreds MiB
+                # By not propagating inputs, stripping and removing
+                # huge Solo5 and OCaml compilers inherited from packages-materialized.
+                doNixSupport = false;
+                stripAllList = [ "." ];
+                preFixup = ''
+                  remove-references-to ${
+                    lib.escapeShellArgs (
+                      lib.concatMap
+                        (drv: [
+                          "-t"
+                          drv
+                        ])
+                        (
+                          lib.optionals (finalOpam ? "ocaml-solo5") [
+                            finalOpam.ocaml-solo5
+                            finalOpam.solo5
+                          ]
+                        )
+                    )
+                  } $out/*
                 '';
               });
             }
