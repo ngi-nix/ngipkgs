@@ -5,7 +5,6 @@
   stdenv,
   callPackage,
   overrideCC,
-  ...
 }:
 let
   libMirage = callPackage ./mirage.nix { };
