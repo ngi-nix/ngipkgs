@@ -51,7 +51,7 @@ in
 
 python.pkgs.buildPythonPackage rec {
   pname = "pdfding";
-  version = "1.4.1";
+  version = "1.5.1";
   src = fetchFromGitHub {
     owner = "mrmn2";
     repo = "PdfDing";

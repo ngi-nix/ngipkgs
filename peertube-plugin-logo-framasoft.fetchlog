@@ -1,0 +1,24 @@
+warning: Git tree '/home/runner/work/ngipkgs/ngipkgs' is dirty
+this derivation will be built:
+  /nix/store/p4wx6ssxw1shj3d25cvkr1fsjw0ig5p6-source.drv
+building '/nix/store/p4wx6ssxw1shj3d25cvkr1fsjw0ig5p6-source.drv'...
+structuredAttrs is enabled
+exporting https://framagit.org/framasoft/peertube/official-plugins.git (rev b035a3b7b109b1227c9afa6d105ea8d017bcf963) into /nix/store/v9w7kypyfqxxdm55nm6i407rca74dpss-source
+Initialized empty Git repository in /nix/store/v9w7kypyfqxxdm55nm6i407rca74dpss-source/.git/
+remote: Enumerating objects: 42, done.
+remote: Counting objects: 100% (42/42), done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 42 (delta 0), reused 35 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (42/42), 6.21 KiB | 6.21 MiB/s, done.
+From https://framagit.org/framasoft/peertube/official-plugins
+ * branch            HEAD       -> FETCH_HEAD
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 10 (delta 0), reused 8 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (10/10), 18.71 KiB | 18.71 MiB/s, done.
+Switched to a new branch 'fetchgit'
+removing `.git'...
+error: hash mismatch in fixed-output derivation '/nix/store/p4wx6ssxw1shj3d25cvkr1fsjw0ig5p6-source.drv':
+         specified: sha256-AzH1rZFqEH8sovZZfJykvsEmCedEZWigQFHWHl6/PdE=
+            got:    sha256-CEXnsBd7QnzodtsnbucCPv5SJCOU6AmTuKVpureeGLQ=
