@@ -1343,14 +1343,14 @@
     "url": {
       "section": {
         "checksum": [
-          "sha256=503c4f74f67d16e30dd962a753ed3bca1469282c2202392f5b0e1b7e2a9b4562",
-          "sha512=2db7116df496c12892025b51b91cff87c739595e475eaa33b9a5bfcfbeb8a91cbe90da9b10d9408f41ccca9daec143d8ddf0099be2fac3f3330a3b3bfd25683e"
+          "sha256=640836f15b2d555bdf2366f6d7783926e11598ad7e94557b167c785b255f4856",
+          "sha512=1954727f1a386c9909996cdabc1a3b150c23361a96e5632280b0f6e6faf8f0ab6a7ca974352378e757c5136375eb5a53235f95caa69e982f48d3a49907948ddd"
         ],
-        "src": "https://github.com/robur-coop/bstr/releases/download/v0.0.3/bstr-0.0.3.tbz"
+        "src": "https://github.com/robur-coop/bstr/releases/download/v0.0.4/bstr-0.0.4.tbz"
       }
     },
-    "version": "0.0.3",
-    "x-commit-hash": "370e04f5beba9807d6a9115225f53eedb8a430aa",
+    "version": "0.0.4",
+    "x-commit-hash": "1ec658c8ac3a4bd67a004d41b7c5e6089f586fdf",
     "x-maintenance-intent": [
       "(latest)"
     ]
@@ -6707,7 +6707,7 @@
               },
               "logop": "and",
               "rhs": {
-                "arg": "0.35.0",
+                "arg": "0.37.0",
                 "prefix_relop": "geq"
               }
             },
@@ -6790,6 +6790,14 @@
           }
         ],
         "val": "melange"
+      },
+      {
+        "conditions": [
+          {
+            "id": "with-dev-setup"
+          }
+        ],
+        "val": "uutf"
       }
     ],
     "description": "\n\nDune is a build system that was designed to simplify the release of\nJane Street packages. It reads metadata from \"dune\" files following a\nvery simple s-expression syntax.\n\nDune is fast, has very low-overhead, and supports parallel builds on\nall platforms. It has no system dependencies; all you need to build\ndune or packages using dune is OCaml. You don't need make or bash\nas long as the packages themselves don't use bash explicitly.\n\nDune is composable; supporting multi-package development by simply\ndropping multiple repositories into the same directory.\n\nDune also supports multi-context builds, such as building against\nseveral opam roots/switches simultaneously. This helps maintaining\npackages across several versions of OCaml and gives cross-compilation\nfor free.\n",
@@ -6808,14 +6816,14 @@
     "url": {
       "section": {
         "checksum": [
-          "sha256=b1a86b2d60bdb4a8b9bb6861bdf2f9f28a6e7cb5d833ce81afecceb9ef9ca549",
-          "sha512=ed14df9163e487d4ae7d0a2427eaab7823ef1f0ef2d93f0b783e6f163bbd5b44ba73f055d60b84e76f476fe11d38e794013628a1da776d9ec13cca9666e7b7ff"
+          "sha256=e76d4d89368a0a70025193aeaf4f7c5b54031dba3f59bf9d2af1971dc0eceddd",
+          "sha512=a7531de073a47f644bd1e06bfb424c50a61d34245e5e0a1f32d8da920437e8fe59246304cb7aec25f797a8dafea876feceeccfe5139502ead4d1ba5c45773ef3"
         ],
-        "src": "https://github.com/ocaml/dune/releases/download/3.20.2/dune-3.20.2.tbz"
+        "src": "https://github.com/ocaml/dune/releases/download/3.21.0/dune-3.21.0.tbz"
       }
     },
-    "version": "3.20.2",
-    "x-commit-hash": "1e54fd3f450aae7fb41ffb6b7c8b7a5aed754777",
+    "version": "3.21.0",
+    "x-commit-hash": "832d2384ce30cf98e32d797aecf81088d1bd354b",
     "x-maintenance-intent": [
       "(latest)"
     ]
@@ -6873,7 +6881,7 @@
       {
         "conditions": [
           {
-            "arg": "3.20",
+            "arg": "3.21",
             "prefix_relop": "geq"
           }
         ],
@@ -6923,14 +6931,14 @@
     "url": {
       "section": {
         "checksum": [
-          "sha256=b1a86b2d60bdb4a8b9bb6861bdf2f9f28a6e7cb5d833ce81afecceb9ef9ca549",
-          "sha512=ed14df9163e487d4ae7d0a2427eaab7823ef1f0ef2d93f0b783e6f163bbd5b44ba73f055d60b84e76f476fe11d38e794013628a1da776d9ec13cca9666e7b7ff"
+          "sha256=e76d4d89368a0a70025193aeaf4f7c5b54031dba3f59bf9d2af1971dc0eceddd",
+          "sha512=a7531de073a47f644bd1e06bfb424c50a61d34245e5e0a1f32d8da920437e8fe59246304cb7aec25f797a8dafea876feceeccfe5139502ead4d1ba5c45773ef3"
         ],
-        "src": "https://github.com/ocaml/dune/releases/download/3.20.2/dune-3.20.2.tbz"
+        "src": "https://github.com/ocaml/dune/releases/download/3.21.0/dune-3.21.0.tbz"
       }
     },
-    "version": "3.20.2",
-    "x-commit-hash": "1e54fd3f450aae7fb41ffb6b7c8b7a5aed754777",
+    "version": "3.21.0",
+    "x-commit-hash": "832d2384ce30cf98e32d797aecf81088d1bd354b",
     "x-maintenance-intent": [
       "(latest)"
     ]
@@ -9886,7 +9894,7 @@
         "conditions": [
           {
             "lhs": {
-              "id": "dev"
+              "id": "with-dev-setup"
             },
             "logop": "and",
             "rhs": {
@@ -10323,7 +10331,7 @@
       {
         "conditions": [
           {
-            "arg": "4.03.0",
+            "arg": "4.08",
             "prefix_relop": "geq"
           }
         ],
@@ -10370,6 +10378,17 @@
           }
         ],
         "val": "menhirCST"
+      },
+      {
+        "conditions": [
+          {
+            "arg": {
+              "id": "version"
+            },
+            "prefix_relop": "eq"
+          }
+        ],
+        "val": "menhirGLR"
       }
     ],
     "dev-repo": "git+https://gitlab.inria.fr/fpottier/menhir.git",
@@ -10384,13 +10403,16 @@
     "url": {
       "section": {
         "checksum": [
-          "md5=b8f83df02226419f99e49f1b637dcb11",
-          "sha512=72c85ec63104d6a7c7b6305b4642b86909fcad2e46561427ad596e37e686b3c94cd382da440f058d32800a15b157b80a8242df8043440a209ba73d209657ea84"
+          "md5=9dc415bda0e3dd274892d59876630ee5",
+          "sha512=2a06d7411ff02b45de1ac27fe124cd22b78f8fd400f708e8be1ed93ff0749c024abd142486ac5375ecde82333d9b9c860f962f5598519c45dd6ee65008b86230"
         ],
-        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20250912/archive.tar.gz"
+        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20260203/archive.tar.gz"
       }
     },
-    "version": "20250912"
+    "version": "20260203",
+    "x-maintenance-intent": [
+      "(latest)"
+    ]
   },
   "menhirCST": {
     "authors": [
@@ -10456,13 +10478,91 @@
     "url": {
       "section": {
         "checksum": [
-          "md5=b8f83df02226419f99e49f1b637dcb11",
-          "sha512=72c85ec63104d6a7c7b6305b4642b86909fcad2e46561427ad596e37e686b3c94cd382da440f058d32800a15b157b80a8242df8043440a209ba73d209657ea84"
+          "md5=9dc415bda0e3dd274892d59876630ee5",
+          "sha512=2a06d7411ff02b45de1ac27fe124cd22b78f8fd400f708e8be1ed93ff0749c024abd142486ac5375ecde82333d9b9c860f962f5598519c45dd6ee65008b86230"
         ],
-        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20250912/archive.tar.gz"
+        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20260203/archive.tar.gz"
       }
     },
-    "version": "20250912"
+    "version": "20260203",
+    "x-maintenance-intent": [
+      "(latest)"
+    ]
+  },
+  "menhirGLR": {
+    "authors": [
+      "François Pottier <francois.pottier@inria.fr>"
+    ],
+    "bug-reports": "https://gitlab.inria.fr/fpottier/menhir/-/issues",
+    "build": [
+      [
+        "dune",
+        "build",
+        "-p",
+        {
+          "id": "name"
+        },
+        "-j",
+        {
+          "id": "jobs"
+        }
+      ]
+    ],
+    "conflicts": [
+      {
+        "conditions": [
+          {
+            "arg": {
+              "id": "version"
+            },
+            "prefix_relop": "neq"
+          }
+        ],
+        "val": "menhir"
+      }
+    ],
+    "depends": [
+      {
+        "conditions": [
+          {
+            "arg": "4.08",
+            "prefix_relop": "geq"
+          }
+        ],
+        "val": "ocaml"
+      },
+      {
+        "conditions": [
+          {
+            "arg": "2.8.0",
+            "prefix_relop": "geq"
+          }
+        ],
+        "val": "dune"
+      }
+    ],
+    "dev-repo": "git+https://gitlab.inria.fr/fpottier/menhir.git",
+    "files-contents": {},
+    "homepage": "http://gitlab.inria.fr/fpottier/menhir",
+    "isLocal": false,
+    "license": "LGPL-2.0-only WITH OCaml-LGPL-linking-exception",
+    "maintainer": "francois.pottier@inria.fr",
+    "name": "menhirGLR",
+    "opam-version": "2.0",
+    "synopsis": "Runtime support library for GLR parsers generated by Menhir",
+    "url": {
+      "section": {
+        "checksum": [
+          "md5=9dc415bda0e3dd274892d59876630ee5",
+          "sha512=2a06d7411ff02b45de1ac27fe124cd22b78f8fd400f708e8be1ed93ff0749c024abd142486ac5375ecde82333d9b9c860f962f5598519c45dd6ee65008b86230"
+        ],
+        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20260203/archive.tar.gz"
+      }
+    },
+    "version": "20260203",
+    "x-maintenance-intent": [
+      "(latest)"
+    ]
   },
   "menhirLib": {
     "authors": [
@@ -10501,7 +10601,7 @@
       {
         "conditions": [
           {
-            "arg": "4.03.0",
+            "arg": "4.08",
             "prefix_relop": "geq"
           }
         ],
@@ -10529,13 +10629,16 @@
     "url": {
       "section": {
         "checksum": [
-          "md5=b8f83df02226419f99e49f1b637dcb11",
-          "sha512=72c85ec63104d6a7c7b6305b4642b86909fcad2e46561427ad596e37e686b3c94cd382da440f058d32800a15b157b80a8242df8043440a209ba73d209657ea84"
+          "md5=9dc415bda0e3dd274892d59876630ee5",
+          "sha512=2a06d7411ff02b45de1ac27fe124cd22b78f8fd400f708e8be1ed93ff0749c024abd142486ac5375ecde82333d9b9c860f962f5598519c45dd6ee65008b86230"
         ],
-        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20250912/archive.tar.gz"
+        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20260203/archive.tar.gz"
       }
     },
-    "version": "20250912"
+    "version": "20260203",
+    "x-maintenance-intent": [
+      "(latest)"
+    ]
   },
   "menhirSdk": {
     "authors": [
@@ -10574,7 +10677,7 @@
       {
         "conditions": [
           {
-            "arg": "4.03.0",
+            "arg": "4.08",
             "prefix_relop": "geq"
           }
         ],
@@ -10602,13 +10705,16 @@
     "url": {
       "section": {
         "checksum": [
-          "md5=b8f83df02226419f99e49f1b637dcb11",
-          "sha512=72c85ec63104d6a7c7b6305b4642b86909fcad2e46561427ad596e37e686b3c94cd382da440f058d32800a15b157b80a8242df8043440a209ba73d209657ea84"
+          "md5=9dc415bda0e3dd274892d59876630ee5",
+          "sha512=2a06d7411ff02b45de1ac27fe124cd22b78f8fd400f708e8be1ed93ff0749c024abd142486ac5375ecde82333d9b9c860f962f5598519c45dd6ee65008b86230"
         ],
-        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20250912/archive.tar.gz"
+        "src": "https://gitlab.inria.fr/fpottier/menhir/-/archive/20260203/archive.tar.gz"
       }
     },
-    "version": "20250912"
+    "version": "20260203",
+    "x-maintenance-intent": [
+      "(latest)"
+    ]
   },
   "metrics": {
     "authors": [
@@ -13654,8 +13760,15 @@
       {
         "conditions": [
           {
-            "arg": "4.0.0",
-            "prefix_relop": "geq"
+            "lhs": {
+              "arg": "4.0.0",
+              "prefix_relop": "geq"
+            },
+            "logop": "and",
+            "rhs": {
+              "arg": "6.0.0",
+              "prefix_relop": "lt"
+            }
           }
         ],
         "val": "lwt"

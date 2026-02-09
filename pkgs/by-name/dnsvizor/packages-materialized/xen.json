@@ -2173,7 +2173,7 @@
               },
               "logop": "and",
               "rhs": {
-                "arg": "0.35.0",
+                "arg": "0.37.0",
                 "prefix_relop": "geq"
               }
             },
@@ -2256,6 +2256,14 @@
           }
         ],
         "val": "melange"
+      },
+      {
+        "conditions": [
+          {
+            "id": "with-dev-setup"
+          }
+        ],
+        "val": "uutf"
       }
     ],
     "description": "\n\nDune is a build system that was designed to simplify the release of\nJane Street packages. It reads metadata from \"dune\" files following a\nvery simple s-expression syntax.\n\nDune is fast, has very low-overhead, and supports parallel builds on\nall platforms. It has no system dependencies; all you need to build\ndune or packages using dune is OCaml. You don't need make or bash\nas long as the packages themselves don't use bash explicitly.\n\nDune is composable; supporting multi-package development by simply\ndropping multiple repositories into the same directory.\n\nDune also supports multi-context builds, such as building against\nseveral opam roots/switches simultaneously. This helps maintaining\npackages across several versions of OCaml and gives cross-compilation\nfor free.\n",
@@ -2274,14 +2282,14 @@
     "url": {
       "section": {
         "checksum": [
-          "sha256=b1a86b2d60bdb4a8b9bb6861bdf2f9f28a6e7cb5d833ce81afecceb9ef9ca549",
-          "sha512=ed14df9163e487d4ae7d0a2427eaab7823ef1f0ef2d93f0b783e6f163bbd5b44ba73f055d60b84e76f476fe11d38e794013628a1da776d9ec13cca9666e7b7ff"
+          "sha256=e76d4d89368a0a70025193aeaf4f7c5b54031dba3f59bf9d2af1971dc0eceddd",
+          "sha512=a7531de073a47f644bd1e06bfb424c50a61d34245e5e0a1f32d8da920437e8fe59246304cb7aec25f797a8dafea876feceeccfe5139502ead4d1ba5c45773ef3"
         ],
-        "src": "https://github.com/ocaml/dune/releases/download/3.20.2/dune-3.20.2.tbz"
+        "src": "https://github.com/ocaml/dune/releases/download/3.21.0/dune-3.21.0.tbz"
       }
     },
-    "version": "3.20.2",
-    "x-commit-hash": "1e54fd3f450aae7fb41ffb6b7c8b7a5aed754777",
+    "version": "3.21.0",
+    "x-commit-hash": "832d2384ce30cf98e32d797aecf81088d1bd354b",
     "x-maintenance-intent": [
       "(latest)"
     ]
@@ -2339,7 +2347,7 @@
       {
         "conditions": [
           {
-            "arg": "3.20",
+            "arg": "3.21",
             "prefix_relop": "geq"
           }
         ],
@@ -2389,14 +2397,14 @@
     "url": {
       "section": {
         "checksum": [
-          "sha256=b1a86b2d60bdb4a8b9bb6861bdf2f9f28a6e7cb5d833ce81afecceb9ef9ca549",
-          "sha512=ed14df9163e487d4ae7d0a2427eaab7823ef1f0ef2d93f0b783e6f163bbd5b44ba73f055d60b84e76f476fe11d38e794013628a1da776d9ec13cca9666e7b7ff"
+          "sha256=e76d4d89368a0a70025193aeaf4f7c5b54031dba3f59bf9d2af1971dc0eceddd",
+          "sha512=a7531de073a47f644bd1e06bfb424c50a61d34245e5e0a1f32d8da920437e8fe59246304cb7aec25f797a8dafea876feceeccfe5139502ead4d1ba5c45773ef3"
         ],
-        "src": "https://github.com/ocaml/dune/releases/download/3.20.2/dune-3.20.2.tbz"
+        "src": "https://github.com/ocaml/dune/releases/download/3.21.0/dune-3.21.0.tbz"
       }
     },
-    "version": "3.20.2",
-    "x-commit-hash": "1e54fd3f450aae7fb41ffb6b7c8b7a5aed754777",
+    "version": "3.21.0",
+    "x-commit-hash": "832d2384ce30cf98e32d797aecf81088d1bd354b",
     "x-maintenance-intent": [
       "(latest)"
     ]
