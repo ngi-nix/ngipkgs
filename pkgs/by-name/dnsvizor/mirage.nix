@@ -7,7 +7,6 @@
   stdenv,
   writeShellApplication,
   removeReferencesTo,
-  ...
 }:
 
 rec {
@@ -120,8 +119,8 @@ rec {
                 # By not propagating inputs, stripping and removing
                 # huge Solo5 and OCaml compilers inherited from packages-materialized.
                 doNixSupport = false;
-                stripAllList = [ "." ];
-                preFixup = ''
+                stripAllList = previousAttrs.stripAllList or [ ] ++ [ "." ];
+                preFixup = previousAttrs.preFixup or "" + "\n" + ''
                   remove-references-to ${
                     lib.escapeShellArgs (
                       lib.concatMap
