@@ -12,24 +12,19 @@ let
 in
 libMirage.builds {
   pname = "dnsvizor";
-  version = "0-unstable-2025-12-17";
+  version = "0-unstable-2026-01-21";
   monorepo-materialized-path = ./monorepo-materialized;
   packages-materialized-path = ./packages-materialized;
   src = fetchFromGitHub {
     owner = "robur-coop";
     repo = "dnsvizor";
-    rev = "57dbfa7208c765ba531995d9638f4a68b4cc6c15";
-    hash = "sha256-heiCAB+1TlAVa23r1GD6WP2w3Ha8kbqKup/gzJz0EW8=";
+    rev = "0a209647142feeb653deb542cc0177621ab70483";
+    hash = "sha256-GuQJzXO2w61nBa9KsnuExBGCEsPZ7lO9hcgPy0UqXRo=";
     # ideally we should use postPatch, but we cannot
     postFetch = ''
       # TODO(linj) enable test
       # currently tests fail to build if target is not "unix"
       rm -vrf $out/test
-
-      # TODO(linj) remove this patch after dnsvizor#114 is merged
-      substituteInPlace $out/config.ml --replace-fail \
-        'package ~min:"0.5.0" "metrics";' \
-        'package ~min:"0.5.0" "metrics"; package ~min:"0.5.0" "metrics-lwt";'
     '';
   };
   overrideAttrs = finalAttrs: previousAttrs: {
