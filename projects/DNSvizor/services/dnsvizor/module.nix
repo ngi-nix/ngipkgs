@@ -363,7 +363,10 @@ in
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectProc = "invisible";
-        RestrictAddressFamilies = [ "AF_NETLINK" ];
+        RestrictAddressFamilies = [
+          "AF_NETLINK"
+          "AF_INET"
+        ];
         RestrictNamespaces = true;
         RestrictRealtime = true;
         SystemCallArchitectures = [ "native" ];
