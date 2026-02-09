@@ -21,13 +21,13 @@
   nixos.modules.services = {
     stalwart-mail = {
       name = "Stalwart Mail Server";
-      module = lib.moduleLocFromOptionString "services.stalwart-mail";
+      module = lib.moduleLocFromOptionString "services.stalwart";
       examples."Enable Stalwart Mail Server" = {
-        module = "${sources.inputs.nixpkgs}/nixos/tests/stalwart/stalwart-mail-config.nix";
+        module = "${sources.inputs.nixpkgs}/nixos/tests/stalwart/stalwart-config.nix";
         description = ''
           Basic configuration for stalwart mail server.
         '';
-        tests.basic.module = pkgs.nixosTests.stalwart-mail;
+        tests.basic.module = pkgs.nixosTests.stalwart;
       };
     };
   };
