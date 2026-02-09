@@ -6,8 +6,6 @@
   opam-nix,
   stdenv,
   writeShellApplication,
-  removeReferencesTo,
-  ...
 }:
 
 rec {
@@ -84,10 +82,6 @@ rec {
                 inherit version;
                 __intentionallyOverridingVersion = true;
 
-                nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [
-                  removeReferencesTo
-                ];
-
                 env =
                   previousAttrs.env or { }
                   // lib.optionalAttrs (finalOpam ? "ocaml-solo5") {
@@ -117,27 +111,9 @@ rec {
                 '';
 
                 # Reduce the full closure size by several hundreds MiB
-                # By not propagating inputs, stripping and removing
-                # huge Solo5 and OCaml compilers inherited from packages-materialized.
+                # By not propagating inputs and stripping all symbols.
                 doNixSupport = false;
-                stripAllList = [ "." ];
-                preFixup = ''
-                  remove-references-to ${
-                    lib.escapeShellArgs (
-                      lib.concatMap
-                        (drv: [
-                          "-t"
-                          drv
-                        ])
-                        (
-                          lib.optionals (finalOpam ? "ocaml-solo5") [
-                            finalOpam.ocaml-solo5
-                            finalOpam.solo5
-                          ]
-                        )
-                    )
-                  } $out/*
-                '';
+                stripAllList = previousAttrs.stripAllList or [ ] ++ [ "." ];
               });
             }
           );
