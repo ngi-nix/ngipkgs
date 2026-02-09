@@ -12,7 +12,7 @@ buildNpmPackage (finalAttrs: {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "b035a3b7b109b1227c9afa6d105ea8d017bcf963";
+    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
     sparseCheckout = [ "peertube-plugin-akismet" ];
     hash = "sha256-AzH1rZFqEH8sovZZfJykvsEmCedEZWigQFHWHl6/PdE=";
   };
