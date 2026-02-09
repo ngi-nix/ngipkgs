@@ -45,12 +45,14 @@ rec {
           [
             "(#opt-"
             "{.note}"
+            "{.tip}"
             "{.warning}"
             "{var}"
           ]
           [
             "(https://nixos.org/manual/nixos/unstable/#opt-"
             "{note}"
+            "{tip}"
             "{warning}"
             "{option}"
           ]
