@@ -6,15 +6,15 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-video-annotation";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-12-18";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    rev = "b035a3b7b109b1227c9afa6d105ea8d017bcf963";
     sparseCheckout = [ "peertube-plugin-video-annotation" ];
-    hash = "sha256-YLEhMJuOFiX9SE+XjhOPZ2kHvAM+arFYmuHXWZDa6+0=";
+    hash = "sha256-laBs12OGvLQj70qvLC40RrXzhsmLfJyyPbkeZub4Fgs=";
   };
 
   # prepare script breaks installation at peertube plugin time
@@ -25,7 +25,7 @@ buildNpmPackage (finalAttrs: {
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-video-annotation";
 
-  npmDepsHash = "sha256-1/9RQZHiUtZFFycIBewGUSImGKUJdv4flZv5EaIJ02E=";
+  npmDepsHash = "sha256-+YymJE1vxwXJnAY2v7ppQ76fW7k23rdzvg+1E1E0Lqc=";
 
   passthru.updateScript = peertube-plugin-akismet.peertubeOfficialPluginsUpdateScript;
 
