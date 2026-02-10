@@ -11,7 +11,7 @@
 let
   libMirage = callPackage ./mirage.nix { };
 in
-(libMirage.build (finalAttrs: {
+(libMirage.builds (finalAttrs: {
   pname = "dnsvizor";
   version = "0-unstable-2026-01-21";
   materializedDir = ./materialized;
@@ -89,7 +89,7 @@ in
       passthru = previousAttrs.passthru or { } // {
         updateScript = _experimental-update-script-combinators.sequence [
           (unstableGitUpdater { })
-          (lib.getExe previousAttrs.passthru.updateScript)
+          previousAttrs.passthru.updateScript
         ];
       };
     }
