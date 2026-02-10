@@ -4,6 +4,7 @@
   sources,
   system,
 
+  flake,
   nixos-modules,
   ...
 }@args:
@@ -77,28 +78,29 @@ rec {
   ) (lib.forceEvalRecursive projects);
 
   optionsDoc = pkgs.nixosOptionsDoc {
-    inherit
-      (lib.evalModules {
-        modules = [
-          {
-            # Don't check because NixOS options are not included.
-            # See comment in NixOS' `noCheckForDocsModule`.
-            config._module.check = false;
+    options =
+      lib.flip lib.removeAttrs [ "_module" ]
+        (lib.evalModules {
+          modules = [
+            "${sources.inputs.nixpkgs}/nixos/modules/misc/version.nix"
 
-            config.nixpkgs.hostPlatform = system;
-            config._module.args.pkgs = pkgs;
+            {
+              # Don't check because NixOS options are not included.
+              # See comment in NixOS' `noCheckForDocsModule`.
+              config._module.check = false;
 
-            imports = lib.pipe nixos-modules [
-              (lib.filterAttrs (_: value: lib.isAttrs value))
-              (lib.mapAttrsToList (name: value: lib.attrValues value))
-              (lib.flatten)
-            ];
-          }
-        ];
-        specialArgs.modulesPath = "${sources.inputs.nixpkgs}/nixos/modules";
-      })
-      options
-      ;
+              config.nixpkgs.hostPlatform = system;
+              config._module.args.pkgs = pkgs;
+
+              imports = lib.pipe nixos-modules [
+                (lib.filterAttrs (_: value: lib.isAttrs value))
+                (lib.mapAttrsToList (name: value: lib.attrValues value))
+                (lib.flatten)
+              ];
+            }
+          ];
+          specialArgs.modulesPath = "${sources.inputs.nixpkgs}/nixos/modules";
+        }).options;
   };
 
   # TODO: no longer useful. refactor whatever needs this and remove.

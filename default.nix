@@ -57,9 +57,8 @@ let
     };
 
     manuals = self.call manuals/default.nix {
-      version = lib.strings.fileContents ./.version;
       revision = flake.sourceInfo.shortRev or flake.sourceInfo.dirtyShortRev or "dev";
-      modulesPath = "${sources.nixpkgs}/nixos/modules";
+      version = lib.strings.fileContents ./.version;
     };
 
     # Combined overview and HTML manuals

@@ -5,7 +5,6 @@
   imagemagick,
   installShellFiles,
   lib,
-  modulesPath,
   perl,
   python3,
   revision,
@@ -15,7 +14,7 @@
   ...
 }:
 let
-  options = callPackage ./Options.nix { inherit modulesPath revision; };
+  options = callPackage ./Options.nix { };
 
   common = stdenv.mkDerivation (finalAttrs: {
     pname = "NGIpkgs-Manuals-${finalAttrs.passthru.format}";
