@@ -6,7 +6,7 @@
   formatter,
   hydrated-projects,
   nonBrokenPackages,
-  overview,
+  overview-with-manuals,
   ...
 }:
 # buildbot executes `nix flake check`, therefore this output
@@ -63,7 +63,7 @@ let
   checksForInfrastructure = {
     "infra/pre-commit" = formatter.hooks.pre-commit;
     "infra/makemake" = toplevel self.nixosConfigurations.makemake;
-    "infra/overview" = overview;
+    "infra/overview" = overview-with-manuals;
   };
 in
 checksForInfrastructure // checksForAllProjects // checksForAllPackages
