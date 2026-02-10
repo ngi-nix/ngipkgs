@@ -12,24 +12,28 @@ rec {
   # Description: generates a valid MyST syntax from `manuals.optionsDoc.optionsNix`.
   optionsMyST =
     let
+      mappings = {
+        # Admonitions
+        # https://github.com/NixOS/nixpkgs/blob/master/doc/README.md#admonitions
+        # https://myst-parser.readthedocs.io/en/stable/syntax/admonitions.html
+        "(#opt-" = "(https://nixos.org/manual/nixos/unstable/#opt-";
+        "{.caution}" = "{caution}";
+        "{.important}" = "{important}";
+        "{.note}" = "{note}";
+        "{.tip}" = "{tip}";
+        "{.warning}" = "{warning}";
+        "{.example}" = "{example}";
+        # Roles
+        # https://github.com/NixOS/nixpkgs/blob/master/doc/README.md#roles
+        # https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html#roles-an-in-line-extension-point
+        # https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html#cross-references
+        "{command}" = "{code}";
+        "{env}" = "{envvar}";
+        "{var}" = "{option}";
+      };
       fixContent =
         text:
-        lib.replaceStrings
-          [
-            "(#opt-"
-            "{.note}"
-            "{.tip}"
-            "{.warning}"
-            "{var}"
-          ]
-          [
-            "(https://nixos.org/manual/nixos/unstable/#opt-"
-            "{note}"
-            "{tip}"
-            "{warning}"
-            "{option}"
-          ]
-          (lib.removeSuffix "\n" text);
+        lib.replaceStrings (lib.attrNames mappings) (lib.attrValues mappings) (lib.removeSuffix "\n" text);
       renderCode =
         arg:
         if lib.typeOf arg == "string" then
