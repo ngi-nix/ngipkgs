@@ -1,37 +1,10 @@
 {
   lib,
-  modulesPath,
-  nixos-modules,
-  nixosOptionsDoc,
-  pkgs,
-  revision,
+  optionsDoc,
   writeText,
   ...
 }:
 rec {
-  optionsDoc = nixosOptionsDoc {
-    inherit revision;
-    options =
-      lib.flip lib.removeAttrs [ "_module" ]
-        (lib.evalModules {
-          class = "nixos";
-          specialArgs = {
-            inherit pkgs modulesPath;
-          };
-          modules = [
-            {
-              config = {
-                # Explanation: do not check anything
-                # because NixOS options are not included.
-                # See also comment in NixOS' `noCheckForDocsModule`.
-                _module.check = false;
-              };
-              imports = lib.attrValues nixos-modules.programs ++ lib.attrValues nixos-modules.services;
-            }
-          ];
-        }).options;
-  };
-
   # NixOS' `nixos-render-docs options commonmark`
   # generates a markdown that is not compatible with MyST,
   # and assumes it's only used in the context of NixOS.
