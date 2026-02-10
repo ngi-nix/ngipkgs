@@ -49,6 +49,8 @@ rec {
 
   eval-projects = lib.evalModules {
     modules = [
+      "${sources.inputs.nixpkgs}/nixos/modules/misc/version.nix"
+
       {
         imports = [ raw-projects ];
 
@@ -58,6 +60,7 @@ rec {
           _module.check = false;
 
           _module.args = args;
+          system.stateVersion = "26.05";
         };
       }
       # TODO: flatten when we fully migrate to the module system
@@ -91,6 +94,7 @@ rec {
 
               config.nixpkgs.hostPlatform = system;
               config._module.args.pkgs = pkgs;
+              config.system.stateVersion = "26.05";
 
               imports = lib.pipe nixos-modules [
                 (lib.filterAttrs (_: value: lib.isAttrs value))
