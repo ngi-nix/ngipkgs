@@ -118,7 +118,10 @@ rec {
           class = "nixos";
           specialArgs.modulesPath = "${sources.nixpkgs}/nixos/modules";
           modules = [
-            { nixpkgs.hostPlatform = system; }
+            {
+              system.stateVersion = "26.05";
+              nixpkgs.hostPlatform = system;
+            }
           ]
           ++ import "${sources.nixpkgs}/nixos/modules/module-list.nix";
         })
