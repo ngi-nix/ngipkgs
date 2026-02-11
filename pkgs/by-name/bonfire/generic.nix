@@ -1,12 +1,10 @@
 {
-  _experimental-update-script-combinators,
   beam,
   bonfire,
   callPackage,
   cmake,
   fetchFromGitHub,
   fetchYarnDeps,
-  gitUpdater,
   lexbor,
   lib,
   nodejs,
@@ -30,15 +28,6 @@ let
 in
 beamPkgs.mixRelease (finalAttrs: {
   pname = "bonfire-${finalAttrs.passthru.env.FLAVOUR}";
-  # Explanation: unstable version which includes fixes from:
-  # https://github.com/bonfire-networks/bonfire-app/issues/1637
-  version = "1.0.2-alpha.23";
-  src = fetchFromGitHub {
-    owner = "bonfire-networks";
-    repo = "bonfire-app";
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-HBf3u3srhnVST0dQuJSW9/+d2grmTvkXKT3Y/6kVxa0=";
-  };
   inherit (finalAttrs.passthru.beamPackages) erlang elixir;
   passthru = {
     env = {
@@ -426,15 +415,7 @@ beamPkgs.mixRelease (finalAttrs: {
       );
     };
 
-    updateScript = _experimental-update-script-combinators.sequence ([
-      (gitUpdater {
-        rev-prefix = "v";
-      })
-      {
-        command = [ finalAttrs.passthru.update.script ];
-        supportedFeatures = [ "silent" ];
-      }
-    ]);
+    updateScript = finalAttrs.passthru.update.script;
 
     # Explanation: to build its Erlang config (config/)
     # and some JavaScript imports (**/deps.hooks.js)

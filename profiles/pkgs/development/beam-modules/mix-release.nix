@@ -32,8 +32,8 @@ lib.extendMkDerivation {
     finalAttrs:
     {
       pname,
-      version,
-      src,
+      version ? finalAttrs.version or "0",
+      src ? finalAttrs.src or null,
       nativeBuildInputs ? [ ],
       buildInputs ? [ ],
       meta ? { },
