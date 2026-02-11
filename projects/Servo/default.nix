@@ -13,6 +13,10 @@
         "Servo"
         "Servo-CSS"
       ];
+      Commons = [
+        "Servo-Editability"
+        "Servo-ServiceWorker-WebAPI"
+      ];
       Core = [
         "Servo-Benchmark"
         "Servo-Script"
