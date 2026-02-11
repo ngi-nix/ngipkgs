@@ -1,5 +1,0 @@
-{ ... }:
-
-{
-  programs.Hypermachines.enable = true;
-}
