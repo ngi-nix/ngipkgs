@@ -223,6 +223,9 @@ rec {
         installPhase = ''
           runHook preInstall
           mkdir -p $out
+          ${lib.concatMapStringsSep "\n" (target: ''
+            ln -s ${finalAttrs.passthru.${target}} $out/${target}
+          '') targets}
           runHook postInstall
         '';
       };
