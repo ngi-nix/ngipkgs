@@ -32,12 +32,12 @@ beamPkgs.mixRelease (finalAttrs: {
   pname = "bonfire-${finalAttrs.passthru.env.FLAVOUR}";
   # Explanation: unstable version which includes fixes from:
   # https://github.com/bonfire-networks/bonfire-app/issues/1637
-  version = "1.0.1-beta.11";
+  version = "1.0.2-alpha.23";
   src = fetchFromGitHub {
     owner = "bonfire-networks";
     repo = "bonfire-app";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-4OA4XccVQrovTDY5rp6/P/w12iIrIEMkjfkPq9E9eAI=";
+    hash = "sha256-HBf3u3srhnVST0dQuJSW9/+d2grmTvkXKT3Y/6kVxa0=";
   };
   inherit (finalAttrs.passthru.beamPackages) erlang elixir;
   passthru = {
@@ -98,18 +98,17 @@ beamPkgs.mixRelease (finalAttrs: {
           ];
           doCheck = false;
         };
-        updateScript = writeShellApplication {
+        updateScript = lib.getExe (writeShellApplication {
           name = "${previousRust.passthru.packageName}-update";
           text = ''
             set -eux
             install -Dm660 "${finalRust.src}/native/${finalRust.passthru.nativeDir}/Cargo.lock" \
               'pkgs/by-name/bonfire/deps/${previousRust.passthru.packageName}/${finalAttrs.passthru.env.FLAVOUR}/Cargo.lock'
           '';
-        };
+        });
       };
     };
-    mixNixDeps = import finalAttrs.passthru.deps {
-      inherit lib pkgs;
+    mixNixDeps = pkgs.callPackage finalAttrs.passthru.deps {
       inherit (finalAttrs.passthru) beamPackages;
       overrides =
         finalMixPkgs: previousMixPkgs:
@@ -181,6 +180,14 @@ beamPkgs.mixRelease (finalAttrs: {
                   # Explanation: remove a dangling symlink pointing out of the repo…
                   ''
                     rm priv/static
+
+                    test $(readlink assets/static/assets/ap_c2s_client) = extensions/bonfire_ui_common/assets/static/tauri/assets/ap_c2s_client
+                    ln -fs ../tauri/assets/ap_c2s_client/ \
+                           assets/static/assets/ap_c2s_client
+
+                    # ToDo(maint/update): adapt when fixed upstream
+                    test $(readlink assets/static/assets/openmls) = /Users/me/Code/Bonfire/openmls/openmls-wasm/pkg
+                    rm assets/static/assets/openmls
                   ''
                 ];
             }
@@ -210,7 +217,7 @@ beamPkgs.mixRelease (finalAttrs: {
               # Description: update pkgs/by-name/bonfire/deps/ex_cldr/hash
               # Explanation: fetchFromGitHub is used instead of fetchHex
               # to let nix provision locales instead of mix.
-              updateScript = writeShellApplication {
+              updateScript = lib.getExe (writeShellApplication {
                 name = "ex_cldr-update";
                 runtimeInputs = [ nurl ];
                 text = ''
@@ -220,7 +227,7 @@ beamPkgs.mixRelease (finalAttrs: {
                       { nativeBuildInputs = previousMixPkg.nativeBuildInputs or [] ++ [ NGIpkgs.pkgs.cacert ]; })
                   ' >pkgs/by-name/bonfire/deps/ex_cldr/${finalAttrs.passthru.env.FLAVOUR}/fetchFromGitHub.hash
                 '';
-              };
+              });
             };
           });
           iconify_ex = previousMixPkgs.iconify_ex.overrideAttrs (
@@ -335,7 +342,12 @@ beamPkgs.mixRelease (finalAttrs: {
         (lib.filter (pname: finalAttrs.passthru.mixNixDeps ? "${pname}") [
           "bonfire_editor_milkdown"
           "bonfire_geolocate"
-          "iconify_ex"
+          # FixMe(correctness): iconify_ex used to come from
+          # https://github.com/bonfire-networks/iconify_ex where it has a yarn.lock
+          # whereas the version from Hex does not.
+          # Waiting for upstream to clarify.
+          # Issue: https://github.com/bonfire-networks/bonfire-app/commit/0eec9bceeeb3ae3cd12c6759586a66341a816cfc#r176983451
+          #"iconify_ex"
         ])
         (pname: {
           package = fetchYarnDeps {
@@ -343,7 +355,7 @@ beamPkgs.mixRelease (finalAttrs: {
             yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}.src}/assets/yarn.lock";
             hash = lib.readFile (./deps + "/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnOfflineCache.hash");
           };
-          updateScript = writeShellApplication {
+          updateScript = lib.getExe (writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [ nurl ];
             text = ''
@@ -353,7 +365,7 @@ beamPkgs.mixRelease (finalAttrs: {
                 NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnOfflineCaches.${pname}.package
               ' >'pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnOfflineCache.hash'
             '';
-          };
+          });
         });
     yarn-berry = yarn-berry_4;
     yarnBerryOfflineCaches =
@@ -370,7 +382,7 @@ beamPkgs.mixRelease (finalAttrs: {
             );
             missingHashes = ./deps + "/${pname}/${finalAttrs.passthru.env.FLAVOUR}/missingHashes.json";
           };
-          updateScript = writeShellApplication {
+          updateScript = lib.getExe (writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [
               nix
@@ -391,7 +403,7 @@ beamPkgs.mixRelease (finalAttrs: {
                 NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package
               " --hash >"pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnBerryOfflineCache.hash"
             '';
-          };
+          });
         });
 
     # Warning(maint/update): bonfire having a huge dependency closure,
@@ -407,7 +419,7 @@ beamPkgs.mixRelease (finalAttrs: {
       ''
       + lib.concatStringsSep "\n" (
         (lib.concatAttrValues (
-          lib.mapAttrs (name: pkg: lib.optional (pkg ? "updateScript") (lib.getExe pkg.updateScript)) (
+          lib.mapAttrs (name: pkg: lib.optional (pkg ? "updateScript") pkg.updateScript) (
             with finalAttrs.passthru; mixNixDeps // yarnOfflineCaches // yarnBerryOfflineCaches
           )
         ))
@@ -419,7 +431,7 @@ beamPkgs.mixRelease (finalAttrs: {
         rev-prefix = "v";
       })
       {
-        command = [ (lib.getExe finalAttrs.passthru.update.script) ];
+        command = [ finalAttrs.passthru.update.script ];
         supportedFeatures = [ "silent" ];
       }
     ]);
