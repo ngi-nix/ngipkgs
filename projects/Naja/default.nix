@@ -8,10 +8,15 @@
 {
   metadata = {
     summary = "EDA tool focused on post logic synthesis";
-    subgrants.Entrust = [
-      "Naja"
-      "Naja-DNL"
-    ];
+    subgrants = {
+      Commons = [
+        "Naja-LEC-TimingModelEngine"
+      ];
+      Entrust = [
+        "Naja"
+        "Naja-DNL"
+      ];
+    };
   };
 
   nixos.modules.programs = {
