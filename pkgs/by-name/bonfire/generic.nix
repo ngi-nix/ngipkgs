@@ -1,12 +1,10 @@
 {
-  _experimental-update-script-combinators,
   beam,
   bonfire,
   callPackage,
   cmake,
   fetchFromGitHub,
   fetchYarnDeps,
-  gitUpdater,
   lexbor,
   lib,
   nodejs,
@@ -30,15 +28,6 @@ let
 in
 beamPkgs.mixRelease (finalAttrs: {
   pname = "bonfire-${finalAttrs.passthru.env.FLAVOUR}";
-  # Explanation: unstable version which includes fixes from:
-  # https://github.com/bonfire-networks/bonfire-app/issues/1637
-  version = "1.0.1-beta.11";
-  src = fetchFromGitHub {
-    owner = "bonfire-networks";
-    repo = "bonfire-app";
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-4OA4XccVQrovTDY5rp6/P/w12iIrIEMkjfkPq9E9eAI=";
-  };
   inherit (finalAttrs.passthru.beamPackages) erlang elixir;
   passthru = {
     env = {
@@ -84,6 +73,8 @@ beamPkgs.mixRelease (finalAttrs: {
       '';
       passthru = previousRust.passthru // {
         inherit nativeDir;
+        # Explanation: this is where `nativeDir` is found
+        # but it cannot be used when import-from-derivation are disallowed.
         #nativeDir = with builtins; head (attrNames (readDir "${previousRust.src}/native"));
         native = rustPlatform.buildRustPackage {
           pname = "${previousRust.passthru.packageName}-native";
@@ -91,25 +82,25 @@ beamPkgs.mixRelease (finalAttrs: {
           src = "${previousRust.src}/native/${finalRust.passthru.nativeDir}";
           cargoLock = {
             lockFile =
-              ./deps + "/${previousRust.passthru.packageName}/${finalAttrs.passthru.env.FLAVOUR}/Cargo.lock";
+              ./extensions
+              + "/${finalAttrs.passthru.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock";
           };
           nativeBuildInputs = [
             cmake
           ];
           doCheck = false;
         };
-        updateScript = writeShellApplication {
+        updateScript = lib.getExe (writeShellApplication {
           name = "${previousRust.passthru.packageName}-update";
           text = ''
             set -eux
             install -Dm660 "${finalRust.src}/native/${finalRust.passthru.nativeDir}/Cargo.lock" \
-              'pkgs/by-name/bonfire/deps/${previousRust.passthru.packageName}/${finalAttrs.passthru.env.FLAVOUR}/Cargo.lock'
+              'pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock'
           '';
-        };
+        });
       };
     };
-    mixNixDeps = import finalAttrs.passthru.deps {
-      inherit lib pkgs;
+    mixNixDeps = pkgs.callPackage finalAttrs.passthru.deps {
       inherit (finalAttrs.passthru) beamPackages;
       overrides =
         finalMixPkgs: previousMixPkgs:
@@ -173,18 +164,24 @@ beamPkgs.mixRelease (finalAttrs: {
                   EOF
                 '';
               });
-          bonfire_ui_common = previousMixPkgs.bonfire_ui_common.overrideAttrs (
-            finalAttrs: previousMixPkg: {
-              postPatch =
-                previousMixPkg.postPatch or ""
-                + lib.concatStringsSep "\n" [
-                  # Explanation: remove a dangling symlink pointing out of the repo…
-                  ''
-                    rm priv/static
-                  ''
-                ];
-            }
-          );
+          bonfire_ui_common = previousMixPkgs.bonfire_ui_common.overrideAttrs (previousMixPkg: {
+            postPatch =
+              previousMixPkg.postPatch or ""
+              + lib.concatStringsSep "\n" [
+                # Explanation: remove a dangling symlink pointing out of the repo…
+                ''
+                  rm priv/static
+
+                  test $(readlink assets/static/assets/ap_c2s_client) = extensions/bonfire_ui_common/assets/static/tauri/assets/ap_c2s_client
+                  ln -fs ../tauri/assets/ap_c2s_client/ \
+                    assets/static/assets/ap_c2s_client
+
+                  # ToDo(maint/update): adapt when fixed upstream
+                  test $(readlink assets/static/assets/openmls) = /Users/me/Code/Bonfire/openmls/openmls-wasm/pkg
+                  rm assets/static/assets/openmls
+                ''
+              ];
+          });
           bonfire_ui_me = previousMixPkgs.bonfire_ui_me.overrideAttrs (previousMixPkg: {
             # Explanation: missing dependency in upstream's deps.hex…
             postPatch = previousMixPkg.postPatch or "" + ''
@@ -201,7 +198,9 @@ beamPkgs.mixRelease (finalAttrs: {
               owner = "elixir-cldr";
               repo = "cldr";
               rev = "v${previousMixPkg.version}";
-              hash = lib.readFile (./deps + "/ex_cldr/${finalAttrs.passthru.env.FLAVOUR}/fetchFromGitHub.hash");
+              hash = lib.readFile (
+                ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash"
+              );
             };
             postInstall = previousMixPkg.postInstall or "" + ''
               cp $src/priv/cldr/locales/* $out/lib/erlang/lib/ex_cldr-${previousMixPkg.version}/priv/cldr/locales/
@@ -210,29 +209,27 @@ beamPkgs.mixRelease (finalAttrs: {
               # Description: update pkgs/by-name/bonfire/deps/ex_cldr/hash
               # Explanation: fetchFromGitHub is used instead of fetchHex
               # to let nix provision locales instead of mix.
-              updateScript = writeShellApplication {
+              updateScript = lib.getExe (writeShellApplication {
                 name = "ex_cldr-update";
                 runtimeInputs = [ nurl ];
                 text = ''
-                  mkdir -p pkgs/by-name/bonfire/deps/ex_cldr/${finalAttrs.passthru.env.FLAVOUR}/
+                  mkdir -p pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/ex_cldr/
                   nurl --hash --expr 'let NGIpkgs = import ./. {}; in
                     NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.passthru.mixNixDeps.ex_cldr.src.overrideAttrs (previousMixPkg:
                       { nativeBuildInputs = previousMixPkg.nativeBuildInputs or [] ++ [ NGIpkgs.pkgs.cacert ]; })
-                  ' >pkgs/by-name/bonfire/deps/ex_cldr/${finalAttrs.passthru.env.FLAVOUR}/fetchFromGitHub.hash
+                  ' >pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash
                 '';
-              };
+              });
             };
           });
-          iconify_ex = previousMixPkgs.iconify_ex.overrideAttrs (
-            finalAttrs: previousMixPkg: {
-              # Explanation: make iconify.ex look for its assets
-              # in $out/assets/… instead of /build/source/assets/….
-              postPatch = previousMixPkg.postPatch or "" + ''
-                substituteInPlace lib/iconify.ex \
-                  --replace-fail 'File.cwd!()' "\"$out\""
-              '';
-            }
-          );
+          iconify_ex = previousMixPkgs.iconify_ex.overrideAttrs (previousMixPkg: {
+            # Explanation: make iconify.ex look for its assets
+            # in $out/assets/… instead of /build/source/assets/….
+            postPatch = previousMixPkgs.postPatch or "" + ''
+              substituteInPlace lib/iconify.ex \
+                --replace-fail 'File.cwd!()' "\"$out\""
+            '';
+          });
           # Relevant: https://github.com/code-supply/deps_nix/pull/33
           lazy_html = previousMixPkgs.lazy_html.overrideAttrs (previousMixPkg: {
             # Explanation: somehow `mix compile --no-deps-check`
@@ -274,59 +271,60 @@ beamPkgs.mixRelease (finalAttrs: {
         };
     };
 
+    # Description: extensions used by `FLAVOUR`
+    # computed by a closure over their dependencies.
     flavour-extensions = (
       let
-        urlAsKey = lib.map (ext: ext // { key = ext.url; });
+        # Explanation: `src` may not exist yet due to
+        urlAsKey = lib.map (ext: ext // { key = ext.name; });
       in
       builtins.genericClosure {
         startSet = urlAsKey [
           finalAttrs.passthru.extensions.${finalAttrs.passthru.env.FLAVOUR}
         ];
-        operator = ext: urlAsKey ext.passthru.extensions;
+        operator = ext: urlAsKey ext.deps;
       }
     );
     extensions = {
-      community = callPackage extensions/community/fetchFromGitHub.nix { } // {
-        passthru = {
-          extensions = with finalAttrs.passthru.extensions; [
-            social
-          ];
-        };
+      community = {
+        name = "community";
+        src = callPackage extensions/community/fetchFromGitHub.nix { };
+        deps = with finalAttrs.passthru.extensions; [
+          social
+        ];
       };
-      cooperation = callPackage extensions/cooperation/fetchFromGitHub.nix { } // {
-        passthru = {
-          extensions = with finalAttrs.passthru.extensions; [
-            ember
-          ];
-        };
+      cooperation = {
+        name = "cooperation";
+        src = callPackage extensions/cooperation/fetchFromGitHub.nix { };
+        deps = with finalAttrs.passthru.extensions; [
+          ember
+        ];
       };
       coordination = {
-        community = callPackage extensions/coordination/fetchFromGitHub.nix { } // {
-          passthru = {
-            extensions = with finalAttrs.passthru.extensions; [
-              community
-            ];
-          };
-        };
+        name = "coordination";
+        src = callPackage extensions/coordination/fetchFromGitHub.nix { };
+        deps = with finalAttrs.passthru.extensions; [
+          community
+        ];
       };
-      ember = callPackage extensions/ember/fetchFromGitHub.nix { } // {
-        passthru = {
-          extensions = [ ];
-        };
+      ember = {
+        name = "ember";
+        src = callPackage extensions/ember/fetchFromGitHub.nix { };
+        deps = with finalAttrs.passthru.extensions; [ ];
       };
-      open_science = callPackage extensions/open_science/fetchFromGitHub.nix { } // {
-        passthru = {
-          extensions = with finalAttrs.passthru.extensions; [
-            social
-          ];
-        };
+      open_science = {
+        name = "open_science";
+        src = callPackage extensions/open_science/fetchFromGitHub.nix { };
+        deps = with finalAttrs.passthru.extensions; [
+          social
+        ];
       };
-      social = callPackage extensions/social/fetchFromGitHub.nix { } // {
-        passthru = {
-          extensions = with finalAttrs.passthru.extensions; [
-            ember
-          ];
-        };
+      social = {
+        name = "social";
+        src = callPackage extensions/social/fetchFromGitHub.nix { };
+        deps = with finalAttrs.passthru.extensions; [
+          ember
+        ];
       };
     };
 
@@ -340,20 +338,22 @@ beamPkgs.mixRelease (finalAttrs: {
         (pname: {
           package = fetchYarnDeps {
             name = "${pname}-yarn-deps";
-            yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}.src}/assets/yarn.lock";
-            hash = lib.readFile (./deps + "/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnOfflineCache.hash");
+            yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}}/src/assets/yarn.lock";
+            hash = lib.readFile (
+              ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnOfflineCache.hash"
+            );
           };
-          updateScript = writeShellApplication {
+          updateScript = lib.getExe (writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [ nurl ];
             text = ''
               set -eux
-              mkdir -p "pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/"
+              mkdir -p "pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/"
               nurl --hash --expr 'let NGIpkgs = import ./. {}; in
                 NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnOfflineCaches.${pname}.package
-              ' >'pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnOfflineCache.hash'
+              ' >'pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnOfflineCache.hash'
             '';
-          };
+          });
         });
     yarn-berry = yarn-berry_4;
     yarnBerryOfflineCaches =
@@ -362,15 +362,17 @@ beamPkgs.mixRelease (finalAttrs: {
           "bonfire_ui_common"
         ])
         (pname: {
+
           package = finalAttrs.passthru.yarn-berry.fetchYarnBerryDeps {
             name = "${pname}-yarn-deps";
-            yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}.src}/assets/yarn.lock";
+            yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}}/src/assets/yarn.lock";
             hash = lib.readFile (
-              ./deps + "/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnBerryOfflineCache.hash"
+              ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
             );
-            missingHashes = ./deps + "/${pname}/${finalAttrs.passthru.env.FLAVOUR}/missingHashes.json";
+            missingHashes = ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/${pname}/missingHashes.json";
           };
-          updateScript = writeShellApplication {
+
+          updateScript = lib.getExe (writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [
               nix
@@ -379,50 +381,59 @@ beamPkgs.mixRelease (finalAttrs: {
             ];
             text = ''
               set -eux
-              mkdir -p "pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/"
-              touch "pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}"/{yarnBerryOfflineCache.hash,missingHashes.json}
+              mkdir -p "pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/"
+              touch "pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}"/{yarnBerryOfflineCache.hash,missingHashes.json}
               nix -L --extra-experimental-features "nix-command" build --no-link -f . \
                 "bonfire.${finalAttrs.passthru.env.FLAVOUR}.passthru.mixNixDeps.${pname}.src"
               yarnLock=$(nix -L --extra-experimental-features "nix-command" eval --raw -f . \
                 "bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package.yarnLock")
               yarn-berry-fetcher missing-hashes "$yarnLock" \
-                >"pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/missingHashes.json"
+                >"pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/missingHashes.json"
               nurl --expr "let NGIpkgs = import ./. {}; in
                 NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package
-              " --hash >"pkgs/by-name/bonfire/deps/${pname}/${finalAttrs.passthru.env.FLAVOUR}/yarnBerryOfflineCache.hash"
+              " --hash >"pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
             '';
-          };
+          });
+
         });
 
     # Warning(maint/update): bonfire having a huge dependency closure,
     # expect a lot of downloads during several minutes.
-    update = callPackage ./update.nix {
-      bonfire = bonfire.${finalAttrs.passthru.env.FLAVOUR};
-    };
-    # Explanation: updates to be run after mmixNixDeps has been updated.
-    updateScripts = writeShellApplication {
-      name = "${finalAttrs.pname}-update";
-      text = ''
-        set -x
-      ''
-      + lib.concatStringsSep "\n" (
-        (lib.concatAttrValues (
-          lib.mapAttrs (name: pkg: lib.optional (pkg ? "updateScript") (lib.getExe pkg.updateScript)) (
-            with finalAttrs.passthru; mixNixDeps // yarnOfflineCaches // yarnBerryOfflineCaches
-          )
-        ))
-      );
-    };
-
-    updateScript = _experimental-update-script-combinators.sequence ([
-      (gitUpdater {
-        rev-prefix = "v";
-      })
-      {
-        command = [ (lib.getExe finalAttrs.passthru.update.script) ];
-        supportedFeatures = [ "silent" ];
+    # Besides, bonfire_social takes about one hour to update
+    # because deps_nix needs to compile when updating…
+    # and bonfire_social is notoriously slow to compile due to its GraphQL implementation.
+    # Issue: https://github.com/bonfire-networks/bonfire-app/issues/1730
+    update =
+      callPackage ./update.nix {
+        bonfire = bonfire.${finalAttrs.passthru.env.FLAVOUR};
       }
-    ]);
+      // {
+        after-mixNixDeps = writeShellApplication {
+          name = "${finalAttrs.pname}-update";
+          text = ''
+            set -x
+          ''
+          + lib.concatLines (
+            lib.concatMap
+              (
+                pkgs:
+                lib.concatAttrValues (
+                  lib.mapAttrs (name: pkg: lib.optional (pkg ? "updateScript") pkg.updateScript) pkgs
+                )
+              )
+              (
+                with finalAttrs.passthru;
+                # The order matters because `mixNixDeps`'s packages
+                # can be used by the packages in yarn caches.
+                [
+                  mixNixDeps
+                  yarnOfflineCaches
+                  yarnBerryOfflineCaches
+                ]
+              )
+          );
+        };
+      };
 
     # Explanation: to build its Erlang config (config/)
     # and some JavaScript imports (**/deps.hooks.js)
@@ -461,8 +472,8 @@ beamPkgs.mixRelease (finalAttrs: {
               mkdir extensions
             ''
             (lib.concatMapStringsSep "\n" (ext: ''
-              cp --no-preserve=mode -r ${ext} extensions/${ext.repo}
-              mkdir -p extensions/${ext.repo}/assets/hooks
+              cp --no-preserve=mode -r ${ext.src} extensions/${ext.src.repo}
+              mkdir -p extensions/${ext.src.repo}/assets/hooks
             '') finalAttrs.passthru.flavour-extensions)
 
             ''
@@ -603,15 +614,16 @@ beamPkgs.mixRelease (finalAttrs: {
   ];
 
   # Note: `preBuild` will not be used when updating,
-  # hence it works to have finalAttrs.passthru.mixNixDeps.${dep}.src
+  # hence it works to have finalAttrs.passthru.mixNixDeps.${dep}
   # in there because `deps.nix` will be updated by then.
   preBuild = lib.concatStringsSep "\n" [
     # Explanation: those yarn assets are not real libraries,
     # they can only be built in bonfire-app.
+    # Note that /src is used instead of .src to be sure to have any patch applied.
     (lib.concatMapStringsSep "\n" (dep: ''
       rm -rf deps/${dep}
       cp --no-preserve=mode -r \
-        ${finalAttrs.passthru.mixNixDeps.${dep}.src} \
+        ${finalAttrs.passthru.mixNixDeps.${dep}}/src \
         deps/${dep}
       pushd deps/${dep}/assets
       yarnOfflineCache="${finalAttrs.passthru.yarnOfflineCaches.${dep}.package}" \
@@ -621,10 +633,11 @@ beamPkgs.mixRelease (finalAttrs: {
     '') (lib.attrNames finalAttrs.passthru.yarnOfflineCaches))
 
     # Explanation: same but for yarn-berry assets.
+    # Note that /src is used instead of .src to be sure to have any patch applied.
     (lib.concatMapStringsSep "\n" (dep: ''
       rm -rf deps/${dep}
       cp --no-preserve=mode -r \
-        ${finalAttrs.passthru.mixNixDeps.${dep}.src} \
+        ${finalAttrs.passthru.mixNixDeps.${dep}}/src \
         deps/${dep}
       pushd deps/${dep}/assets
       yarnOfflineCache="${finalAttrs.passthru.yarnBerryOfflineCaches.${dep}.package}" \

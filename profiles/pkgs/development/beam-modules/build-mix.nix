@@ -84,6 +84,7 @@ lib.extendMkDerivation {
         addToSearchPath ERL_LIBS "$1/lib/erlang/lib"
       '';
 
+      # Remark: patchPhase will be applied to $out/src
       postUnpack = ''
         mkdir -p $out
         cp -r $sourceRoot $out/src
