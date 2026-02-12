@@ -1,14 +1,13 @@
 {
   lib,
-  nix-update,
   writeShellApplication,
 
   ngipkgs,
+  sources,
 }:
 (writeShellApplication {
   name = "update-all";
-  runtimeInputs = [ nix-update ];
-  meta.description = "updates all the NGIpkgs packages (nix with flakes supported required)";
+  meta.description = "updates all the NGIpkgs packages";
   text =
     let
       skipped-packages = [
@@ -21,11 +20,11 @@
         "pretalxFull" # -> pretalx
         # FIX: needs custom update script
         "marginalia-search"
-        "peertube-plugin-livechat"
+        "peertube-plugins.livechat"
         "_0wm-server"
         # FIX: dream2nix
         "liberaforms"
-        # FIX: package scope
+        # FIX: package scope.  #2154 supports package scope, so this probably can be removed
         "bigbluebutton"
         "heads"
         "lean-ftl"
@@ -43,9 +42,16 @@
         "kazarma"
         "anastasis"
       ];
-      update-packages = lib.filter (x: !lib.elem x skipped-packages) (lib.attrNames ngipkgs);
+      update-packages = lib.pipe ngipkgs [
+        (lib.filterAttrs (n: _: !lib.elem n skipped-packages)) # a pkg, a pkg set
+        (lib.flattenAttrs ".")
+        (lib.filterAttrs (n: _: !lib.elem n skipped-packages)) # a pkg, a pkg in a pkg set
+        (lib.filterAttrs (_: v: lib.isDerivation v))
+        (lib.filterAttrs (_: v: lib.hasAttr "updateScript" v))
+        lib.attrNames
+      ];
       update-commands = lib.concatMapStringsSep "\n" (package: ''
-        if ! nix-update --flake --use-update-script "${package}" "$@"; then
+        if ! update "${sources.nixpkgs}" "${package}" "$@"; then
           echo "${package}" >> "$TMPDIR/failed_updates.txt"
         fi
       '') update-packages;
@@ -55,6 +61,8 @@
       TMPDIR=$(mktemp -d)
 
       echo -n> "$TMPDIR/failed_updates.txt"
+
+      ${lib.readFile ./update.sh}
 
       ${update-commands}
 
