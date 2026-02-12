@@ -12,9 +12,11 @@ let
 
   call =
     name:
-    lib.recursiveUpdate (callPackage (root + "/${name}") { }) {
-      passthru.updateScript = updateScript;
-    };
+    (callPackage (root + "/${name}") { }).overrideAttrs (old: {
+      passthru = old.passthru or { } // {
+        inherit updateScript;
+      };
+    });
 
   plugins = lib.pipe root [
     builtins.readDir
