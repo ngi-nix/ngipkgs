@@ -26,7 +26,7 @@ jobs:
       - name: Update all packages
         id: update-packages
         run: |
-          nix-shell --run 'update-all --commit' | tee /tmp/update-all.log
+          nix-shell --run 'update-all true' | tee /tmp/update-all.log
 
           {
             echo "UPDATES<<EOF"

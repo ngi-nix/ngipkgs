@@ -1,17 +1,15 @@
-# NOTE: currently, this only works with flakes, because `nix-update` can't
-# find `maintainers/scripts/update.nix` otherwise
-#
-# nix-shell --run 'update PACKAGE_NAME --use-update-script'
+# nix-shell --run 'update PACKAGE_NAME true'
+# The second boolen parameter is optional and controls whether to commit the update.
 {
+  lib,
   writeShellApplication,
-  nix-update,
+  sources,
 }:
 (writeShellApplication {
   name = "update";
-  runtimeInputs = [ nix-update ];
   text = ''
-    package=$1; shift # past value
-    nix-update --flake "$package" "$@"
+    ${lib.readFile ./update.sh}
+    update "${sources.nixpkgs}" "$@"
   '';
-  meta.description = "updates an NGIpkgs package (nix with flakes supported required)";
+  meta.description = "updates an NGIpkgs package";
 })
