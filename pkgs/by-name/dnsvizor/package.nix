@@ -5,15 +5,16 @@
   stdenv,
   callPackage,
   overrideCC,
+  unstableGitUpdater,
+  _experimental-update-script-combinators,
 }:
 let
   libMirage = callPackage ./mirage.nix { };
 in
-libMirage.builds {
+(libMirage.builds (finalAttrs: {
   pname = "dnsvizor";
   version = "0-unstable-2026-01-21";
-  monorepo-materialized-path = ./monorepo-materialized;
-  packages-materialized-path = ./packages-materialized;
+  materializedDir = ./materialized;
   src = fetchFromGitHub {
     owner = "robur-coop";
     repo = "dnsvizor";
@@ -26,42 +27,45 @@ libMirage.builds {
       rm -vrf $out/test
     '';
   };
-  overrideAttrs = finalAttrs: previousAttrs: {
+  overrideUnikernel = finalAttrs: previousAttrs: {
     buildInputs = previousAttrs.buildInputs or [ ] ++ [
       # Some targets, such as hvt, need static GMP (or MPIR)
-      (
-        (pkgsStatic.gmp.override {
-          # This compiles GMP with a GCC compiled with some flag implying --disable-tls
-          # Disabling or rather emulating TLS (Thread-Local Storage)
-          # is still required as of solo5-hvt-0.9.3 when compiling with OCaml-4
-          # to avoid a crash at startup in __gmpn_cpuvec_init at an instruction mov %fs:0x28,%r12
-          # accessing %fs (the address of the current thread's user-space thread structure):
-          #
-          # solo5-hvt-debug --dumpcore=dump --mem=512 --net:service=tap-unikernel -- \
-          #   $(nix -L build --print-out-paths --no-link -f. dnsvizor.hvt)/dnsvizor.hvt
-          #
-          # Solo5: trap: type=#PF ec=0x0 rip=0x466a86 rsp=0x1ffffc10 rflags=0x10002
-          # Solo5: trap: cr2=0x28
-          # Solo5: ABORT: cpu_x86_64.c:181: Fatal trap
-          stdenv = overrideCC pkgsStatic.stdenv pkgsStatic.stdenv.cc.cc;
-        }).overrideAttrs
-        (prevAttrs: {
-          # This is to support cxx = true which is not necessary for DNSvizor,
-          # but it's pkgs.gmp's default on most platforms.
-          depsBuildBuild = [
-            pkgsStatic.stdenv.cc
-            pkgsStatic.binutils
-          ];
-        })
-      )
+      (pkgsStatic.gmp.override {
+        # This compiles GMP with a GCC compiled with some flag implying --disable-tls
+        # Disabling or rather emulating TLS (Thread-Local Storage)
+        # is still required as of solo5-hvt-0.9.3 when compiling with OCaml-4
+        # to avoid a crash at startup in __gmpn_cpuvec_init at an instruction mov %fs:0x28,%r12
+        # accessing %fs (the address of the current thread's user-space thread structure):
+        #
+        # solo5-hvt-debug --dumpcore=dump --mem=512 --net:service=tap-unikernel -- \
+        #   $(nix -L build --print-out-paths --no-link -f. dnsvizor.hvt)/dnsvizor.hvt
+        #
+        # Solo5: trap: type=#PF ec=0x0 rip=0x466a86 rsp=0x1ffffc10 rflags=0x10002
+        # Solo5: trap: cr2=0x28
+        # Solo5: ABORT: cpu_x86_64.c:181: Fatal trap
+        stdenv = overrideCC pkgsStatic.stdenv pkgsStatic.stdenv.cc.cc;
+        # Can be supported by adding pkgsStatic.stdenv.{cc,binutils} to depsBuildBuild
+        # but DNSvizor does not need it.
+        cxx = false;
+      })
     ];
   };
   query = {
     # follow upstream CI version (.cirrus.yml) because newer ones fail to build
     ocaml-base-compiler = "4.14.2";
   };
+  # ToDo(maint/update): increase the version boundary asserted
+  # or remove the pinned entries when no longer needed.
+  # Boundary literals are split in two when they would otherwise
+  # be replaced by update-source-version.
   monorepoQuery = {
-    uutf = "1.0.3+dune"; # default version is not in the dune overlay yet
+    # mirage-dnsvizor-hvt> File "duniverse/multipart_form/lib/dune", line 5, characters 31-35:
+    # mirage-dnsvizor-hvt> 5 |    base64.rfc2045 prettym pecu uutf fmt angstrom))
+    # mirage-dnsvizor-hvt>                                    ^^^^
+    # mirage-dnsvizor-hvt> Error: Library "uutf" not found.
+    uutf =
+      assert lib.versionAtLeast ("0" + "-unstable-2026-01-21") finalAttrs.version;
+      "1.0.3+dune"; # default version is not in the dune overlay yet
   };
 
   # Explanation: remove broken targets instead of setting meta.broken
@@ -79,4 +83,14 @@ libMirage.builds {
       "xen"
     ]
   ) libMirage.possibleTargets;
-}
+})).overrideAttrs
+  (
+    finalAttrs: previousAttrs: {
+      passthru = previousAttrs.passthru or { } // {
+        updateScript = _experimental-update-script-combinators.sequence [
+          (unstableGitUpdater { })
+          previousAttrs.passthru.updateScript
+        ];
+      };
+    }
+  )
