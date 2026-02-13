@@ -132,7 +132,7 @@ in
               we can still reduce granularity and move all examples to the application level.
             */
             examples = mkOption {
-              type = attrsOf example;
+              type = lazyAttrsOf example;
               description = "A configuration of an existing application module that illustrates how to use it";
               default = { };
             };
@@ -141,7 +141,7 @@ in
             #       Without this field, many applications will appear entirely untested although there's actually *some* assurance that *something* works.
             #       Eventually we want to move to documentable tests exclusively, and then remove this field, but this may take a very long time.
             tests = mkOption {
-              type = attrsOf test;
+              type = lazyAttrsOf test;
               default = { };
               description = "NixOS test that ensures project components behave as intended";
             };
