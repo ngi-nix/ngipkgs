@@ -47,11 +47,11 @@
   nixos = {
     modules.programs.cryptolyzer = {
       module = ./programs/module.nix;
-    };
-    # TODO: this absolute basic example, which may show up just about anywhere, can probably extracted into a pattern with two parameters: the program module and the command to run for the smoke test
-    examples."Enable CryptoLyzer" = {
-      module = ./programs/examples/example.nix;
-      tests.basic.module = ./programs/tests/test.nix;
+      # TODO: this absolute basic example, which may show up just about anywhere, can probably extracted into a pattern with two parameters: the program module and the command to run for the smoke test
+      examples."Enable CryptoLyzer" = {
+        module = ./programs/examples/example.nix;
+        tests.basic.module = ./programs/tests/test.nix;
+      };
     };
 
     demo.shell = {

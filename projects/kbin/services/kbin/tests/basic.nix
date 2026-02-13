@@ -21,8 +21,8 @@ in
       {
         imports = [
           sources.modules.ngipkgs
-          sources.modules.services.kbin
-          sources.examples.kbin.basic
+          sources.modules.services.kbin-service
+          sources.examples.kbin.basic-service
         ];
 
         services.phpfpm.pools.kbin = {
