@@ -12,7 +12,7 @@ let
 in
 # Documentation: manuals/Contributor/How_to/update/pkgs/bonfire.md
 {
-  script = writeShellApplication {
+  script = lib.getExe (writeShellApplication {
     name = "bonfire-update";
     runtimeInputs = [
       bonfire.passthru.yarn-berry.yarn-berry-fetcher
@@ -32,22 +32,21 @@ in
       (lib.concatMapStringsSep "\n" (flavour: ''
         mkdir -p pkgs/by-name/bonfire/extensions/${flavour}
         {
-          echo "{fetchFromGitHub, ...}:"
+          echo "{ fetchFromGitHub, ... }:"
           nurl https://github.com/bonfire-networks/${flavour}
         } >pkgs/by-name/bonfire/extensions/${flavour}/fetchFromGitHub.nix
       '') (lib.map (ext: ext.repo) bonfire.passthru.flavour-extensions))
 
-      # Description: update pkgs/by-name/bonfire/${FLAVOUR}/deps.nix
+      # Description: update pkgs/by-name/bonfire/extensions/${FLAVOUR}/deps.nix
       # using deps_nix.
       # bash
       ''
         deps=$(
             nix -L --show-trace --extra-experimental-features "nix-command" \
                 build \
+                --rebuild \
                 --option sandbox relaxed \
                 --no-link --print-out-paths \
-                --repair \
-                --refresh \
                 -f . \
                 bonfire.${FLAVOUR}.passthru.update.package
         )
@@ -60,7 +59,7 @@ in
           -f . bonfire.${FLAVOUR}.updateScripts
       ''
     ];
-  };
+  });
 
   package = callPackage ../../../profiles/pkgs/development/beam-modules/mix-update.nix {
     package = bonfire.overrideAttrs (previousAttrs: {
