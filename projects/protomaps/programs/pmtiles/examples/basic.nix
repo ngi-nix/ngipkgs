@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.pmtiles.enable = true;
+}
