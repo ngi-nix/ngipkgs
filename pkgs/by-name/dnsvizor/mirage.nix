@@ -8,6 +8,7 @@
   writeShellApplication,
   unstableGitUpdater,
   git,
+  emptyDirectory,
 }:
 
 rec {
@@ -258,13 +259,25 @@ rec {
         (
           lib.composeExtensions (finalAttrs: previousAttrs: {
             passthru = previousAttrs.passthru or { } // {
-              updateScript = {
-                command = depsUpdateScript;
-                supportedFeatures = [ "commit" ];
-              };
               depsUpdateScriptForThisTarget = depsUpdateScriptForTarget target;
             };
           }) overrideAttrs
         )
-    );
+    )
+    // {
+      update = stdenv.mkDerivation {
+        pname = "${pname}-update";
+        version = "0";
+        src = emptyDirectory;
+        installPhase = ''
+          runHook preInstall
+          echo "This dummy package contains an updateScript updating the package set." > $out
+          runHook postInstall
+        '';
+        passthru.updateScript = {
+          command = depsUpdateScript;
+          supportedFeatures = [ "commit" ];
+        };
+      };
+    };
 }
