@@ -6,6 +6,9 @@
   opam-nix,
   stdenv,
   writeShellApplication,
+  unstableGitUpdater,
+  git,
+  emptyDirectory,
 }:
 
 rec {
@@ -21,7 +24,7 @@ rec {
       target,
       opamPackages ? opam-nix.queryToScope { } ({ mirage = "*"; } // query),
       ...
-    }:
+    }@args:
     stdenv.mkDerivation {
       name = "mirage-${pname}-${target}";
       inherit src version;
@@ -43,6 +46,7 @@ rec {
         cp -R . $out
         runHook postBuild
       '';
+      pos = builtins.unsafeGetAttrPos "src" args;
     };
 
   # Description: read opam files from mirage-conf and build the unikernel.
@@ -155,6 +159,7 @@ rec {
   builds =
     {
       pname,
+      src,
       targets,
       packages-materialized-path,
       monorepo-materialized-path,
@@ -162,57 +167,117 @@ rec {
       ...
     }@args:
     let
-      self = lib.genAttrs targets (
-        target:
-        (build (
-          args
-          // {
-            inherit target;
-            monorepo-materialized-path = monorepo-materialized-path + "/${target}.json";
-            packages-materialized-path = packages-materialized-path + "/${target}.json";
-          }
-        )).overrideAttrs
-          (
-            lib.composeExtensions (finalAttrs: previousAttrs: {
-              passthru = previousAttrs.passthru or { } // {
-                updateScript = writeShellApplication {
-                  name = "${pname}-${target}-update";
-                  runtimeInputs = [
-                    coreutils
-                    jq
-                    nix
-                  ];
-                  text = ''
-                    set -x
-                    packagesJson=$(nix --extra-experimental-features nix-command -L build \
-                      --no-link --print-out-paths --allow-import-from-derivation -f. \
-                      ${pname}.${target}.packages-materialized)
-                    jq <"$packagesJson" |
-                    install -Dm660 /dev/stdin pkgs/by-name/${pname}/packages-materialized/${target}.json
+      # deps of all targets, together with src and related flake inputs, are updated in lockstep
+      depsUpdateScript = lib.getExe (writeShellApplication {
+        name = "${pname}-update";
+        inherit runtimeInputs;
+        text =
+          let
+            updateSrc = lib.escapeShellArgs (unstableGitUpdater {
+              url = src.gitRepoUrl;
+            });
+          in
+          ''
+            set -x
 
-                    monorepoJson=$(nix --extra-experimental-features nix-command -L build \
-                      --no-link --print-out-paths --allow-import-from-derivation -f. \
-                      ${pname}.${target}.monorepo-materialized)
-                    jq <"$monorepoJson" |
-                    install -Dm660 /dev/stdin pkgs/by-name/${pname}/monorepo-materialized/${target}.json
-                  '';
-                };
-              };
-            }) overrideAttrs
-          )
-      );
-    in
-    lib.recurseIntoAttrs (
-      self
-      // {
-        updateScript = writeShellApplication {
-          name = "dnsvizor-update";
-          runtimeInputs = [
-            jq
-            nix
-          ];
-          text = lib.concatMapStringsSep "\n" (target: lib.getExe self.${target}.updateScript) targets;
+            srcUpdateJson=$(UPDATE_NIX_ATTR_PATH=${pname}.${lib.head targets}.mirage-conf \
+              ${updateSrc} | \
+              jq '.[] += {attrPath:"${pname}"} | .[]')
+
+            # update opam-related flake inputs because they are used when updating deps
+            nix --extra-experimental-features "nix-command flakes" \
+              flake update opam-repository opam-overlays mirage-opam-overlays
+
+            declare -a updatedFiles
+            # work around "unbound variable" error of empty array caused by set -u
+            updatedFiles+=()
+
+            ${lib.concatLines (map updateDepsForTarget targets)}
+
+            flakeLockFile="flake.lock"
+            depsUpdateJson=""
+            if [ ''${#updatedFiles[@]} -gt 0 ]; then
+              if [ "$(git diff --name-only "$flakeLockFile")" != "" ]; then
+                updatedFiles+=("$flakeLockFile")
+              fi
+              depsUpdateJson=$(jq --null-input \
+                '{"attrPath":"${pname}","oldVersion":"0","newVersion":"0","commitMessage":"${pname}: update deps","files":$ARGS.positional}' \
+                --args -- "''${updatedFiles[@]}")
+            fi
+
+            jq --slurp <<< "$srcUpdateJson$depsUpdateJson"
+          '';
+      });
+      depsUpdateScriptForTarget =
+        target:
+        writeShellApplication {
+          name = "${pname}-${target}-deps-update";
+          inherit runtimeInputs;
+          text = ''
+            set -x
+            ${updateDepsForTarget target}
+          '';
         };
-      }
-    );
+      runtimeInputs = [
+        nix
+        jq
+        coreutils
+        git
+      ];
+      updateDepsForTarget = target: ''
+        packagesMaterializedFile="pkgs/by-name/${pname}/packages-materialized/${target}.json"
+        packagesJson=$(nix --extra-experimental-features nix-command -L build \
+          --no-link --print-out-paths --allow-import-from-derivation -f. \
+          ${pname}.${target}.packages-materialized)
+        jq <"$packagesJson" |
+        install -Dm660 /dev/stdin "$packagesMaterializedFile"
+        if [ "$(git diff --name-only "$packagesMaterializedFile")" != "" ]; then
+          updatedFiles+=("$packagesMaterializedFile")
+        fi
+
+        monorepoMaterializedFile="pkgs/by-name/${pname}/monorepo-materialized/${target}.json"
+        monorepoJson=$(nix --extra-experimental-features nix-command -L build \
+          --no-link --print-out-paths --allow-import-from-derivation -f. \
+          ${pname}.${target}.monorepo-materialized)
+        jq <"$monorepoJson" |
+        install -Dm660 /dev/stdin "$monorepoMaterializedFile"
+        if [ "$(git diff --name-only "$monorepoMaterializedFile")" != "" ]; then
+          updatedFiles+=("$monorepoMaterializedFile")
+        fi
+      '';
+    in
+    lib.genAttrs targets (
+      target:
+      (build (
+        args
+        // {
+          inherit target;
+          monorepo-materialized-path = monorepo-materialized-path + "/${target}.json";
+          packages-materialized-path = packages-materialized-path + "/${target}.json";
+        }
+      )).overrideAttrs
+        (
+          lib.composeExtensions (finalAttrs: previousAttrs: {
+            passthru = previousAttrs.passthru or { } // {
+              depsUpdateScriptForThisTarget = depsUpdateScriptForTarget target;
+            };
+          }) overrideAttrs
+        )
+    )
+    // {
+      update = stdenv.mkDerivation {
+        pname = "${pname}-update";
+        version = "0";
+        src = emptyDirectory;
+        installPhase = ''
+          runHook preInstall
+          echo "This dummy package contains an updateScript updating the package set." > $out
+          runHook postInstall
+        '';
+        passthru.updateScript = {
+          command = depsUpdateScript;
+          supportedFeatures = [ "commit" ];
+        };
+      };
+    };
 }
