@@ -8,6 +8,7 @@
   rebar,
   rebar3,
   fetchMixDeps,
+  beamPackages,
   findutils,
   ripgrep,
   bbe,
@@ -122,6 +123,7 @@ lib.extendMkDerivation {
         ++
           # Erlang/Elixir deps
           [
+            beamPackages.mixBuildDirHook
             erlang
             elixir
             hex
@@ -129,7 +131,7 @@ lib.extendMkDerivation {
           ]
         ++
           # Mix deps
-          ((builtins.attrValues mixNixDeps))
+          (builtins.attrValues mixNixDeps)
         ++
           # other compile-time deps
           [
@@ -185,8 +187,6 @@ lib.extendMkDerivation {
       configurePhase =
         initAttrs.configurePhase or ''
           runHook preConfigure
-
-          ${pkgs.path + "/pkgs/development/beam-modules/mix-configure-hook.sh"}
 
           # This is needed for projects that have a specific compile step
           # the dependency needs to be compiled in order for the task

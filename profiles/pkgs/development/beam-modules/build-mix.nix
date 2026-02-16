@@ -1,6 +1,7 @@
 {
   stdenv,
   writeText,
+  beamPackages,
   elixir,
   hex,
   lib,
@@ -91,6 +92,7 @@ lib.extendMkDerivation {
       '';
 
       nativeBuildInputs = nativeBuildInputs ++ [
+        beamPackages.mixBuildDirHook
         elixir
         hex
       ];
@@ -100,7 +102,6 @@ lib.extendMkDerivation {
         previousAttrs.configurePhase or ''
           runHook preConfigure
 
-          ${pkgs.path + "/pkgs/development/beam-modules/mix-configure-hook.sh"}
           ${lib.optionalString (removeConfig && isNull appConfigPath)
             # By default, we don't want to include whatever config a dependency brings; per
             # https://hexdocs.pm/elixir/main/Config.html, config is application specific.
