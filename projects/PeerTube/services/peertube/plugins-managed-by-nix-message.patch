@@ -1,25 +1,26 @@
 diff --git a/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html b/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html
-index 3dc651b16..59eacf1ba 100644
+index 2cd0dd657..0302f2d4c 100644
 --- a/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html
 +++ b/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.html
-@@ -1,3 +1,12 @@
-+<my-alert type="info">
-+  @if (pluginType == 1) {
-+    Plugins
-+  } @else {
-+    Themes
-+  }
-+  are being managed with Nix.
-+</my-alert>
+@@ -1,4 +1,13 @@
+ @if (pagination.totalItems === 0) {
++  <my-alert type="info">
++    @if (pluginType == 1) {
++      Plugins
++    } @else {
++      Themes
++    }
++    are being managed with Nix.
++  </my-alert>
 +
- <div class="no-results" *ngIf="pagination.totalItems === 0">
-   {{ getNoResultMessage() }}
- </div>
+   <div class="no-results">
+     {{ getNoResultMessage() }}
+   </div>
 diff --git a/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.ts b/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.ts
-index 8cb0d84db..756afc9a5 100644
+index a4ad8021d..7233d2321 100644
 --- a/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.ts
 +++ b/client/src/app/+admin/plugins/plugin-list-installed/plugin-list-installed.component.ts
-@@ -11,6 +11,7 @@ import { ButtonComponent } from '../../../shared/shared-main/buttons/button.comp
+@@ -10,6 +10,7 @@ import { ButtonComponent } from '../../../shared/shared-main/buttons/button.comp
  import { DeleteButtonComponent } from '../../../shared/shared-main/buttons/delete-button.component'
  import { InfiniteScrollerDirective } from '../../../shared/shared-main/common/infinite-scroller.directive'
  import { PluginCardComponent } from '../shared/plugin-card.component'
@@ -27,8 +28,8 @@ index 8cb0d84db..756afc9a5 100644
  
  @Component({
    selector: 'my-plugin-list-installed',
-@@ -22,7 +23,8 @@ import { PluginCardComponent } from '../shared/plugin-card.component'
-     NgFor,
+@@ -19,7 +20,8 @@ import { PluginCardComponent } from '../shared/plugin-card.component'
+     InfiniteScrollerDirective,
      PluginCardComponent,
      ButtonComponent,
 -    DeleteButtonComponent

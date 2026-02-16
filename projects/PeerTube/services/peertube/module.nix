@@ -42,9 +42,15 @@ in
         NODE_CONFIG_DIR = "/var/lib/peertube/config";
         NODE_ENV = "production";
         NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
-        NPM_CONFIG_CACHE = "/var/cache/peertube/.npm";
-        NPM_CONFIG_PREFIX = peerCfg.package;
-        HOME = peerCfg.package;
+        HOME = "/var/lib/peertube";
+
+        XDG_DATA_HOME = "/var/lib/peertube/.local/share";
+        XDG_CACHE_HOME = "/var/cache/peertube";
+        XDG_CONFIG_HOME = "/var/lib/peertube/.config";
+        NODE_PATH = "${peerCfg.package}/lib/node_modules";
+
+        NPM_CONFIG_PREFER_OFFLINE = "true";
+        NPM_CONFIG_IGNORE_SCRIPTS = "true";
       };
 
       systemCallsList = [
@@ -118,6 +124,7 @@ in
                   [
                     jq
                     nodejs
+                    pnpm_10
                   ]
                   ++ lib.optionals (!configured) [
                     iproute2
@@ -142,30 +149,31 @@ in
                   # To install packages offline from their caches, configure NPM to behave
                   npmfun="$(mktemp -d)"
                   export NPM_CONFIG_USERCONFIG="$npmfun"/.npmrc
-                  npm config set offline true
-                  npm config set progress false
+                  pnpm config set offline false
+                  pnpm config set progress false
+                  pnpm config set loglevel verbose
 
                   ${lib.concatMapStrings (plugin: ''
-                    npm config set cache ${plugin.npmDeps or "/no-npm-deps"}
+                    pnpm config set cache ${plugin.npmDeps or "/no-npm-deps"}
                     echo "Running installer for ${plugin}/lib/node_modules/${plugin.pname}"
-                    node ~/dist/scripts/plugin/install.js -p ${plugin}/lib/node_modules/${plugin.pname}
+                    node ${peerCfg.package}/dist/scripts/plugin/install.js -p ${plugin}/lib/node_modules/${plugin.pname}
                   '') cfg.plugins}
-
-                  rm -r "$npmfun"
 
                   if [ -e "${peerCfg.settings.storage.plugins}/nixos-plugins.json" ]; then
                     for plugin in $(jq --slurp --raw-output '.[0] - .[1] | .[]' ${peerCfg.settings.storage.plugins}/nixos-plugins.json ${nixosPluginsJson}); do
                       # ignore trailing newline
                       [ -z "$plugin" ] && continue
                       echo "Removing plugin $plugin (even on success, a (wrong) error message is returned)"
-                      node ~/dist/scripts/plugin/uninstall.js -n "$plugin"
+                      node ${peerCfg.package}/dist/scripts/plugin/uninstall.js -n "$plugin"
                     done
                   fi
+
+                  rm -r "$npmfun"
 
                   ln -sf ${nixosPluginsJson} ${peerCfg.settings.storage.plugins}/nixos-plugins.json
 
                   packages_hash_post="$(sha256sum ${peerCfg.settings.storage.plugins}/package.json)"
-                  [ "$packages_hash_pre" = "$packages_hash_post" ] || touch ${peerCfg.settings.storage.plugins}/.restart
+                  [ "$packages_hash_pre" = "$packages_hash_post" ] || touch ${peerCfg.settings.storage.plugins}.restart
                 '';
               }
             );
@@ -199,12 +207,13 @@ in
             # Sandboxing
             RestrictAddressFamilies = [ ];
 
-            # System Call Filtering
-            SystemCallFilter = [
-              ("~" + lib.concatStringsSep " " systemCallsList)
-              "pipe"
-              "pipe2"
-            ];
+            # TODO: this is too restrictive since pnpm requires more syscalls
+            # # System Call Filtering
+            # SystemCallFilter = [
+            #   ("~" + lib.concatStringsSep " " systemCallsList)
+            #   "pipe"
+            #   "pipe2"
+            # ];
           }
           // cfgService;
         }
@@ -215,20 +224,23 @@ in
     lib.mkIf (peerCfg.enable && cfg.enable) {
       services.peertube = {
         settings.plugins.index.enabled = false;
-        package = cfg.package.overrideAttrs (previousAttrs: {
-          patches = (previousAttrs.patches or [ ]) ++ [
-            ./disable-plugin-uninstall.patch
-            ./disable-plugin-browsing.patch
-            ./plugins-managed-by-nix-message.patch
-          ];
+        package =
+          let
+            ov-package = cfg.package.overrideAttrs (previousAttrs: {
+              patches = (previousAttrs.patches or [ ]) ++ [
+                ./disable-plugin-uninstall.patch
+                ./disable-plugin-browsing.patch
+                ./plugins-managed-by-nix-message.patch
+              ];
 
-          # yarn can't handle npm caches, and we can't build npm packages with our yarn tooling
-          # Working on getting declarative plugin management into upstream to avoid this: https://github.com/Chocobozzz/PeerTube/issues/6428
-          postPatch = (previousAttrs.postPatch or "") + ''
-            substituteInPlace server/core/lib/plugins/yarn.ts \
-              --replace-fail 'yarn ''${command}' 'npm --offline ''${command}'
-          '';
-        });
+              buildInputs = previousAttrs.buildInputs or [ ] ++ [
+                pkgs.pnpm_10
+              ];
+
+              passthru.debug = mkPluginService false;
+            });
+          in
+          ov-package;
       };
 
       systemd.services = {

@@ -21,6 +21,7 @@
       instance.name = "My Lovely PeerTube Instance";
       # Enable livestreaming
       live.enabled = true;
+      storage.logs = "/var/lib/peertube/storage/logs";
     };
 
     plugins = {
