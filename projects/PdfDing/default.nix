@@ -24,7 +24,6 @@
     };
   };
 
-  # TODO: production examples with sops?
   nixos.modules.services = {
     pdfding = {
       module = lib.moduleLocFromOptionString "services.pdfding";
@@ -32,17 +31,17 @@
         basic = {
           module = ./services/pdfding/examples/basic.nix;
           description = "Sqlite default service";
-          tests.basic.module = pkgs.nixosTests.pdfding.basic;
+          tests.basic.module = ./services/pdfding/tests/basic.nix;
         };
         postgres = {
           module = ./services/pdfding/examples/postgres.nix;
           description = "Postgres and consume feature";
-          tests.postgres.module = pkgs.nixosTests.pdfding.postgres;
+          tests.postgres.module = ./services/pdfding/tests/postgres.nix;
         };
         s3-backups = {
-          module = ./services/pdfding/examples/minio.nix;
+          module = ./services/pdfding/examples/s3-backups.nix;
           description = "Backup feature of pdfding";
-          tests.s3-backups.module = pkgs.nixosTests.pdfding.s3-backups;
+          tests.s3-backups.module = ./services/pdfding/tests/s3-backups.nix;
         };
       };
       links = {

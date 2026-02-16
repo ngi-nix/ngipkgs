@@ -1,9 +1,9 @@
 pdfding:
     django:
         secret_key: ENC[AES256_GCM,data:HViE2/LVRlecba+tlPpPhatncZu4EhM=,iv:NLQPmUmIG+ypu8fdRfKOISxkGZGEozTn9u1CBgm4Q10=,tag:urmz/yU6kaskxrn3VG+bcQ==,type:str]
-    minio:
-        user: ENC[AES256_GCM,data:RAudEEw=,iv:QPkMjPv2PDVWcc2GmN4eCE5Mw7j0iyR3aw0LBaGnGgA=,tag:drQFdDqcdYrL8gH3dOSRdA==,type:str]
-        password: ENC[AES256_GCM,data:O8x8eUEK7INQ5E8FmBu8W2pdgC4Ioq4=,iv:v6P4symgKI+BCklW+7H6WRzpNlLAqmifcl6yGx67pVc=,tag:N9Q+tCIv28fyJp9fgKgHMg==,type:str]
+    s3:
+        user: ENC[AES256_GCM,data:6IL9r1MzuXem9zeZ0a1H7q2Hg7J7z2yvyg4=,iv:YHf7yI/93rH0pqM9CxMPC0vugpJldQTsV0RLJXkuw/E=,tag:wuopRKpgRY7dXcRg6vJAMw==,type:str]
+        password: ENC[AES256_GCM,data:Mgx1bNwxMuX4ACNcSl2NGQBR6hLZTvPv4scleImwr22FhLk5GyirFeIoaHevqRRy/L5TBWO3bPB8tdhBb0A1Xg==,iv:6L6F/G0CRZdp2+Hmjz2GyoASz1Hbd7XZHxzZvb/uvi4=,tag:+wR889hc5to+TDHqo/GByg==,type:str]
 sops:
     age:
         - recipient: age16xvvc22xm35xzgc2yx6cpcz6wnww8tf6rwfmrag4vnem7nq6h9pqr33epg
@@ -42,7 +42,7 @@ sops:
             dmNaMVQ5alo1dkFRa1lvbVlockYrNlUKTQ8LzlEwEzm/7hNdMLidmQyR4ddyleS2
             ANoywmxn2jZaeAf/RAqaMiJmr/ak5KrXOw+paptcuMEtnFBfEwS4UA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-05T11:24:50Z"
-    mac: ENC[AES256_GCM,data:8xIaMPMXAFgercDmsRLjHfvH97BWR4ZU5nzchAButpiLZKAN561DnswcxdQz2eCWo0i8pT81gQNPIUB3Esl6di4yAHrVA3JCHCQnz93nHzJE4BEZGtKIcPyyeOKd5ih6Y4BfbbC61Q0YNUNQv3yzjl0bkBDMhhYnalkgIzFqA4M=,iv:VItCFwO53tNJiDpQOWf/hruZ8/YFluWY0qUagKVNXes=,tag:/MWeyW29J5Im7mVmb8CU2w==,type:str]
+    lastmodified: "2026-02-16T14:15:59Z"
+    mac: ENC[AES256_GCM,data:KcXXZ6iNqpjfvhhkSSpEJptqvvg+ZwTDGdxNcvGJwOy3PGNcsklWzNtuxCUmvGZcF9vwaX3QpQpYjVD1Hdtxbp/f4rnTjPprKXV2mlkraZlgqlggKx8/EV2TRMk1ZxZ0tQTAvv5v1m5/KQmbWyHLf05PolxfbRZkGVxpw33eqmA=,iv:YZyWNAElkOy6EoDKX7dO72i2MQe5d08qy3Q1yXMHyAw=,tag:0eGkvyqdgo/pRchCtsVl0w==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0

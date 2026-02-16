@@ -5,7 +5,7 @@
   ...
 }:
 let
-  baseTestFile = pkgs.path + "/nixos/tests/web-apps/pdfding/postgres.nix";
+  baseTestFile = pkgs.path + "/nixos/tests/web-apps/pdfding/s3-backups.nix";
   baseTest = import baseTestFile { inherit pkgs lib; };
 in
 {
@@ -23,7 +23,7 @@ in
       imports = [
         sources.modules.ngipkgs
         sources.modules.services.pdfding
-        sources.examples.PdfDing.postgres
+        sources.examples.PdfDing.s3-backups
         "${sources.inputs.sops-nix}/modules/sops"
         nodeConfig
       ];
