@@ -51,9 +51,14 @@
     in
     lib.recursiveUpdate nixosTests {
       # FIX:
-      "wireguard-dynamic-refresh-networkd-linux-latest" = {
+      "wireguard-amneziawg-quick-linux-latest" = {
         problem.broken.reason = ''
-          https://buildbot.ngi.nixos.org/#/builders/987/builds/1
+          https://buildbot.ngi.nixos.org/#/builders/984/builds/1643
+        '';
+      };
+      "wireguard-amneziawg-linux-latest" = {
+        problem.broken.reason = ''
+          https://buildbot.ngi.nixos.org/#/builders/981/builds/1644
         '';
       };
     };
