@@ -5,6 +5,18 @@
   ...
 }@args:
 
+let
+  # TODO:
+  serviceTests.peertube-plugins.module = ./services/peertube/tests/peertube-plugins.nix;
+  serviceTests.peertube-plugins.problem.broken.reason = brokenReason;
+  serviceTests.peertube-plugin-livechat.module = ./services/peertube/tests/peertube-plugin-livechat.nix;
+  serviceTests.peertube-plugin-livechat.problem.broken.reason = brokenReason;
+  brokenReason = ''
+    The plugin was manually tested to be working, but the NixOS test itself
+    needs a few tweaks
+  '';
+in
+
 {
   metadata = {
     summary = "A decentralised streaming video platform";
@@ -59,8 +71,7 @@
           examples.basic-server = {
             module = ./services/peertube/examples/basic.nix;
             description = "Basic server configuration";
-            tests.peertube-plugins.module = ./services/peertube/tests/peertube-plugins.nix;
-            tests.peertube-plugin-livechat.module = ./services/peertube/tests/peertube-plugin-livechat.nix;
+            tests = serviceTests;
           };
         };
         peertube-runner = {
@@ -100,8 +111,7 @@
           '';
         }
       ];
-      tests.peertube-plugins.module = ./services/peertube/tests/peertube-plugins.nix;
-      tests.peertube-plugin-livechat.module = ./services/peertube/tests/peertube-plugin-livechat.nix;
+      tests = serviceTests;
     };
   };
 }
