@@ -83,14 +83,19 @@ in
       "xen"
     ]
   ) libMirage.possibleTargets;
-})).overrideAttrs
+})).extend
   (
-    finalAttrs: previousAttrs: {
-      passthru = previousAttrs.passthru or { } // {
-        updateScript = _experimental-update-script-combinators.sequence [
-          (unstableGitUpdater { })
-          previousAttrs.passthru.updateScript
-        ];
-      };
+    finalSet: previousSet: {
+      update = previousSet.update.overrideAttrs (
+        _finalAttrs: previousAttrs: {
+          passthru = previousAttrs.passthru or { } // {
+            updateScript = _experimental-update-script-combinators.sequence [
+              # To update `src` only once before materializing all `targets`.
+              (unstableGitUpdater { })
+              [ previousAttrs.passthru.materializeTargets ]
+            ];
+          };
+        }
+      );
     }
   )

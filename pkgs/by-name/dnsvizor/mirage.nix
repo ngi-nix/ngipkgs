@@ -1,3 +1,7 @@
+# Description: this file implements build helpers
+# for MirageOS unikernels <https://mirageos.org>.
+# Though currently located in ngipkgs/pkgs/by-name/dnsvizor/mirage.nix
+# it is not specific to NGIpkgs, DNSvizor nor any `src` updater.
 {
   coreutils,
   jq,
@@ -6,6 +10,7 @@
   opam-nix,
   stdenv,
   writeShellApplication,
+  writeText,
 }:
 
 let
@@ -81,7 +86,7 @@ rec {
         ...
       }@args:
       let
-        name = "mirage-${pname}";
+        mirageName = "mirage-${pname}-${target}";
         mirageConfIFD = configure (
           args
           // {
@@ -96,16 +101,16 @@ rec {
             opamPackages = packages;
           }
         );
-        packagesMaterialized = opam-nix.materializeOpamProject { } "${name}-${target}" mirageConfIFD query;
+        packagesMaterialized = opam-nix.materializeOpamProject { } mirageName mirageConfIFD query;
         monorepoMaterialized = opam-nix.materializeBuildOpamMonorepo { } mirageConfIFD monorepoQuery;
         monorepo = opam-nix.unmaterializeQueryToMonorepo { } (materializedDir + "/${target}/monorepo.json");
         packages =
           (opam-nix.materializedDefsToScope {
-            sourceMap."${name}-${target}" = finalAttrs.passthru.mirageConf;
+            sourceMap.${mirageName} = finalAttrs.passthru.mirageConf;
           } (materializedDir + "/${target}/packages.json")).overrideScope
             (
               finalOpam: previousOpam: {
-                "${name}-${target}" = previousOpam."${name}-${target}".overrideAttrs (
+                ${mirageName} = previousOpam.${mirageName}.overrideAttrs (
                   lib.composeExtensions (finalUnikernel: previousUnikernel: {
                     inherit version;
                     __intentionallyOverridingVersion = true;
@@ -146,10 +151,10 @@ rec {
             );
       in
       {
-        inherit name;
+        pname = "${pname}-${target}";
         installPhase = ''
           runHook preInstall
-          cp -R --no-preserve=mode ${finalAttrs.passthru.packages."${name}-${target}"} $out
+          cp -R --no-preserve=mode ${finalAttrs.passthru.packages.${mirageName}} $out
           ${lib.optionalString
             (
               (stdenv.hostPlatform.isLinux && target == "unix")
@@ -163,8 +168,8 @@ rec {
           runHook postInstall
         '';
         passthru = {
-          updateScript = lib.getExe (writeShellApplication {
-            name = "${pname}-update-${target}";
+          materialize = lib.getExe (writeShellApplication {
+            name = "${pname}-materialize-${target}";
             runtimeInputs = [
               coreutils
               jq
@@ -173,15 +178,15 @@ rec {
             text = ''
               set -x
               materializedDir=$(nix --extra-experimental-features nix-command -L eval \
-                -f. ${pname}.passthru.${target}.passthru.materializedDir)
+                -f. ${pname}.${target}.passthru.materializedDir)
               mkdir -p "$materializedDir/${target}/"
               packagesJson=$(nix --extra-experimental-features nix-command -L build \
                 --no-link --print-out-paths --allow-import-from-derivation --show-trace \
-                -f. ${pname}.passthru.${target}.passthru.packagesMaterialized)
+                -f. ${pname}.${target}.passthru.packagesMaterialized)
               jq <"$packagesJson" >"$materializedDir/${target}/packages.json"
               monorepoJson=$(nix --extra-experimental-features nix-command -L build \
                 --no-link --print-out-paths --allow-import-from-derivation --show-trace \
-                -f. ${pname}.passthru.${target}.passthru.monorepoMaterialized)
+                -f. ${pname}.${target}.passthru.monorepoMaterialized)
               jq <"$monorepoJson" >"$materializedDir/${target}/monorepo.json"
             '';
           });
@@ -198,37 +203,62 @@ rec {
       };
   };
 
-  # Description: build all given targets
-  # or only a single if accessed in `passthru.${target}`.
+  # Description: generate a package set to `build` each one of the given `targets`,
+  # with an additional `update` package providing a `materializeTargets` script.
+  #
+  # Usage: the `materializeTargets` script must be called after having updated
+  # the given `src` (and possibly `opam-nix`) to generate required materialization files.
+  # This update should be done inside a `update.passthru.updateScript`,
+  # that can be inserted with a call to `extend` on the resulting package set.
   builds = lib.extendMkDerivation {
-    constructDrv = stdenv.mkDerivation;
-    inherit excludeDrvArgNames;
     extendDrvArgs =
       finalAttrs:
       {
         pname,
+        src,
+        version,
         targets ? finalAttrs.targets or possibleTargets,
         ...
       }@args:
-      {
-        passthru = lib.genAttrs targets (target: build (args // { inherit target; })) // {
-          updateScript = lib.getExe (writeShellApplication {
-            name = "${pname}-update";
-            text = lib.concatMapStringsSep "\n" (target: ''
-              ${finalAttrs.passthru.${target}.passthru.updateScript}
-            '') targets;
-          });
-        };
-        phases = [ "installPhase" ];
-        installPhase = ''
-          runHook preInstall
-          mkdir -p $out
-          ${lib.concatMapStringsSep "\n" (target: ''
-            ln -s ${finalAttrs.passthru.${target}} $out/${target}
-          '') targets}
-          runHook postInstall
-        '';
-      };
+      args;
+    constructDrv =
+      fnOrArgs:
+      let
+        finalArgs = lib.fix (lib.toFunction fnOrArgs);
+      in
+      lib.recurseIntoAttrs (
+        lib.makeExtensible (
+          finalSet:
+          lib.genAttrs finalArgs.targets (target: build (finalArgs // { inherit target; }))
+          // {
+            update =
+              (writeText "${finalArgs.pname}-${finalArgs.version}" ''
+                This package only exists to provide a location for an `updateScript`
+                updating `src` only once before calling `materializeTargets`.
+              '').overrideAttrs
+                (
+                  finalAttrs: _previousAttrs: {
+                    # Let `update-source-version` find where to update `version` and `hash`.
+                    pos = builtins.unsafeGetAttrPos "src" finalArgs;
+                    passthru = {
+                      inherit (finalArgs) src materializedDir;
+                      materializeTargets = lib.getExe (writeShellApplication {
+                        name = "${finalArgs.pname}-materializeTargets";
+                        text = ''
+                          materializedDir=$(nix --extra-experimental-features nix-command -L eval \
+                            -f. ${finalArgs.pname}.update.passthru.materializedDir)
+                          rm -f "$materializedDir/*/*.json"
+                        ''
+                        + lib.concatMapStringsSep "\n" (target: ''
+                          ${finalSet.${target}.passthru.materialize}
+                        '') finalArgs.targets;
+                      });
+                    };
+                  }
+                );
+          }
+        )
+      );
   };
 
   possibleTargets = [
