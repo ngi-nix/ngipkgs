@@ -33,7 +33,6 @@
           config.services.postgresql.finalPackage
         ];
 
-        services.pdfding.installWrapper = true;
         services.pdfding.installTestHelpers = true;
       };
   };

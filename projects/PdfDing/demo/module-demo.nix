@@ -15,7 +15,6 @@ in
       echo "PdfDing is ready at http://localhost:${toString cfg.port}"
     '';
 
-    services.pdfding.installWrapper = true;
     services.pdfding.installTestHelpers = true;
 
     systemd.services.pdfding.path = [ pkgs.sqlite ];

@@ -34,7 +34,6 @@
           sqlite
         ];
 
-        services.pdfding.installWrapper = true;
         services.pdfding.installTestHelpers = true;
       };
   };

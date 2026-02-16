@@ -7,8 +7,6 @@
     backup.schedule = "*/1 * * * *";
     backup.endpoint = "127.0.0.1:9000";
     envFiles = [ config.sops.templates."pdfding-minio-keys".path ];
-    # adds pdfding-manage django admin executable to path
-    installWrapper = true;
   };
 
   # Setup a local minio service for the backup feature

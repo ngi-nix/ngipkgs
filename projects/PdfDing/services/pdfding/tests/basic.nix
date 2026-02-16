@@ -35,8 +35,6 @@
           sqlite
         ];
 
-        services.pdfding.installWrapper = true;
-
         # test email validation works
         services.pdfding.extraEnvironment = {
           EMAIL_BACKEND = "SMTP";
