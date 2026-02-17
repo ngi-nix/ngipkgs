@@ -3,13 +3,14 @@
 {
   lib,
   writeShellApplication,
+  nix-update,
   sources,
 }:
 (writeShellApplication {
   name = "update";
   text = ''
     ${lib.readFile ./update.sh}
-    update "${sources.nixpkgs}" "$@"
+    update "${sources.nixpkgs}" "${lib.getExe nix-update}" "$@"
   '';
   meta.description = "updates an NGIpkgs package";
 })

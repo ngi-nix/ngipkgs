@@ -1,5 +1,6 @@
 {
   lib,
+  nix-update,
   writeShellApplication,
 
   ngipkgs,
@@ -47,11 +48,10 @@
         (lib.flattenAttrs ".")
         (lib.filterAttrs (n: _: !lib.elem n skipped-packages)) # a pkg, a pkg in a pkg set
         (lib.filterAttrs (_: v: lib.isDerivation v))
-        (lib.filterAttrs (_: v: lib.hasAttr "updateScript" v))
         lib.attrNames
       ];
       update-commands = lib.concatMapStringsSep "\n" (package: ''
-        if ! update "${sources.nixpkgs}" "${package}" "$@"; then
+        if ! update "${sources.nixpkgs}" "${lib.getExe nix-update}" "${package}" "$@"; then
           echo "${package}" >> "$TMPDIR/failed_updates.txt"
         fi
       '') update-packages;
