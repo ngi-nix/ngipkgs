@@ -3,6 +3,7 @@
   callPackage,
   fetchFromGitHub,
   gitUpdater,
+  gitMinimal,
   lib,
   writeText,
   writeShellApplication,
@@ -57,18 +58,37 @@ lib.recurseIntoAttrs (
               updateScript = _experimental-update-script-combinators.sequence [
                 (gitUpdater { rev-prefix = "v"; })
                 {
-                  command = (
-                    writeShellApplication {
-                      name = "bonfire-update-flavours";
-                      text = ''
+                  command = lib.getExe (writeShellApplication {
+                    name = "bonfire-update-flavours";
+                    runtimeInputs = [
+                      gitMinimal
+                    ];
+                    text = lib.concatLines [
+                      # Avoid a costly update if `gitUpdater` has not modified this file.
+                      ''
+                        if git diff --exit-code -- pkgs/by-name/bonfire/package.nix; then
+                          exit 0
+                        fi
+                      ''
+                      # Clean everything to begin with to avoid leftovers.
+                      ''
                         rm -rf pkgs/by-name/bonfire/extensions/*/
                         mkdir -p pkgs/by-name/bonfire/extensions/
                       ''
-                      + lib.concatMapStringsSep "\n" (flavour: ''
-                        ${finalFlavours.${flavour}.passthru.update.script}
-                      '') flavours;
-                    }
-                  );
+                      # Updating all flavours using the same `src` set by `gitUpdater`
+                      # to avoid any flavour ending up using a `src` no longer matching
+                      # the files generated in pkgs/by-name/bonfire/extensions/${flavour}/,
+                      # which can happen when upstream releases a new version
+                      # during the update of a flavour,
+                      # which is likely since each flavour update takes roughly one hour.
+                      (lib.concatMapStringsSep "\n" (
+                        flavour:
+                        lib.optionalString (!(finalFlavours.${flavour}.meta.broken or false)) ''
+                          ${lib.getExe finalFlavours.${flavour}.passthru.update.script}
+                        ''
+                      ) flavours)
+                    ];
+                  });
                   supportedFeatures = [ "silent" ];
                 }
               ];
