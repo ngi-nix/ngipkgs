@@ -63,6 +63,6 @@
         '';
       }
     ];
-    tests.demo.module = null;
+    tests.demo.module = import ./services/bonfire/tests/basic.nix args;
   };
 }
