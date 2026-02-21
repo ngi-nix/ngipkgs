@@ -8,7 +8,7 @@
   callPackage,
 }:
 let
-  FLAVOUR = bonfire.passthru.env.FLAVOUR;
+  FLAVOUR = bonfire.FLAVOUR;
 in
 # Documentation: manuals/Contributor/How_to/update/pkgs/bonfire.md
 {

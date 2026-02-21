@@ -27,35 +27,34 @@ let
   );
 in
 beamPkgs.mixRelease (finalAttrs: {
-  pname = "bonfire-${finalAttrs.passthru.env.FLAVOUR}";
+  pname = "bonfire-${finalAttrs.env.FLAVOUR}";
   inherit (finalAttrs.passthru.beamPackages) erlang elixir;
+  env = {
+    FLAVOUR = "ember";
+
+    WITH_IMAGE_VIX = "1";
+    WITH_GIT_DEPS = "1";
+    WITH_FORKS = "0";
+    WITH_DOCKER = "no";
+
+    # Explanation: from justfile's _ext-migrations-copy
+    MIX_OS_DEPS_COMPILE_PARTITION_COUNT = "1";
+
+    # Remark: somehow lib/api/graphql_masto_adapter.ex
+    # has become extremely slow to compile.
+    # Issue: https://github.com/bonfire-networks/bonfire-app/issues/1730
+    WITH_API_GRAPHQL = "1";
+
+    # ToDo(functional/completeness): support this?
+    #WITH_XMPP = "1";
+
+    # Explanation: config/bonfire_common.exs
+    # uses this to set :rustler_precompiled, force_build_all
+    # which is needed to let nix provision Rust libraries.
+    RUSTLER_BUILD_ALL = "true";
+  };
   passthru = {
-    env = {
-      FLAVOUR = "ember";
-
-      WITH_IMAGE_VIX = "true";
-      WITH_GIT_DEPS = "1";
-      WITH_FORKS = "0";
-      WITH_DOCKER = "no";
-
-      # Explanation: from justfile's _ext-migrations-copy
-      MIX_OS_DEPS_COMPILE_PARTITION_COUNT = "1";
-
-      # Remark: somehow lib/api/graphql_masto_adapter.ex
-      # has become extremely slow to compile.
-      # Issue: https://github.com/bonfire-networks/bonfire-app/issues/1730
-      WITH_API_GRAPHQL = "1";
-
-      # ToDo(functional/completeness): support this?
-      #WITH_XMPP = "1";
-
-      # Explanation: config/bonfire_common.exs
-      # uses this to set :rustler_precompiled, force_build_all
-      # which is needed to let nix provision Rust libraries.
-      RUSTLER_BUILD_ALL = "true";
-    };
-
-    deps = ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/deps.nix";
+    deps = ./extensions + "/${finalAttrs.env.FLAVOUR}/deps.nix";
     # Explanation: it's not possible to use deps_nix's Rust support in NGIpkgs
     # because its way to set `src` requires --allow-import-from-derivation
     overrideAttrsRust = nativeDir: finalRust: previousRust: {
@@ -82,8 +81,7 @@ beamPkgs.mixRelease (finalAttrs: {
           src = "${previousRust.src}/native/${finalRust.passthru.nativeDir}";
           cargoLock = {
             lockFile =
-              ./extensions
-              + "/${finalAttrs.passthru.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock";
+              ./extensions + "/${finalAttrs.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock";
           };
           nativeBuildInputs = [
             cmake
@@ -95,7 +93,7 @@ beamPkgs.mixRelease (finalAttrs: {
           text = ''
             set -eux
             install -Dm660 "${finalRust.src}/native/${finalRust.passthru.nativeDir}/Cargo.lock" \
-              'pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock'
+              'pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock'
           '';
         });
       };
@@ -198,9 +196,7 @@ beamPkgs.mixRelease (finalAttrs: {
               owner = "elixir-cldr";
               repo = "cldr";
               rev = "v${previousMixPkg.version}";
-              hash = lib.readFile (
-                ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash"
-              );
+              hash = lib.readFile (./extensions + "/${finalAttrs.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash");
             };
             postInstall = previousMixPkg.postInstall or "" + ''
               cp $src/priv/cldr/locales/* $out/lib/erlang/lib/ex_cldr-${previousMixPkg.version}/priv/cldr/locales/
@@ -213,11 +209,11 @@ beamPkgs.mixRelease (finalAttrs: {
                 name = "ex_cldr-update";
                 runtimeInputs = [ nurl ];
                 text = ''
-                  mkdir -p pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/ex_cldr/
+                  mkdir -p pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/ex_cldr/
                   nurl --hash --expr 'let NGIpkgs = import ./. {}; in
-                    NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.passthru.mixNixDeps.ex_cldr.src.overrideAttrs (previousMixPkg:
+                    NGIpkgs.bonfire.${finalAttrs.env.FLAVOUR}.passthru.mixNixDeps.ex_cldr.src.overrideAttrs (previousMixPkg:
                       { nativeBuildInputs = previousMixPkg.nativeBuildInputs or [] ++ [ NGIpkgs.pkgs.cacert ]; })
-                  ' >pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash
+                  ' >pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash
                 '';
               });
             };
@@ -280,7 +276,7 @@ beamPkgs.mixRelease (finalAttrs: {
       in
       builtins.genericClosure {
         startSet = urlAsKey [
-          finalAttrs.passthru.extensions.${finalAttrs.passthru.env.FLAVOUR}
+          finalAttrs.passthru.extensions.${finalAttrs.env.FLAVOUR}
         ];
         operator = ext: urlAsKey ext.deps;
       }
@@ -339,19 +335,17 @@ beamPkgs.mixRelease (finalAttrs: {
           package = fetchYarnDeps {
             name = "${pname}-yarn-deps";
             yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}}/src/assets/yarn.lock";
-            hash = lib.readFile (
-              ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnOfflineCache.hash"
-            );
+            hash = lib.readFile (./extensions + "/${finalAttrs.env.FLAVOUR}/${pname}/yarnOfflineCache.hash");
           };
           updateScript = lib.getExe (writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [ nurl ];
             text = ''
               set -eux
-              mkdir -p "pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/"
+              mkdir -p "pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/"
               nurl --hash --expr 'let NGIpkgs = import ./. {}; in
-                NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnOfflineCaches.${pname}.package
-              ' >'pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnOfflineCache.hash'
+                NGIpkgs.bonfire.${finalAttrs.env.FLAVOUR}.yarnOfflineCaches.${pname}.package
+              ' >'pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/yarnOfflineCache.hash'
             '';
           });
         });
@@ -367,9 +361,9 @@ beamPkgs.mixRelease (finalAttrs: {
             name = "${pname}-yarn-deps";
             yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}}/src/assets/yarn.lock";
             hash = lib.readFile (
-              ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
+              ./extensions + "/${finalAttrs.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
             );
-            missingHashes = ./extensions + "/${finalAttrs.passthru.env.FLAVOUR}/${pname}/missingHashes.json";
+            missingHashes = ./extensions + "/${finalAttrs.env.FLAVOUR}/${pname}/missingHashes.json";
           };
 
           updateScript = lib.getExe (writeShellApplication {
@@ -381,17 +375,17 @@ beamPkgs.mixRelease (finalAttrs: {
             ];
             text = ''
               set -eux
-              mkdir -p "pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/"
-              touch "pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}"/{yarnBerryOfflineCache.hash,missingHashes.json}
+              mkdir -p "pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/"
+              touch "pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}"/{yarnBerryOfflineCache.hash,missingHashes.json}
               nix -L --extra-experimental-features "nix-command" build --no-link -f . \
-                "bonfire.${finalAttrs.passthru.env.FLAVOUR}.passthru.mixNixDeps.${pname}.src"
+                "bonfire.${finalAttrs.env.FLAVOUR}.passthru.mixNixDeps.${pname}.src"
               yarnLock=$(nix -L --extra-experimental-features "nix-command" eval --raw -f . \
-                "bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package.yarnLock")
+                "bonfire.${finalAttrs.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package.yarnLock")
               yarn-berry-fetcher missing-hashes "$yarnLock" \
-                >"pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/missingHashes.json"
+                >"pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/missingHashes.json"
               nurl --expr "let NGIpkgs = import ./. {}; in
-                NGIpkgs.bonfire.${finalAttrs.passthru.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package
-              " --hash >"pkgs/by-name/bonfire/extensions/${finalAttrs.passthru.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
+                NGIpkgs.bonfire.${finalAttrs.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package
+              " --hash >"pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
             '';
           });
 
@@ -405,7 +399,7 @@ beamPkgs.mixRelease (finalAttrs: {
     # Issue: https://github.com/bonfire-networks/bonfire-app/issues/1730
     update =
       callPackage ./update.nix {
-        bonfire = bonfire.${finalAttrs.passthru.env.FLAVOUR};
+        bonfire = bonfire.${finalAttrs.env.FLAVOUR};
       }
       // {
         after-mixNixDeps = writeShellApplication {
@@ -437,7 +431,7 @@ beamPkgs.mixRelease (finalAttrs: {
 
     # Explanation: to build its Erlang config (config/)
     # and some JavaScript imports (**/deps.hooks.js)
-    # bonfire-app overlays symlinks from bonfire-app, ember and ${finalAttrs.passthru.env.FLAVOUR}.
+    # bonfire-app overlays symlinks from bonfire-app, ember and ${finalAttrs.env.FLAVOUR}.
     bonfire-setup =
       pkgs.runCommandLocal "bonfire-setup"
         {
@@ -479,12 +473,12 @@ beamPkgs.mixRelease (finalAttrs: {
             ''
               cp --no-preserve=mode -r ${finalAttrs.src}/config .
               cp --no-preserve=mode -rs ${finalAttrs.src}/justfile .
-              just flavour_make_symlinks ${finalAttrs.passthru.env.FLAVOUR}
+              just flavour_make_symlinks ${finalAttrs.env.FLAVOUR}
             ''
 
             # Explanation: from: just _flavour_install
             ''
-              $SHELL extensions/${finalAttrs.passthru.env.FLAVOUR}/install.sh --yes
+              $SHELL extensions/${finalAttrs.env.FLAVOUR}/install.sh --yes
             ''
 
             # Explanation: unsymlink config/config.exs to modify it
@@ -545,7 +539,7 @@ beamPkgs.mixRelease (finalAttrs: {
 
             # Explanation: inherit the environment variables
             # from bonfire because they're used in appConfigPath.
-            env = finalAttrs.passthru.env // previousArgs.env or { };
+            env = finalAttrs.env // previousArgs.env or { };
             inherit (finalAttrs) mixEnv;
             postConfigure = previousArgs.postConfigure or "" + ''
               cp --no-preserve=mode -r ${finalAttrs.passthru.bonfire-setup}/extensions .
@@ -648,7 +642,7 @@ beamPkgs.mixRelease (finalAttrs: {
     '') (lib.attrNames finalAttrs.passthru.yarnBerryOfflineCaches))
 
     # Explanation: call lib/mix/tasks/sync_themes.ex
-    # See: justfile#_flavour_install ${finalAttrs.passthru.env.FLAVOUR}
+    # See: justfile#_flavour_install ${finalAttrs.env.FLAVOUR}
     ''
       mix bonfire.sync_themes
     ''

@@ -38,8 +38,9 @@ lib.recurseIntoAttrs (
             tag = "v${finalAttrs.version}";
             hash = "sha256-+C7Ts7MuDR6GwZ/G16GZw1E5VO2snTBb4tcffdC6GK4=";
           };
-          passthru = lib.recursiveUpdate previousAttrs.passthru {
-            env.FLAVOUR = flavour;
+
+          env = previousAttrs.env or { } // {
+            FLAVOUR = flavour;
           };
         }
       )

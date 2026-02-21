@@ -1262,6 +1262,8 @@ let
               sizeable
               faviconic
               bonfire_api_graphql
+              image
+              evision
               ex_aws_s3
               blurhash
             ];
@@ -2231,6 +2233,23 @@ let
         in
         drv;
 
+      complex =
+        let
+          version = "0.6.0";
+          drv = buildMix {
+            inherit version;
+            name = "complex";
+            appConfigPath = ./config;
+
+            src = fetchHex {
+              inherit version;
+              pkg = "complex";
+              sha256 = "0a5fa95580dcaf30fcd60fe1aaf24327c0fe401e98c24d892e172e79498269f9";
+            };
+          };
+        in
+        drv;
+
       cors_plug =
         let
           version = "3.0.3";
@@ -2802,6 +2821,122 @@ let
         in
         drv;
 
+      ember =
+        let
+          version = "0.0.1";
+          drv = buildMix {
+            inherit version;
+            name = "ember";
+            appConfigPath = ./config;
+
+            src = fetchFromGitHub {
+              owner = "bonfire-networks";
+              repo = "ember";
+              rev = "815e48ad5ed7f0310287f98aff8a2fde16994f55";
+              hash = "sha256-qDkVxXnpclxOjyVEo3xkT4XhQw1HceiT0vNvRzCSh3E=";
+            };
+
+            beamDeps = [
+              bonfire_common
+              bonfire_ui_common
+              activity_pub
+              bonfire_mailer
+              bonfire_epics
+              bonfire_ecto
+              bonfire_data_assort
+              bonfire_boundaries
+              bonfire_ui_boundaries
+              bonfire_federate_activitypub
+              bonfire_data_access_control
+              bonfire_data_activity_pub
+              bonfire_data_identity
+              bonfire_data_social
+              bonfire_data_edges
+              bonfire_editor_milkdown
+              bonfire_me
+              bonfire_ui_me
+              bonfire_social
+              bonfire_social_graph
+              bonfire_posts
+              bonfire_ui_social
+              bonfire_ui_social_graph
+              bonfire_ui_posts
+              bonfire_ui_moderation
+              bonfire_tag
+              bonfire_classify
+              bonfire_notify
+              ecto_sparkles
+              needle
+              needle_uid
+              needle_ulid
+              ex_ulid
+              untangle
+              entrepot
+              entrepot_ecto
+              nodeinfo
+              paginator
+              voodoo
+              arrows
+              ex_cldr
+              surface
+              phoenix
+              phoenix_live_view
+              phoenix_view
+              plug_crypto
+              plug_cowboy
+              cowboy
+              bandit
+              orion
+              corsica
+              ecto
+              ecto_sql
+              postgrex
+              ecto_psql_extras
+              db_connection
+              ex_aws_s3
+              ex_marcel
+              req
+              finch
+              httpoison
+              jason
+              poison
+              timex
+              solid
+              mime
+              oban
+              sourceror
+              owl
+              mogrify
+              cachex
+              sizeable
+              geo
+              recase
+              emote
+              uniq
+              rustler_precompiled
+              decimal
+              floki
+              faker
+              gettext
+              text
+              text_corpus_udhr
+              hackney
+              opentelemetry_process_propagator
+              opentelemetry_exporter
+              opentelemetry_semantic_conventions
+              telemetry_metrics
+              telemetry
+              telemetry_poller
+              sentry
+              oban_web
+              absinthe
+              bonfire_api_graphql
+              absinthe_client
+            ];
+          };
+        in
+        drv.override (workarounds.rustlerPrecompiled { } drv);
+
       emote =
         let
           version = "0.1.1";
@@ -2902,6 +3037,29 @@ let
           };
         in
         drv;
+
+      evision =
+        let
+          version = "0.2.14";
+          drv = buildMix {
+            inherit version;
+            name = "evision";
+            appConfigPath = ./config;
+
+            src = fetchHex {
+              inherit version;
+              pkg = "evision";
+              sha256 = "630714395f2c242e488944b4c9c75a5de96cbb95d3cbb69f0525bdb3e0a88775";
+            };
+
+            beamDeps = [
+              castore
+              elixir_make
+              nx
+            ];
+          };
+        in
+        drv.override (workarounds.elixirMake { } drv);
 
       ex2ms =
         let
@@ -4165,6 +4323,35 @@ let
         in
         drv;
 
+      image =
+        let
+          version = "0.62.1";
+          drv = buildMix {
+            inherit version;
+            name = "image";
+            appConfigPath = ./config;
+
+            src = fetchHex {
+              inherit version;
+              pkg = "image";
+              sha256 = "5a5a7acaf68cfaed8932d478b95152cd7d84071442cac558c59f2d31427e91ab";
+            };
+
+            beamDeps = [
+              evision
+              jason
+              nx
+              phoenix_html
+              plug
+              req
+              rustler
+              sweet_xml
+              vix
+            ];
+          };
+        in
+        drv;
+
       jason =
         let
           version = "1.4.4";
@@ -5012,6 +5199,28 @@ let
         in
         drv;
 
+      nx =
+        let
+          version = "0.10.0";
+          drv = buildMix {
+            inherit version;
+            name = "nx";
+            appConfigPath = ./config;
+
+            src = fetchHex {
+              inherit version;
+              pkg = "nx";
+              sha256 = "3db8892c124aeee091df0e6fbf8e5bf1b81f502eb0d4f5ba63e6378ebcae7da4";
+            };
+
+            beamDeps = [
+              complex
+              telemetry
+            ];
+          };
+        in
+        drv;
+
       oban =
         let
           version = "2.20.2";
@@ -5032,6 +5241,54 @@ let
               jason
               postgrex
               telemetry
+            ];
+          };
+        in
+        drv;
+
+      oban_met =
+        let
+          version = "1.0.5";
+          drv = buildMix {
+            inherit version;
+            name = "oban_met";
+            appConfigPath = ./config;
+
+            src = fetchHex {
+              inherit version;
+              pkg = "oban_met";
+              sha256 = "64664d50805bbfd3903aeada1f3c39634652a87844797ee400b0bcc95a28f5ea";
+            };
+
+            beamDeps = [
+              oban
+            ];
+          };
+        in
+        drv;
+
+      oban_web =
+        let
+          version = "2.11.6";
+          drv = buildMix {
+            inherit version;
+            name = "oban_web";
+            appConfigPath = ./config;
+
+            src = fetchHex {
+              inherit version;
+              pkg = "oban_web";
+              sha256 = "576d94b705688c313694c2c114ca21aa0f8f2ad1b9ca45c052c5ba316d3e8d10";
+            };
+
+            beamDeps = [
+              jason
+              oban
+              oban_met
+              phoenix
+              phoenix_html
+              phoenix_live_view
+              phoenix_pubsub
             ];
           };
         in
@@ -6125,6 +6382,59 @@ let
         in
         drv;
 
+      social =
+        let
+          version = "0.0.1";
+          drv = buildMix {
+            inherit version;
+            name = "social";
+            appConfigPath = ./config;
+
+            src = fetchFromGitHub {
+              owner = "bonfire-networks";
+              repo = "social";
+              rev = "b48bf9d88630d44561ad7aff611487d8f1381714";
+              hash = "sha256-F5s4z6u4NqE+UuHhrP73ClHS0KzdRWFZhaglFuCAh2g=";
+            };
+
+            beamDeps = [
+              ember
+              bonfire_messages
+              bonfire_ui_messages
+              bonfire_ui_reactions
+              bonfire_classify
+              bonfire_search
+              bonfire_invite_links
+              bonfire_data_shared_user
+              bonfire_api_graphql
+              bonfire_open_id
+              bonfire_poll
+              bonfire_geolocate
+              mfm_parser
+              forecastr
+              activity_pub
+              ecto_sparkles
+              needle
+              needle_uid
+              needle_ulid
+              ex_ulid
+              absinthe
+              eqrcode
+              geo_postgis
+              geo
+              phoenix
+              phoenix_live_view
+              owl
+              httpoison
+              poison
+              hackney
+              rustler_precompiled
+              igniter
+            ];
+          };
+        in
+        drv.override (workarounds.rustlerPrecompiled { } drv);
+
       solid =
         let
           version = "0.18.0";
@@ -6766,6 +7076,35 @@ let
           };
         in
         drv;
+
+      vix =
+        let
+          version = "0.35.0";
+          drv = buildMix {
+            inherit version;
+            name = "vix";
+            appConfigPath = ./config;
+
+            VIX_COMPILATION_MODE = "PLATFORM_PROVIDED_LIBVIPS";
+
+            nativeBuildInputs = [
+              pkg-config
+              vips
+            ];
+
+            src = fetchHex {
+              inherit version;
+              pkg = "vix";
+              sha256 = "a3e80067a89d0631b6cf2b93594e03c1b303a2c7cddbbdd28040750d521984e5";
+            };
+
+            beamDeps = [
+              cc_precompiler
+              elixir_make
+            ];
+          };
+        in
+        drv.override (workarounds.elixirMake { } drv);
 
       voodoo =
         let
