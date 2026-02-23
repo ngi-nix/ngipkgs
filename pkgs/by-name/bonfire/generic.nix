@@ -2,20 +2,22 @@
   beam,
   bonfire,
   callPackage,
+  callPackages,
   cmake,
   fetchFromGitHub,
   fetchYarnDeps,
+  just,
   lexbor,
   lib,
+  nix,
   nodejs,
-  pkgs,
+  nurl,
+  runCommandLocal,
+  rustPlatform,
+  writeShellApplication,
   yarn,
   yarn-berry_4,
   yarnConfigHook,
-  rustPlatform,
-  writeShellApplication,
-  nix,
-  nurl,
   ...
 }:
 let
@@ -98,7 +100,7 @@ beamPkgs.mixRelease (finalAttrs: {
         });
       };
     };
-    mixNixDeps = pkgs.callPackage finalAttrs.passthru.deps {
+    mixNixDeps = callPackages finalAttrs.passthru.deps {
       inherit (finalAttrs.passthru) beamPackages;
       overrides =
         finalMixPkgs: previousMixPkgs:
@@ -433,11 +435,11 @@ beamPkgs.mixRelease (finalAttrs: {
     # and some JavaScript imports (**/deps.hooks.js)
     # bonfire-app overlays symlinks from bonfire-app, ember and ${finalAttrs.env.FLAVOUR}.
     bonfire-setup =
-      pkgs.runCommandLocal "bonfire-setup"
+      runCommandLocal "bonfire-setup"
         {
           inherit (finalAttrs) src;
           nativeBuildInputs = [
-            pkgs.just
+            just
           ];
         }
         (
