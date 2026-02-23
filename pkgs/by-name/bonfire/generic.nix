@@ -266,6 +266,18 @@ beamPkgs.mixRelease (finalAttrs: {
         }
         // lib.optionalAttrs (previousMixPkgs ? "evision") {
           evision = (callPackage deps/evision.nix { } finalMixPkgs previousMixPkgs).evision;
+        }
+        # Explanation: deps_nix wrongly detect rustler_precompiled is needed for flavours
+        # and since it requires import-from-derivation,
+        # they have to be removed from `preConfigure`.
+        // lib.optionalAttrs (previousMixPkgs ? "ember") {
+          ember = previousMixPkgs.ember.overrideAttrs { preConfigure = ""; };
+        }
+        // lib.optionalAttrs (previousMixPkgs ? "social") {
+          social = previousMixPkgs.social.overrideAttrs { preConfigure = ""; };
+        }
+        // lib.optionalAttrs (previousMixPkgs ? "open_science") {
+          open_science = previousMixPkgs.open_science.overrideAttrs { preConfigure = ""; };
         };
     };
 
