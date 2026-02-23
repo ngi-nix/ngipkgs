@@ -6,15 +6,15 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "peertube-theme-dark";
-  version = "0-unstable-2025-05-30";
+  version = "0-unstable-2025-12-18";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "1c6f794d7a5d9c69374cb6fa1daf184258acb63a";
+    rev = "b035a3b7b109b1227c9afa6d105ea8d017bcf963";
     sparseCheckout = [ "peertube-theme-dark" ];
-    hash = "sha256-qICONcpP05r1BYF+GaPsp9+7CoKZcF024otOHspU2Tk=";
+    hash = "sha256-txDLxMVqgTg3/Bmxjdv5UkH3Lbm8v3/n/vpfgQkgqtE=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-theme-dark";
