@@ -9,21 +9,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "sstorytime";
-  version = "0.1.0-beta-unstable-2025-12-01";
+  version = "0.1.1-beta-unstable-2026-02-14";
 
   src = fetchFromGitHub {
     owner = "markburgess";
     repo = "SSTorytime";
-    rev = "dddcfb68fcf811e914ec96331c30aaacab8cc2a0";
-    hash = "sha256-eqVex9Cje05G776pl/lMRGDPopGSTdfpPkORtjUNK6k=";
+    rev = "5fac7fac42926461ed6a26498ede0b805c9a27bb";
+    hash = "sha256-xWTiWn71+O+pKlI8TAQv+TmqWlnG9NHGGbfJIW8vlWU=";
   };
 
-  patches = [
-    ./0001-Get-database-credentials-from-environment-variables.patch
-    ./0002-Reuse-database-connection.patch
-  ];
-
-  vendorHash = "sha256-7Ac+Ml8+8IJ4KAMjaYCgLrcX8yOL2LPCAjC4Q3ZfHjQ=";
+  vendorHash = "sha256-2CH/8a2QvY57mFovxN5+JCOQ+ZjwmQCsN5O73Ci+14k=";
 
   # make port configurable
   postPatch = ''
