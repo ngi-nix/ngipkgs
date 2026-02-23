@@ -19,12 +19,12 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "taler-mdb";
-  version = "1.3.0";
+  version = "1.4.0";
 
   src = fetchgit {
     url = "https://git-www.taler.net/taler-mdb.git";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-bslsC/m75kt8JoIQPp53u64SxghwZloOHehctphpNwI=";
+    hash = "sha256-RRUq5H/wXv/eK+aISGfcxLLTPYjs22V43XZiM5Az6M0=";
     fetchSubmodules = true;
   };
 
