@@ -32,19 +32,19 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "manyfold";
-  version = "0.131.0";
+  version = "0.132.1";
 
   src = fetchFromGitHub {
     owner = "manyfold3d";
     repo = "manyfold";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-fiSTrSctqpYrvjw+jT8g5oNWeAQfLAILcXM7P1sLxJ8=";
+    hash = "sha256-HP+KcDpAvCxyW8JqDBwhQ/jfklwDFD1VK45PQL8BQUQ=";
   };
 
   prePatch = ''
     echo ${gems.ruby.version} >.ruby-version
     substituteInPlace Gemfile.lock \
-      --replace-fail '   ruby 3.4.1p0' "   ruby ${gems.ruby.version}" \
+      --replace-fail '   ruby 3.4.8p72' "   ruby ${gems.ruby.version}" \
       --replace-fail '   2.6.2' "   ${gems.bundler.version}"
   '';
 
@@ -58,7 +58,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   missingHashes = ./missing-hashes.json;
   offlineCache = yarn-berry.fetchYarnBerryDeps {
     inherit (finalAttrs) src missingHashes;
-    hash = "sha256-qnU96Iyaz+Yo1dWIK/c1lNPtPeL3AkaWTLZFA0YsI/8=";
+    hash = "sha256-hvSPhzK1GSXctLfcGjG1bD7Uy8KL5c5slvtEAKKJHHI=";
   };
 
   # dynamically loaded by ruby gems
