@@ -10,13 +10,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "0wm-opmode";
-  version = "0-unstable-2025-10-27";
+  version = "0-unstable-2026-02-09";
 
   src = fetchFromGitHub {
     owner = "lab0-cc";
     repo = "0WM-OpMode";
-    rev = "1c9d4f24b033423a930db4d1eb17470e1bb6cffb";
-    hash = "sha256-ltXtjGNl5/MIdin/Du7f9pJ70wXAFCcwTmS/CcQCrBE=";
+    rev = "365dce706ec01627412e72f57e650fe84a3ddf02";
+    hash = "sha256-0ke6dT/u9oD7HGR2z3nQiZ8MtPla2mhWjHPDOkP9u6Y=";
     fetchSubmodules = true;
   };
 
