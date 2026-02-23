@@ -18,17 +18,15 @@
         "inventaire" # -> inventaire-client
         "kbin" # -> kbin-backend
         "kbin-frontend" # -> kbin-backend
+        "openfire" # -> openfire-unwrapped
         "pretalxFull" # -> pretalx
         # FIX: needs custom update script
+        "_0wm-server"
+        "funkwhale"
         "marginalia-search"
         "peertube-plugins.livechat"
-        "_0wm-server"
         # FIX: dream2nix
         "liberaforms"
-        # FIX: package scope.  #2154 supports package scope, so this probably can be removed
-        "bigbluebutton"
-        "heads"
-        "lean-ftl"
         # FIX: don't update `sparql-queries` if there is no version change
         "inventaire-client"
         # fetcher not supported
@@ -48,11 +46,15 @@
         (lib.flattenAttrs ".")
         (lib.filterAttrs (n: _: !lib.elem n skipped-packages)) # a pkg, a pkg in a pkg set
         (lib.filterAttrs (_: v: lib.isDerivation v))
-        lib.attrNames
       ];
-      update-commands = lib.concatMapStringsSep "\n" (package: ''
-        if ! update "${sources.nixpkgs}" "${lib.getExe nix-update}" "${package}" "$@"; then
-          echo "${package}" >> "$TMPDIR/failed_updates.txt"
+      update-commands = lib.concatMapAttrsStringSep "\n" (name: drv: ''
+        if ! update "${sources.nixpkgs}" "${lib.getExe nix-update}" "${name}" "$@"; then
+          echo "${name}" >> "$TMPDIR/failed_updates.txt"
+
+          logfile="${drv.pname or drv.name or ""}.log"
+          if [[ -f "$logfile" ]]; then
+            mv "$logfile" "$TMPDIR"
+          fi
         fi
       '') update-packages;
     in
