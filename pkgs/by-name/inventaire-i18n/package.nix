@@ -7,17 +7,17 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "inventaire-i18n";
-  version = "0-unstable-2026-01-05";
+  version = "0-unstable-2026-02-20";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire-i18n";
-    rev = "78db3f9bb06a862396db1fff808f2f241b117c98";
-    hash = "sha256-PDuaiwR60cVTCIyFXzrXitMIULD3+NEs9KzYGLin0ag=";
+    rev = "62a9c66898c4fa2e2e062619d6d26680b8d07d7c";
+    hash = "sha256-A0D8Q5A4jzU9Xl9y2rse8Pf2q4ZcJRRKO2kzcGHy6kQ=";
   };
 
-  npmDepsHash = "sha256-hJ9L9X53n44Iz0lKX2NspMLtQbQA0nRgJvYZc5+xNuA=";
+  npmDepsHash = "sha256-67PiiCrVUtqJklzxawUjNQ3uXd+TwUmDL+/DOWFl7G4=";
 
   postPatch = ''
     patchShebangs scripts
