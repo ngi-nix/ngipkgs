@@ -3,7 +3,7 @@
   pkgs,
   lib,
   ...
-}@args:
+}:
 
 let
   service = "sylkserver";
@@ -19,6 +19,8 @@ let
       EOF
     '') (lib.attrNames cfg.settings)}
   '';
+
+  configType = path: lib.types.submodule (lib.modules.importApply path { inherit pkgs service cfg; });
 in
 
 {
@@ -40,12 +42,12 @@ in
         type = lib.types.submodule {
           options = {
             config = lib.mkOption {
-              type = lib.types.submodule (import ./config-modules/config.nix args);
+              type = configType ./config-modules/config.nix;
               default = { };
               description = "Main SylkServer configuration.";
             };
             conference = lib.mkOption {
-              type = lib.types.submodule (import ./config-modules/conference.nix args);
+              type = configType ./config-modules/conference.nix;
               default = { };
               description = "Conference application configuration.";
             };
@@ -74,7 +76,7 @@ in
               description = "WebRTC gateway configuration.";
             };
             xmppgateway = lib.mkOption {
-              type = lib.types.submodule (import ./config-modules/xmppgateway.nix args);
+              type = configType ./config-modules/xmppgateway.nix;
               default = { };
               description = "XMPP gateway configuration.";
             };
