@@ -1,10 +1,13 @@
 {
   fetchFromGitea,
   lib,
-  python3Packages,
+
+  buildPythonPackage,
+  django,
+  hatchling,
 }:
 
-python3Packages.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "django-honeypot";
   version = "1.3.0";
   pyproject = true;
@@ -17,11 +20,11 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-8j1/p+GD8ac+y/TT2K6SvJAYogAX3QC12LExt/nJeYk=";
   };
 
-  build-system = with python3Packages; [
+  build-system = [
     hatchling
   ];
 
-  dependencies = with python3Packages; [
+  dependencies = [
     django
   ];
 

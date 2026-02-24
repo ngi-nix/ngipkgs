@@ -1,10 +1,12 @@
 {
   fetchFromGitHub,
   lib,
-  python3Packages,
+
+  buildPythonPackage,
+  setuptools,
 }:
 
-python3Packages.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "django-admin-tools";
   version = "0.9.3";
   pyproject = true;
@@ -16,7 +18,7 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-Ul+XEAiemDj26lQpJqBV+pxxhUui1YXZkkxO6wPhEOY=";
   };
 
-  build-system = with python3Packages; [
+  build-system = [
     setuptools
   ];
 

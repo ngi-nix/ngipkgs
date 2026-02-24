@@ -1,10 +1,12 @@
 {
   fetchPypi,
   lib,
-  python3Packages,
+
+  buildPythonPackage,
+  setuptools,
 }:
 
-python3Packages.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "django-simple-math-captcha";
   version = "2.0.1";
   pyproject = true;
@@ -14,7 +16,7 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-U2OkdU2tRhsiMkZoAy4IQi3Jpe9hHTWVD9Pakqh9GtM=";
   };
 
-  build-system = with python3Packages; [
+  build-system = [
     setuptools
   ];
 

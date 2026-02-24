@@ -1,10 +1,16 @@
 {
   fetchFromGitHub,
   lib,
-  python3Packages,
+
+  buildPythonPackage,
+  django,
+  redis,
+  setuptools,
+  setuptools-scm,
+  wheel,
 }:
 
-python3Packages.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "django-constance";
   version = "4.3.4";
   pyproject = true;
@@ -16,17 +22,17 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-fs4P4lk6K5eceQ82o7/mW1JLgfuTR0k4799X0VWnG54=";
   };
 
-  build-system = with python3Packages; [
+  build-system = [
     setuptools
     setuptools-scm
     wheel
   ];
 
-  dependencies = with python3Packages; [
+  dependencies = [
     django
   ];
 
-  optional-dependencies = with python3Packages; {
+  optional-dependencies = {
     redis = [
       redis
     ];

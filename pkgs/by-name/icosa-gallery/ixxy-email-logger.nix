@@ -1,10 +1,12 @@
 {
   fetchFromGitHub,
   lib,
-  python3Packages,
+
+  buildPythonPackage,
+  setuptools,
 }:
 
-python3Packages.buildPythonPackage {
+buildPythonPackage {
   pname = "ixxy-email-logger";
   version = "0-unstable-2025-08-28";
   pyproject = true;
@@ -16,7 +18,7 @@ python3Packages.buildPythonPackage {
     hash = "sha256-OSecCqHpMx+xSSz5cdydFXIDRuzFxfwLG6tnwZF+gAg=";
   };
 
-  build-system = with python3Packages; [
+  build-system = [
     setuptools
   ];
 
