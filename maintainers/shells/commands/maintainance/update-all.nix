@@ -51,7 +51,7 @@
         if ! update "${sources.nixpkgs}" "${lib.getExe nix-update}" "${name}" "$@"; then
           echo "${name}" >> "$TMPDIR/failed_updates.txt"
 
-          logfile="${drv.pname or drv.name or ""}.log"
+          logfile="${lib.getName drv}.log"
           if [[ -f "$logfile" ]]; then
             mv "$logfile" "$TMPDIR"
           fi
