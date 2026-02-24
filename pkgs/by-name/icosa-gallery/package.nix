@@ -17,7 +17,7 @@ let
   };
   python3Packages = python3'.pkgs;
 in
-python3Packages.buildPythonApplication rec {
+python3Packages.buildPythonApplication (finalAttrs: {
   pname = "icosa-gallery";
   version = "0-unstable-2026-01-15";
   pyproject = false;
@@ -29,7 +29,7 @@ python3Packages.buildPythonApplication rec {
     hash = "sha256-w/PF/65eIkg9OgIzWw8VEGKVuepEf8C/xXjeyiLzH+I=";
   };
 
-  sourceRoot = "${src.name}/django";
+  sourceRoot = "${finalAttrs.src.name}/django";
 
   patches = [
     ./BASE_DIR.patch
@@ -107,7 +107,7 @@ python3Packages.buildPythonApplication rec {
 
   postFixup =
     let
-      pythonPath = python3Packages.makePythonPath dependencies;
+      pythonPath = python3Packages.makePythonPath finalAttrs.finalPackage.dependencies;
     in
     ''
       wrapProgram $out/opt/icosa-gallery/gunicorn \
@@ -122,4 +122,4 @@ python3Packages.buildPythonApplication rec {
     teams = with lib.teams; [ ngi ];
     mainProgram = "icosa-gallery";
   };
-}
+})

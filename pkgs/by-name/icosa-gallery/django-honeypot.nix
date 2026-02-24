@@ -7,7 +7,7 @@
   hatchling,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "django-honeypot";
   version = "1.3.0";
   pyproject = true;
@@ -16,7 +16,7 @@ buildPythonPackage rec {
     domain = "codeberg.org";
     owner = "jpt";
     repo = "django-honeypot";
-    tag = version;
+    tag = finalAttrs.version;
     hash = "sha256-8j1/p+GD8ac+y/TT2K6SvJAYogAX3QC12LExt/nJeYk=";
   };
 
@@ -39,4 +39,4 @@ buildPythonPackage rec {
     maintainers = with lib.maintainers; [ prince213 ];
     teams = with lib.teams; [ ngi ];
   };
-}
+})

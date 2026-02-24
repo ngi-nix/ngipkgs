@@ -6,7 +6,7 @@
   setuptools,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "django-admin-tools";
   version = "0.9.3";
   pyproject = true;
@@ -14,7 +14,7 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "django-admin-tools";
     repo = "django-admin-tools";
-    tag = version;
+    tag = finalAttrs.version;
     hash = "sha256-Ul+XEAiemDj26lQpJqBV+pxxhUui1YXZkkxO6wPhEOY=";
   };
 
@@ -33,4 +33,4 @@ buildPythonPackage rec {
     maintainers = with lib.maintainers; [ prince213 ];
     teams = with lib.teams; [ ngi ];
   };
-}
+})

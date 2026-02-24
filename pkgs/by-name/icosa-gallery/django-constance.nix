@@ -10,7 +10,7 @@
   wheel,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "django-constance";
   version = "4.3.4";
   pyproject = true;
@@ -18,7 +18,7 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "jazzband";
     repo = "django-constance";
-    tag = version;
+    tag = finalAttrs.version;
     hash = "sha256-fs4P4lk6K5eceQ82o7/mW1JLgfuTR0k4799X0VWnG54=";
   };
 
@@ -49,4 +49,4 @@ buildPythonPackage rec {
     maintainers = with lib.maintainers; [ prince213 ];
     teams = with lib.teams; [ ngi ];
   };
-}
+})
