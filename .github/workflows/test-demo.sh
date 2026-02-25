@@ -13,6 +13,9 @@ _pkg_install() {
     *archlinux*)
         pacman -Syu --noconfirm "${pkgs[@]}"
         ;;
+    *fedora*)
+        dnf install -y "${pkgs[@]}"
+        ;;
     *)
         echo "ERROR: Unknown distro '$DISTRO'. Exiting ..." >&2
         exit 1

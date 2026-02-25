@@ -20,6 +20,8 @@ jobs:
           - "debian:unstable"
           - "ubuntu:24.04"
           - "ubuntu:25.04"
+          - "fedora"
+          - "fedora:rawhide"
           # TODO: ubuntu:devel
         project:
           - "Cryptpad"

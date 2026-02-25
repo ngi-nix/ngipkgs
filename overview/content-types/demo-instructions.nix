@@ -58,6 +58,16 @@ in
             }
           ];
         }
+        {
+          platform = "Fedora";
+          shell-session.bash = [
+            {
+              input = ''
+                dnf install -y curl git jq nix
+              '';
+            }
+          ];
+        }
       ];
     };
     nix-config = mkOption {
@@ -123,6 +133,16 @@ in
         }
         {
           platform = "Arch";
+          shell-session.bash = [
+            {
+              input = ''
+                nix-build ./default.nix && ./result
+              '';
+            }
+          ];
+        }
+        {
+          platform = "Fedora";
           shell-session.bash = [
             {
               input = ''
