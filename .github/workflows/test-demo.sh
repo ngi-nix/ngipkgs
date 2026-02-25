@@ -23,7 +23,7 @@ _pkg_install() {
 install_nix() {
     _pkg_install curl
 
-    if [[ "$INSTALLER" == "experimental" ]]; then
+    if [[ "$INSTALLER" != "distro" ]]; then
         curl -sSfL https://artifacts.nixos.org/nix-installer | sh -s -- install linux --no-confirm --init none
         source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         return
