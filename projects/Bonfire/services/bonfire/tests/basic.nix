@@ -66,8 +66,8 @@
 
       with subtest("start bonfire"):
         machine.wait_for_unit("bonfire.service")
-        machine.wait_for_open_port(${toString nodes.machine.config.services.bonfire.settings.PUBLIC_PORT})
-        machine.wait_for_open_port(${toString nodes.machine.config.services.bonfire.settings.SERVER_PORT})
+        machine.wait_for_open_port(${toString nodes.machine.services.bonfire.settings.PUBLIC_PORT})
+        machine.wait_for_open_port(${toString nodes.machine.services.bonfire.settings.SERVER_PORT})
 
       # ToDo(security): whenever bonfire supports Unix socket
       # with subtest("check bonfire socket"):
