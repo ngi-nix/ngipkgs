@@ -10,13 +10,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "0wm-client";
-  version = "0-unstable-2025-10-27";
+  version = "0-unstable-2026-02-26";
 
   src = fetchFromGitHub {
     owner = "lab0-cc";
     repo = "0WM-Client";
-    rev = "1765193f33021ae9b5e7523c13c3715796d18756";
-    hash = "sha256-jmWjegt5OyBk4XyqDiWETVRZKxLXV5jOb3MBNGiVl60=";
+    rev = "da562e29da906f6ea946da656056f420c751e43b";
+    hash = "sha256-Sy5/4zxnZWPmYBJlpOgrGUjVvOhBFRqILDqDntCrxJk=";
     fetchSubmodules = true;
   };
 
