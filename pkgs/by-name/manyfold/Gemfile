@@ -28,7 +28,7 @@ gem "acts-as-taggable-on", "~> 13.0"
 gem "ffi-libarchive", "~> 1.1"
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", "~> 1.22", require: false
+gem "bootsnap", "~> 1.23", require: false
 
 # Database adapters
 gem "activerecord-enhancedsqlite3-adapter", "~> 0.8"
@@ -41,7 +41,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
   gem "rspec-rails"
-  gem "standard", "~> 1.53"
+  gem "standard", "~> 1.54"
   gem "factory_bot"
   gem "faker", "~> 3.6"
   gem "guard", "~> 2.20"
@@ -70,7 +70,7 @@ end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem "web-console", "~> 4.1"
+  gem "web-console", "~> 4.3"
   gem "scout_apm"
   gem "listen", "~> 3.10"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
@@ -168,7 +168,7 @@ gem "omniauth_openid_connect", "~> 0.8"
 gem "sidekiq-cron", "~> 2.3"
 
 group :development, :production do
-  gem "sys-cpu", "~> 1.1"
+  gem "sys-cpu", "~> 1.2"
   gem "get_process_mem", "~> 1.0"
   gem "rails_performance", "~> 1.6"
   gem "redis-namespace"
@@ -228,4 +228,6 @@ gem "noticed", "~> 3.0"
 
 gem "devise_invitable", "~> 2.0"
 
-gem "user_agent_parser", "~> 2.20"
+gem "user_agent_parser", "~> 2.21"
+
+gem "marcel", "~> 1.1"
