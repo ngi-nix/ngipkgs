@@ -9,13 +9,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "0wm-ap-mock";
-  version = "0-unstable-2025-10-27";
+  version = "0-unstable-2026-02-26";
 
   src = fetchFromGitHub {
     owner = "lab0-cc";
     repo = "0WM-AP-Mock";
-    rev = "dcc0d14826e56c02f0f538303c59115326dd8a47";
-    hash = "sha256-ywii5ca6UIsHplLZf6jGBfbziTaoC8qbyvqJcChFTPc=";
+    rev = "4a61e6cfdd103a69bc861899eae58336ab572159";
+    hash = "sha256-VVc/ZI+F8EGzKj3JCaKr1bHxROEUBE0hiZ2mnvemSlg=";
   };
 
   nativeBuildInputs = [
