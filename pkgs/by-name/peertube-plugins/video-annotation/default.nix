@@ -5,14 +5,14 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-video-annotation";
-  version = "0-unstable-2025-11-20";
+  version = "0-unstable-2025-12-18";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "b0f4f4ba5c6708ebade66dc1b17000ca640ad9e9";
-    hash = "sha256-6yFcBmtKKSD6mfVAQsHDXaxb8i9t4LvN2eelQrjL7Hc=";
+    rev = "b035a3b7b109b1227c9afa6d105ea8d017bcf963";
+    hash = "sha256-mgIOklLsdJNMw7ccoyOcfpf72W2KI5BvPpCtrCmh6bQ=";
   };
 
   # prepare script breaks installation at peertube plugin time
@@ -23,7 +23,7 @@ buildNpmPackage (finalAttrs: {
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-video-annotation";
 
-  npmDepsHash = "sha256-1/9RQZHiUtZFFycIBewGUSImGKUJdv4flZv5EaIJ02E=";
+  npmDepsHash = "sha256-+YymJE1vxwXJnAY2v7ppQ76fW7k23rdzvg+1E1E0Lqc=";
 
   meta = {
     description = "Add a field in the video form so users can set annotation to their video";
