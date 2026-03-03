@@ -78,7 +78,7 @@ in
     };
     tests = mkOption {
       description = "at least one test for the example";
-      type = with types; attrsOf test;
+      type = with types; lazyAttrsOf test;
       default = { };
     };
     links = mkOption {
