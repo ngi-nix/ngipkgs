@@ -8,12 +8,12 @@
   callPackage,
 }:
 let
-  FLAVOUR = bonfire.passthru.env.FLAVOUR;
+  FLAVOUR = bonfire.FLAVOUR;
 in
 # Documentation: manuals/Contributor/How_to/update/pkgs/bonfire.md
 {
   script = writeShellApplication {
-    name = "bonfire-update";
+    name = "bonfire-update-${FLAVOUR}";
     runtimeInputs = [
       bonfire.passthru.yarn-berry.yarn-berry-fetcher
       coreutils
@@ -29,35 +29,37 @@ in
       # Explanation: updating the extensions
       # must come before updating the dependencies in `deps.nix`,
       # which uses the extensions.
-      (lib.concatMapStringsSep "\n" (flavour: ''
-        mkdir -p pkgs/by-name/bonfire/extensions/${flavour}
+      (lib.concatMapStringsSep "\n" (ext: ''
+        mkdir -p pkgs/by-name/bonfire/extensions/${ext.name}
         {
-          echo "{fetchFromGitHub, ...}:"
-          nurl https://github.com/bonfire-networks/${flavour}
-        } >pkgs/by-name/bonfire/extensions/${flavour}/fetchFromGitHub.nix
-      '') (lib.map (ext: ext.repo) bonfire.passthru.flavour-extensions))
+          echo "{ fetchFromGitHub, ... }:"
+          nurl https://github.com/bonfire-networks/${ext.name}
+          echo
+        } >pkgs/by-name/bonfire/extensions/${ext.name}/fetchFromGitHub.nix
+      '') bonfire.passthru.flavour-extensions)
 
-      # Description: update pkgs/by-name/bonfire/${FLAVOUR}/deps.nix
+      # Description: update pkgs/by-name/bonfire/extensions/${FLAVOUR}/deps.nix
       # using deps_nix.
       # bash
       ''
         deps=$(
             nix -L --show-trace --extra-experimental-features "nix-command" \
                 build \
+                --rebuild \
                 --option sandbox relaxed \
                 --no-link --print-out-paths \
-                --repair \
-                --refresh \
                 -f . \
                 bonfire.${FLAVOUR}.passthru.update.package
         )
         cp -f "$deps" pkgs/by-name/bonfire/extensions/${FLAVOUR}/deps.nix
       ''
 
-      # Description: update Rust and Yarn dependencies depending on `deps.nix`.
+      # Description: update Rust and Yarn dependencies depending on `deps.nix` for `FLAVOUR`,
+      # but not for the extensions that `FLAVOUR` depends on.
+      # This must currently be done when considering those extensions as a flavour themselves.
       ''
         nix --extra-experimental-features "nix-command" -L run \
-          -f . bonfire.${FLAVOUR}.updateScripts
+          -f . bonfire.${FLAVOUR}.update.after-mixNixDeps
       ''
     ];
   };
