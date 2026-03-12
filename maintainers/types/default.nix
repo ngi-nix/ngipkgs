@@ -5,6 +5,8 @@
 */
 {
   lib,
+  pkgs,
+  sources,
   ...
 }@args:
 let
