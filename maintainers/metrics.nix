@@ -38,19 +38,20 @@ let
       metadata = {
         subgrants = mapAttrs (_: length) p.metadata.subgrants;
       };
-      nixos = {
-        tests = countComponent p.nixos "tests";
-        examples = countComponent p.nixos "examples";
-      }
-      // optionalAttrs (p ? nixos.modules.services) {
-        services = countComponent p.nixos.modules "services";
-      }
-      // optionalAttrs (p ? nixos.modules.programs) {
-        programs = countComponent p.nixos.modules "programs";
-      }
-      // optionalAttrs (p ? nixos.demo) {
-        demos = countComponent p.nixos "demo";
-      };
+      nixos =
+        {
+          tests = countComponent p.nixos "tests";
+          examples = countComponent p.nixos "examples";
+        }
+        // optionalAttrs (p ? nixos.modules.services) {
+          services = countComponent p.nixos.modules "services";
+        }
+        // optionalAttrs (p ? nixos.modules.programs) {
+          programs = countComponent p.nixos.modules "programs";
+        }
+        // optionalAttrs (p ? nixos.demo) {
+          demos = countComponent p.nixos "demo";
+        };
     }
   ) raw-projects;
 
@@ -81,12 +82,12 @@ let
       lib.foldl (acc: name: acc // { "${name}" = accumulate name; }) acc names
     ) { } project-metrics;
 
-  nixos-derivations =
+  nixpkgs-ngi-derivations =
     let
       maintained = import ./metrics-maintainer.nix { inherit pkgs; };
       packages = pkgs.writeText "packages" (lib.strings.toJSON maintained.packages);
     in
-    pkgs.runCommand "nixos-derivations"
+    pkgs.runCommand "nixpkgs-ngi-derivations"
       {
         nativeBuildInputs = with pkgs; [ jq ];
       }
@@ -109,21 +110,21 @@ let
       '';
 
   /*
-    Summary of NGIpkgs and NixOS metrics.
+    Summary of NGIpkgs and Nixpkgs metrics.
 
     # Outputs
 
-    ## NGIpkgs
+    ## ngipkgs
 
-    Metrics related to the NGIpkgs monorepo.
+    Metrics related to packages in the NGIpkgs monorepo.
 
     - `derivations`
 
-      : Number of derivations maintained in NGIpkgs
+      : Number of package derivations maintained in the NGIpkgs monorepo
 
     - `update-scripts`
 
-      : Number of derivations maintained in NGIpkgs that have an explicit update script
+      : Number of package derivations in NGIpkgs that have an explicit update script
 
     - `metadata`
 
@@ -137,17 +138,21 @@ let
 
       : Number of NGI-funded projects in NGIpkgs
 
-    ## NixOS
+    ## nixpkgs
 
-    Metrics related to NixOS.
+    Metrics related to packages in upstream Nixpkgs maintained by the NGI team.
 
     - `derivations`
 
-      : Number of derivations maintained in Nixpkgs
+      : Number of package derivations in upstream Nixpkgs maintained by the NGI team
 
     - `update-scripts`
 
-      : Number of derivations maintained in Nixpkgs that have an explicit update script
+      : Number of package derivations in upstream Nixpkgs (maintained by NGI team) that have an explicit update script
+
+    ## nixos
+
+    Metrics related to NixOS modules, tests, and examples in NGIpkgs.
 
     - `programs`
 
@@ -178,17 +183,18 @@ let
       };
       update-scripts = length (filter (d: d ? passthru.updateScript) (attrValues ngipkgs));
     };
-    nixos = (countAttrs "nixos") // {
-      derivations = length (lib.importJSON "${nixos-derivations}/packages.json");
-      update-scripts = length (lib.importJSON "${nixos-derivations}/packages-update-scripts.json");
+    nixpkgs = {
+      derivations = length (lib.importJSON "${nixpkgs-ngi-derivations}/packages.json");
+      update-scripts = length (lib.importJSON "${nixpkgs-ngi-derivations}/packages-update-scripts.json");
     };
+    nixos = countAttrs "nixos";
   };
 in
 rec {
   inherit
     project-metrics
     summary
-    nixos-derivations
+    nixpkgs-ngi-derivations
     ;
 
   metrics = {
