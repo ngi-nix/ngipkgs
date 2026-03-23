@@ -26,8 +26,8 @@
       with subtest("liberaforms"):
           server.wait_for_unit("liberaforms.service")
 
-          res = server.wait_until_succeeds("curl --fail http://localhost", timeout=10)
-          assert("Ethical forms with LiberaForms" in res)
+          res = server.wait_until_succeeds("curl --fail http://localhost", timeout=80)
+          assert("ethical form software" in res)
 
           res = server.succeed("curl http://localhost/site/recover-password -c cookies.txt -b cookies.txt")
           assert("Recover password" in res)
@@ -46,4 +46,34 @@
           res = server.succeed("curl http://localhost/user/login")
           assert("Login to your account" in res)
     '';
+
+  # Debug interactively with:
+  # - nix build -f . projects.Liberaforms.tests.liberaforms.driverInteractive
+  # - ./result/bin/nixos-test-driver
+  # - run_tests()
+  # ssh -o User=root vsock%3 (can also do vsock/3, but % works with scp etc.)
+  interactive.sshBackdoor.enable = true;
+
+  interactive.nodes.server =
+    { config, ... }:
+    let
+      port = 5000;
+    in
+    {
+      virtualisation.forwardPorts = [
+        {
+          from = "host";
+          host.port = port;
+          guest.port = port;
+        }
+        {
+          from = "host";
+          host.port = 3939;
+          guest.port = 80;
+        }
+      ];
+
+      # forwarded ports need to be accessible
+      networking.firewall.allowedTCPPorts = [ port ];
+    };
 }

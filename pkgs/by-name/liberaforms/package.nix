@@ -67,7 +67,6 @@ let
           rev = "rel_${lib.replaceStrings [ "." ] [ "_" ] version}";
           hash = "sha256-RVpreszvd5hn9BLzvnfKT4nibUuybtZwBRloe5NaP/E=";
         };
-        env.NIX_CFLAGS_COMPILE = "-Wno-error=implicit-function-declaration";
         disabledTestPaths = [
           # typing correctness, not interesting
           "test/ext/mypy"
@@ -139,7 +138,7 @@ python3Packages.buildPythonPackage (finalAttrs: {
     flask-login
     flask-marshmallow
     flask-migrate
-    flask-session
+    flask-session2
     flask-sqlalchemy
     flask-wtf
     greenlet
