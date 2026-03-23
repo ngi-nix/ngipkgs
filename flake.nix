@@ -1,8 +1,6 @@
 {
   description = "NGIpkgs";
 
-  inputs.dream2nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.dream2nix.url = "github:nix-community/dream2nix";
   inputs.flake-utils.inputs.systems.follows = "systems";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
