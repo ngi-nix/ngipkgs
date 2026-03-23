@@ -11,6 +11,7 @@ let
       django-admin-tools = final.callPackage ./django-admin-tools.nix { };
       django-constance = final.callPackage ./django-constance.nix { };
       django-honeypot = final.callPackage ./django-honeypot.nix { };
+      django-silk = final.callPackage ./django-silk.nix { };
       django-simple-math-captcha = final.callPackage ./django-simple-math-captcha.nix { };
       ixxy-email-logger = final.callPackage ./ixxy-email-logger.nix { };
     };
