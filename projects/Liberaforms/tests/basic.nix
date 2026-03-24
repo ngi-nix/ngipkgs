@@ -56,16 +56,8 @@
 
   interactive.nodes.server =
     { config, ... }:
-    let
-      port = 5000;
-    in
     {
       virtualisation.forwardPorts = [
-        {
-          from = "host";
-          host.port = port;
-          guest.port = port;
-        }
         {
           from = "host";
           host.port = 3939;
@@ -74,6 +66,6 @@
       ];
 
       # forwarded ports need to be accessible
-      networking.firewall.allowedTCPPorts = [ port ];
+      networking.firewall.allowedTCPPorts = [ 80 ];
     };
 }
