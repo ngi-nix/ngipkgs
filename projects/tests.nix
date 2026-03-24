@@ -24,7 +24,6 @@ let
           # kmscon allows zooming with [Ctrl] + [+] and [Ctrl] + [-]
           services.kmscon = {
             enable = true;
-            autologinUser = "root";
             fonts = [
               {
                 name = "Hack";
@@ -32,6 +31,7 @@ let
               }
             ];
           };
+          services.getty.autologinUser = "root";
         };
       debugging.interactive.nodes = lib.mapAttrs (_: _: tools) test.nodes;
       args = {
