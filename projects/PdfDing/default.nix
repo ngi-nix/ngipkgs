@@ -4,6 +4,11 @@
   sources,
   ...
 }@args:
+let
+  brokenReason = ''
+    pdfding derivation is broken in nixpkgs, fix at https://github.com/NixOS/nixpkgs/pull/496164
+  '';
+in
 {
   metadata = {
     summary = "Web-based selfhosted PDF manager, viewer and editor";
@@ -32,16 +37,19 @@
           module = ./services/pdfding/examples/basic.nix;
           description = "Sqlite default service";
           tests.basic.module = ./services/pdfding/tests/basic.nix;
+          tests.basic.problem.broken.reason = brokenReason;
         };
         postgres = {
           module = ./services/pdfding/examples/postgres.nix;
           description = "Postgres and consume feature";
           tests.postgres.module = ./services/pdfding/tests/postgres.nix;
+          tests.postgres.problem.broken.reason = brokenReason;
         };
         s3-backups = {
           module = ./services/pdfding/examples/s3-backups.nix;
           description = "Backup feature of pdfding";
           tests.s3-backups.module = ./services/pdfding/tests/s3-backups.nix;
+          tests.s3-backups.problem.broken.reason = brokenReason;
         };
       };
       links = {
@@ -55,6 +63,7 @@
 
   # e2e not tied to an example
   nixos.tests.e2e.module = pkgs.nixosTests.pdfding.e2e;
+  nixos.tests.e2e.problem.broken.reason = brokenReason;
 
   nixos.demo.vm = {
     module = ./demo/module.nix;
@@ -84,6 +93,7 @@
         '';
       }
     ];
-    tests.basic.module = pkgs.nixosTests.pdfding.basic;
+    tests.basic.module = ./services/pdfding/tests/basic.nix;
+    tests.basic.problem.broken.reason = brokenReason;
   };
 }
