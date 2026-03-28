@@ -6,8 +6,6 @@
 {
   name = "NodeBB";
 
-  interactive.sshBackdoor.enable = true;
-
   nodes.machine = {
     imports = [
       sources.modules.ngipkgs
@@ -26,4 +24,10 @@
 
       machine.succeed("curl -v ${nodes.machine.services.nodebb.settings.url} >&2")
     '';
+
+  # Debug interactively with:
+  # - nix build -f . projects.NodeBB.tests.postgresql.driverInteractive -L && ./result/bin/nixos-test-driver
+  # - start_all()/run_tests()
+  # ssh -o User=root vsock%3 (can also do vsock/3, but % works with scp etc.)
+  interactive.sshBackdoor.enable = true;
 }
