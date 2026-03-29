@@ -3,7 +3,6 @@
   stdenvNoCC,
   callPackage,
   fetchFromGitHub,
-  fetchpatch,
   writeShellApplication,
   bashInteractive,
   ghdl,
@@ -21,7 +20,6 @@ let
   nextpnr-xilinx = callPackage ./nix/nextpnr-xilinx.nix { };
   prjxray = callPackage ./nix/prjxray.nix { };
   fasm = callPackage ./nix/fasm {
-    inherit fetchpatch;
     inherit (python3Packages)
       buildPythonPackage
       pythonOlder

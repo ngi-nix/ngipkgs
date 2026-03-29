@@ -8,7 +8,6 @@
   cmake,
   textx,
   cython,
-  fetchpatch,
 }:
 
 buildPythonPackage rec {
