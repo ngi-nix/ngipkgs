@@ -38,7 +38,6 @@ let
     callPackage ./nix/nextpnr-xilinx-chipdb.nix {
       backend = name;
       inherit nextpnr-xilinx;
-      inherit prjxray;
     }
   );
 
@@ -47,7 +46,6 @@ let
     name = "openxc7-env";
     runtimeInputs = [
       fasm
-      prjxray
       nextpnr-xilinx
 
       yosys
@@ -66,9 +64,7 @@ let
       "NEXTPNR_XILINX_DIR" = "${nextpnr-xilinx}";
       "NEXTPNR_XILINX_PYTHON_DIR" = "${nextpnr-xilinx}/share/nextpnr/python/";
       "PRJXRAY_DB_DIR" = "${nextpnr-xilinx}/share/nextpnr/external/prjxray-db";
-      "PRJXRAY_PYTHON_DIR" = "${prjxray}/usr/share/python3/";
       "PYTHONPATH" = lib.strings.concatStringsSep ":" [
-        "${prjxray}/usr/share/python3"
         (python3Packages.makePythonPath (
           [
             fasm
@@ -124,7 +120,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   passthru.packages = {
     inherit
       nextpnr-xilinx
-      prjxray
       fasm
       ;
     inherit (nextpnr-xilinx-chipdb)
