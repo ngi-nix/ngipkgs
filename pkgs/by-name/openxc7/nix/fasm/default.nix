@@ -6,8 +6,11 @@
   fetchFromGitHub,
   pythonOlder,
   cmake,
+  jre_headless,
+  antlr4_9,
   textx,
   cython,
+  fetchpatch,
 }:
 
 buildPythonPackage rec {
@@ -22,17 +25,30 @@ buildPythonPackage rec {
     owner = "openxc7";
     repo = "fasm";
     rev = "2f57ccb1727a120e8cacbb95c578f3c71bdcc95a";
-    hash = "sha256-ZytcNJvXs+GUSIrf4dtYl+Hc5kEQmeJP+3BQOmQImIw=";
+    fetchSubmodules = true;
+    hash = "sha256-4Na24czHPGvxuNuWKDiLkoBamsbqjGQkaQc8ogYHtuA=";
   };
 
   nativeBuildInputs = [
     cmake
+    jre_headless
     cython
+  ];
+
+  buildInputs = [
+    antlr4_9.runtime.cpp
   ];
 
   propagatedBuildInputs = [
     textx
   ];
+
+  env.ANTLR4_RUNTIME_INCLUDE = "${antlr4_9.runtime.cpp.dev}/include/antlr4-runtime";
+
+  postPatch = ''
+    substituteInPlace setup.py \
+      --replace-fail "self.antlr_runtime = 'static'" "self.antlr_runtime = 'shared'"
+  '';
 
   dontUseCmakeConfigure = true;
 
