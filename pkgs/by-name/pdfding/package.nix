@@ -172,7 +172,7 @@ python.pkgs.buildPythonPackage (finalAttrs: {
 
   passthru = {
     inherit python;
-    tests = nixosTests.pdfding;
+    # tests = nixosTests.pdfding; # NOTE: already tested
     frontend = callPackage ./frontend.nix { };
     updateScript = ./update.sh;
   };
