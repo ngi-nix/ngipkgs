@@ -2,7 +2,6 @@
   _experimental-update-script-combinators,
   callPackage,
   fetchFromGitHub,
-  fetchpatch2,
   gitMinimal,
   gitUpdater,
   lib,
@@ -43,11 +42,7 @@ lib.recurseIntoAttrs (
           patches = [
             # ToDo(maint/update): remove when merged upstream
             # PR: https://github.com/bonfire-networks/bonfire-app/pull/1821
-            (fetchpatch2 {
-              name = "fix-vix";
-              url = "https://github.com/bonfire-networks/bonfire-app/commit/98d38c339f467ed43f7572ae36cd2ca905927efe.patch";
-              hash = "sha256-7W7CYdP02F/aFa1+hT0FHNngywrO6hTg1/Nw441bd5A=";
-            })
+            ./fix-vix.patch
           ];
 
           env = previousAttrs.env or { } // {
