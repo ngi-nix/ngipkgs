@@ -4,6 +4,7 @@
   fetchpatch2,
   python3,
   python3Packages,
+  protobuf_32,
   enableContrib ? true,
   enableCuda ? false,
   apply_patch_py,
@@ -14,6 +15,7 @@ let
 in
 (python3Packages.opencv4.override {
   inherit enableContrib;
+  protobuf = protobuf_32;
   # Explanation: match CMAKE_OPENCV_IMG_CODER_SELECTION in evision/Makefile
   enableEXR = true;
   enableJPEG = true;
