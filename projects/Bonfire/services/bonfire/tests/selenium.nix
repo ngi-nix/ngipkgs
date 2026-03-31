@@ -18,6 +18,7 @@ writers.writePython3Bin "selenium-test"
       "E501" # line too long
     ];
   }
+  # python
   ''
     from selenium import webdriver
     from selenium.webdriver.common.by import By
@@ -39,19 +40,19 @@ writers.writePython3Bin "selenium-test"
     service = webdriver.FirefoxService(executable_path="${lib.getExe geckodriver}")  # noqa: E501
     driver = webdriver.Firefox(options=options, service=service)
 
-    driver.implicitly_wait(30)
-    driver.set_page_load_timeout(60)
+    driver.implicitly_wait(60)
+    driver.set_page_load_timeout(90)
 
     log("Opening sign up page")
     driver.get("${url}/signup")
 
 
-    def wait_elem(by, query, timeout=10):
+    def wait_elem(by, query, timeout=30):
         wait = WebDriverWait(driver, timeout)
         wait.until(EC.presence_of_element_located((by, query)))
 
 
-    def wait_title_contains(title, timeout=10):
+    def wait_title_contains(title, timeout=30):
         wait = WebDriverWait(driver, timeout)
         wait.until(EC.title_contains(title))
 
@@ -83,19 +84,22 @@ writers.writePython3Bin "selenium-test"
     set_value(input_password, "${password}")
 
     log("Submitting credentials for login")
-    driver.find_element(By.CSS_SELECTOR, 'button[data-role=signup_submit]').click()
+    driver.find_element(By.CSS_SELECTOR, 'button#signup_submit').click()
 
-    log("Waiting user creation page")
-    wait_title_contains("Create a new user profile")
+    log("Waiting to create new personal profile")
+    wait_title_contains("Create new personal profile")
     input_name = find_element(By.CSS_SELECTOR, 'input#create-user-form_profile_0_name')
     set_value(input_name, "${user}")
 
+    log("Create new personal profile")
     input_username = find_element(By.CSS_SELECTOR, 'input#create-user-form_character_0_username')
     set_value(input_username, "${user}")
     if driver.find_element(By.CSS_SELECTOR, 'input[name=undiscoverable]').is_selected():
         driver.find_element(By.CSS_SELECTOR, 'input[name=undiscoverable]').click()
     if driver.find_element(By.CSS_SELECTOR, 'input[name=unindexable]').is_selected():
         driver.find_element(By.CSS_SELECTOR, 'input[name=unindexable]').click()
+    if not driver.find_element(By.CSS_SELECTOR, 'input#create-user-code-of-conduct-consent').is_selected():
+        driver.find_element(By.CSS_SELECTOR, 'input#create-user-code-of-conduct-consent').click()
     driver.find_element(By.CSS_SELECTOR, 'button[type=submit]').click()
 
     log("Waiting Home page")

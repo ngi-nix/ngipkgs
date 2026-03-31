@@ -2,11 +2,14 @@
   lib,
   fetchFromGitHub,
   fetchpatch2,
+  jq,
   python3,
   python3Packages,
   enableContrib ? true,
   enableCuda ? false,
   apply_patch_py,
+  sysprof,
+  libsysprof-capture,
   ...
 }:
 let
@@ -24,59 +27,67 @@ in
 }).overrideAttrs
   (
     finalAttrs: previousAttrs: {
-      # Explanation: nixpkgs's opencv-4.12.0 is not (yet) supported by evision-0.2.14
-      # and more specifically, gen2.py's flags where changed substantialy in opencv-4.12.0:
-      # https://github.com/opencv/opencv/pull/27325
-      #
-      # ToDo(maintenance/update): once evision supports opencv-4.12.0
-      # this version may be able to match nixpkgs' version.
-      version = "4.11.0";
+      # Explanation: match evision-0.2.17's `OPENCV_VER`
+      version = "4.13.0";
 
       src = fetchFromGitHub {
         owner = "opencv";
         repo = "opencv";
         tag = finalAttrs.version;
-        hash = "sha256-oiU4CwoMfuUbpDtujJVTShMCzc5GsnIaprC4DzkSzEM=";
+        hash = "sha256-h9gpSf+xf/OafQSCYq3JYBt/ShnxafSG7WbxesTjM/A=";
       };
-      patches = [
-        # ToDo(maintenance/update): remove this patch on opencv-4.12.0
-        #
-        # Explanation: frontporting opencv-4.11.0 to nixos-25.11
-        # stumbles on the new ffmpeg-8 in nixos-25.11.
-        # Issue: https://github.com/opencv/opencv/issues/27688
-        (fetchpatch2 {
-          name = "FFmpeg 8.0 support";
-          url = "https://github.com/opencv/opencv/pull/27691.patch";
-          hash = "sha256-wRL2mLxclO5NpWg1rBKso/8oTO13I5XJ6pEW+Y3PsPc=";
-        })
+      /*
+        patches = [
+          # ToDo(maintenance/update): remove this patch on opencv-4.12.0
+          #
+          # Explanation: frontporting opencv-4.11.0 to nixos-25.11
+          # stumbles on the new ffmpeg-8 in nixos-25.11.
+          # Issue: https://github.com/opencv/opencv/issues/27688
+          (fetchpatch2 {
+            name = "FFmpeg 8.0 support";
+            url = "https://github.com/opencv/opencv/pull/27691.patch";
+            hash = "sha256-wRL2mLxclO5NpWg1rBKso/8oTO13I5XJ6pEW+Y3PsPc=";
+          })
 
-        # ToDo(maintenance/update): remove this patch on opencv-4.12.0
-        #
-        # Explanation: frontporting opencv-4.11.0 to nixos-25.11
-        # stumbles on the new cmake-4 in nixos-25.11,
-        # which deprecated too old cmake_minimum_required() in CMakeLists.txt
-        # that BUILD_JASPER=ON + WITH_ADE=ON still expects.
-        (fetchpatch2 {
-          name = "Fix configuring with CMake version 4";
-          url = "https://github.com/opencv/opencv/pull/27192.patch";
-          hash = "sha256-1yzOU9xR5LmdxzczM4sXuDyZ/DCLJApAQMUQE2mmAlg=";
-        })
-      ];
+          # ToDo(maintenance/update): remove this patch on opencv-4.12.0
+          #
+          # Explanation: frontporting opencv-4.11.0 to nixos-25.11
+          # stumbles on the new cmake-4 in nixos-25.11,
+          # which deprecated too old cmake_minimum_required() in CMakeLists.txt
+          # that BUILD_JASPER=ON + WITH_ADE=ON still expects.
+          (fetchpatch2 {
+            name = "Fix configuring with CMake version 4";
+            url = "https://github.com/opencv/opencv/pull/27192.patch";
+            hash = "sha256-1yzOU9xR5LmdxzczM4sXuDyZ/DCLJApAQMUQE2mmAlg=";
+          })
+        ];
+      */
 
-      # Explanation: nixos-25.11#opencv4's contribSrc's version
+      # Explanation: nixos-26.05#opencv4's contribSrc's version
       # is not using finalAttrs.version
       # so override postUnpack with the correct one.
       opencvContribSrc = fetchFromGitHub {
         owner = "opencv";
         repo = "opencv_contrib";
         tag = finalAttrs.version;
-        hash = "sha256-YNd96qFJ8SHBgDEEsoNps888myGZdELbbuYCae9pW3M=";
+        hash = "sha256-8YRCq1H9afb1a0pVevH0x61SMW4dTpLAno/P9A6bOIg=";
       };
       postUnpack = ''
-        cp --no-preserve=mode -r "${finalAttrs.opencvContribSrc}/modules" "$NIX_BUILD_TOP/source/opencv_contrib"
+        cp --no-preserve=mode -r "${finalAttrs.opencvContribSrc}/modules" "$sourceRoot/opencv_contrib"
+        # Required for apply_patch to find `opencv_contrib`,
+        # eg. for `patch_ocr_tesseract_run_with_components`
+        mkdir $sourceRoot/opencv_contrib-${finalAttrs.version}
+        ln -s ../opencv_contrib $sourceRoot/opencv_contrib-${finalAttrs.version}/modules
       '';
 
-      nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [ python3 ];
+      nativeBuildInputs = previousAttrs.nativeBuildInputs or [ ] ++ [
+        jq
+        python3
+      ];
+      buildInputs = previousAttrs.buildInputs or [ ] ++ [
+        sysprof
+        libsysprof-capture
+      ];
 
       # Explanation(compatibility): evision has an unusual way to patch opencv:
       # a Python script.
@@ -190,18 +201,22 @@ in
       # > from the python module in the OpenCV repo so that they output header files
       # > that can be used in Elixir bindings
       #
-      # For that evision needs a headers.txt generated for Python
+      # For that evision needs a gen_python_config.json generated for Python
       # listing the .hpp files to consider.
       # Unfortunately those files are absolute path in $NIX_BUILD_TOP,
-      # they need to be fixed to point to $out, and installed there.
+      # they need to be fixed to point to somewhere in $out.
+      # Note that $out/include/ cannot be used reliably
+      # since some headers are not installed at all yet required by evision.
       postInstall = previousAttrs.postInstall or "" + ''
-        OPENCV_HEADERS_TXT=$NIX_BUILD_TOP/$sourceRoot/build/modules/python_bindings_generator/headers.txt
+        pushd "$NIX_BUILD_TOP/$sourceRoot"
+        find . \( -name "*.hpp" -or -name "*.h" \) \
+             -exec sh -xc 'install -Dm644 -t$out/source/''${1%/*} $1' -- {} \;
+        OPENCV_HEADERS="build/modules/python_bindings_generator/gen_python_config.json"
         mkdir -p $out/modules/python_bindings_generator/
-        while IFS= read -r header; do
-          h=$(realpath --relative-to "$NIX_BUILD_TOP" "$header")
-          install -Dm644 "$header" "$out/$h"
-          echo "$out/$h"
-        done <"$OPENCV_HEADERS_TXT" >$out/modules/python_bindings_generator/headers${lib.optionalString enableContrib "-contrib"}.txt
+        jq '.headers |= map(sub("^'"$NIX_BUILD_TOP"'"; "'$out'"))' \
+          <"$OPENCV_HEADERS" \
+          >$out/modules/python_bindings_generator/gen_python_config${lib.optionalString enableContrib "-contrib"}.json
+        popd
       '';
     }
   )

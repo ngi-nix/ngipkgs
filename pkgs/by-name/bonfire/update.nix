@@ -10,7 +10,6 @@
 let
   FLAVOUR = bonfire.FLAVOUR;
 in
-# Documentation: manuals/Contributor/How_to/update/pkgs/bonfire.md
 {
   script = writeShellApplication {
     name = "bonfire-update-${FLAVOUR}";
@@ -58,6 +57,7 @@ in
       # This must currently be done when considering those extensions as a flavour themselves.
       ''
         nix --extra-experimental-features "nix-command" -L run \
+          --option sandbox relaxed \
           -f . bonfire.${FLAVOUR}.update.after-mixNixDeps
       ''
     ];
@@ -66,7 +66,6 @@ in
   package = callPackage ../../../profiles/pkgs/development/beam-modules/mix-update.nix {
     package = bonfire.overrideAttrs (previousAttrs: {
       pname = "${previousAttrs.pname}-${FLAVOUR}";
-      preBuild = "";
       postPatch =
         previousAttrs.postPatch or ""
         + lib.concatStringsSep "\n" [
@@ -75,6 +74,26 @@ in
             cat >>config/config.exs <<EOF
             config :bonfire_common, Bonfire.Common.Localise.Cldr,
               force_locale_download: false
+            EOF
+          ''
+          # Explanation: re-enable downloading of precompiled Rust libs.
+          ''
+            cat >>config/config.exs <<EOF
+            config :decent,
+                    Decent.Native,
+                    skip_compilation?: true
+            config :lumis,
+                    Lumis.Native,
+                    skip_compilation?: true
+            config :mdex_native,
+                    MDEx.Native,
+                    skip_compilation?: true
+            config :mjml,
+                    Mjml.Native,
+                    skip_compilation?: true
+            config :tokenizers,
+                    Tokenizers.Native,
+                    skip_compilation?: true,
             EOF
           ''
         ];

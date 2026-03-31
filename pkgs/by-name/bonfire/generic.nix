@@ -1,6 +1,8 @@
 {
+  stdenv,
   beam,
   bonfire,
+  cacert,
   callPackage,
   callPackages,
   cmake,
@@ -12,6 +14,9 @@
   nix,
   nodejs,
   nurl,
+  cargo,
+  oniguruma,
+  pkg-config,
   runCommandLocal,
   rustPlatform,
   writeShellApplication,
@@ -21,7 +26,9 @@
   ...
 }:
 let
-  beamPkgs = beam.packages.erlang_28.extend (
+  # ToDo(maintenance): use erlang_28 or erlang_29 after
+  # https://github.com/bonfire-networks/bonfire-app/issues/2110
+  beamPkgs = beam.packages.erlang_27.extend (
     final: previous: {
       buildMix = final.callPackage ../../../profiles/pkgs/development/beam-modules/build-mix.nix { };
       mixRelease = final.callPackage ../../../profiles/pkgs/development/beam-modules/mix-release.nix { };
@@ -34,10 +41,12 @@ beamPkgs.mixRelease (finalAttrs: {
   env = {
     FLAVOUR = "ember";
 
+    WITH_AI = "1";
     WITH_IMAGE_VIX = "1";
     WITH_GIT_DEPS = "1";
     WITH_FORKS = "0";
     WITH_DOCKER = "no";
+    COMPILE_ALL_LOCALES = "no";
 
     # Explanation: from justfile's _ext-migrations-copy
     MIX_OS_DEPS_COMPILE_PARTITION_COUNT = "1";
@@ -49,67 +58,237 @@ beamPkgs.mixRelease (finalAttrs: {
 
     # ToDo(functional/completeness): support this?
     #WITH_XMPP = "1";
-
-    # Explanation: config/bonfire_common.exs
-    # uses this to set :rustler_precompiled, force_build_all
-    # which is needed to let nix provision Rust libraries.
-    RUSTLER_BUILD_ALL = "true";
   };
   passthru = {
     deps = ./extensions + "/${finalAttrs.env.FLAVOUR}/deps.nix";
     # Explanation: it's not possible to use deps_nix's Rust support in NGIpkgs
     # because its way to set `src` requires --allow-import-from-derivation
-    overrideAttrsRust = nativeDir: finalRust: previousRust: {
-      preConfigure = ''
-        mkdir -p priv/native
-        for lib in ${finalRust.passthru.native}/lib/*
-        do
-          dest="$(basename "$lib")"
-          if [[ "''${dest##*.}" = "dylib" ]]
-          then
-            dest="''${dest%.dylib}.so"
-          fi
-          ln -s "$lib" "priv/native/$dest"
-        done
-      '';
-      passthru = previousRust.passthru // {
-        inherit nativeDir;
-        # Explanation: this is where `nativeDir` is found
-        # but it cannot be used when import-from-derivation are disallowed.
-        #nativeDir = with builtins; head (attrNames (readDir "${previousRust.src}/native"));
-        native = rustPlatform.buildRustPackage {
-          pname = "${previousRust.passthru.packageName}-native";
-          version = previousRust.version;
-          src = "${previousRust.src}/native/${finalRust.passthru.nativeDir}";
-          cargoLock = {
-            lockFile =
-              ./extensions + "/${finalAttrs.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock";
-          };
-          nativeBuildInputs = [
-            cmake
-          ];
-          doCheck = false;
+    overrideAttrsRust =
+      {
+        nativeDir,
+        outputHashes ? { },
+        sourceRoot ? null,
+        regeneratedCargoLock ? false,
+        buildFeatures ? [ ],
+      }:
+      finalRust: previousRust: {
+        env = previousRust.env or { } // {
+          # Explanation: config/bonfire_common.exs
+          # uses this to set:
+          # config :rustler_precompiled, force_build_all:
+          # which is needed to let nix provision Rust libraries.
+          RUSTLER_BUILD_ALL = "true";
         };
-        updateScript = lib.getExe (writeShellApplication {
-          name = "${previousRust.passthru.packageName}-update";
-          text = ''
-            set -eux
-            install -Dm660 "${finalRust.src}/native/${finalRust.passthru.nativeDir}/Cargo.lock" \
-              'pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${previousRust.passthru.packageName}/Cargo.lock'
-          '';
-        });
+        preConfigure = ''
+          mkdir -p priv/native
+          for lib in ${finalRust.passthru.native}/lib/*
+          do
+            dest="$(basename "$lib")"
+            if [[ "''${dest##*.}" = "dylib" ]]
+            then
+              dest="''${dest%.dylib}.so"
+            fi
+            ln -s "$lib" "priv/native/$dest"
+          done
+        '';
+        passthru = previousRust.passthru // {
+          inherit nativeDir;
+
+          # Explanation: this is where `nativeDir` is found
+          # but it cannot be used when import-from-derivation are disallowed.
+          #nativeDir = with builtins; head (attrNames (readDir "${previousRust.src}/native"));
+          native = rustPlatform.buildRustPackage (finalNative: {
+            pname = "${previousRust.env.beamModuleName}-native";
+            inherit (previousRust) version src;
+            inherit buildFeatures;
+            sourceRoot =
+              if sourceRoot == null then
+                "${previousRust.env.beamModuleName}-${previousRust.version}/native/${finalRust.passthru.nativeDir}"
+              else
+                sourceRoot;
+            cargoLock = {
+              lockFile =
+                ./extensions + "/${finalAttrs.env.FLAVOUR}/${previousRust.env.beamModuleName}/Cargo.lock";
+              inherit outputHashes;
+            };
+            passthru = {
+              regeneratedCargoLock = stdenv.mkDerivation {
+                pname = "${previousRust.env.beamModuleName}-native-regeneratedCargoLock";
+                inherit (previousRust) version src;
+                __noChroot = true;
+                sourceRoot =
+                  if sourceRoot == null then
+                    "${previousRust.env.beamModuleName}-${previousRust.version}/native/${finalRust.passthru.nativeDir}"
+                  else
+                    sourceRoot;
+                buildInputs = [
+                  cacert
+                  cargo
+                ];
+                # Upstream's `Cargo.lock` does not include hashsum for `lumis*` crates
+                # but those are required by `importCargoLock`
+                # to populate the offline cache for `cargo`.
+                buildPhase = ''
+                  cargo generate-lockfile
+                '';
+                installPhase = ''
+                  cp Cargo.lock $out
+                '';
+              };
+            };
+            prePatch = lib.optionalString regeneratedCargoLock ''
+              cp -fv ${
+                #finalNative.cargoLock.lockFile
+                ./extensions + "/${finalAttrs.env.FLAVOUR}/${previousRust.env.beamModuleName}/Cargo.lock"
+              } Cargo.lock
+            '';
+            nativeBuildInputs = [
+              cmake
+            ];
+            doCheck = false;
+          });
+          updateScript =
+            let
+              originalCargoLock = "${finalRust.src}/native/${finalRust.passthru.nativeDir}/Cargo.lock";
+            in
+            writeShellApplication {
+              name = "${previousRust.env.beamModuleName}-update";
+              text = ''
+                set -eux
+                install -Dm660 ${
+                  if regeneratedCargoLock then
+                    finalRust.passthru.native.passthru.regeneratedCargoLock
+                  else
+                    originalCargoLock
+                } \
+                  'pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${previousRust.env.beamModuleName}/Cargo.lock'
+              '';
+            };
+        };
       };
-    };
+
+    # Explanation: `exla` depends on `xla`, which depends on openxla
+    # `pkgs.xla` packages openxla but using a different configuration,
+    xla = callPackage deps/xla/default.nix { xla = finalAttrs.passthru.mixNixDeps.xla; };
+
     mixNixDeps = callPackages finalAttrs.passthru.deps {
       inherit (finalAttrs.passthru) beamPackages;
       overrides =
         finalMixPkgs: previousMixPkgs:
         {
-          autumn = previousMixPkgs.autumn.overrideAttrs (
-            finalAttrs.passthru.overrideAttrsRust "autumnus_nif"
+          decent = previousMixPkgs.decent.overrideAttrs (
+            finalAttrs.passthru.overrideAttrsRust {
+              nativeDir = "decent";
+              sourceRoot = "source/native/decent";
+            }
           );
-          mdex = previousMixPkgs.mdex.overrideAttrs (finalAttrs.passthru.overrideAttrsRust "comrak_nif");
-          mjml = previousMixPkgs.mjml.overrideAttrs (finalAttrs.passthru.overrideAttrsRust "mjml_nif");
+          lumis = previousMixPkgs.lumis.overrideAttrs (
+            finalAttrs.passthru.overrideAttrsRust {
+              nativeDir = "lumis_nif";
+              regeneratedCargoLock = true;
+            }
+          );
+          mdex_native = previousMixPkgs.mdex_native.overrideAttrs (
+            finalAttrs.passthru.overrideAttrsRust {
+              nativeDir = "mdex_native_nif";
+              # Explanation: MDEx's NIF only builds in the syntax highlighter when told to at compile time,
+              # when using Elixir's `rustler` it's done with:
+              # `config :mdex_native, syntax_highlighter: :lumis`
+              # but here Nixpkgs' `buildRustPackage` is in charge.
+              buildFeatures = [ "lumis" ];
+            }
+          );
+          mjml = previousMixPkgs.mjml.overrideAttrs (
+            finalAttrs.passthru.overrideAttrsRust {
+              nativeDir = "mjml_nif";
+            }
+          );
+
+          exla =
+            (previousMixPkgs.exla.override (previousArgs: {
+              beamDeps =
+                previousArgs.beamDeps
+                ++ (with finalMixPkgs; [
+                  fine
+                ]);
+            })).overrideAttrs
+              (previousMixPkg: {
+                # Explanation: only required when deps.nix uses git, not the hex package.
+                # sourceRoot = "source/exla";
+
+                env = previousMixPkg.env or { } // {
+                  FINE_INCLUDE_DIR = finalMixPkgs.fine + "/src/c_include";
+                  EXLA_FORCE_REBUILD = "true";
+                  XLA_ARCHIVE_PATH = finalAttrs.passthru.xla;
+                  XLA_BUILD = "false";
+                  #EXLA_CPU_ONLY = "true";
+                  #XLA_TARGET = "cpu";
+                  #XLA_TARGET_PLATFORM = …;
+                };
+
+                nativeBuildInputs = previousMixPkg.nativeBuildInputs or [ ] ++ [
+                  #cmake
+                ];
+
+                postPatch = previousMixPkg.postPatch or "" + ''
+                  substituteInPlace mix.exs \
+                    --replace-fail "Fine.include_dir()" '"${finalMixPkgs.fine}/src/c_include"'
+                '';
+
+                preConfigure = previousMixPkg.preConfigure or "" + ''
+                  export HOME="$PWD"
+                  export ELIXIR_MAKE_CACHE_DIR="$TEMPDIR/elixir_make_cache"
+                  export XLA_CACHE_DIR=cache
+                  mkdir -p $out/cache
+                  ln -s $out/cache cache
+                  ln -s ${finalAttrs.passthru.xla} cache/xla_extension
+                  printf %s >cache/xla_snapshot.txt ${finalAttrs.passthru.xla}
+                '';
+                preFixup = previousMixPkg.preFixup or "" + ''
+                  rm -rf $out/cache/exla
+                  find $out/cache -type f -not -name "*.so" -delete
+                  find $out/cache -type d -empty -depth -delete
+                '';
+              });
+
+          nx =
+            (previousMixPkgs.nx.override (previousArgs: {
+              beamDeps =
+                previousArgs.beamDeps
+                ++ (with finalMixPkgs; [
+                  fine
+                ]);
+            })).overrideAttrs
+              (previousMixPkg: {
+                # Explanation: only required when deps.nix uses git, not the hex package.
+                #sourceRoot = "source/nx";
+
+                env = previousMixPkg.env or { } // {
+                  FINE_INCLUDE_DIR = finalMixPkgs.fine + "/src/c_include";
+                };
+
+                nativeBuildInputs = previousMixPkg.nativeBuildInputs or [ ] ++ [
+                  #cmake
+                ];
+              });
+          tokenizers =
+            (previousMixPkgs.tokenizers.overrideAttrs (
+              finalAttrs.passthru.overrideAttrsRust {
+                nativeDir = "ex_tokenizers";
+              }
+            )).overrideAttrs
+              (previousAttrs: {
+                passthru = previousAttrs.passthru or { } // {
+                  # Issue: https://github.com/elixir-nx/tokenizers/pull/67
+                  native = previousAttrs.passthru.native.overrideAttrs (previousRust: {
+                    buildInputs = previousRust.buildInputs or [ ] ++ [ oniguruma ];
+                    nativeBuildInputs = previousRust.nativeBuildInputs or [ ] ++ [ pkg-config ];
+                    env = previousRust.env or { } // {
+                      RUSTONIG_SYSTEM_LIBONIG = "1";
+                    };
+                  });
+                };
+              });
           bonfire_common = previousMixPkgs.bonfire_common.overrideAttrs (previousMixPkg: {
             # Explanation: remove a dangling symlink pointing out of bonfire_common…
             postPatch = previousMixPkg.postPatch or "" + ''
@@ -168,15 +347,16 @@ beamPkgs.mixRelease (finalAttrs: {
             postPatch =
               previousMixPkg.postPatch or ""
               + lib.concatStringsSep "\n" [
-                # Explanation: remove a dangling symlink pointing out of the repo…
+                # Explanation: fix dangling symlinks
+                # Issue: https://github.com/bonfire-networks/bonfire_ui_common/issues/11
                 ''
                   rm priv/static
 
                   test $(readlink assets/static/assets/ap_c2s_client) = extensions/bonfire_ui_common/assets/static/tauri/assets/ap_c2s_client
-                  ln -fs ../tauri/assets/ap_c2s_client/ \
-                    assets/static/assets/ap_c2s_client
-
-                  # ToDo(maint/update): adapt when fixed upstream
+                  rm assets/static/assets/ap_c2s_client
+                ''
+                # ToDo(maint/update): adapt when fixed upstream
+                ''
                   test $(readlink assets/static/assets/openmls) = /Users/me/Code/Bonfire/openmls/openmls-wasm/pkg
                   rm assets/static/assets/openmls
                 ''
@@ -207,7 +387,7 @@ beamPkgs.mixRelease (finalAttrs: {
               # Description: update pkgs/by-name/bonfire/deps/ex_cldr/hash
               # Explanation: fetchFromGitHub is used instead of fetchHex
               # to let nix provision locales instead of mix.
-              updateScript = lib.getExe (writeShellApplication {
+              updateScript = writeShellApplication {
                 name = "ex_cldr-update";
                 runtimeInputs = [ nurl ];
                 text = ''
@@ -217,7 +397,7 @@ beamPkgs.mixRelease (finalAttrs: {
                       { nativeBuildInputs = previousMixPkg.nativeBuildInputs or [] ++ [ NGIpkgs.pkgs.cacert ]; })
                   ' >pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/ex_cldr/fetchFromGitHub.hash
                 '';
-              });
+              };
             };
           });
           iconify_ex = previousMixPkgs.iconify_ex.overrideAttrs (previousMixPkg: {
@@ -261,6 +441,35 @@ beamPkgs.mixRelease (finalAttrs: {
             '';
             buildInputs = previousMixPkg.buildInputs or [ ] ++ [
               lexbor
+            ];
+          });
+          # Explanation: somehow rustler is no longer tracked as a dependency
+          # of rustler_precompiled in deps.nix, yet is required
+          # to let Nix Nix provision Rust libraries:
+          # Related: https://github.com/philss/rustler_precompiled/issues/71#issuecomment-2195460685
+          rustler =
+            let
+              version = "0.37.1";
+              drv = finalAttrs.passthru.beamPackages.buildMix {
+                inherit version;
+                name = "rustler";
+                appConfigPath = ./config;
+
+                src = finalAttrs.passthru.beamPackages.fetchHex {
+                  inherit version;
+                  pkg = "rustler";
+                  sha256 = "24547e9b8640cf00e6a2071acb710f3e12ce0346692e45098d84d45cdb54fd79";
+                };
+
+                beamDeps = [
+                  previousMixPkgs.jason
+                ];
+              };
+            in
+            drv;
+          rustler_precompiled = previousMixPkgs.rustler_precompiled.overrideAttrs (previousMixPkg: {
+            propagatedBuildInputs = previousMixPkg.propagatedBuildInputs or [ ] ++ [
+              finalMixPkgs.rustler
             ];
           });
         }
@@ -341,8 +550,6 @@ beamPkgs.mixRelease (finalAttrs: {
     yarnOfflineCaches =
       lib.genAttrs
         (lib.filter (pname: finalAttrs.passthru.mixNixDeps ? "${pname}") [
-          "bonfire_editor_milkdown"
-          "bonfire_geolocate"
           "iconify_ex"
         ])
         (pname: {
@@ -351,7 +558,7 @@ beamPkgs.mixRelease (finalAttrs: {
             yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}}/src/assets/yarn.lock";
             hash = lib.readFile (./extensions + "/${finalAttrs.env.FLAVOUR}/${pname}/yarnOfflineCache.hash");
           };
-          updateScript = lib.getExe (writeShellApplication {
+          updateScript = writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [ nurl ];
             text = ''
@@ -361,26 +568,28 @@ beamPkgs.mixRelease (finalAttrs: {
                 NGIpkgs.bonfire.${finalAttrs.env.FLAVOUR}.yarnOfflineCaches.${pname}.package
               ' >'pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/yarnOfflineCache.hash'
             '';
-          });
+          };
         });
     yarn-berry = yarn-berry_4;
     yarnBerryOfflineCaches =
       lib.genAttrs
         (lib.filter (pname: finalAttrs.passthru.mixNixDeps ? "${pname}") [
+          "bonfire_editor_milkdown"
+          "bonfire_geolocate"
           "bonfire_ui_common"
         ])
         (pname: {
 
           package = finalAttrs.passthru.yarn-berry.fetchYarnBerryDeps {
             name = "${pname}-yarn-deps";
-            yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}}/src/assets/yarn.lock";
+            yarnLock = "${finalAttrs.passthru.mixNixDeps.${pname}.src}/assets/yarn.lock";
             hash = lib.readFile (
               ./extensions + "/${finalAttrs.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
             );
             missingHashes = ./extensions + "/${finalAttrs.env.FLAVOUR}/${pname}/missingHashes.json";
           };
 
-          updateScript = lib.getExe (writeShellApplication {
+          updateScript = writeShellApplication {
             name = "${pname}-update";
             runtimeInputs = [
               nix
@@ -401,7 +610,7 @@ beamPkgs.mixRelease (finalAttrs: {
                 NGIpkgs.bonfire.${finalAttrs.env.FLAVOUR}.yarnBerryOfflineCaches.${pname}.package
               " --hash >"pkgs/by-name/bonfire/extensions/${finalAttrs.env.FLAVOUR}/${pname}/yarnBerryOfflineCache.hash"
             '';
-          });
+          };
 
         });
 
@@ -426,12 +635,13 @@ beamPkgs.mixRelease (finalAttrs: {
               (
                 pkgs:
                 lib.concatAttrValues (
-                  lib.mapAttrs (name: pkg: lib.optional (pkg ? "updateScript") pkg.updateScript) pkgs
+                  lib.mapAttrs (name: pkg: lib.optional (pkg ? "updateScript") (lib.getExe pkg.updateScript)) pkgs
                 )
               )
               (
                 with finalAttrs.passthru;
-                # The order matters because `mixNixDeps`'s packages
+                # Warning(correctness): the order matters
+                # because `mixNixDeps`'s packages
                 # can be used by the packages in yarn caches.
                 [
                   mixNixDeps
@@ -484,6 +694,13 @@ beamPkgs.mixRelease (finalAttrs: {
               mkdir -p extensions/${ext.src.repo}/assets/hooks
             '') finalAttrs.passthru.flavour-extensions)
 
+            # ToDo(maintenance): remove when fixed upstream
+            # https://github.com/bonfire-networks/ember/pull/2
+            ''
+              substituteInPlace extensions/ember/deps.git \
+                --replace-fail '## GENERAL' 'bonfire_ui_reactions = "https://github.com/bonfire-networks/bonfire_ui_reactions"'
+            ''
+
             ''
               cp --no-preserve=mode -r ${finalAttrs.src}/config .
               cp --no-preserve=mode -rs ${finalAttrs.src}/justfile .
@@ -508,18 +725,26 @@ beamPkgs.mixRelease (finalAttrs: {
             ''
               cat >>config/config.exs <<EOF
 
-              config :autumn,
-                      Autumn.Native,
+              config :lumis,
+                      Lumis.Native,
                       skip_compilation?: true,
-                      load_from: {:autumn, "priv/native/libautumnus_nif"}
-              config :mdex,
-                      MDEx.Native,
+                      load_from: {:lumis, "priv/native/liblumis_nif"}
+              config :decent,
+                      Decent.Native,
                       skip_compilation?: true,
-                      load_from: {:mdex, "priv/native/libcomrak_nif"}
+                      load_from: {:decent, "priv/native/libdecent"}
+              config :mdex_native,
+                      MDExNative.Native,
+                      skip_compilation?: true,
+                      load_from: {:mdex_native, "priv/native/libmdex_native_nif"}
               config :mjml,
                       Mjml.Native,
                       skip_compilation?: true,
                       load_from: {:mjml, "priv/native/libmjml_nif"}
+              config :tokenizers,
+                      Tokenizers.Native,
+                      skip_compilation?: true,
+                      load_from: {:tokenizers, "priv/native/libex_tokenizers"}
               EOF
             ''
           ]
@@ -551,8 +776,11 @@ beamPkgs.mixRelease (finalAttrs: {
             # which points to extensions/social/assets/hooks/
             appConfigPath = "${finalAttrs.passthru.bonfire-setup}/config";
 
+            # Because of surface.
+            erlangDeterministicBuilds = false;
+
             # Explanation: inherit the environment variables
-            # from bonfire because they're used in appConfigPath.
+            # from bonfire because they're used in `appConfigPath`.
             env = finalAttrs.env // previousArgs.env or { };
             inherit (finalAttrs) mixEnv;
             postConfigure = previousArgs.postConfigure or "" + ''
@@ -563,7 +791,8 @@ beamPkgs.mixRelease (finalAttrs: {
     };
   };
   mixEnv = "prod";
-  # Explanation: useless in Nix and incompatible with Surface.
+  # Explanation: incompatible with Surface.
+  # Issue: https://github.com/surface-ui/surface/issues/762
   erlangDeterministicBuilds = false;
 
   # ToDo(optimize/size): test if it works.
@@ -578,6 +807,25 @@ beamPkgs.mixRelease (finalAttrs: {
   # Explanation: to run yarnConfigHook multiple times manually.
   dontYarnInstallDeps = true;
   dontYarnBerryInstallDeps = true;
+
+  patches = [
+    patches/bumblebee.diff
+  ];
+  # FixMe(maintenance): version trimmed from ".alpha-1" suffix to avoid:
+  # -> Running mix compile.app --no-deps-check (inside Bonfire.Umbrella.MixProject)
+  # ** (Mix.Error) Expected :version to be a valid Version, got: "1.0.6.alpha-ember-1" (see the Version module for more information)
+  #     (mix 1.18.4) lib/mix.ex:618: Mix.raise/2
+  #     (mix 1.18.4) lib/mix/tasks/compile.app.ex:146: Mix.Tasks.Compile.App.run/1
+  #     (mix 1.18.4) lib/mix/task.ex:495: anonymous fn/3 in Mix.Task.run_task/5
+  #     (stdlib 6.2.2.3) timer.erl:595: :timer.tc/2
+  #     (mix 1.18.4) lib/mix/task.ex:519: Mix.Task.with_debug/4
+  #     (mix 1.18.4) lib/mix/tasks/compile.all.ex:117: Mix.Tasks.Compile.All.run_compiler/2
+  #     (mix 1.18.4) lib/mix/tasks/compile.all.ex:97: Mix.Tasks.Compile.All.compile/4
+  #     (mix 1.18.4) lib/mix/tasks/compile.all.ex:71: Mix.Tasks.Compile.All.do_run/2
+  postPatch = ''
+    substituteInPlace mix.exs \
+      --replace-fail 'version: "1.0.6-beta.5"' 'version: "1.0.6"'
+  '';
 
   postConfigure = lib.concatStringsSep "\n" [
     # Explanation: bonfire_ui_common & co. look like Elixir libraries,
@@ -612,7 +860,7 @@ beamPkgs.mixRelease (finalAttrs: {
       EOF
     ''
 
-    # See: justfile#_deps-post-get
+    # Explanation: from justfile#_deps-post-get
     ''
       mkdir -p data
       mkdir -p data/uploads
@@ -625,9 +873,12 @@ beamPkgs.mixRelease (finalAttrs: {
   # hence it works to have finalAttrs.passthru.mixNixDeps.${dep}
   # in there because `deps.nix` will be updated by then.
   preBuild = lib.concatStringsSep "\n" [
+    ''
+      mkdir -p deps
+    ''
     # Explanation: those yarn assets are not real libraries,
     # they can only be built in bonfire-app.
-    # Note that /src is used instead of .src to be sure to have any patch applied.
+    # Explanation(correctness): /src is used instead of .src to be sure to have any patch applied.
     (lib.concatMapStringsSep "\n" (dep: ''
       rm -rf deps/${dep}
       cp --no-preserve=mode -r \
@@ -676,9 +927,9 @@ beamPkgs.mixRelease (finalAttrs: {
     # either by hanging when copying, or by not copying all migrations.
     # Note that all files are also copied, including those with *.exs.wip.
     ''
-      rm -rf ./priv/repo/*
+      rm -rf priv/repo/*
       mkdir -p priv/repo/migrations/
-      for file in deps/bonfire_*/priv/repo/migrations/*; do
+      for file in _build/${finalAttrs.mixEnv}/lib/bonfire_*/priv/repo/migrations/*; do
         cp -ft priv/repo/migrations/ "$file"
       done
     ''
@@ -687,10 +938,27 @@ beamPkgs.mixRelease (finalAttrs: {
   postBuild = lib.concatStringsSep "\n" [
     # See: justfile#_rel-compile-assets
     ''
+      mix bonfire.gen_tailwind_sources
+      ln -fns ${finalAttrs.passthru.mixNixDeps.phoenix}/src deps/phoenix
+      ln -fns ${finalAttrs.passthru.mixNixDeps.phoenix_live_view}/src deps/phoenix_live_view
+      ln -fns ${finalAttrs.passthru.mixNixDeps.phoenix_html}/src deps/phoenix_html
+      ln -fns ${finalAttrs.passthru.mixNixDeps.phoenix_live_head}/src deps/phoenix_live_head
+      ln -fns ${finalAttrs.passthru.mixNixDeps.bonfire_notify}/src deps/bonfire_notify
+      ln -fns ${finalAttrs.passthru.mixNixDeps.live_select}/src deps/live_select
+      ln -fns ${finalAttrs.passthru.mixNixDeps.bonfire_ui_reactions}/src deps/bonfire_ui_reactions
       pushd assets
       ${lib.getExe finalAttrs.passthru.yarn-berry.yarn-berry-offline} build
       popd
+      if [ -d "extensions/${finalAttrs.env.FLAVOUR}/priv/static" ]; then
+        cp -R "extensions/${finalAttrs.env.FLAVOUR}/priv/static/." priv/static/
+      fi
       mix phx.digest --no-deps-check
+    ''
+  ];
+
+  preInstall = lib.concatStringsSep "\n" [
+    ''
+      cp -ra ${finalAttrs.passthru.mixNixDeps.exla}/cache cache
     ''
   ];
 

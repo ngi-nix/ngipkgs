@@ -7,6 +7,7 @@
   which,
   python3,
   elixir,
+  fetchFromGitHub,
   enableOpenCVContrib ? true,
   # FixMe(functional/completeness): test whether CUDA actually works. CUDA is not free software.
   cudaSupport ? config.cudaSupport,
@@ -15,28 +16,26 @@
 }:
 finalMixPkgs: previousMixPkgs: {
   evision = previousMixPkgs.evision.overrideAttrs (
-    finalAttrs: previousAttrs: {
+    finalAttrs: previousAttrs:
+    let
+      src = fetchFromGitHub {
+        owner = "cocoa-xu";
+        repo = "evision";
+        rev = "v${finalAttrs.version}";
+        hash = "sha256-3iek3FQBIrauJ2x7Ph9RCkdSH7kePamff+ycjKNBGuM=";
+      };
+    in
+    {
+      inherit src;
       # Explanation: to build, evision.so requires:
       # 1. OPENCV_CONFIGURATION_PRIVATE_HPP, a private CPP header from opencv.src
-      # 2. C_SRC_HEADERS_TXT, a list of CPP headers from python_bindings_generator
+      # 2. C_SRC_HEADERS_TXT, a JSON file listing CPP headers from python_bindings_generator
       postUnpack = previousAttrs.postUnpack or "" + ''
+        cp -av --no-preserve=mode ${src}/py_src $sourceRoot
         cp -at $sourceRoot/c_src/ \
           ${finalAttrs.passthru.opencv.src}/modules/core/include/opencv2/core/utils/configuration.private.hpp \
-          ${finalAttrs.passthru.opencv}/modules/python_bindings_generator/headers${lib.optionalString enableOpenCVContrib "-contrib"}.txt
+          ${finalAttrs.passthru.opencv}/modules/python_bindings_generator/gen_python_config${lib.optionalString enableOpenCVContrib "-contrib"}.json
       '';
-
-      patches = [
-        # Explanation: avoid errors caused by missing flann symbols.
-        # See https://github.com/cocoa-xu/evision/issues/293
-        # Revert [PATCH] commented out `cvflann::flann_distance_t` conversion
-        (fetchpatch2 {
-          name = "commented-out-cvflann-flann_distance_t-conversion
--functions";
-          url = "https://github.com/cocoa-xu/evision/commit/4ae5c62ca591e0a0fadb5dcd90ed5149bddfc7c0.patch";
-          hash = "sha256-+vM6swrqIK9Xz2R8kRSR+BeF7wBvW6x6d0N/+9FnO5E=";
-          revert = true;
-        })
-      ];
 
       # Explanation: skip complex rules of the Makefile to build opencv,
       # and let cmake use the opencv provided by nix.

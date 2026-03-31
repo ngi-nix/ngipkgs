@@ -2,7 +2,6 @@
   _experimental-update-script-combinators,
   callPackage,
   fetchFromGitHub,
-  fetchpatch2,
   gitMinimal,
   gitUpdater,
   lib,
@@ -32,23 +31,14 @@ lib.recurseIntoAttrs (
       generic.overrideAttrs (
         finalAttrs: previousAttrs: {
           pname = "bonfire";
-          version = "1.0.2-alpha.32";
+          version = "0-unstable-2026-07-23";
           src = fetchFromGitHub {
             owner = "bonfire-networks";
             repo = "bonfire-app";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-+C7Ts7MuDR6GwZ/G16GZw1E5VO2snTBb4tcffdC6GK4=";
+            rev = "58aaa57f08bd6ecece9cc90359fc0c6a9014e590";
+            #tag = "v${finalAttrs.version}";
+            hash = "sha256-onb5HsXy92bz+a0RW5tLHyVt6j6+BqWDcB/P37S2I7s=";
           };
-
-          patches = [
-            # ToDo(maint/update): remove when merged upstream
-            # PR: https://github.com/bonfire-networks/bonfire-app/pull/1821
-            (fetchpatch2 {
-              name = "fix-vix";
-              url = "https://github.com/bonfire-networks/bonfire-app/commit/98d38c339f467ed43f7572ae36cd2ca905927efe.patch";
-              hash = "sha256-7W7CYdP02F/aFa1+hT0FHNngywrO6hTg1/Nw441bd5A=";
-            })
-          ];
 
           env = previousAttrs.env or { } // {
             FLAVOUR = flavour;

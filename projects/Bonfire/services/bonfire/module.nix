@@ -28,7 +28,7 @@ let
   secrets = [ ];
 
   elixirFormat = pkgs.formats.elixirConf { elixir = cfg.package.elixir; };
-  inherit (elixirFormat.lib) mkAtom mkRaw mkTuple;
+  inherit (elixirFormat.lib) mkRaw mkTuple;
 
 in
 {
@@ -167,7 +167,8 @@ in
             description = ''
               Hostname or Unix socket **directory** to connect to the PostgreSQL database.
             '';
-            default = "/run/postgresql";
+            #default = "/run/postgresql";
+            default = "localhost";
           };
           POSTGRES_DB = lib.mkOption {
             type = lib.types.str;
@@ -429,6 +430,7 @@ in
         };
         services.postgresql = {
           enable = true;
+          enableTCPIP = true;
           ensureDatabases = [ cfg.settings.POSTGRES_DB ];
           extensions = lib.mkIf (cfg.package.mixNixDeps ? "geo_postgis") (
             with config.services.postgresql.package.pkgs; [ postgis ]
@@ -443,18 +445,26 @@ in
         };
         systemd.services.postgresql-setup = lib.mkIf (!(lib.types.path.check cfg.settings.POSTGRES_HOST)) {
           path = [
-            config.services.postgresql
+            config.services.postgresql.package
             pkgs.gnused
             pkgs.replace-secret
           ];
-          postStart = ''
-            install -m600 ${pkgs.writeText "" ''
-              ALTER ROLE ${config.users.users.${service}.name} WITH ENCRYPTED PASSWORD '@DB_USER_PASSWORD@';
-            ''} /run/${service}/init.sql
-            replace-secret @DB_USER_PASSWORD@ $CREDENTIALS_DIRECTORY/${service}.POSTGRES_PASSWORD /run/${service}/init.sql
-            psql -U postgres --file /run/${service}/init.sql
-            rm /run/${service}/init.sql
-          '';
+          postStart =
+            let
+              run = "/run/postgresql";
+            in
+            ''
+              set -x
+              install -m600 ${pkgs.writeText "" ''
+                ALTER ROLE ${config.users.users.${service}.name} WITH ENCRYPTED PASSWORD '@DB_USER_PASSWORD@';
+              ''} ${run}/init.sql
+              replace-secret @DB_USER_PASSWORD@ $CREDENTIALS_DIRECTORY/${service}.POSTGRES_PASSWORD ${run}/init.sql
+              psql -U postgres --file ${run}/init.sql
+              rm ${run}/init.sql
+            '';
+          serviceConfig = {
+            ImportCredential = "${service}.POSTGRES_PASSWORD";
+          };
         };
       })
 

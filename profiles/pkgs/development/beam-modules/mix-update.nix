@@ -43,21 +43,6 @@ package.overrideAttrs (
                 '${deps_nix_injection_pattern}' \
                 '${deps_nix_injection_pattern} [{ :deps_nix, git: "https://github.com/code-supply/deps_nix" }] ++'
         ''
-        # Explanation: re-enable downloading of well-known precompiled Rust libs.
-        ''
-          mkdir -p config
-          cat >>config/config.exs <<EOF
-          config :autumn,
-                  Autumn.Native,
-                  skip_compilation?: true
-          config :mdex,
-                  MDEx.Native,
-                  skip_compilation?: true
-          config :mjml,
-                  Mjml.Native,
-                  skip_compilation?: true
-          EOF
-        ''
       ];
     configurePhase = lib.concatStringsSep "\n" [
       ''
@@ -70,6 +55,7 @@ package.overrideAttrs (
       ''
       # Explanation: prefer to download NIF
       ''
+        unset RUSTLER_BUILD_ALL
         unset RUSTLER_PRECOMPILED_FORCE_BUILD_ALL
         export HOME=$NIX_BUILD_TOP/home
         export GIT_SSL_CAINFO=$NIX_SSL_CERT_FILE
@@ -89,5 +75,10 @@ package.overrideAttrs (
     installPhase = ''
       cp -f deps.nix $out
     '';
+    # Explanation: avoid to build dependencies included in the following.
+    preBuild = "";
+    postBuild = "";
+    preInstall = "";
+    postInstall = "";
   }
 )

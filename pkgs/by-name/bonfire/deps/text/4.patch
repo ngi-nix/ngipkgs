@@ -1,0 +1,54 @@
+From 10bad143bed89fd55d7a2c3cdfa977f59b7cfe1e Mon Sep 17 00:00:00 2001
+From: Julien Moutinho <julm@sourcephile.fr>
+Date: Thu, 9 Jul 2026 00:13:05 +0200
+Subject: [PATCH] Fix compatibility with Erlang/OTP 28
+
+Erlang/OTP 28 no longer allows regexes to be defined in the module body and interpolated into an attribute.
+
+Closes: https://github.com/kipcole9/text/issues/3
+---
+ lib/pii.ex | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/lib/pii.ex b/lib/pii.ex
+index 029159f..9363fe9 100644
+--- a/lib/pii.ex
++++ b/lib/pii.ex
+@@ -29,7 +29,7 @@ defmodule Text.PII do
+ 
+   """
+ 
+-  @patterns [
++  defp patterns do [
+     email: ~r/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/,
+     url: ~r{\bhttps?://[^\s<>"']+},
+     ssn: ~r/\b\d{3}-\d{2}-\d{4}\b/,
+@@ -43,14 +43,13 @@ defmodule Text.PII do
+     # Always re-validated by Luhn before being reported.
+     credit_card: ~r/\b(?:\d[ \-]?){12,18}\d\b/
+   ]
+-
+-  @types Keyword.keys(@patterns)
++  end
+ 
+   @doc """
+   Returns the list of detector type atoms supported by this module.
+   """
+   @spec types() :: [atom()]
+-  def types, do: @types
++  def types, do: Keyword.keys(patterns())
+ 
+   @doc """
+   Detects PII matches in the text.
+@@ -85,9 +84,9 @@ defmodule Text.PII do
+           %{type: atom(), value: String.t(), start: non_neg_integer(), length: pos_integer()}
+         ]
+   def detect(text, options \\ []) when is_binary(text) do
+-    requested = Keyword.get(options, :types, @types)
++    requested = Keyword.get(options, :types, types())
+ 
+-    @patterns
++    patterns()
+     |> Enum.filter(fn {type, _} -> type in requested end)
+     |> Enum.flat_map(fn {type, regex} ->
+       Regex.scan(regex, text, return: :index)
