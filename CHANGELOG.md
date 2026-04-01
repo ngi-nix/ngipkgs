@@ -4,9 +4,71 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Bug Fixes
+
+- *demo* Skip forwarding privileged ports
+- Add stateVersion to module evaluations
+- Use correct logfile names for update-all script
+- Installer name in ci demo test
+
+
 ### CI/CD
 
 - Fix the overview build command
+- Set buildbot-nix attribute to "checks.x86_64-linux"
+- Check overview with manuals
+- Use experimental installer for demo tests
+
+
+### Documentation
+
+- *manuals* Refactor mapping; map env to envvar
+- Support {.tip} admonition (#2059)
+
+
+### Features
+
+- *mirage* Replace hillingar by new help builder enabling to remove IFD
+
+
+### Miscellaneous Tasks
+
+- Update CHANGELOG.md
+- Clean up update-all; avoid polluting workdir
+
+
+### Overview
+
+- *Heads* Expose scope for overview; don't modify attr name
+- Display binary files
+- Add metadata heading
+- Add instructions for experimental installer
+
+
+### Performance
+
+- *DNSvizor* Remove unneeded runtime closure items
+
+
+### Refactor
+
+- Re-use project options in manuals
+
+
+### _0wm-ap-mock
+
+- 0-unstable-2025-10-27 -> 0-unstable-2026-02-26
+
+
+### _0wm-client
+
+- 0-unstable-2025-10-27 -> 0-unstable-2026-02-26
+
+
+### _0wm-opmode
+
+- 0-unstable-2025-10-27 -> 0-unstable-2026-02-09
+- 0-unstable-2026-02-09 -> 0-unstable-2026-02-26
 
 
 ### Build
@@ -14,11 +76,286 @@ All notable changes to this project will be documented in this file.
 - Replace manual -> manuals
 
 
+### Compat/install
+
+- *DNSvizor* Remove import-from-derivation
+
+
+### Demo
+
+- Add fedora installation target
+
+
+### Dnsvizor
+
+- Enable hvt, spt, xen, qubes, virtio and muen targets
+- Do not expose known bad targets
+- Switch to upstream hillingar
+- Switch to upstream dnsvizor
+- Add comments about supported targets
+- Cleanups (#2060)
+- 0-unstable-2025-12-17 -> 0-unstable-2026-01-21
+- Small cleanup
+
+
+### Dnsvizor.unix
+
+- Init at 0-unstable-2025-12-15
+
+
+### Flake
+
+- Remove inputs.opam2json
+
+
 ### Heads
 
 - 0.2.1-unstable-2025-04-03 -> 0.2.1-unstable-2026-02-01
 - Drop EOL'd librem targets from default builds
 - Make coreboot build verbose
+
+
+### Heads.UNTESTED_talos-2
+
+- Init
+- Check that skiboot source is correct
+
+
+### Helium
+
+- 6.0.0 -> 7.0.0
+
+
+### Inventaire-i18n
+
+- 0-unstable-2026-01-05 -> 0-unstable-2026-02-20
+- 0-unstable-2026-02-20 -> 0-unstable-2026-02-28
+- 0-unstable-2026-02-28 -> 0-unstable-2026-03-09
+
+
+### Maintainers
+
+- Add announcement-draft script
+
+
+### Manyfold
+
+- 0.131.0 -> 0.132.1
+- 0.132.1 -> 0.133.1
+- 0.133.1 -> 0.134.0
+
+
+### Nodebb
+
+- 4.8.0 -> 4.8.1
+- 4.8.1 -> 4.9.1
+- 4.9.1 -> 4.9.2
+
+
+### Openxc7
+
+- 0.8.2-unstable-2025-04-03 -> 0.8.2-unstable-2026-03-02
+
+
+### Peertube-plugins
+
+- Set updateScript normally
+
+
+### Peertube-plugins.akismet
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.auth-ldap
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.auth-openid-connect
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.auth-saml2
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.auto-block-videos
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.auto-mute
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.hello-world
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.logo-framasoft
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.matomo
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.privacy-remover
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.transcoding-custom-quality
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.transcoding-profile-debug
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-plugins.video-annotation
+
+- 0-unstable-2025-11-20 -> 0-unstable-2025-12-18
+
+
+### Peertube-theme-background-red
+
+- 0.0.4 -> 0-unstable-2025-12-18
+
+
+### Peertube-theme-dark
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-12-18
+
+
+### Peertube-theme-framasoft
+
+- 0-unstable-2025-05-30 -> 0-unstable-2025-12-18
+
+
+### Pkgs
+
+- *bonfire* Replace deprecated hook with `mixBuildDirHook`
+- *pdfding* Disable test_views
+- *taler-mdb* 1.0.0 -> 1.3.0
+
+
+### Pkgs/django-admin-tools
+
+- Init at 0.9.3
+
+
+### Pkgs/django-constance
+
+- Init at 4.3.4
+
+
+### Pkgs/django-honeypot
+
+- Init at 1.3.0
+
+
+### Pkgs/django-simple-math-captcha
+
+- Init at 2.0.1
+
+
+### Pkgs/icosa-gallery
+
+- Init at 0-unstable-2026-01-15
+- Don't expose dependencies
+- Avoid python3Packages while in its scope
+- Use finalAttrs
+
+
+### Pkgs/ixxy-email-logger
+
+- Init at 0-unstable-2025-08-28
+
+
+### Project/DNSvizor
+
+- Relax hardening option RestrictAddressFamilies (#2061)
+
+
+### Projects
+
+- *Bonfire* Add test to demo (#2186)
+- *Bonfire* Fix eval warning with nodes.machine.config
+- *Funkwhale* Only apply demo module if service is enabled
+- *Kaidan* Mark test as broken
+- *Kaidan* Fix tests' mouse coordinates
+- *Libervia* Mark as broken
+- *PdfDing* Switch to migrated module from Nixpkgs
+- *PdfDing* Switch to migrated nixos tests from Nixpkgs
+- *PeerTube* Refactor plugins composition
+- *PeerTube* Fix plugins compat with v8.0.2
+- *PeerTube* Link plugins instead of installing them
+- *PeerTube* Mark tests as broken
+- *Taler* Mark anastasis as broken; unbreak basic test
+- *Wireguard* Mark amneziawg tests as broken
+- *repath-studio* Fix and refactor test
+- *stalwart* Renamed to stalwart in Nixpkgs
+
+
+### Projects/DNSvizor
+
+- Init
+
+
+### Projects/Icosa-Gallery
+
+- Init
+- Add module
+- Add basic example
+- Add basic test
+- Add demo vm
+
+
+### Py3dtiles
+
+- 12.0.0 -> 12.1.0
+
+
+### Reoxide
+
+- 0.7.2 -> 0.8.0
+
+
+### Run
+
+- *DNSvizor* Workaround startup crash by emulating Thread-Local Storage
+
+
+### Sstorytime
+
+- 0.1.0-beta-unstable-2025-12-01 -> 0.1.1-beta-unstable-2026-02-14
+- 0.1.1-beta-unstable-2026-02-14 -> 0.1.1-beta-unstable-2026-03-01
+- 0.1.1-beta-unstable-2026-03-01 -> 0.1.1-beta-unstable-2026-03-07
+
+
+### Taldir
+
+- 1.0.5-unstable-2025-11-07 -> 1.3.3-unstable-2026-02-17
+
+
+### Taler-mdb
+
+- 1.3.0 -> 1.4.0
+
+
+### Tau-tower
+
+- 0.2.101-unstable-2025-12-17 -> 0.2.2-beta-unstable-2026-03-14
 
 
 ## 26.01 - 2026-01-30
