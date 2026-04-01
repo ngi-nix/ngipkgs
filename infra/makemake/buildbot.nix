@@ -38,6 +38,9 @@ in
         auth.authToken.file = config.sops.secrets."cachix".path;
       };
       showTrace = true;
+
+      # reduce nix-eval-jobs workers count to avoid OOM
+      evalWorkerCount = 12;
     };
 
     buildbot-nix.worker = {
