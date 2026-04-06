@@ -8,7 +8,7 @@
   yarnInstallHook,
   nodejs,
   makeWrapper,
-  nodePackages,
+  serve,
   nix-update-script,
 }:
 
@@ -71,7 +71,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   postFixup = ''
     wrapProgram $out/bin/wax-client \
-      --prefix PATH : ${lib.makeBinPath [ nodePackages.serve ]} \
+      --prefix PATH : ${lib.makeBinPath [ serve ]} \
   '';
 
   passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };

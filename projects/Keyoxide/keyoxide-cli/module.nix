@@ -10,7 +10,7 @@ in
 {
   options.programs.keyoxide-cli = {
     enable = lib.mkEnableOption "keyoxide-cli";
-    package = lib.mkPackageOption pkgs [ "nodePackages" "keyoxide" ] { };
+    package = lib.mkPackageOption pkgs "keyoxide-cli" { };
   };
 
   config = lib.mkIf cfg.enable {
