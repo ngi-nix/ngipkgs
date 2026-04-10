@@ -184,10 +184,11 @@ let
       buildInputs = [ openssl ];
 
       meta = {
-        url = "https://mcaptcha.org/";
+        homepage = "https://mcaptcha.org/";
         description = "mCaptcha is proof-of-work based captcha system that is privacy focused and fully automated.";
         license = lib.licenses.agpl3Plus;
         mainProgram = "mcaptcha";
+        teams = with lib.teams; [ ngi ];
       };
     };
 in
