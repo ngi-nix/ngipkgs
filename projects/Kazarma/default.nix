@@ -34,7 +34,7 @@
 
   nixos.modules.services = {
     kazarma = {
-      name = "service name";
+      name = "Kazarma";
       module = ./services/kazarma/module.nix;
       examples."Enable kazarma" = {
         module = ./services/kazarma/examples/basic.nix;
