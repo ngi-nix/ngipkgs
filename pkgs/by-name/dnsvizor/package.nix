@@ -27,6 +27,10 @@ libMirage.builds {
     '';
   };
   overrideAttrs = finalAttrs: previousAttrs: {
+    meta = {
+      homepage = "https://github.com/robur-coop/dnsvizor";
+      teams = with lib.teams; [ ngi ];
+    };
     buildInputs = previousAttrs.buildInputs or [ ] ++ [
       # Some targets, such as hvt, need static GMP (or MPIR)
       (
