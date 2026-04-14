@@ -1,4 +1,5 @@
 {
+  lib,
   wrapFirefox,
   firefox-devedition-unwrapped,
   fetchFirefoxAddon,
@@ -12,6 +13,10 @@ let
       passthru = previousAttrs.passthru // {
         requireSigning = false;
         allowAddonSideload = true;
+      };
+      meta = previousAttrs.meta // {
+        homepage = "https://www.meta-press.es";
+        teams = with lib.teams; [ ngi ];
       };
     })
   );
