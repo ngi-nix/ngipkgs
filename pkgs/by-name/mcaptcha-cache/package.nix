@@ -1,4 +1,5 @@
 {
+  lib,
   rustPlatform,
   fetchFromGitHub,
 }:
@@ -22,4 +23,9 @@ rustPlatform.buildRustPackage {
 
   # error[E0425]: cannot find function `register_commands` in module `$crate::commands`
   doCheck = false;
+
+  meta = {
+    homepage = "https://github.com/mCaptcha/cache";
+    teams = with lib.teams; [ ngi ];
+  };
 }
