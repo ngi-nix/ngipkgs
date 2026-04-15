@@ -15,6 +15,8 @@
   imagemagick,
   potrace,
   yarn,
+  pkg-config,
+  nodePackages,
   node-pre-gyp,
   nix-update-script,
 }:
@@ -47,6 +49,8 @@ stdenv.mkDerivation (finalAttrs: {
     python3
     gnumake
     gcc
+    nodePackages.node-gyp
+    pkg-config
     node-pre-gyp
   ];
 

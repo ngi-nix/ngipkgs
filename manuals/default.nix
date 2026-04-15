@@ -1,5 +1,6 @@
 {
   callPackage,
+  fetchFromGitHub,
   fetchurl,
   gnused,
   imagemagick,
@@ -14,6 +15,23 @@
   ...
 }:
 let
+  python = python3.override {
+    packageOverrides = final: prev: {
+      # nixpkgs PR https://github.com/NixOS/nixpkgs/pull/504645
+      sphinx-last-updated-by-git = prev.sphinx-last-updated-by-git.overridePythonAttrs {
+        version = "0.3.8-unstable-2026-03-22";
+        src = fetchFromGitHub {
+          owner = "mgeier";
+          repo = "sphinx-last-updated-by-git";
+          rev = "8d4eef2561996319e6f785b4faa914a1e6545476";
+          hash = "sha256-30pZiqWs6Da+O8j08EIHrUoiJfJUPT6FdDiPBjmvRL8=";
+          fetchSubmodules = true;
+          leaveDotGit = true;
+        };
+      };
+    };
+  };
+
   options = callPackage ./Options.nix { };
 
   common = stdenv.mkDerivation (finalAttrs: {
@@ -98,7 +116,7 @@ let
           hash = "sha256-m5f2WVVj1b7dyxBle/Ug959DAJ7PYinK0OlkD/zxh0s=";
         };
       };
-      pythonPackages = python3.withPackages (
+      pythonPackages = python.withPackages (
         pyPkgs: with pyPkgs; [
           linkify-it-py
           myst-parser

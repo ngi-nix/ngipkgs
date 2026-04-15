@@ -1,0 +1,27 @@
+From c7d1beaf4bce7ea120936293ec279fd3c468afee Mon Sep 17 00:00:00 2001
+From: phanirithvij <phanirithvij2000@gmail.com>
+Date: Sun, 29 Mar 2026 20:21:10 +0530
+Subject: [PATCH] patch xc7z035 tilegrid
+
+Signed-off-by: phanirithvij <phanirithvij2000@gmail.com>
+---
+ xilinx/python/xilinx_device.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xilinx/python/xilinx_device.py b/xilinx/python/xilinx_device.py
+index 386d4724..56f31c92 100644
+--- a/xilinx/python/xilinx_device.py
++++ b/xilinx/python/xilinx_device.py
+@@ -461,6 +461,9 @@ def import_device(name, prjxray_root, metadata_root):
+ 		# https://github.com/gatecat/nextpnr-xilinx/issues/35
+ 		# https://github.com/f4pga/prjxray/pull/1889
+ 		fabricname = 'xc7a50t'
++	elif fabricname == 'xc7z035':
++		# https://github.com/openXC7/nextpnr-xilinx/issues/87
++		fabricname = 'xc7z045'
+ 	# Load intent JSON
+ 	with open(metadata_root + "/wire_intents.json", "r") as ijf:
+ 		ij = json.load(ijf)
+-- 
+2.53.0
+

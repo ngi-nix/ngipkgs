@@ -7,18 +7,21 @@
   redisTestHook,
   funkwhale,
   runCommand,
+  typesense,
+  curl,
 
   # Frontend
   stdenv,
-  fetchYarnDeps,
-  yarnConfigHook,
-  yarnBuildHook,
+  yarn-berry_4,
   nodejs,
+  cypress,
+  dart-sass,
 
   nix-update-script,
 }:
 let
   python = python3;
+  yarn-berry = yarn-berry_4;
 
   meta = {
     description = "Federated platform for audio streaming, exploration, and publishing";
@@ -32,7 +35,7 @@ let
 in
 python.pkgs.buildPythonApplication rec {
   pname = "funkwhale";
-  version = "2.0.0-alpha.2";
+  version = "2.0.0";
   pyproject = true;
 
   src = fetchFromGitLab {
@@ -40,7 +43,7 @@ python.pkgs.buildPythonApplication rec {
     owner = "funkwhale";
     repo = "funkwhale";
     tag = version;
-    hash = "sha256-4WvTyVqFuSlkim/9S88tutvXJqA4VHsILH5q4WKsjo8=";
+    hash = "sha256-hMxVWnKa2n8ZmY8A2J8603tpyRvTH/Po37gZDBmRKWY=";
   };
 
   sourceRoot = "${src.name}/api";
@@ -49,12 +52,6 @@ python.pkgs.buildPythonApplication rec {
     # `unicode-slugify` was removed from nixpkgs.
     # See https://github.com/NixOS/nixpkgs/pull/448893.
     ./replace-unicode-slugify.patch
-
-    # The function was removed in an update.
-    ./fix-allauth-internal-function-use.patch
-
-    # Broken in <https://github.com/django-oauth/django-oauth-toolkit/commit/13f0aceb010eececfb581a0e21f013f47a8f5f6b#diff-a7fb1c13746762fee6dcacf6b9f28079ef7f1567104660aa5a8d6ca388ccc838R123-R130>
-    ./fix-oob-schemes.patch
 
     ./fix-root-filesystem-tests.patch
   ];
@@ -120,6 +117,7 @@ python.pkgs.buildPythonApplication rec {
       cryptography
       defusedxml
       feedparser
+      httpx
       python-ffmpeg
       liblistenbrainz
       musicbrainzngs
@@ -137,7 +135,9 @@ python.pkgs.buildPythonApplication rec {
       pycountry
 
       # Typesense
-      typesense
+      #typesense
+      # Remove once https://github.com/NixOS/nixpkgs/pull/503394 is merged
+      (python3.pkgs.callPackage ./deps/typesense { inherit typesense curl; })
 
       ipython
       pluralizer
@@ -196,24 +196,41 @@ python.pkgs.buildPythonApplication rec {
       inherit version src;
       sourceRoot = "${src.name}/front";
 
-      yarnOfflineCache = fetchYarnDeps {
+      missingHashes = ./missing-hashes.json;
+      offlineCache = yarn-berry.fetchYarnBerryDeps {
         yarnLock = "${src}/front/yarn.lock";
-        hash = "sha256-+rGiKBg18XL6W5b5VaYAbwbF+kQGX8JBIn0ATJyd9Bg=";
+        # TODO update script
+        # yarn-berry-fetcher missing-hashes $(nix-build -A funkwhale.frontend.src)/front/yarn.lock >pkgs/by-name/funkwhale/missing-hashes.json
+        missingHashes = ./missing-hashes.json;
+        hash = "sha256-II/9X4JILGJli5gSznIfKMGlDzp84IMJS7l1qV2KNOk=";
       };
 
-      yarnBuildScript = "build:deployment";
+      env = {
+        CYPRESS_INSTALL_BINARY = 0;
+        CYPRESS_RUN_BINARY = lib.getExe cypress;
+      };
 
       nativeBuildInputs = [
-        yarnConfigHook
-        yarnBuildHook
+        yarn-berry.yarnBerryConfigHook
+        yarn-berry
         nodejs
+        dart-sass
       ];
+
+      buildPhase = ''
+        runHook preBuild
+
+        # force sass-embedded to use our own sass instead of the bundled one
+        substituteInPlace node_modules/sass-embedded/dist/lib/src/compiler-path.js \
+            --replace-fail 'compilerCommand = (() => {' 'compilerCommand = (() => { return ["${lib.getExe dart-sass}"];'
+
+        yarn run build:deployment
+        runHook postBuild
+      '';
 
       installPhase = ''
         runHook preInstall
-
         cp -r dist $out
-
         runHook postInstall
       '';
 
@@ -222,6 +239,7 @@ python.pkgs.buildPythonApplication rec {
       };
     };
 
+    # TODO experimental combinator
     updateScript = nix-update-script {
       extraArgs = [
         "--subpackage"

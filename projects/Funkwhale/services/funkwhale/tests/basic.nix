@@ -39,7 +39,7 @@
     machine.succeed("curl --fail http://localhost")
 
     # Can create supseruser and login.
-    machine.succeed("sudo -u funkwhale funkwhale-manage fw users create --superuser "
+    machine.succeed("cd /var/lib/funkwhale && sudo -u funkwhale funkwhale-manage fw users create --superuser "
                     "--username testinahat --email test@example.com --password teast1997")
     machine.succeed('curl --fail http://localhost/api/v2/users/login '
                     '--form "username=testinahat" --form "password=teast1997" '
@@ -50,4 +50,11 @@
     machine.succeed("sudo -u funkwhale funkwhale-manage generate_typesense_index")
     machine.wait_for_console_text("typesense\\.build_canonical_index.*succeeded")
   '';
+
+  # Debug interactively with:
+  # - nix build -f . projects.Funkwhale.tests.basic.driverInteractive
+  # - ./result/bin/nixos-test-driver
+  # - run_tests()
+  # ssh -o User=root vsock%3 (can also do vsock/3, but % works with scp etc.)
+  interactive.sshBackdoor.enable = true;
 }
