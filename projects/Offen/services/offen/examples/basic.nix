@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.offen.enable = true;
+}
