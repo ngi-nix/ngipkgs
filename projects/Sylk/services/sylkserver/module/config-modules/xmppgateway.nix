@@ -1,12 +1,12 @@
 {
-  config,
   pkgs,
-  lib,
+  cfg,
+  service,
   ...
 }:
+{ lib, ... }:
 
 let
-  cfg = config.services.sylkserver;
   settingsFormat = pkgs.formats.ini { };
 in
 
@@ -21,14 +21,14 @@ in
       };
       ca_file = lib.mkOption {
         type = lib.types.path;
-        default = "${cfg.package}/share/sylkserver/tls/ca.crt";
-        defaultText = lib.literalExpression "\"\${config.services.sylkserver.package}/share/sylkserver/tls/ca.crt\"";
+        default = "${cfg.package}/share/${service}/tls/ca.crt";
+        defaultText = lib.literalExpression "\"\${config.services.${service}.package}/share/${service}/tls/ca.crt\"";
         description = "Path to the Certificate Authority file for TLS.";
       };
       certificate = lib.mkOption {
         type = lib.types.path;
-        default = "${cfg.package}/share/sylkserver/tls/default.crt";
-        defaultText = lib.literalExpression "\"\${config.services.sylkserver.package}/share/sylkserver/tls/default.crt\"";
+        default = "${cfg.package}/share/${service}/tls/default.crt";
+        defaultText = lib.literalExpression "\"\${config.services.${service}.package}/share/${service}/tls/default.crt\"";
         description = "Path to the server certificate file for TLS.";
       };
     };

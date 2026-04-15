@@ -3,10 +3,11 @@
   pkgs,
   lib,
   ...
-}@args:
+}:
 
 let
-  cfg = config.services.sylkserver;
+  service = "sylkserver";
+  cfg = config.services.${service};
   settingsFormat = pkgs.formats.ini { };
 
   configDir = pkgs.runCommand "sylkserver-config-dir" { } ''
@@ -19,15 +20,12 @@ let
     '') (lib.attrNames cfg.settings)}
   '';
 
-  logsDir = cfg.settings.config.Server.trace_dir;
-  spoolDir = cfg.settings.config.Server.spool_dir;
-  transferDir = cfg.settings.conference.Conference.file_transfer_dir;
-  screensharingDir = cfg.settings.conference.Conference.screensharing_images_dir;
+  configType = path: lib.types.submodule (lib.modules.importApply path { inherit pkgs service cfg; });
 in
 
 {
   options = {
-    services.sylkserver = {
+    services.${service} = {
       enable = lib.mkEnableOption "the SylkServer SIP/XMPP/WebRTC Application Server";
       package = lib.mkPackageOption pkgs "sylkserver" { };
       debug = lib.mkEnableOption "verbose logging";
@@ -38,30 +36,18 @@ in
         description = "Whether to open ports in the firewall for SylkServer.";
       };
 
-      user = lib.mkOption {
-        type = lib.types.nonEmptyStr;
-        default = "sylkserver";
-        description = "User account under which SylkServer runs.";
-      };
-
-      group = lib.mkOption {
-        type = lib.types.nonEmptyStr;
-        default = "sylkserver";
-        description = "Group under which SylkServer runs.";
-      };
-
       # See configuration samples for options
       # e.g. https://github.com/AGProjects/sylkserver/blob/master/config.ini.sample
       settings = lib.mkOption {
         type = lib.types.submodule {
           options = {
             config = lib.mkOption {
-              type = lib.types.submodule (import ./config-modules/config.nix args);
+              type = configType ./config-modules/config.nix;
               default = { };
               description = "Main SylkServer configuration.";
             };
             conference = lib.mkOption {
-              type = lib.types.submodule (import ./config-modules/conference.nix args);
+              type = configType ./config-modules/conference.nix;
               default = { };
               description = "Conference application configuration.";
             };
@@ -90,7 +76,7 @@ in
               description = "WebRTC gateway configuration.";
             };
             xmppgateway = lib.mkOption {
-              type = lib.types.submodule (import ./config-modules/xmppgateway.nix args);
+              type = configType ./config-modules/xmppgateway.nix;
               default = { };
               description = "XMPP gateway configuration.";
             };
@@ -114,36 +100,18 @@ in
     # TODO: dynamic user?
     # there were some issues with using a dynamic user (tied to uid and gid)
     # that may warrant patching the software
-    users.groups.${cfg.group} = { };
-    users.users.${cfg.user} = {
+    users.groups.${service} = { };
+    users.users.${service} = {
       description = "SylkServer service user";
       isSystemUser = true;
-      group = cfg.group;
+      group = service;
     };
 
-    systemd.tmpfiles.settings.sylkserver =
-      let
-        ruleArgs = {
-          inherit (cfg) user group;
-          mode = "770";
-        };
-      in
-      {
-        "${transferDir}".d = ruleArgs;
-        "${screensharingDir}".d = ruleArgs;
-      }
-      // lib.optionalAttrs (logsDir != "/var/log/sylkserver") {
-        "${logsDir}".d = ruleArgs;
-      }
-      // lib.optionalAttrs (spoolDir != "/var/lib/sylkserver") {
-        "${spoolDir}".d = ruleArgs;
-      };
-
-    systemd.services.sylkserver = {
+    systemd.services.${service} = {
       description = "SylkServer SIP/XMPP/WebRTC Application Server";
       serviceConfig = {
-        User = cfg.user;
-        Group = cfg.group;
+        User = service;
+        Group = service;
         ExecStart = toString [
           (lib.getExe' cfg.package "sylk-server")
           (lib.optionalString cfg.debug "--debug")
@@ -151,14 +119,16 @@ in
           "--config-dir ${configDir}"
         ];
         StateDirectory = [
-          "sylkserver"
+          service
+          "${service}/file_transfer"
+          "${service}/screensharing_images"
         ];
-        LogsDirectory = [
-          "sylkserver"
-        ];
+        LogsDirectory = [ service ];
         BindPaths = [
-          "%S/sylkserver/file_transfer:${transferDir}"
-          "%S/sylkserver/screensharing_images:${screensharingDir}"
+          cfg.settings.conference.Conference.file_transfer_dir
+          cfg.settings.conference.Conference.screensharing_images_dir
+          cfg.settings.config.Server.spool_dir
+          cfg.settings.config.Server.trace_dir
         ];
         Restart = "on-failure";
         RestartSec = 5;
