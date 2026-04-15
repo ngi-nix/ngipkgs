@@ -7,9 +7,14 @@
 {
   metadata = {
     summary = "Standards-compliant open-source IMAP server with server-side encryption";
-    subgrants.Review = [
-      "Aerogramme"
-    ];
+    subgrants = {
+      Commons = [
+        "Aerogramme-1.0"
+      ];
+      Review = [
+        "Aerogramme"
+      ];
+    };
     links = {
       homepage = {
         text = "Homepage";
