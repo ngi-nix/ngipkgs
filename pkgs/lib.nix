@@ -137,9 +137,13 @@ rec {
       collectFiles =
         attrs:
         let
-          # get value of `files` attr or empty list
+          # get value of `declarations` attr or empty list
           getFiles =
-            attr: if attr.value ? files && builtins.isList attr.value.files then attr.value.files else [ ];
+            attr:
+            if attr.value ? declarations && builtins.isList attr.value.declarations then
+              attr.value.declarations
+            else
+              [ ];
         in
         lib.concatMap getFiles (lib.attrsToList attrs);
     in
