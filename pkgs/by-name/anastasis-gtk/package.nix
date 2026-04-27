@@ -25,12 +25,12 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "anastasis-gtk";
-  version = "0.6.3";
+  version = "0.7.0";
 
   src = fetchgit {
     url = "https://git-www.taler.net/anastasis-gtk.git";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-nMkoLTuOCQ0p//MnY0f++rpmylLznn0n/1h0IGBp8G0=";
+    hash = "sha256-6F/Z8s6HoqrURS7d51cILhnBGifLI7r9xdT67lRsbn8=";
   };
 
   nativeBuildInputs = [
