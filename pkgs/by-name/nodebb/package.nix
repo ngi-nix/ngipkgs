@@ -11,13 +11,13 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "nodebb";
-  version = "4.9.2";
+  version = "4.10.3";
 
   src = fetchFromGitHub {
     owner = "NodeBB";
     repo = "NodeBB";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-yPCxIcpwzGqKzDDGkTCw9l0uTRu5Eb0D6V/0YOgdcrA=";
+    hash = "sha256-MSlEIK3VH0l/zuzwfRhcPe4WxbatLvZkTLg3YKabpZ0=";
     postFetch = ''
       cp $out/install/package.json $out
     '';

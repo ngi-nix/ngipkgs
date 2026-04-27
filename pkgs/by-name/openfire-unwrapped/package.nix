@@ -8,17 +8,17 @@
 }:
 maven.buildMavenPackage rec {
   pname = "openfire-unwrapped";
-  version = "5.0.3";
+  version = "5.0.4";
 
   src = fetchFromGitHub {
     owner = "igniterealtime";
     repo = "Openfire";
     tag = "v${version}";
-    hash = "sha256-5oK8ywCtBc7zh6yA/PBBO8yfeWkJ0/uSpcNiETD7pPk=";
+    hash = "sha256-vOD8DX4P+SrCSrvOSJ4O/wUUpzeETIG4pu1vP+lM6rw=";
   };
 
   mvnJdk = jdk_headless;
-  mvnHash = "sha256-Z5438DdDCrIusePAZ1NFQ7D2NPu1iJwaCeCEQodsf6g=";
+  mvnHash = "sha256-VLZuGb/c4NRbHgDWXX5ANF0suWBX/sdab7Tl2tgitmk=";
 
   # some deps require internet for tests
   mvnParameters = "-Dmaven.test.skip";

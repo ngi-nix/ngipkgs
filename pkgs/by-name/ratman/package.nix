@@ -13,14 +13,14 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ratman";
-  version = "0.7.0-unstable-2025-09-09";
+  version = "0.7.0-unstable-2026-04-26";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "irdest";
     repo = "irdest";
-    rev = "b0e2113b2194e5bbef2d227f2a151fe05db0de44";
-    hash = "sha256-q9MO+xfxT5tbiEV3L7qb3LefYS+cWXVFD2BGt8ftoh4=";
+    rev = "a07d895badf9a8b94594fb66fe4c7392a3252b8a";
+    hash = "sha256-qgUvdHIaeVZRuDjdsshEpfd/AgHJPTKRQdHjtksH3MU=";
   };
 
   cargoHash = "sha256-Bemqfjm4yeen0c3vVlJxpVW2Tatfvm4dvkAf6SjXGFk=";

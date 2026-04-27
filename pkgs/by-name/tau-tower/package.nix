@@ -9,16 +9,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "tau-tower";
-  version = "0.2.2-beta-unstable-2026-03-14";
+  version = "0.2.3-unstable-2026-04-10";
 
   src = fetchFromGitHub {
     owner = "tau-org";
     repo = "tau-tower";
-    rev = "26908437b568c80fc470934948067341e581d43e";
-    hash = "sha256-qaui9xWNWuh669kWyTnLGqtuDIKFs4K5Iv3Tti6Befk=";
+    rev = "4061e0518d7a461a061fdc0a13fc4fe332f1c528";
+    hash = "sha256-/mfFin1HjHsJ8IHPSsLLYaq1432ZFtzg8gGTPGUmhLw=";
   };
 
-  cargoHash = "sha256-5BAL5A78LIgr5G50aU1TXl19qkKiUPPVJn/QogfRMKI=";
+  cargoHash = "sha256-Qv97FTiccfQSBI2OBfl31p3oF/JCL/+UXkK+owuByDY=";
 
   nativeBuildInputs = [
     perl

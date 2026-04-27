@@ -5,19 +5,19 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "peertube-plugin-matomo";
-  version = "0-unstable-2025-12-18";
+  version = "0-unstable-2026-04-24";
 
   src = fetchFromGitLab {
     domain = "framagit.org";
     owner = "framasoft";
     repo = "peertube/official-plugins";
-    rev = "b035a3b7b109b1227c9afa6d105ea8d017bcf963";
-    hash = "sha256-mgIOklLsdJNMw7ccoyOcfpf72W2KI5BvPpCtrCmh6bQ=";
+    rev = "678a334cec1392406858f93466af875f242c4be6";
+    hash = "sha256-tr8SSm8WgzY6BcTu+eqeXXAm/GZ8OaLbfhcbkmO69/4=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/peertube-plugin-matomo";
 
-  npmDepsHash = "sha256-s2vrUKMRF+VhBPAbv/RQ66UBNOBYEvi/axxJB132R9s=";
+  npmDepsHash = "sha256-xPRkdEdLHVvVqcEtuDCK0V0xQxKH8RFX+UDP4RZCqpM=";
 
   meta = {
     description = "Matomo plugin that tracks page views on a PeerTube instance";

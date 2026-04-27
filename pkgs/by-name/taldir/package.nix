@@ -9,15 +9,15 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "taldir";
-  version = "1.3.3-unstable-2026-02-17";
+  version = "1.5.1-unstable-2026-03-29";
 
   src = fetchgit {
     url = "https://git-www.taler.net/taldir.git";
-    rev = "228a58526dcdb6863021e10109dafb411b5726d4";
-    hash = "sha256-f/50jnf7h0SzHnRVbp7vbwRpMsMb6wqb1P7m+kDRrPY=";
+    rev = "13b4074969a156b72bb48b4818df5c29bb383cf3";
+    hash = "sha256-KZ7DQUiaQyQnW0txLYwdLZnlMmelpZHE9igQjwaUusQ=";
   };
 
-  vendorHash = "sha256-eZFE/hWQPG88lZT9KM/j2B0uoWvWQaPoMNcBKf5jWj8=";
+  vendorHash = "sha256-f2CyTqTbEbbdk9dZKu3PIOwM8EJPCQ7ua0Gg8t09JwA=";
 
   nativeBuildInputs = [
     recutils
