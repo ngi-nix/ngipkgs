@@ -27,11 +27,11 @@ in
       rm -vrf $out/test
     '';
   };
+  meta = {
+    homepage = "https://github.com/robur-coop/dnsvizor";
+    teams = with lib.teams; [ ngi ];
+  };
   overrideUnikernel = finalAttrs: previousAttrs: {
-    meta = {
-      homepage = "https://github.com/robur-coop/dnsvizor";
-      teams = with lib.teams; [ ngi ];
-    };
     buildInputs = previousAttrs.buildInputs or [ ] ++ [
       # Some targets, such as hvt, need static GMP (or MPIR)
       (pkgsStatic.gmp.override {
