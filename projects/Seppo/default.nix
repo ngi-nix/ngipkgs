@@ -23,6 +23,5 @@
     };
   };
 
-  nixos.modules.programs.seppo.module = null;
   nixos.modules.services.seppo.module = null;
 }

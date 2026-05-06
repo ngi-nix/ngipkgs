@@ -9,6 +9,9 @@
   metadata = {
     summary = "GNUnet is GNU's framework for secure peer-to-peer networking";
     subgrants = {
+      Commons = [
+        "libgnunetutil"
+      ];
       Core = [
         "GNUnet-Android"
       ];
@@ -16,11 +19,13 @@
         "GNUnet-CONG"
       ];
       Review = [
+        "GNS"
         "GNUnet-L2"
         "GNUnet-Messenger"
-        "ProbabilisticNAT"
         "gnunet"
         "gnunet-test"
+        "ProbabilisticNAT"
+        "R5N-DHT"
       ];
     };
   };
