@@ -121,24 +121,6 @@ in
       group = cfg.group;
     };
 
-    systemd.tmpfiles.settings.sylkserver =
-      let
-        ruleArgs = {
-          inherit (cfg) user group;
-          mode = "770";
-        };
-      in
-      {
-        "${transferDir}".d = ruleArgs;
-        "${screensharingDir}".d = ruleArgs;
-      }
-      // lib.optionalAttrs (logsDir != "/var/log/sylkserver") {
-        "${logsDir}".d = ruleArgs;
-      }
-      // lib.optionalAttrs (spoolDir != "/var/lib/sylkserver") {
-        "${spoolDir}".d = ruleArgs;
-      };
-
     systemd.services.sylkserver = {
       description = "SylkServer SIP/XMPP/WebRTC Application Server";
       serviceConfig = {
@@ -152,6 +134,8 @@ in
         ];
         StateDirectory = [
           "sylkserver"
+          "sylkserver/file_transfer"
+          "sylkserver/screensharing_images"
         ];
         LogsDirectory = [
           "sylkserver"
@@ -159,6 +143,8 @@ in
         BindPaths = [
           "%S/sylkserver/file_transfer:${transferDir}"
           "%S/sylkserver/screensharing_images:${screensharingDir}"
+          "%S/sylkserver:${spoolDir}"
+          "%L/sylkserver:${logsDir}"
         ];
         Restart = "on-failure";
         RestartSec = 5;
