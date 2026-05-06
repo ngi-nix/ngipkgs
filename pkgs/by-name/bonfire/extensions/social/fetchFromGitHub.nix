@@ -2,6 +2,6 @@
 fetchFromGitHub {
   owner = "bonfire-networks";
   repo = "social";
-  rev = "13e8bb4c74515a866705e0d186cb8b510ccf04ce";
-  hash = "sha256-WswNXQ0V5K+7nN9F7LamhK6uKpRCDp1795k9cFQhZ3Q=";
+  rev = "b48bf9d88630d44561ad7aff611487d8f1381714";
+  hash = "sha256-F5s4z6u4NqE+UuHhrP73ClHS0KzdRWFZhaglFuCAh2g=";
 }

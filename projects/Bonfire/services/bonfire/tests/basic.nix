@@ -32,7 +32,7 @@
 
   interactive = {
     # HowTo(maint/debug):
-    # nix -L run -f . hydrated-projects.Bonfire.nixos.tests.basic.driverInteractive
+    # nix -L run -f . projects.Bonfire.tests.basic.driverInteractive
     # python> start_all()
     # ssh -o User=root vsock/3
     sshBackdoor.enable = true;
@@ -43,7 +43,7 @@
         networking.firewall.allowedTCPPorts = [ 80 ];
         virtualisation.forwardPorts = [
           # HowTo(maint/debug):
-          # nix -L run -f . hydrated-projects.Bonfire.nixos.tests.basic.driverInteractive
+          # nix -L run -f . projects.Bonfire.tests.basic.driverInteractive
           # python> start_all()
           # firefox http://localhost:4000
           {

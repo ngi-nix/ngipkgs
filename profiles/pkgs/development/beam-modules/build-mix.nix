@@ -51,7 +51,7 @@ lib.extendMkDerivation {
       # A config directory that is considered for all the dependencies of an app, typically in $src/config/
       # This was initially added, as some of Mobilizon's dependencies need to access the config at build time.
       appConfigPath ? finalAttrs.appConfigPath or null,
-      env ? { },
+      env ? finalAttrs.env or { },
       ...
     }@previousAttrs:
     #assert finalAttrs.appConfigPath != null -> finalAttrs.removeConfig;
@@ -60,7 +60,7 @@ lib.extendMkDerivation {
       name = "${name}-${finalAttrs.version}";
       inherit version src;
 
-      env = env // {
+      env = {
         ERL_COMPILER_OPTIONS =
           let
             options = erlangCompilerOptions ++ lib.optionals erlangDeterministicBuilds [ "deterministic" ];
@@ -73,7 +73,8 @@ lib.extendMkDerivation {
         MIX_DEBUG = if enableDebugInfo then 1 else 0;
         MIX_ENV = mixEnv;
         MIX_TARGET = mixTarget;
-      };
+      }
+      // previousAttrs.env or { };
 
       __darwinAllowLocalNetworking = true;
 
@@ -84,6 +85,7 @@ lib.extendMkDerivation {
         addToSearchPath ERL_LIBS "$1/lib/erlang/lib"
       '';
 
+      # Remark: patchPhase will be applied to $out/src
       postUnpack = ''
         mkdir -p $out
         cp -r $sourceRoot $out/src
