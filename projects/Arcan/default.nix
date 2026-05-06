@@ -40,7 +40,7 @@
       examples.base = {
         module = ./example.nix;
         description = "testing documentation";
-        tests.basic.module = null;
+        tests.basic.module = ./tests/basic.nix;
       };
       links = {
         build = {
