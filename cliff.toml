@@ -1,5 +1,6 @@
 # git-cliff ~ configuration file
 # https://git-cliff.org/docs/configuration
+# https://github.com/orhun/git-cliff/blob/main/cliff.toml
 
 [changelog]
 # A Tera template to be rendered as the changelog's header.
@@ -11,29 +12,40 @@ All notable changes to this project will be documented in this file.\n
 # A Tera template to be rendered for each release in the changelog.
 # See https://keats.github.io/tera/docs/#introduction
 body = """
+{%- macro remote_url() -%}
+  https://github.com/ngi-nix/ngipkgs
+{%- endmacro -%}
+
+{% macro print_commit(commit) -%}
+    - {% if commit.scope %}*{{ commit.scope }}:* {% endif %}\
+        {% if commit.breaking %}[**breaking**] {% endif %}\
+        {{ commit.message | upper_first }} - \
+        ([{{ commit.id | truncate(length=7, end="") }}]({{ self::remote_url() }}/commit/{{ commit.id }}))\
+{% endmacro -%}
+
 {% if version %}\
-    ## {{ version | trim_start_matches(pat="v") }} - {{ timestamp | date(format="%Y-%m-%d") }}
+    {% if previous.version %}\
+        ## [{{ version | trim_start_matches(pat="v") }}]\
+          ({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
+    {% else %}\
+        ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+    {% endif %}\
 {% else %}\
-    ## Unreleased
+    ## [unreleased]
 {% endif %}\
+
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | upper_first }}
     {% for commit in commits
     | filter(attribute="scope")
     | sort(attribute="scope") %}
-        - *{{commit.scope}}* {{ commit.message | upper_first }}
-        {%- if commit.breaking %}
-        {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
-        {%- endif -%}
+        {{ self::print_commit(commit=commit) }}
     {%- endfor -%}
     {% raw %}\n{% endraw %}\
     {%- for commit in commits %}
         {%- if commit.scope -%}
         {% else -%}
-            - {{ commit.message | upper_first }}
-            {% if commit.breaking -%}
-            {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
-            {% endif -%}
+            {{ self::print_commit(commit=commit) }}
         {% endif -%}
     {% endfor -%}
     {% raw %}\n{% endraw %}\
@@ -46,6 +58,11 @@ footer = """
 """
 # Remove leading and trailing whitespaces from the changelog's body.
 trim = true
+# An array of regex based postprocessors to modify the changelog.
+postprocessors = [
+  # Replace the placeholder `<REPO>` with a URL.
+  { pattern = '<REPO>', replace = "https://github.com/ngi-nix/ngipkgs" }, # replace repository URL
+]
 
 [git]
 # Parse commits according to the conventional commits specification.
@@ -73,6 +90,11 @@ commit_parsers = [
   { message = ".*flake.lock", skip = true },
   { message = '.*overview', group = "Overview" },
   { message = '^\((.*)\):.*->.*', group = "(${1})" },
+]
+# An array of regex based parsers to modify commit messages prior to further processing.
+commit_preprocessors = [
+  # Replace issue numbers with link templates to be updated in `changelog.postprocessors`.
+  { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](<REPO>/issues/${2}))" },
 ]
 # Exclude commits that are not matched by any commit parser.
 filter_commits = false
