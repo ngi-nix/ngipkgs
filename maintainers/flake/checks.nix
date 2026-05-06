@@ -4,7 +4,7 @@
 
   checks,
   formatter,
-  hydrated-projects,
+  projects,
   nonBrokenPackages,
   overview-with-manuals,
   ...
@@ -23,26 +23,12 @@ let
 
   # TODO: rename toplevel attributes?
   self = flake;
-  projects = hydrated-projects;
 
   toplevel = machine: machine.config.system.build.toplevel; # for makemake
 
-  checksForAllProjects =
-    let
-      checksForProject =
-        projectName: project:
-        let
-          checksForNixosTests = concatMapAttrs (testName: test: {
-            "projects/${projectName}/nixos/tests/${testName}" = test;
-          }) project.nixos.tests;
-
-          checksForNixosTypes = {
-            "projects/${projectName}/nixos/module-check" = checks.${projectName};
-          };
-        in
-        checksForNixosTests // checksForNixosTypes;
-    in
-    concatMapAttrs checksForProject projects;
+  checksForAllProjects = concatMapAttrs (
+    projectName: project: lib.flattenAttrs "/" projects.${projectName}
+  ) projects;
 
   checksForAllPackages =
     let
