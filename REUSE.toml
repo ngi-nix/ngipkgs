@@ -1,0 +1,10 @@
+version = 1
+SPDX-PackageName = "ngipkgs"
+SPDX-PackageSupplier = "NGIpkgs contributors <ngi@nixos.org>"
+SPDX-PackageDownloadLocation = "https://github.com/ngi-nix/ngipkgs"
+
+[[annotations]]
+path = ["**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NGIpkgs contributors <ngi@nixos.org>"
+SPDX-License-Identifier = "MIT"
