@@ -73,6 +73,7 @@
         fricklerhandwerk
         erethon
         lorenzleutgeb
+        imincik
       ];
       remotebuild = with keys; [
         getpsyched
