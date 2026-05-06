@@ -7,12 +7,12 @@
 }:
 
 # TODO(linj) implement and test DHCP
-#   - run dnsvizor as a DHCP server
+#   - run DNSvizor as a DHCP server
 #   - update DNS record in the authoritative DNS server when DHCP ip changes
 #   - update config for tlstunnel mirageos unikernel when DHCP ip changes
 #     - need to add module (and package) for tlstunnel unikernel first, which itself is a complex project
 # TODO(linj) implement and test --ipv6-only: currently we assume ipv4 is always there and have implemented/tested --ipv4-only and dual stack configs
-#   - dnsvizor always has a default value for --ipv4 (but not ipv4-gateway?), seems conflict with --ipv6-only.  is --ipv6-only even supported by dnsvizor?
+#   - DNSvizor always has a default value for --ipv4 (but not ipv4-gateway?), seems conflict with --ipv6-only.  is --ipv6-only even supported by DNSvizor?
 # TODO(linj) test DNSSEC (is that even possible?)
 
 let
@@ -40,14 +40,17 @@ let
 in
 {
   options.services.dnsvizor = {
-    enable = lib.mkEnableOption "dnsvizor";
+    enable = lib.mkEnableOption "DNSvizor";
 
-    package = lib.mkPackageOption pkgs "dnsvizor (hvt target)" {
+    package = lib.mkPackageOption pkgs "HVT (Hardware Virtualized Tender) target of DNSvizor" {
       default = [
         "dnsvizor"
         "hvt"
       ];
-      extraDescription = "We assume dnsvizor.hvt exists at the root dir of the package.";
+      extraDescription = ''
+        This package must provide an HVT unikernel
+        at `share/mirageos/dnsvizor.hvt`.
+      '';
     };
 
     memory = lib.mkOption {
@@ -240,7 +243,7 @@ in
       description = "The main network interface of the host.";
     };
 
-    openFirewall = lib.mkEnableOption "opening ports in the firewall for dnsvizor";
+    openFirewall = lib.mkEnableOption "opening ports in the firewall for DNSvizor";
 
     packetForwardingIsSecure = lib.mkOption {
       type = lib.types.bool;
@@ -328,7 +331,7 @@ in
 
   config = lib.mkIf cfg.enable {
     systemd.services.dnsvizor = {
-      description = "dnsvizor recursive/stub DNS resolver and DHCP server";
+      description = "DNSvizor recursive/stub DNS resolver and DHCP server";
       documentation = [ "https://robur-coop.github.io/dnsvizor-handbook/" ];
       wantedBy = [ "multi-user.target" ];
       bindsTo = [ unikernelInterfaceSystemdUnit ];
@@ -339,7 +342,7 @@ in
             --mem=${builtins.toString cfg.memory} \
             --net:service=${utils.escapeSystemdExecArg cfg.unikernelInterface} \
             -- \
-            ${cfg.package}/dnsvizor.hvt \
+            ${cfg.package}/share/mirageos/dnsvizor.hvt \
             ${utils.escapeSystemdExecArgs (lib.cli.toCommandLineGNU { } cfg.settings)}
         '';
         Restart = "on-failure";
@@ -452,7 +455,7 @@ in
     warnings = lib.optional (!cfg.packetForwardingIsSecure) ''
       services.dnsvizor module enables packet forwarding.
       A properly configured firewall or a trusted L2 on all network interfaces is required to prevent unauthorized access to the internal network.
-      A simple firewall will be added and configured for dnsvizor if you enable networking.firewall.enable, networking.firewall.filterForward and networking.nftables.enable.
+      A simple firewall will be added and configured for DNSvizor if you enable networking.firewall.enable, networking.firewall.filterForward and networking.nftables.enable.
       If you build your own firewall, allow packets from ${cfg.unikernelInterface} to ${cfg.mainInterface}.
       After a firewall is set up, set services.dnsvizor.packetForwardingIsSecure to true to disable this warning.
     '';
