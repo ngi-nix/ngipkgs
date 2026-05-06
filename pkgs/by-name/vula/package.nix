@@ -34,7 +34,9 @@ python3.pkgs.buildPythonApplication {
   postPatch = ''
     rm pyproject.toml
     substituteInPlace vula/frontend/constants.py \
-      --replace "IMAGE_BASE_PATH = '/usr/share/icons/vula/'" "IMAGE_BASE_PATH = '$out/share/icons/vula/'"
+      --replace-fail "IMAGE_BASE_PATH = '/usr/share/icons/vula/'" "IMAGE_BASE_PATH = '$out/share/icons/vula/'"
+    substituteInPlace setup.cfg \
+      --replace-fail "[pytest]" "[tool:pytest]"
   '';
 
   build-system = with python3.pkgs; [

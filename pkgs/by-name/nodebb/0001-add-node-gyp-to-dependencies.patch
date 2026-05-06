@@ -1,0 +1,59 @@
+From 893dd8a25ea9a9f76461f75243f336982baa3c08 Mon Sep 17 00:00:00 2001
+From: phanirithvij <phanirithvij2000@gmail.com>
+Date: Sun, 29 Mar 2026 00:21:31 +0530
+Subject: [PATCH] add node-gyp to dependencies
+
+Signed-off-by: phanirithvij <phanirithvij2000@gmail.com>
+---
+ install/package.json | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/install/package.json b/install/package.json
+index 42a5dda294..80ec7fc70e 100644
+--- a/install/package.json
++++ b/install/package.json
+@@ -36,6 +36,7 @@
+         "@isaacs/ttlcache": "2.1.4",
+         "@nodebb/spider-detector": "2.0.3",
+         "@popperjs/core": "2.11.8",
++        "@socket.io/redis-adapter": "8.3.0",
+         "@textcomplete/contenteditable": "0.1.13",
+         "@textcomplete/core": "0.1.13",
+         "@textcomplete/textarea": "0.1.13",
+@@ -97,6 +98,7 @@
+         "mousetrap": "1.6.5",
+         "multer": "2.1.1",
+         "nconf": "0.13.0",
++        "node-gyp": "^12.2.0",
+         "nodebb-plugin-2factor": "7.6.1",
+         "nodebb-plugin-composer-default": "10.3.28",
+         "nodebb-plugin-dbsearch": "6.4.1",
+@@ -140,7 +142,6 @@
+         "sitemap": "9.0.1",
+         "socket.io": "4.8.3",
+         "socket.io-client": "4.8.3",
+-        "@socket.io/redis-adapter": "8.3.0",
+         "sortablejs": "1.15.7",
+         "spdx-license-list": "6.11.0",
+         "terser-webpack-plugin": "5.4.0",
+@@ -164,9 +165,9 @@
+         "@apidevtools/swagger-parser": "10.1.0",
+         "@commitlint/cli": "20.5.0",
+         "@commitlint/config-angular": "20.5.0",
+-        "coveralls": "3.1.1",
+         "@eslint/js": "10.0.1",
+         "@stylistic/eslint-plugin": "5.10.0",
++        "coveralls": "3.1.1",
+         "eslint-config-nodebb": "2.0.1",
+         "globals": "17.4.0",
+         "grunt": "1.6.1",
+@@ -204,4 +205,4 @@
+             "url": "https://github.com/barisusakli"
+         }
+     ]
+-}
+\ No newline at end of file
++}
+-- 
+2.53.0
+

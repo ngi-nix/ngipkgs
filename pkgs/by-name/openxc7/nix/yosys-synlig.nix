@@ -89,5 +89,9 @@ stdenv.mkDerivation (finalAttrs: {
     license = licenses.asl20;
     maintainers = with maintainers; [ hzeller ];
     platforms = platforms.all;
+    # Note:
+    # dropped from nixpkgs in https://github.com/NixOS/nixpkgs/pull/473242
+    # alternative pr https://github.com/NixOS/nixpkgs/pull/472800
+    broken = true;
   };
 })

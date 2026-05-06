@@ -22,6 +22,9 @@
         module = ./example.nix;
         description = "";
         tests.compile-example.module = ./test.nix;
+        tests.compile-example.problem.broken.reason = ''
+          Has several problems as of now.
+        '';
       };
     };
   };

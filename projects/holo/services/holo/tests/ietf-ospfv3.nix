@@ -40,7 +40,9 @@
       machine.wait_for_open_port(50051)
 
       # Test the running configuration is empty
-      machine.succeed("holo-cli -c 'show running format json'")
+      out = machine.succeed("holo-cli -c 'show running format json'")
+      print(out)
+      assert out.strip() == "{}";
 
       # Configure an OSPFv3 instance:
       # as seen in https://asciinema.org/a/qYxmDu1QjGPBAt5gNyNKvXhHk
@@ -55,6 +57,14 @@
       machine.send_chars("exit\n", 1)
 
       # Verify the configuration was applied (in interactive test)
-      machine.succeed("test \"$(holo-cli -c 'show running format json')\" != \"{}\"");
+      out = machine.succeed("holo-cli -c 'show running format json'")
+      print(out)
+      assert out.strip() != "{}";
     '';
+
+  # Debug interactively with:
+  # - nix run .#projects.holo.tests.basic.driverInteractive -L
+  # - start_all()/run_tests()
+  # ssh -o User=root vsock%3 (can also do vsock/3, but % works with scp etc.)
+  interactive.sshBackdoor.enable = true;
 }

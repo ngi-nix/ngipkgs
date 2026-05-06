@@ -40,7 +40,8 @@
             - to be allowed to read ssh journal logs (adding reaction user to systemd-journal group)
             - and allow changing firewall rules (adding CAP_NET_ADMIN previlige to reaciton systemd service)
         '';
-        tests.non-root.module = pkgs.nixosTests.reaction;
+        tests.non-root.module = pkgs.nixosTests.reaction.basic;
+        tests.plugins.module = pkgs.nixosTests.reaction.plugins;
       };
       examples.root = {
         module = ./services/reaction/examples/root.nix;
@@ -49,7 +50,7 @@
 
           Prefer the non-root configuration and give the service and the reaction user fine-grained access based on your usecase for reaction.
         '';
-        tests.root.module = pkgs.nixosTests.reaction-firewall;
+        tests.root.module = pkgs.nixosTests.reaction.firewall;
       };
     };
   };
@@ -99,6 +100,6 @@
         '';
       }
     ];
-    tests.demo.module = pkgs.nixosTests.reaction-firewall;
+    tests.demo.module = pkgs.nixosTests.reaction.firewall;
   };
 }

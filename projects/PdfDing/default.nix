@@ -84,6 +84,6 @@
         '';
       }
     ];
-    tests.basic.module = pkgs.nixosTests.pdfding.basic;
+    tests.basic.module = ./services/pdfding/tests/basic.nix;
   };
 }

@@ -2,6 +2,6 @@
 fetchFromGitHub {
   owner = "bonfire-networks";
   repo = "ember";
-  rev = "c3876542fc617bb12385c34b3fbd90ca78ab10bb";
-  hash = "sha256-uKW3/5ZT6hKCHhCgGj0vCW6/Ev5VyjoJn1wiPk8QAHI=";
+  rev = "815e48ad5ed7f0310287f98aff8a2fde16994f55";
+  hash = "sha256-qDkVxXnpclxOjyVEo3xkT4XhQw1HceiT0vNvRzCSh3E=";
 }
