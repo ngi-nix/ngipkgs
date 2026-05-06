@@ -3,7 +3,6 @@
   runtimeShell,
   backend,
   nextpnr-xilinx,
-  prjxray,
   pypy310,
   coreutils,
   findutils,
@@ -22,7 +21,6 @@ stdenv.mkDerivation (finalAttrs: {
   dontUnpack = true;
 
   buildInputs = [
-    prjxray
     nextpnr-xilinx
     pypy310
     coreutils

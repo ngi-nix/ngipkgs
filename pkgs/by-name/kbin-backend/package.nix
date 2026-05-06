@@ -15,33 +15,19 @@ let
     optionalString
     ;
 
-  php = php82.override {
-    packageOverrides = final: prev: {
-      extensions = prev.extensions // {
-        # newer versions don't seem to work with kbin
-        redis = prev.extensions.redis.overrideAttrs (
-          finalAttrs: previousAttrs: {
-            version = "6.0.2";
-            src = fetchFromGitHub {
-              repo = "phpredis";
-              owner = "phpredis";
-              rev = finalAttrs.version;
-              hash = "sha256-Ie31zak6Rqxm2+jGXWg6KN4czHe9e+190jZRQ5VoB+M=";
-            };
-          }
-        );
-      };
-    };
-  };
+  # NOTE: php override with `packageOverrides` no longer works
+  # documentation in nixpkgs php framework is outdated
+  php = php82;
 in
 # NOTE: when updating this:
 # - also update the `kbin-frontend` yarn deps hash and its `package.json`
+# - project seems dead https://codeberg.org/Kbin/kbin-core/issues/1425 and last commit on Feb 2024
 php.buildComposerProject (
   finalAttrs:
   let
     pname = "kbin";
-    baseVersion = "0.0.1";
-    version = "0.0.1-unstable-2024-02-05";
+    # realVersion = "0.0.1-unstable-2024-02-05";
+    version = "0.0.1";
   in
   {
     inherit pname version;
@@ -83,7 +69,19 @@ php.buildComposerProject (
       enabled
       ++ (with all; [
         amqp
-        redis
+        (redis.overrideAttrs (
+          finalAttrs: previousAttrs: {
+            # newer versions don't seem to work with kbin
+            # https://github.com/phpredis/phpredis/issues/2564
+            version = "6.0.2";
+            src = fetchFromGitHub {
+              repo = "phpredis";
+              owner = "phpredis";
+              rev = finalAttrs.version;
+              hash = "sha256-Ie31zak6Rqxm2+jGXWg6KN4czHe9e+190jZRQ5VoB+M=";
+            };
+          }
+        ))
       ])
     );
 
@@ -104,11 +102,6 @@ php.buildComposerProject (
         | sponge config/packages/oneup_flysystem.yaml
     '');
 
-    preBuild = ''
-      # composer does not support unstable versioning scheme
-      export version="${baseVersion}"
-    '';
-
     installCheckPhase = ''
       runHook preInstallCheck
 
@@ -128,7 +121,7 @@ php.buildComposerProject (
           read -r input_tag
           if [ "$input_tag" = 0 ]
           then
-            printf '%s' ${baseVersion}
+            printf '%s' ${version}
           else
             printf '%s' "$input_tag"
           fi

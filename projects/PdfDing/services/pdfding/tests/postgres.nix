@@ -7,6 +7,7 @@
 let
   baseTestFile = pkgs.path + "/nixos/tests/web-apps/pdfding/postgres.nix";
   baseTest = import baseTestFile { inherit pkgs lib; };
+  ngiPkgs = pkgs;
 in
 {
   inherit (baseTest)
@@ -18,7 +19,7 @@ in
 
   nodes = lib.mapAttrs (
     _: nodeConfig:
-    { config, pkgs, ... }:
+    { config, ... }:
     {
       imports = [
         sources.modules.ngipkgs
@@ -26,6 +27,15 @@ in
         sources.examples.PdfDing.postgres
         "${sources.inputs.sops-nix}/modules/sops"
         nodeConfig
+      ];
+
+      # TODO remove once pdfding update+fix reaches nixpkgs
+      # https://github.com/NixOS/nixpkgs/pull/496164
+      services.pdfding.package = lib.mkForce ngiPkgs.pdfding;
+      nixpkgs.overlays = [
+        (self: super: {
+          pdfding = ngiPkgs.pdfding;
+        })
       ];
 
       sops = lib.mkForce {

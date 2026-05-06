@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  dream2nix,
   sources,
   system,
 }:
@@ -41,7 +40,6 @@ let
     let
       evaluated = lib.evalModules {
         specialArgs = {
-          inherit dream2nix;
           packageSets.nixpkgs = pkgs;
         };
         modules = [
@@ -83,14 +81,12 @@ let
     _: directory:
     if pathExists (directory + "/package.nix") then
       callPackage (directory + "/package.nix") { }
-    else if pathExists (directory + "/dream2.nix") then
-      callModule (directory + "/dream2.nix")
     else if pathExists (directory + "/sbt-derivation.nix") then
       callPackage (directory + "/sbt-derivation.nix") {
         inherit mkSbtDerivation;
       }
     else
-      throw "No package.nix, dream2.nix or sbt-derivation.nix found in ${directory}"
+      throw "No package.nix, or sbt-derivation.nix found in ${directory}"
   ) packageDirectories;
 in
 self

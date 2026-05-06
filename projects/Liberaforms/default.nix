@@ -24,7 +24,8 @@
     examples.basic = {
       module = ./example.nix;
       description = "";
-      tests.liberaforms.module = ./test.nix;
+      tests.basic.module = ./tests/basic.nix;
+      tests.smoke-test.module = ./tests/smoke-test.nix;
     };
   };
 }

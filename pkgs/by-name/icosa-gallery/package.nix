@@ -11,6 +11,7 @@ let
       django-admin-tools = final.callPackage ./django-admin-tools.nix { };
       django-constance = final.callPackage ./django-constance.nix { };
       django-honeypot = final.callPackage ./django-honeypot.nix { };
+      django-silk = final.callPackage ./django-silk.nix { };
       django-simple-math-captcha = final.callPackage ./django-simple-math-captcha.nix { };
       ixxy-email-logger = final.callPackage ./ixxy-email-logger.nix { };
     };
@@ -19,20 +20,24 @@ let
 in
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "icosa-gallery";
-  version = "0-unstable-2026-01-15";
+  version = "0-unstable-2026-03-11";
   pyproject = false;
 
   src = fetchFromGitHub {
     owner = "icosa-foundation";
     repo = "icosa-gallery";
-    rev = "2fc0fe9505f682b8c11f1b282355790c7eb78e0c";
-    hash = "sha256-w/PF/65eIkg9OgIzWw8VEGKVuepEf8C/xXjeyiLzH+I=";
+    rev = "12a10b77ac9b924c6832d39875577119427d3d11";
+    hash = "sha256-o9PyvC23I3n4YY6PEA03zt/aL7O25ck/O9BKQxy68Os=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/django";
 
   patches = [
     ./BASE_DIR.patch
+
+    # sourceRoot prevents usage of fetchpatch2
+    # upstream PR is https://github.com/icosa-foundation/icosa-gallery/pull/200
+    ./0001-Fix-django-ninja-removed-Config.patch
   ];
 
   dependencies =

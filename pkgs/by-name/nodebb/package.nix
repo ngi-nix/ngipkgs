@@ -11,23 +11,34 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "nodebb";
-  version = "4.9.2";
+  version = "4.10.1";
 
   src = fetchFromGitHub {
     owner = "NodeBB";
     repo = "NodeBB";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-yPCxIcpwzGqKzDDGkTCw9l0uTRu5Eb0D6V/0YOgdcrA=";
+    hash = "sha256-QG55il+BeVdfmKrOvsyjULHUpySiYrWvgblO8OPsKM0=";
     postFetch = ''
       cp $out/install/package.json $out
     '';
   };
 
+  patches = [
+    # sharp is failing to build from source
+    # node-gyp is missing from the install/package.json
+    ./0001-add-node-gyp-to-dependencies.patch
+  ];
+
   postPatch = ''
     cp ${./package-lock.json} ./package-lock.json
+
+    # overrwrite the package.json to the patched version
+    cp install/package.json package.json
   '';
 
-  npmDepsHash = "sha256-fEtxiYJD1wiQkrzoCuUoc/qhPYhpkY0OgybKTJkILO4=";
+  npmDepsHash = "sha256-o6waZ/LmvJ7fLpQk8Te4X6atV0wAABWyU7XOC4gxLjk=";
+
+  makeCacheWritable = true;
 
   nativeBuildInputs = [ pkg-config ];
 
