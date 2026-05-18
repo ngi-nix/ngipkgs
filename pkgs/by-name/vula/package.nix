@@ -19,15 +19,15 @@ let
 in
 python3.pkgs.buildPythonApplication {
   pname = "vula";
-  version = "0.2.2024011000-unstable-2025-07-15";
+  version = "0.2.2024011000-unstable-2026-05-13";
   pyproject = true;
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "vula";
     repo = "vula";
-    rev = "59611c2c7d1ac69be71961ecccf52c61c6b3dd3e";
-    hash = "sha256-hYXkfgTlcQ7HIMiYRxkuWuVGjZxWNqRgbjfKFT6gnaw=";
+    rev = "9cdda071100dd4dd06f98f7b5ef21168f834e08b";
+    hash = "sha256-ZYlXu2e3iW1SsyOpFe6CzXwiy72hMiV/VzIlPR+c31c=";
   };
 
   # without removing `pyproject.toml` we don't end up with an executable.
