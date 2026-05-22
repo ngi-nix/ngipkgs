@@ -36,11 +36,131 @@ This is what you can do with software from NGIpkgs:
 In order to do that:
 - [Install Nix on Linux or WSL](https://nix.dev/install-nix)
 
-> [!WARNING]
-> End-user instructions are not available yet, and even simple workflows may not work as intended.
-> This is currently work in progress.
->
-> You need to be proficient enough with the Nix langauge and NixOS to read the code and set up an environment where you can experiment with deploying and running the applications provided in this repository.
+## Quick start
+
+Add NGIpkgs as a flake input to your `flake.nix`:
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    ngipkgs.url = "github:ngi-nix/ngipkgs";
+  };
+
+  outputs = { nixpkgs, ngipkgs, ... }: {
+    nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        # Add NGIpkgs overlay so packages are available in pkgs.ngipkgs
+        ngipkgs.nixosModules.ngipkgs
+
+        # Import an NGIpkgs program module (e.g. formulas — a CLI tool)
+        ngipkgs.nixosModules.programs.formulas
+
+        # Import an NGIpkgs service module (e.g. funkwhale — a federated audio platform)
+        ngipkgs.nixosModules.services.funkwhale
+
+        ./configuration.nix
+      ];
+    };
+  };
+}
+```
+
+### Using packages
+
+Packages are available under `ngipkgs.packages.<system>.<name>`.
+
+Run a CLI tool without installing it:
+
+```ShellSession
+nix run github:ngi-nix/ngipkgs#formulas -- --help
+```
+
+Build a package locally:
+
+```ShellSession
+nix build github:ngi-nix/ngipkgs#formulas
+```
+
+Add packages to your NixOS configuration:
+
+```nix
+{ pkgs, ngipkgs, ... }: {
+  environment.systemPackages = with ngipkgs.packages.${pkgs.system}; [
+    formulas
+    py3dtiles
+  ];
+}
+```
+
+Or use the NGIpkgs overlay to make packages available under `pkgs.ngipkgs`:
+
+```nix
+{ pkgs, ... }: {
+  environment.systemPackages = with pkgs.ngipkgs; [
+    formulas
+    py3dtiles
+  ];
+}
+```
+
+### Using NixOS modules
+
+NGIpkgs provides NixOS modules for both **programs** (CLI tools) and **services** (long-running daemons).
+
+Add a module to your configuration:
+
+```nix
+{ ... }: {
+  imports = [
+    # Program modules make a CLI tool available on the system
+    inputs.ngipkgs.nixosModules.programs.formulas
+
+    # Service modules configure and run a background service
+    inputs.ngipkgs.nixosModules.services.funkwhale
+  ];
+
+  # Enable a program
+  programs.formulas.enable = true;
+
+  # Configure a service
+  services.funkwhale = {
+    enable = true;
+    configureNginx = true;
+    settings = {
+      FUNKWHALE_HOSTNAME = "music.example.com";
+    };
+  };
+}
+```
+
+> [!TIP]
+> Browse available modules at <https://ngi.nixos.org> or under `projects/` in the repository.
+
+### Trying demos
+
+Each project may include a demo configuration that you can run in a virtual machine:
+
+```ShellSession
+nix run github:ngi-nix/ngipkgs#demos.formulas
+```
+
+This boots a NixOS VM with the application pre-installed and configured.
+
+### Using the NGIpkgs overlay
+
+If you prefer to use the NGIpkgs packages as an overlay on your Nixpkgs package set:
+
+```nix
+{ pkgs, ngipkgs, ... }: {
+  nixpkgs.overlays = [ ngipkgs.overlays.default ];
+}
+```
+
+After adding the overlay, packages are available directly as `pkgs.formulas`, `pkgs.py3dtiles`, etc.
+
+### Prerequisites
 
 It will help you to go more quickly if you learn to:
 - [Read the Nix language](https://nix.dev/tutorials/nix-language)
@@ -52,13 +172,13 @@ It will help you to go more quickly if you learn to:
 
 ## Structure of NGIpkgs
 
-The each piece of software in NGIpkgs is called a *project*.
+Each piece of software in NGIpkgs is called a *project*.
 Each project may consist of multiple packaging artefacts:
 - NixOS configuration modules for adding application components to a NixOS system
-- Exampes for configuring these modules
+- Examples for configuring these modules
 - Tests to ensure the modules and examples work as intended
-- Libraries for various progrmaming languages that can be composed with Nixpkgs package recipes
-- Links to upstream documentation for using the application or maintaing or extending the NixOS packaging
+- Libraries for various programming languages that can be composed with Nixpkgs package recipes
+- Links to upstream documentation for using the application or maintaining or extending the NixOS packaging
 
 ```
 .
