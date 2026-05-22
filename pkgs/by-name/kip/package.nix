@@ -23,6 +23,7 @@
   libressl,
   cacert,
   gnutls,
+  nix-update-script,
 }:
 let
   python-with-packages = python3.withPackages (
@@ -80,4 +81,14 @@ stdenv.mkDerivation (finalAttrs: {
   preBuild = ''
     patchShebangs test
   '';
+
+  passthru.updateScript = nix-update-script { };
+
+  meta = {
+    description = "Keyful Identity Protocol — symmetric-key encryption and signing via an online KIP Service";
+    homepage = "https://gitlab.com/arpa2/kip";
+    license = lib.licenses.bsd2;
+    maintainers = [ ];
+    teams = with lib.teams; [ ngi ];
+  };
 })
