@@ -1,0 +1,5 @@
+{
+  programs.formulas = {
+    enable = true;
+  };
+}
