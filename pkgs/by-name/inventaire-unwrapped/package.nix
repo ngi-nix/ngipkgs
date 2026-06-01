@@ -9,14 +9,14 @@
 
 buildNpmPackage rec {
   pname = "inventaire-unwrapped";
-  version = "4.0.1";
+  version = "5.1.1";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "inventaire";
     repo = "inventaire";
     tag = "v${version}";
-    hash = "sha256-tYVz/elb9AbqdMDBgiyQtOrQzas+It3hhgBc2wzl74w=";
+    hash = "sha256-sX0ldypp94Ul6Xmm7aaihESMuRvHsEsEm+dJmDjkdgM=";
   };
 
   # Cannot handle git+https://codeberg.org source url, but it later gets fetched manually anyway
