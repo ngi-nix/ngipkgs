@@ -21,13 +21,13 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "repath-studio";
-  version = "0.4.12";
+  version = "0.4.14";
 
   src = fetchFromGitHub {
     owner = "repath-studio";
     repo = "repath-studio";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-sdM3owUYI0P12+R4YyYtF/20Zl0EpJY6t4Z1q/K5EqM=";
+    hash = "sha256-El3gXpfNofHev84tpa0v16y2Sjdo6kmlm44hgHcinCk=";
   };
 
   patches = [
@@ -43,7 +43,7 @@ buildNpmPackage (finalAttrs: {
 
   makeCacheWritable = true;
 
-  npmDepsHash = "sha256-Zihy5VYlkeQtmZUS25kgu3aYGPfQdUxjNSK33WHOEeQ=";
+  npmDepsHash = "sha256-gOk/hHWGLwAxPIBqasoUzfszPv911afb/VLn7w7g5KE=";
 
   nativeBuildInputs = [
     finalAttrs.passthru.clojureWithCache
