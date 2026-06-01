@@ -47,14 +47,14 @@ in
           <article class="project">
             <div class="row">
               <h2>
-                <a href="/project/${self.name}">${self.name}</a>
+                <a href="/ngipkgs/project/${self.name}">${self.name}</a>
               </h2>
               ${concatStringsSep "\n" (
                 map (deliverable: ''
                   <a
                     class="deliverable-tag ${optionalString (deliverable.hasProblem) "deliverable-has-problem"}"
                     title="${deliverable.name} ${deliverable.type}${optionalString (deliverable.hasProblem) " has a problem"}"
-                    href="/project/${self.name}#${
+                    href="/ngipkgs/project/${self.name}#${
                       if deliverable.type != "demo" then "${deliverable.type}s.${deliverable.name}" else "demo"
                     }"
                   >

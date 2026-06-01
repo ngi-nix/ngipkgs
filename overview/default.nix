@@ -172,7 +172,7 @@ let
         breadcrumbs = ''
           <nav aria-label="Breadcrumb" class="breadcrumb">
             <ol>
-              <li><a href="/">Projects</a></li>
+              <li><a href="/ngipkgs">Projects</a></li>
               <li>${name}</li>
             </ol>
           </nav>
